@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Graphics Engine">
+      <UniqueIdentifier>{6eabc5e3-c84c-4a5b-90e8-7adaecbf1f90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics Engine\Shader Manager">
+      <UniqueIdentifier>{f4062348-8ec7-4104-8175-3e74400ead62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics Engine\VAO Manager">
+      <UniqueIdentifier>{a365fab4-5a9f-4fbb-9e78-1fd668de2e0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics Engine\Light Manager">
+      <UniqueIdentifier>{69ac18e7-ace3-4ae5-bdd6-28ef468aab0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics Engine\Mesh">
+      <UniqueIdentifier>{3d61ebb9-3119-41c0-ae96-60dd08798ac9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics Engine\Graphics Controller">
+      <UniqueIdentifier>{81f6441d-10e9-4c2e-a7dc-f9b50d3116f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input Handler">
+      <UniqueIdentifier>{bda6e101-7891-499e-89bc-a25e58f2de16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics Engine\ImGui">
+      <UniqueIdentifier>{509b763e-fb70-4adf-afa9-5e196c5b1cde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics Engine\ImGui\backends">
+      <UniqueIdentifier>{813afed8-cc4c-4377-ad74-28645da30482}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics Engine\SceneSave">
+      <UniqueIdentifier>{13d264ec-9916-40cf-8ba2-1d9b459b1941}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{a3eb3f03-de0d-4d45-864d-edc647ca39f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player">
+      <UniqueIdentifier>{64aa2570-a3db-4003-a09b-4b47c87a8dc8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Basic Shader Manager\cShaderManager.cpp">
+      <Filter>Graphics Engine\Shader Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Basic Shader Manager\cShader.cpp">
+      <Filter>Graphics Engine\Shader Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="cVAOManager\cVAOManager.cpp">
+      <Filter>Graphics Engine\VAO Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Other Graphics Stuff\glad.c">
+      <Filter>Graphics Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Other Graphics Stuff\ScenePersistence.cpp">
+      <Filter>Graphics Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Other Graphics Stuff\cLightManager.cpp">
+      <Filter>Graphics Engine\Light Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Other Graphics Stuff\cMesh.cpp">
+      <Filter>Graphics Engine\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Other Graphics Stuff\cGraphicsMain.cpp">
+      <Filter>Graphics Engine\Graphics Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="cInputHandler.cpp">
+      <Filter>Input Handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\imgui\imgui.cpp">
+      <Filter>Graphics Engine\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\imgui\imgui_demo.cpp">
+      <Filter>Graphics Engine\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\imgui\imgui_draw.cpp">
+      <Filter>Graphics Engine\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\imgui\imgui_tables.cpp">
+      <Filter>Graphics Engine\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\imgui\imgui_widgets.cpp">
+      <Filter>Graphics Engine\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\imgui\backends\imgui_impl_glfw.cpp">
+      <Filter>Graphics Engine\ImGui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\imgui\backends\imgui_impl_opengl3.cpp">
+      <Filter>Graphics Engine\ImGui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="cSceneManagement.cpp">
+      <Filter>Graphics Engine\SceneSave</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\sPhsyicsProperties.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\cPhysics.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\cPhysics_BasicTests.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\cPhysics_IntersectionTests.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\cPhysics_Update.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="cPlayer.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Basic Shader Manager\cShaderManager.h">
+      <Filter>Graphics Engine\Shader Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="cVAOManager\cVAOManager.h">
+      <Filter>Graphics Engine\VAO Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Other Graphics Stuff\GLWF_CallBacks.h">
+      <Filter>Graphics Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Other Graphics Stuff\OpenGLCommon.h">
+      <Filter>Graphics Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Other Graphics Stuff\cLightManager.h">
+      <Filter>Graphics Engine\Light Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Other Graphics Stuff\cMesh.h">
+      <Filter>Graphics Engine\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Other Graphics Stuff\cGraphicsMain.h">
+      <Filter>Graphics Engine\Graphics Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="cInputHandler.h">
+      <Filter>Input Handler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\imgui\imconfig.h">
+      <Filter>Graphics Engine\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\imgui\imgui.h">
+      <Filter>Graphics Engine\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\imgui\imgui_internal.h">
+      <Filter>Graphics Engine\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\imgui\imstb_rectpack.h">
+      <Filter>Graphics Engine\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\imgui\imstb_textedit.h">
+      <Filter>Graphics Engine\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\imgui\imstb_truetype.h">
+      <Filter>Graphics Engine\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\imgui\backends\imgui_impl_glfw.h">
+      <Filter>Graphics Engine\ImGui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\imgui\backends\imgui_impl_opengl3.h">
+      <Filter>Graphics Engine\ImGui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\imgui\backends\imgui_impl_opengl3_loader.h">
+      <Filter>Graphics Engine\ImGui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="cSceneManagement.h">
+      <Filter>Graphics Engine\SceneSave</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\iPhysicsMeshTransformAccess.h">
+      <Filter>Graphics Engine\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\sPhsyicsProperties.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\cPhysics.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="cPlayer.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
