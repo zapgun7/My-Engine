@@ -115,7 +115,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration);$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3.lib;cAssimpHelper.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -133,7 +133,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration);$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3.lib;cAssimpHelper.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -150,6 +150,8 @@
     <ClCompile Include="cInputHandler.cpp" />
     <ClCompile Include="cPlayer.cpp" />
     <ClCompile Include="cSceneManagement.cpp" />
+    <ClCompile Include="cSoundManager.cpp" />
+    <ClCompile Include="cSoundUtils.cpp" />
     <ClCompile Include="cVAOManager\cVAOManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Other Graphics Stuff\cGraphicsMain.cpp" />
@@ -176,6 +178,8 @@
     <ClInclude Include="Basic Shader Manager\cShaderManager.h" />
     <ClInclude Include="cInputHandler.h" />
     <ClInclude Include="cPlayer.h" />
+    <ClInclude Include="cSoundManager.h" />
+    <ClInclude Include="cSoundUtils.h" />
     <ClInclude Include="cVAOManager\cVAOManager.h" />
     <ClInclude Include="Other Graphics Stuff\cGraphicsMain.h" />
     <ClInclude Include="Other Graphics Stuff\cLightManager.h" />

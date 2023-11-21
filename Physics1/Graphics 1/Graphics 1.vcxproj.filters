@@ -49,6 +49,9 @@
     <Filter Include="Player">
       <UniqueIdentifier>{64aa2570-a3db-4003-a09b-4b47c87a8dc8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{585c80b5-5172-435c-8e39-eece406d4fcb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Basic Shader Manager\cShaderManager.cpp">
@@ -123,6 +126,12 @@
     <ClCompile Include="cPlayer.cpp">
       <Filter>Player</Filter>
     </ClCompile>
+    <ClCompile Include="cSoundManager.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="cSoundUtils.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basic Shader Manager\cShaderManager.h">
@@ -190,6 +199,12 @@
     </ClInclude>
     <ClInclude Include="cPlayer.h">
       <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="cSoundManager.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="cSoundUtils.h">
+      <Filter>Audio</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
