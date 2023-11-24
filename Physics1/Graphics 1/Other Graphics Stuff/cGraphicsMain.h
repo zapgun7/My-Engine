@@ -58,11 +58,12 @@ private:
 	std::vector<std::string> m_AvailableModels; // String of model file names to choose from
 
 	//cPlayer* m_player;
-
+public:
 	glm::vec3 m_cameraEye;
 	glm::vec3 m_cameraTarget;
 	glm::vec3 m_cameraRotation;
 	glm::vec3 m_upVector;
+private:
 
 	cShaderManager* m_pShaderThing;
 	GLuint m_shaderProgramID;
@@ -72,7 +73,9 @@ private:
 	double m_lastTime;
 	GLFWwindow* m_window;
 	cVAOManager* m_pMeshManager = NULL;
+public:
 	std::vector< cMesh* > m_vec_pMeshesToDraw;
+private:
 	cLightManager* m_pTheLights;
 
 	// ImGui

@@ -4,6 +4,7 @@
 #include <fmod/fmod.hpp>
 #include <vector>
 #include <map>
+#include "Physics/sPhsyicsProperties.h" // To bind an object to a channel to play sound through
 
 
 #define gdpAudioNamespaceBegin namespace audio {
@@ -12,12 +13,20 @@
 
 gdpAudioNamespaceBegin
 
-class SoundManager
+struct s3DSound
+{
+	FMOD::Channel* channel; // To play 3d sound through
+	sPhsyicsProperties* object;
+};
+
+
+
+class cSoundManager
 {
 public:
-	~SoundManager();
+	~cSoundManager();
 
-	static SoundManager* GetInstance();
+	static cSoundManager* GetInstance();
 
 	// System
 	void Initialize();
@@ -31,7 +40,8 @@ public:
 	int CreateChannelGroup(const char* name);
 
 
-	void PlaySound(unsigned int channelId, unsigned int channelGrpId);
+	void PlaySound(unsigned int soundId, unsigned int channelGrpId);
+	void PlaySound(unsigned int soundId, audio::s3DSound* audioObj, bool isLooping);
 
 	// Channels
 	void SetChannelPan(unsigned int channelId, float value);
@@ -45,9 +55,24 @@ public:
 
 	// DSP
 
+
+
+	// Sound Objects
+	void AddNewObject(sPhsyicsProperties* phyObj); // Should only need the object to initialize the object
+	void UpdateAllObjects(void); // Updates 3d info on all objects in vec
+	void PlaySoundFromObject(int id, const char* soundName, bool isLooping);
+	void SetListenerAttribs(glm::vec3 pos, glm::vec3 vel, glm::vec3 up, glm::vec3 forward);
+
+
+	// FMOD -> GLM -> FMOD
+	void GLMToFMOD(const glm::vec3& in, FMOD_VECTOR& out);
+	void FMODToGLM(const FMOD_VECTOR& in, glm::vec3& out);
+
+
 private:
-	SoundManager();
-	static SoundManager* m_Instance;
+	cSoundManager();
+	static cSoundManager* m_Instance;
+	std::string m_FilePath;
 
 	int CheckSoundCache(const char* name);
 
@@ -56,12 +81,15 @@ private:
 	bool m_Destroyed;
 	FMOD::System* m_System;
 
+
+	using sound_obj_vec = std::vector<s3DSound>; // Vector of objects bound to (dynamic) objects
 	using sound_vec = std::vector<FMOD::Sound*>;
 	using channel_vec = std::vector<FMOD::Channel*>;
 	using channelgroup_vec = std::vector<FMOD::ChannelGroup*>;
 	using sound_cache = std::map<const char*, unsigned int>;
 	using sound_cache_iter = sound_cache::iterator;
 
+	sound_obj_vec m_SoundObjs;
 	sound_vec m_Sounds;
 	channel_vec m_Channels;
 	sound_cache m_SoundCache;
@@ -71,4 +99,4 @@ private:
 
 gdpAudioNamespaceEnd
 
-#define GetSoundManager() audio::SoundManager::GetInstance()
+//#define GetSoundManager() audio::cSoundManager::GetInstance()
