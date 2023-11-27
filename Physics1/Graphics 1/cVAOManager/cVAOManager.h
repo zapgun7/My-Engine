@@ -6,44 +6,8 @@
 
 #include <string>
 #include <map>
-//#include "../AssimpFileLoaderHelper/AssimpFileLoaderHelper/cAssimpHelper.h"
 
-// The vertex structure 
-//	that's ON THE GPU (eventually) 
-// So dictated from THE SHADER
-struct sVertex
-{
-//	float x, y, z;		
-//	float r, g, b;
-	float x, y, z, w;		// w 'cause math
-	float r, g, b, a;
-	float nx, ny, nz, nw;	// Won't use nw
-};
-
-
-struct sModelDrawInfo
-{
-	sModelDrawInfo(); 
-
-	std::string meshName;
-
-	unsigned int VAO_ID;
-
-	unsigned int VertexBufferID;
-	unsigned int VertexBuffer_Start_Index;
-	unsigned int numberOfVertices;
-
-	unsigned int IndexBufferID;
-	unsigned int IndexBuffer_Start_Index;
-	unsigned int numberOfIndices;
-	unsigned int numberOfTriangles;
-
-	// The "local" (i.e. "CPU side" temporary array)
-	sVertex* pVertices;	//  = 0;
-	// The index buffer (CPU side)
-	unsigned int* pIndices;
-};
-
+#include "sModelDrawInfo.h"
 
 class cVAOManager
 {

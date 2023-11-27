@@ -13,10 +13,23 @@
 
 gdpAudioNamespaceBegin
 
+enum DSPs
+{
+	Echo,
+	Distortion,
+	PitchShift,
+	Fader
+};
+
 struct s3DSound
 {
 	FMOD::Channel* channel; // To play 3d sound through
 	sPhsyicsProperties* object;
+
+	FMOD::DSP* echo = nullptr;
+	FMOD::DSP* distortion = nullptr;
+	FMOD::DSP* pitchshift = nullptr;
+	FMOD::DSP* fader = nullptr;
 };
 
 
@@ -54,19 +67,32 @@ public:
 	void SetChannelGroupVolume(unsigned int channelGroupId, float value);
 
 	// DSP
-
+	void AddEchoDSP(audio::s3DSound* audioObj);
+	void SetEchoDSP(FMOD::DSP* echoDSP, float delay, float feedback, float drylevel, float wetlevel);
+	void AddDistortionDSP(audio::s3DSound* audioObj);
+	void SetDistortionDSP(FMOD::DSP* distortionDSP, float distortion);
+	void AddPitchshiftDSP(audio::s3DSound* audioObj);
+	void SetPitchShiftDSP(FMOD::DSP* pitchshiftDSP, float pitch);
+	void AddFaderDSP(audio::s3DSound* audioObj);
+	void SetFaderDSP(FMOD::DSP* faderDSP, float gain);
 
 
 	// Sound Objects
 	void AddNewObject(sPhsyicsProperties* phyObj); // Should only need the object to initialize the object
 	void UpdateAllObjects(void); // Updates 3d info on all objects in vec
 	void PlaySoundFromObject(int id, const char* soundName, bool isLooping);
+	void AddDSPToObject(int id, DSPs dsp);
 	void SetListenerAttribs(glm::vec3 pos, glm::vec3 vel, glm::vec3 up, glm::vec3 forward);
+	void SetDSPFromObject(int id, DSPs dsp, float param1);
 
 
 	// FMOD -> GLM -> FMOD
 	void GLMToFMOD(const glm::vec3& in, FMOD_VECTOR& out);
 	void FMODToGLM(const FMOD_VECTOR& in, glm::vec3& out);
+
+
+	// Occlusion Geometry
+	void AddPolygonGeometry(const std::vector<glm::vec3>& vertices);
 
 
 private:
@@ -80,6 +106,7 @@ private:
 	bool m_Destroying;
 	bool m_Destroyed;
 	FMOD::System* m_System;
+	FMOD::Geometry* m_Geometry;
 
 
 	using sound_obj_vec = std::vector<s3DSound>; // Vector of objects bound to (dynamic) objects

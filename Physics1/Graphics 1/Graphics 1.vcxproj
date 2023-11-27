@@ -164,6 +164,9 @@
     <ClCompile Include="Physics\cPhysics_IntersectionTests.cpp" />
     <ClCompile Include="Physics\cPhysics_Update.cpp" />
     <ClCompile Include="Physics\sPhsyicsProperties.cpp" />
+    <ClCompile Include="TextureManager\C24BitBMPpixel.cpp" />
+    <ClCompile Include="TextureManager\cBasicTextureManager.cpp" />
+    <ClCompile Include="TextureManager\CTextureFromBMP.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\imgui\backends\imgui_impl_glfw.h" />
@@ -181,6 +184,7 @@
     <ClInclude Include="cSoundManager.h" />
     <ClInclude Include="cSoundUtils.h" />
     <ClInclude Include="cVAOManager\cVAOManager.h" />
+    <ClInclude Include="cVAOManager\sModelDrawInfo.h" />
     <ClInclude Include="Other Graphics Stuff\cGraphicsMain.h" />
     <ClInclude Include="Other Graphics Stuff\cLightManager.h" />
     <ClInclude Include="Other Graphics Stuff\cMesh.h" />
@@ -190,6 +194,9 @@
     <ClInclude Include="Physics\cPhysics.h" />
     <ClInclude Include="Physics\iPhysicsMeshTransformAccess.h" />
     <ClInclude Include="Physics\sPhsyicsProperties.h" />
+    <ClInclude Include="TextureManager\C24BitBMPpixel.h" />
+    <ClInclude Include="TextureManager\cBasicTextureManager.h" />
+    <ClInclude Include="TextureManager\CTextureFromBMP.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

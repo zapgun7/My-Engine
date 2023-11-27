@@ -4,6 +4,7 @@
 in vec4 colour;
 in vec4 vertexWorldPos;			// vertex in "world space"
 in vec4 vertexWorldNormal;	
+in vec2 textureCoords;
 
 out vec4 outputColour;		// To the frame buffer (aka screen)
 
@@ -19,6 +20,44 @@ uniform vec4 eyeLocation;
 
 uniform bool bUseDebugColour;	// if this is true, then use debugColourRGBA for the colour
 uniform vec4 debugColourRGBA;		
+
+// If FALSE, we use the texture colour as the vertex colour
+// (NOT the one from the model file)
+uniform bool bUseVertexColours;		// If true, then DOESN'T use texture colours
+
+// Usually, you would pass the alpha transparency as the 4th colour value, 
+// 	but for clarity, we'll pass it separately...
+uniform float transparencyAlpha;
+
+uniform sampler2D texture_00;			// 2D meaning x,y or s,t or u,v
+uniform sampler2D texture_01;
+uniform sampler2D texture_02;
+uniform sampler2D texture_03;
+uniform sampler2D texture_04;			
+uniform sampler2D texture_05;
+uniform sampler2D texture_06;
+uniform sampler2D texture_07;
+
+//
+uniform bool bUseHeightMap;
+uniform sampler2D heightMapSampler;		// Texture unit 20
+uniform sampler2D discardSampler;		// Texture unit 21
+
+// Skybox, cubemap, etc.
+uniform bool bIsSkyBox;
+uniform samplerCube skyBoxTexture;
+
+// For the discard example
+uniform bool bUseDiscardMaskTexture;
+uniform sampler2D maskSamplerTexture01;
+
+//... and so on
+//uniform float textureMixRatio[8];
+uniform vec4 textureMixRatio_0_3;		// 1, 0, 0, 0 
+uniform vec4 textureMixRatio_4_7;
+
+//uniform samplerCube skyBox;
+
 
 struct sLight
 {
@@ -53,15 +92,84 @@ vec4 calculateLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 
 void main()
 {
+	
+
 //	gl_FragColor = vec4(color, 1.0);
 
-	vec4 vertexRGBA = colour;
+//	if ( bUseHeightMap )
+//	{
+//		outputColour.rgba = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+//		return;
+//	}
+
+	// Discard the water
+//	if ( bUseHeightMap )
+//	{
+//		// Range of 0 to 1
+//		float height = texture( heightMapSampler, textureCoords.st ).r;
+//		
+//		if ( height <= 0.005f )
+//		{
+//			discard;
+//		}
+//	}
+
+	if ( bUseDiscardMaskTexture )
+	{
+		float maskValue = texture( maskSamplerTexture01, textureCoords.st ).r;
+		// If "black" then discard
+		if ( maskValue < 0.1f )
+		{
+			discard;
+//			outputColour.rgba = vec4( 1.0f, 0.0f, 0.0f, 1.0f );
+//			return;
+		}	
+	}
+	
+	if ( bIsSkyBox )
+	{
+		//uniform samplerCube skyBoxTexture;
+		vec4 skyBoxSampleColour = texture( skyBoxTexture, vertexWorldNormal.xyz ).rgba;
+		outputColour.rgb = skyBoxSampleColour.rgb;
+		outputColour.a = 1.0f;
+		return;
+	}
+	
+	// Reflect
+	// Reflects based on the eye position
+	// genType reflect( genType IncidentAngle, 	genType Nnormal);
+//	vec3 eyeVector = normalize(eyeLocation.xyz - vertexWorldPos.xyz);
+//	vec3 reflectAngle = reflect( eyeVector, vertexWorldNormal.xyz);
+//	vec3 reflectAngle = refract( eyeVector, vertexWorldNormal.xyz, 	1.333);
+//	
+//	vec4 skyBoxSampleColour = texture( skyBoxTexture, reflectAngle.xyz ).rgba;
+	
+//	outputColour.rgb = skyBoxSampleColour.rgb;
+//	outputColour.a = 1.0f;
+//	return;
+	
+
+	vec4 textureColour = 
+			  texture( texture_00, textureCoords.st ).rgba * textureMixRatio_0_3.x 	
+			+ texture( texture_01, textureCoords.st ).rgba * textureMixRatio_0_3.y
+			+ texture( texture_02, textureCoords.st ).rgba * textureMixRatio_0_3.z
+			+ texture( texture_03, textureCoords.st ).rgba * textureMixRatio_0_3.w;
+
+	// Make the 'vertex colour' the texture colour we sampled...
+	vec4 vertexRGBA = textureColour;	
+	
+	// ...unless we want to use the vertex colours from the model
+	if (bUseVertexColours)
+	{
+		// Use model vertex colour and NOT the texture colour
+		vertexRGBA = colour;
+	}
 	
 	if ( bUseDebugColour )
 	{	
 		vertexRGBA = debugColourRGBA;
 	}
-	
+
 	if ( bDoNotLight )
 	{
 		outputColour = vertexRGBA;

@@ -136,6 +136,8 @@ bool cVAOManager::LoadModelIntoVAO(
 	GLint vcol_location = glGetAttribLocation(shaderProgramID, "vCol");	// program;
 	GLint vNormal_location = glGetAttribLocation(shaderProgramID, "vNormal");	// program;
 
+	GLint vTextureCoords_location = glGetAttribLocation(shaderProgramID, "vTextureCoords");
+
 	// Set the vertex attributes for this shader
 	glEnableVertexAttribArray(vpos_location);	    // vPos
 	glVertexAttribPointer( vpos_location, 4,		// vPos
@@ -155,6 +157,13 @@ bool cVAOManager::LoadModelIntoVAO(
                            sizeof(sVertex),
 						   ( void* ) offsetof(sVertex, nx));
 
+
+	glEnableVertexAttribArray(vTextureCoords_location);	    // vTextureCoords;
+	glVertexAttribPointer(vTextureCoords_location, 2,		// in vec2 vTextureCoords;
+		GL_FLOAT, GL_FALSE,
+		sizeof(sVertex),
+		(void*)offsetof(sVertex, u));
+
 	// Now that all the parts are set up, set the VAO to zero
 	glBindVertexArray(0);
 
@@ -164,6 +173,7 @@ bool cVAOManager::LoadModelIntoVAO(
 	glDisableVertexAttribArray(vpos_location);
 	glDisableVertexAttribArray(vcol_location);
 	glDisableVertexAttribArray(vNormal_location);
+	glDisableVertexAttribArray(vTextureCoords_location);
 
 
 	// Store the draw information into the map
@@ -228,24 +238,31 @@ bool cVAOManager::m_LoadTheFile(std::string theFileName, sModelDrawInfo& drawInf
 	drawInfo.pVertices = new sVertex[drawInfo.numberOfVertices];
 	for (unsigned int vertIndex = 0; vertIndex != drawInfo.numberOfVertices; vertIndex++)
 	{
-		// 3 1582 1581 2063 
+		// Vertices
         drawInfo.pVertices[vertIndex].x = scene->mMeshes[0]->mVertices[vertIndex].x;
 		drawInfo.pVertices[vertIndex].y = scene->mMeshes[0]->mVertices[vertIndex].y;
 		drawInfo.pVertices[vertIndex].z = scene->mMeshes[0]->mVertices[vertIndex].z;
 		drawInfo.pVertices[vertIndex].w = 1.0f;
 
-
+		// Normals
         drawInfo.pVertices[vertIndex].nx = scene->mMeshes[0]->mNormals[vertIndex].x;
 		drawInfo.pVertices[vertIndex].ny = scene->mMeshes[0]->mNormals[vertIndex].y;
 		drawInfo.pVertices[vertIndex].nz = scene->mMeshes[0]->mNormals[vertIndex].z;
 		drawInfo.pVertices[vertIndex].nw = 1.0f;
 
-        if (scene->mMeshes[0]->HasVertexColors(0))
+		// UV Coords
+// 		drawInfo.pVertices[vertIndex].u = scene->mMeshes[0]->mTextureCoords[vertIndex]->x;
+// 		drawInfo.pVertices[vertIndex].v = scene->mMeshes[0]->mTextureCoords[vertIndex]->y;
+		drawInfo.pVertices[vertIndex].u = scene->mMeshes[0]->mTextureCoords[0][vertIndex].x;
+		drawInfo.pVertices[vertIndex].v = scene->mMeshes[0]->mTextureCoords[0][vertIndex].y;
+
+
+        if (scene->mMeshes[0]->HasVertexColors(vertIndex))
         {
-            drawInfo.pVertices[vertIndex].r = scene->mMeshes[0]->mColors[0]->r;
-            drawInfo.pVertices[vertIndex].g = scene->mMeshes[0]->mColors[0]->g;
-            drawInfo.pVertices[vertIndex].b = scene->mMeshes[0]->mColors[0]->b;
-            drawInfo.pVertices[vertIndex].a = scene->mMeshes[0]->mColors[0]->a;
+            drawInfo.pVertices[vertIndex].r = scene->mMeshes[0]->mColors[0][vertIndex].r;
+            drawInfo.pVertices[vertIndex].g = scene->mMeshes[0]->mColors[0][vertIndex].g;
+            drawInfo.pVertices[vertIndex].b = scene->mMeshes[0]->mColors[0][vertIndex].b;
+            drawInfo.pVertices[vertIndex].a = scene->mMeshes[0]->mColors[0][vertIndex].a;
         }
         else
         {

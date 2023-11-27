@@ -16,6 +16,9 @@
 # Mono auto generated files
 mono_crash.*
 
+#Big Libraries
+cAssimpHelper.lib
+
 # Build results
 //[Dd]ebug/
 [Dd]ebugPublic/

@@ -5,14 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Graphics Engine">
       <UniqueIdentifier>{6eabc5e3-c84c-4a5b-90e8-7adaecbf1f90}</UniqueIdentifier>
     </Filter>
@@ -51,6 +43,9 @@
     </Filter>
     <Filter Include="Audio">
       <UniqueIdentifier>{585c80b5-5172-435c-8e39-eece406d4fcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics Engine\TextureManager">
+      <UniqueIdentifier>{a3102251-b31a-430e-a117-92cbb57a74c6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -132,6 +127,15 @@
     <ClCompile Include="cSoundUtils.cpp">
       <Filter>Audio</Filter>
     </ClCompile>
+    <ClCompile Include="TextureManager\C24BitBMPpixel.cpp">
+      <Filter>Graphics Engine\TextureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager\cBasicTextureManager.cpp">
+      <Filter>Graphics Engine\TextureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager\CTextureFromBMP.cpp">
+      <Filter>Graphics Engine\TextureManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basic Shader Manager\cShaderManager.h">
@@ -205,6 +209,18 @@
     </ClInclude>
     <ClInclude Include="cSoundUtils.h">
       <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager\C24BitBMPpixel.h">
+      <Filter>Graphics Engine\TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager\cBasicTextureManager.h">
+      <Filter>Graphics Engine\TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager\CTextureFromBMP.h">
+      <Filter>Graphics Engine\TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="cVAOManager\sModelDrawInfo.h">
+      <Filter>Graphics Engine\VAO Manager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

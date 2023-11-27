@@ -9,38 +9,22 @@
 
 #include "../Physics/iPhysicsMeshTransformAccess.h"
 
-// This is where we are going to head...
-// struct sPhsyicsProperties
-// {
-// 	sPhsyicsProperties()
-// 	{
-// 		this->position = glm::vec3(0.0f);
-// 		this->velocity = glm::vec3(0.0f);
-// 		this->acceleration = glm::vec3(0.0f);
-// 		this->inverse_mass = 1.0f;	// What should this be??
-// 	}
-// 
-// //	typeOfSimplePhyiscThingy = "Sphere"
-// 
-// 	glm::vec3 position;
-// 	glm::vec3 velocity;
-// 	glm::vec3 acceleration;
-// 
-// 	// Since division is "slow" and we are dividing my mass, 
-// 	// Could make this immovable by making this 0 (infinite mass)
-// 	float inverse_mass;	//	float mass;		
-// 
-// 	// Rotational
-// //	glm::vec3 momentOfWhatever;
-// //	glm::vec3 rotationalSpeed;
-// };
-
 
 class cMesh : public iPhysicsMeshTransformAccess
 {
 public:
 	cMesh();		// Called on creation   c'tor
 	~cMesh();		// Called on deletion   d'tor
+
+	// Texture Stuff
+
+	static const int NUM_TEXTURES = 8;
+	std::string textureName[NUM_TEXTURES];
+	float textureRatios[NUM_TEXTURES];
+
+	///////////////////
+
+
 
 	std::string meshName;
 

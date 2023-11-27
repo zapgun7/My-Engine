@@ -47,8 +47,8 @@ cGraphicsMain* cGraphicsMain::getGraphicsMain(void) // Making graphics main a si
 
 cGraphicsMain::cGraphicsMain()
 {
-	m_cameraEye = glm::vec3(10.0f, 5.0f, 10.0f);
-	m_cameraTarget = glm::vec3(-1.0f, -0.2f, -1.0f);
+	m_cameraEye = glm::vec3(-120.0f, 40.0f, 0.0f);
+	m_cameraTarget = glm::vec3(1.0f, -0.2f, 0.0f);
 	m_cameraRotation = glm::vec3(0.0, 0.0f, 0.0f);
 	m_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
 	m_ShowLightEditor = false;
@@ -118,6 +118,18 @@ bool cGraphicsMain::Initialize()
 	m_pTheLights = new cLightManager();
 	m_pTheLights->SetUniformLocations(m_shaderProgramID);
 
+	////////////////// TEXTURE LOADING ///////////////
+	m_pTextureManager = new cBasicTextureManager();
+	m_pTextureManager->SetBasePath("assets/textures");
+
+	m_pTextureManager->Create2DTextureFromBMPFile("rosewood.bmp", true);
+	m_pTextureManager->Create2DTextureFromBMPFile("rosewood_n.bmp", true);
+	m_pTextureManager->Create2DTextureFromBMPFile("Water_Texture_01.bmp", true);
+
+
+
+	/////////////////////////////////////////////////
+
 
 	// MODEL LOADING /////////////////
 
@@ -142,32 +154,23 @@ bool cGraphicsMain::Initialize()
 	ImGui_ImplGlfw_InitForOpenGL(m_window, true);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 	
-	// Our state
-	//bool show_credits_window = false;
+	////// Throw in some modles to test textures
+
+	cMesh* plane = new cMesh();
+	plane->meshName = "Big_Flat_Mesh.ply";
+	plane->friendlyName = "bigolplane";
+	plane->setDrawPosition(glm::vec3(0.0f, -30.0f, 0.0f));
+	plane->bDoNotLight = true;
+
+	//plane->textureName[0] = "Water_Texture_01.bmp";
+	plane->textureName[0] = "rosewood.bmp";
+	plane->textureRatios[0] = 1.0f;
+
+	m_vec_pMeshesToDraw.push_back(plane);
+
+	
 
 
-
-	// Load in default player object
-// 	cMesh* meshToAdd = new cMesh();
-// 	meshToAdd->meshName = "Sphere_1_unit_Radius.ply"; // Set object type
-// 	meshToAdd->friendlyName = "Player";
-// 	meshToAdd->bDoNotLight = true;
-// 
-// 	m_vec_pMeshesToDraw.push_back(meshToAdd);
-// 
-// 	// Create the physics object
-// 	sPhsyicsProperties* newShape = new sPhsyicsProperties();
-// 	newShape->shapeType = sPhsyicsProperties::SPHERE;
-// 	newShape->setShape(new sPhsyicsProperties::sSphere(1.0f)); // Since a unit sphere, radius of .5 
-// 	newShape->pTheAssociatedMesh = meshToAdd;
-// 	newShape->inverse_mass = 1.0f; // Idk what to set this
-// 	newShape->friendlyName = "Sphere";
-// 	newShape->acceleration.y = -20.0f;
-// 	newShape->position = glm::vec3(0, 10, 0);
-// 	::g_pPhysics->AddShape(newShape);
-// 	m_player->setAssociatedPhysObj(newShape);
-// 
-// 	meshToAdd->uniqueID = newShape->getUniqueID();
 
 	return 1;
 }
@@ -199,47 +202,6 @@ bool cGraphicsMain::Update() // Main "loop" of the window. Not really a loop, ju
 	static double timeTillVelRand = velRandInterval;
 
 	timeTillVelRand -= deltaTime;
-
-
-	// Scary Balls
-	if (timeTillVelRand <= 0)
-	{
-		timeTillVelRand += velRandInterval;
-		for (unsigned int i = 0; i < m_vec_pMeshesToDraw.size(); i++)
-		{
-			//std::string test = m_vec_pMeshesToDraw[i]->friendlyName.substr(0, 4);
-			if (m_vec_pMeshesToDraw[i]->friendlyName.substr(0, 5) == "Scary") // If the type to fling around
-			{
-				if (rand() % 30 == 0)
-				{
-					sPhsyicsProperties* obj = ::g_pPhysics->findShapeByUniqueID(m_vec_pMeshesToDraw[i]->uniqueID);
-					obj->velocity.x = rand() % 50;
-					obj->velocity.z = rand() % 50;
-					//obj->velocity.y = rand() % 50;
-					if (rand() % 2 == 0)
-						obj->velocity.x *= -1;
-					if (rand() % 2 == 0)
-						obj->velocity.z *= -1;
-				}
-			}
-		}
-	}
-
-	// Teleport obj back up to 0,0
-
-	for (cMesh* mesh : m_vec_pMeshesToDraw)
-	{
-		sPhsyicsProperties* obj = ::g_pPhysics->findShapeByUniqueID(mesh->uniqueID);
-		if (obj->position.y < -300)
-		{
-			sPhsyicsProperties* obj = ::g_pPhysics->findShapeByUniqueID(mesh->uniqueID);
-			obj->velocity = glm::vec3(0);
-			obj->position = glm::vec3(0, 20, 0);
-			obj->oldPosition = glm::vec3(0, 20, 0);
-		}
-	}
-
-
 
 
 	// Graphics update will find a better spot for it later TODO
@@ -1044,7 +1006,15 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 		glUniform1f(bUseDebugColour_UL, (GLfloat)GL_FALSE);
 	}
 
+	//////////////////// TEXTURE STUFF /////////////////////////
 
+	GLint bUseVertexColours_UL = glGetUniformLocation(shaderProgramID, "bUseVertexColours");
+	glUniform1f(bUseVertexColours_UL, (GLfloat)GL_FALSE);
+
+
+	SetUpTextures(pCurrentMesh, shaderProgramID);
+
+	/////////////////////////////////////////////////////////////
 
 	sModelDrawInfo modelInfo;
 	if (m_pMeshManager->FindDrawInfoByModelName(pCurrentMesh->meshName, modelInfo))
@@ -1294,4 +1264,92 @@ void cGraphicsMain::flyCameraInput(int width, int height)
 			m_cameraEye -= glm::normalize(glm::cross(m_upVector, m_cameraTarget)) * m_FlyCamSpeed;
 		}
 	}
+}
+
+
+void cGraphicsMain::SetUpTextures(cMesh* pCurrentMesh, GLuint shaderProgramID)
+{
+	{
+		GLint textureUnitNumber = 0;
+		GLuint Texture00 = m_pTextureManager->getTextureIDFromName(pCurrentMesh->textureName[textureUnitNumber]);
+		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
+		glBindTexture(GL_TEXTURE_2D, Texture00);
+		GLint texture_00_UL = glGetUniformLocation(shaderProgramID, "texture_00");
+		glUniform1i(texture_00_UL, textureUnitNumber);
+	}
+
+	{
+		GLint textureUnitNumber = 1;
+		GLuint Texture01 = m_pTextureManager->getTextureIDFromName(pCurrentMesh->textureName[textureUnitNumber]);
+		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
+		glBindTexture(GL_TEXTURE_2D, Texture01);
+		GLint texture_01_UL = glGetUniformLocation(shaderProgramID, "texture_01");
+		glUniform1i(texture_01_UL, textureUnitNumber);
+	}
+
+	{
+		GLint textureUnitNumber = 2;
+		GLuint Texture02 = m_pTextureManager->getTextureIDFromName(pCurrentMesh->textureName[textureUnitNumber]);
+		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
+		glBindTexture(GL_TEXTURE_2D, Texture02);
+		GLint texture_02_UL = glGetUniformLocation(shaderProgramID, "texture_02");
+		glUniform1i(texture_02_UL, textureUnitNumber);
+	}
+
+	{
+		GLint textureUnitNumber = 3;
+		GLuint Texture03 = m_pTextureManager->getTextureIDFromName(pCurrentMesh->textureName[textureUnitNumber]);
+		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
+		glBindTexture(GL_TEXTURE_2D, Texture03);
+		GLint texture_03_UL = glGetUniformLocation(shaderProgramID, "texture_03");
+		glUniform1i(texture_03_UL, textureUnitNumber);
+	}
+	// and so on to however many texture you are using
+
+//    uniform vec4 textureMixRatio_0_3;
+//    uniform vec4 textureMixRatio_4_7;
+
+	GLint textureMixRatio_0_3_UL = glGetUniformLocation(shaderProgramID, "textureMixRatio_0_3");
+	//    GLint textureMixRatio_4_7_UL = glGetUniformLocation(shaderProgramID, "textureMixRatio_4_7");
+
+	glUniform4f(textureMixRatio_0_3_UL,
+		pCurrentMesh->textureRatios[0],
+		pCurrentMesh->textureRatios[1],
+		pCurrentMesh->textureRatios[2],
+		pCurrentMesh->textureRatios[3]);
+	//    glUniform4f(textureMixRatio_4_7_UL,
+	//                pCurrentMesh->textureRatios[4],
+	//                pCurrentMesh->textureRatios[5],
+	//                pCurrentMesh->textureRatios[6],
+	//                pCurrentMesh->textureRatios[7]);
+
+
+		// Also set up the height map and discard texture
+
+	{
+		// uniform sampler2D heightMapSampler;		// Texture unit 20
+		GLint textureUnitNumber = 20;
+		GLuint Texture20 = m_pTextureManager->getTextureIDFromName("NvF5e_height_map.bmp");
+		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
+		glBindTexture(GL_TEXTURE_2D, Texture20);
+		GLint texture_20_UL = glGetUniformLocation(shaderProgramID, "heightMapSampler");
+		glUniform1i(texture_20_UL, textureUnitNumber);
+	}
+
+
+
+	// Set up a skybox
+	{
+		// uniform samplerCube skyBoxTexture;		// Texture unit 30
+		GLint textureUnit30 = 30;
+		GLuint skyBoxID = m_pTextureManager->getTextureIDFromName("SunnyDay");
+		glActiveTexture(GL_TEXTURE0 + textureUnit30);
+		// NOTE: Binding is NOT to GL_TEXTURE_2D
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxID);
+		GLint skyBoxSampler_UL = glGetUniformLocation(shaderProgramID, "skyBoxTexture");
+		glUniform1i(skyBoxSampler_UL, textureUnit30);
+	}
+
+
+	return;
 }

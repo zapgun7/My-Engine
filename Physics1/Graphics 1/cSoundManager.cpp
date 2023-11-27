@@ -19,6 +19,8 @@
 
 gdpAudioNamespaceBegin
 
+
+
 cSoundManager* cSoundManager::m_Instance = nullptr;
 
 cSoundManager::cSoundManager()
@@ -283,7 +285,7 @@ void cSoundManager::UpdateAllObjects(void)
 		FMOD_VECTOR testVel;
 
 		m_SoundObjs[i].channel->get3DAttributes(&testPos, &testVel);
-		std::cout << testVel.y << std::endl;
+		//std::cout << testVel.y << std::endl;
 	}
 }
 void cSoundManager::GLMToFMOD(const glm::vec3& in, FMOD_VECTOR& out)
@@ -337,5 +339,182 @@ void cSoundManager::SetListenerAttribs(glm::vec3 pos, glm::vec3 vel, glm::vec3 u
 	m_System->set3DListenerAttributes(0, &FMODpos, &FMODvel, &FMODfor, &FMODup);
 	return;
 }
+
+void cSoundManager::AddEchoDSP(audio::s3DSound* audioObj)
+{
+	FMOD_RESULT result;
+	FMOD::DSP* dsp_echo;
+	result = m_System->createDSPByType(FMOD_DSP_TYPE_ECHO, &dsp_echo);
+	FMOD_ERROR_CHECK(result);
+
+	result = audioObj->channel->addDSP(0, dsp_echo);
+	FMOD_ERROR_CHECK(result);
+	audioObj->echo = dsp_echo;
+}
+
+void cSoundManager::AddDistortionDSP(audio::s3DSound* audioObj)
+{
+	FMOD_RESULT result;
+	FMOD::DSP* dsp_distortion;
+	result = m_System->createDSPByType(FMOD_DSP_TYPE_DISTORTION, &dsp_distortion);
+	result = dsp_distortion->setParameterFloat(0, 0.9f);
+
+	result = audioObj->channel->addDSP(0, dsp_distortion);
+	audioObj->distortion = dsp_distortion;
+}
+
+void cSoundManager::AddPitchshiftDSP(audio::s3DSound* audioObj)
+{
+	FMOD_RESULT result;
+	FMOD::DSP* dsp_pitchshift;
+	result = m_System->createDSPByType(FMOD_DSP_TYPE_PITCHSHIFT, &dsp_pitchshift);
+	//result = dsp_pitchshift->setParameterFloat(0, 0.9f);
+
+	result = audioObj->channel->addDSP(0, dsp_pitchshift);
+	audioObj->pitchshift = dsp_pitchshift;
+}
+
+void cSoundManager::AddFaderDSP(audio::s3DSound* audioObj)
+{
+	FMOD_RESULT result;
+	FMOD::DSP* dsp_fader;
+	result = m_System->createDSPByType(FMOD_DSP_TYPE_FADER, &dsp_fader);
+
+	result = audioObj->channel->addDSP(0, dsp_fader);
+	audioObj->fader = dsp_fader;
+}
+
+void cSoundManager::AddDSPToObject(int id, DSPs dsp)
+{
+	for (unsigned int i = 0; i < m_SoundObjs.size(); i++) // !!! TODO lazy way to do it, should create map with physobj id -> struct
+	{
+		if (id == m_SoundObjs[i].object->getUniqueID())
+		{
+			if (dsp == Echo)
+			{
+				AddEchoDSP(&m_SoundObjs[i]);
+			}
+			else if (dsp == Distortion)
+			{
+				AddDistortionDSP(&m_SoundObjs[i]);
+			}
+			else if (dsp == PitchShift)
+			{
+				AddPitchshiftDSP(&m_SoundObjs[i]);
+			}
+			else if (dsp == Fader)
+			{
+				AddFaderDSP(&m_SoundObjs[i]);
+			}
+
+			return;
+		}
+	}
+}
+
+void cSoundManager::SetEchoDSP(FMOD::DSP* echoDSP, float delay, float feedback, float drylevel, float wetlevel)
+{
+	echoDSP->setParameterFloat(0, delay);
+	echoDSP->setParameterFloat(1, feedback);
+	echoDSP->setParameterFloat(2, drylevel);
+	echoDSP->setParameterFloat(3, wetlevel);
+}
+
+void cSoundManager::SetDistortionDSP(FMOD::DSP* distortionDSP, float distortion)
+{
+	distortionDSP->setParameterFloat(0, distortion);
+	//std::cout << distortion << std::endl;
+}
+
+void cSoundManager::SetPitchShiftDSP(FMOD::DSP* pitchshiftDSP, float pitch)
+{
+	pitchshiftDSP->setParameterFloat(0, pitch);
+}
+
+void cSoundManager::SetFaderDSP(FMOD::DSP* faderDSP, float gain)
+{
+	faderDSP->setParameterFloat(0, gain);
+}
+
+void cSoundManager::SetDSPFromObject(int id, DSPs dsp, float param1)
+{
+	for (unsigned int i = 0; i < m_SoundObjs.size(); i++) // !!! TODO lazy way to do it, should create map with physobj id -> struct
+	{
+		if (id == m_SoundObjs[i].object->getUniqueID())
+		{
+			if (dsp == DSPs::Echo)
+			{
+				if (m_SoundObjs[i].echo != nullptr)
+				{
+					SetEchoDSP(m_SoundObjs[i].echo, param1, 10, 0, 0);
+				}
+			}
+			else if (dsp == DSPs::Distortion)
+			{
+				if (m_SoundObjs[i].distortion != nullptr)
+				{
+					SetDistortionDSP(m_SoundObjs[i].distortion, param1);
+				}
+			}
+			else if (dsp == PitchShift)
+			{
+				if (m_SoundObjs[i].pitchshift != nullptr)
+				{
+					SetPitchShiftDSP(m_SoundObjs[i].pitchshift, param1);
+				}
+			}
+			else if (dsp == Fader)
+			{
+				if (m_SoundObjs[i].fader != nullptr)
+				{
+					SetFaderDSP(m_SoundObjs[i].fader, param1);
+				}
+			}
+
+			return;
+		}
+	}
+}
+
+void cSoundManager::AddPolygonGeometry(const std::vector<glm::vec3>& vertices)
+{
+	FMOD_RESULT result;
+	result = m_System->createGeometry(1, 4, &m_Geometry);
+	FMOD_ERROR_CHECK(result);
+
+	int index;
+	// Add the polygon
+	int numVertices = vertices.size();
+	FMOD_VECTOR* fmodVertices = (FMOD_VECTOR*)malloc(sizeof(FMOD_VECTOR) * numVertices);
+	for (int i = 0; i < numVertices; i++) {
+		GLMToFMOD(vertices[i], fmodVertices[i]);
+		//printf("%.2f, %.2f, %.2f\n", fmodVertices[i].x, fmodVertices[i].y, fmodVertices[i].z);
+	}
+
+
+	result = m_Geometry->addPolygon(0.95f, 0.95f, true, numVertices, fmodVertices, &index);
+	FMOD_ERROR_CHECK(result);
+
+
+
+	// Set the position
+	FMOD_VECTOR fmodPosition;
+	GLMToFMOD(glm::vec3(0), fmodPosition);
+	result = m_Geometry->setPosition(&fmodPosition);
+	FMOD_ERROR_CHECK(result);
+
+	glm::vec3 scale(1.f);
+	FMOD_VECTOR fmodScale;
+	GLMToFMOD(scale, fmodScale);
+	result = m_Geometry->setScale(&fmodScale);
+	FMOD_ERROR_CHECK(result);
+
+
+	m_Geometry->setActive(true);
+}
+
+
+
+
 
 gdpAudioNamespaceEnd
