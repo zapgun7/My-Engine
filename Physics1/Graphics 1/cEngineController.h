@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <glm/glm.hpp> // just so it recognizes vec
 
 // This will be effectively what the main.cpp does now
 // Will instantiate all required parts: audio, graphics, physics, (NEW) imgui class
@@ -11,6 +12,7 @@
 //#include "cEngineController_IMPL.h"
 class cEngineController_IMPL; // Don't want to include everything the impl will
 class cMesh;
+class cLightManager;
 
 class cEngineController
 {
@@ -23,9 +25,15 @@ public:
 	bool Initialize(void); // Initializes the implementation, returns true if all goes smoothly
 
 
-	// Calls for the Level Editor
+	//-------------- Calls for the Level Editor -----------------//
+
+	/// Data Retrieval ///
 	void getAvailableModels(std::vector<std::string>* ModelVec); // Sets the provided variable with a vector of available models
-	void getActiveMeshes(std::vector<cMesh*>* MeshVec); // Sets provided vector with pointers to all active meshes
+	void getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights); // Sets provided vector with pointers to all active meshes
+	void getAvailableSaves(std::vector<std::string>* SaveVec);
+
+	/// Data Setting ///
+	void setMeshData(int meshID, std::string newFriendlyName, std::string newTextureNames[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor);
 
 
 private:

@@ -3,7 +3,7 @@
 #include "imgui/imgui.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
-#include "cSceneManagement.h"
+//#include "cSceneManagement.h"
 
 #include "cEngineController.h" // Callbacks to edit object parameters
 
@@ -25,8 +25,8 @@ public:
 	// Editor Windows
 	void RootWindow(std::vector<cMesh*> ActiveMeshVec);
 	void MeshEditor(std::vector<cMesh*> ActiveMeshVec);
-	void LightEditor();
-	void SceneManager();
+	void LightEditor(cLightManager* TheLights);
+	void SceneManager(std::vector<std::string> AvailableSaves);
 
 private:
 	
@@ -38,6 +38,7 @@ private:
 
 	// Stored Info
 	std::vector<std::string> m_AvailableModels;
+	std::vector<std::string> m_AvailableTextures;
 
 	// Saved Navigation Info
 	int m_mesh_obj_idx;
@@ -48,6 +49,6 @@ private:
 	//cInputHandler* m_InputHandler; // Don't know exactly how to manage a general input
 	GLFWwindow* m_window;
 
-	cSceneManagement* m_pSceneManager;
+	//cSceneManagement* m_pSceneManager;
 	cEngineController* m_pEngineController;
 };

@@ -122,9 +122,9 @@ bool cGraphicsMain::Initialize()
 	m_pTextureManager = new cBasicTextureManager();
 	m_pTextureManager->SetBasePath("assets/textures");
 
-	m_pTextureManager->Create2DTextureFromBMPFile("rosewood.bmp", true);
-	m_pTextureManager->Create2DTextureFromBMPFile("rosewood_n.bmp", true);
-	m_pTextureManager->Create2DTextureFromBMPFile("Water_Texture_01.bmp", true);
+	//m_pTextureManager->Create2DTextureFromBMPFile("rosewood.bmp", true);
+	//m_pTextureManager->Create2DTextureFromBMPFile("rosewood_n.bmp", true);
+	//m_pTextureManager->Create2DTextureFromBMPFile("Water_Texture_01.bmp", true);
 
 
 
@@ -134,6 +134,7 @@ bool cGraphicsMain::Initialize()
 	// MODEL LOADING /////////////////
 
 	LoadModels();
+	LoadTextures();
 
 
 	// Initialize lights here if ya want em
@@ -887,13 +888,15 @@ void cGraphicsMain::getAvailableModels(std::vector<std::string>* ModelVec)
 	return;
 }
 
-void cGraphicsMain::getActiveMeshes(std::vector<cMesh*>* MeshVec)
+void cGraphicsMain::getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights)
 {
 	// MeshVec = &m_vec_pMeshesToDraw; // No work :(
 	for (unsigned int i = 0; i < m_vec_pMeshesToDraw.size(); i++)
 	{
 		MeshVec->push_back(m_vec_pMeshesToDraw[i]);
 	}
+	TheLights = m_pTheLights;
+
 	return;
 }
 
@@ -1089,6 +1092,33 @@ bool cGraphicsMain::LoadModels(void)
 	return true;
 }
 
+bool cGraphicsMain::LoadTextures(void)
+{
+	std::ifstream texturesToLoad("assets/textures/textures.txt");
+	if (!texturesToLoad.is_open())
+	{
+		// didn't open :(
+		std::cout << "ERROR: Failed to open the texture list file!" << std::endl;
+		std::cout << texturesToLoad.is_open();
+	}
+	std::string line = "";
+
+	while (std::getline(texturesToLoad, line))
+	{
+		//m_pMeshManager->LoadModelIntoVAO(line.c_str(),
+		//	modelDrawingInfo, m_shaderProgramID);
+		m_pTextureManager->Create2DTextureFromBMPFile(line.c_str(), true);
+		std::cout << "Loaded texture: " << line << " vertices" << std::endl;
+		m_AvailableTextures.push_back(line.c_str());
+	}
+
+	texturesToLoad.close();
+
+
+	return true;
+	
+}
+
 // Adds new object to the meshestodraw
 void cGraphicsMain::addNewMesh(std::string fileName, char* friendlyName) // This should create the physics object first, then the mesh, then set associated mesh
 {
@@ -1154,25 +1184,58 @@ void cGraphicsMain::addNewMesh(std::string fileName, char* friendlyName) // This
 	return;
 }
 
-// Updates values of selected object from the gui
-void cGraphicsMain::updateSelectedMesh(int meshIdx, std::string friendlyName, glm::vec3 newPos, glm::vec3 newOri, glm::vec3 customColor, float newScale, bool doNotLight, bool useCustomColor) 
+void cGraphicsMain::updateMesh(int meshID, std::string newFriendlyName, std::string newTextureNames[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor)
 {
-	// pos and ori need to update the physics object
+	// Start by finding mesh with corresponding ID
+	// Should have this in a map, I'll do it later
+	cMesh* meshToUpdate = nullptr;
+	for (unsigned int i = 0; i < m_vec_pMeshesToDraw.size(); i++)
+	{
+		if (m_vec_pMeshesToDraw[i]->uniqueID == meshID)
+		{
+			meshToUpdate = m_vec_pMeshesToDraw[i];
+			break;
+		}
+	}
+	if (meshToUpdate == nullptr)
+		return;
 
-	//::g_pPhysics->setShapePos(newPos, m_vec_pMeshesToDraw[meshIdx]->uniqueID); // UNPHYS
-	//::g_pPhysics->setShapeOri(newOri, m_vec_pMeshesToDraw[meshIdx]->uniqueID);
 
-	//m_vec_pMeshesToDraw[meshIdx]->drawPosition = newPos;
-	//m_vec_pMeshesToDraw[meshIdx]->eulerOrientation = newOri;
-	//glm::vec3 oldOri = m_vec_pMeshesToDraw[meshIdx]->getEulerOrientation();
-	//glm::vec3 deltaOri = newOri - oldOri;
-	//m_vec_pMeshesToDraw[meshIdx]->adjustRotationAngleFromEuler(deltaOri);
-	//m_vec_pMeshesToDraw[meshIdx]->adjustRotationAngleFromEuler(glm::vec3(0.0f, 0.0f, 0.01f));
-	m_vec_pMeshesToDraw[meshIdx]->scale = glm::vec3(newScale, newScale, newScale);
-	m_vec_pMeshesToDraw[meshIdx]->bDoNotLight = doNotLight;
-	m_vec_pMeshesToDraw[meshIdx]->wholeObjectDebugColourRGBA = glm::vec4(customColor, 1);
-	m_vec_pMeshesToDraw[meshIdx]->bUseDebugColours = useCustomColor;
+	meshToUpdate->friendlyName = newFriendlyName;
+	for (unsigned int i = 0; i < meshToUpdate->NUM_TEXTURES; i++)
+	{
+		meshToUpdate->textureName[i] = newTextureNames[i];
+		meshToUpdate->textureRatios[i] = newRatios[i];
+	}
+	meshToUpdate->bIsVisible = isVisible;
+	meshToUpdate->bIsWireframe = isWireframe;
+	meshToUpdate->bDoNotLight = doNotLight;
+	meshToUpdate->bUseDebugColours = useDebugColor;
+	meshToUpdate->wholeObjectDebugColourRGBA = debugColor;
+
+
+	return;
 }
+
+// Updates values of selected object from the gui
+// void cGraphicsMain::updateSelectedMesh(int meshIdx, std::string friendlyName, glm::vec3 newPos, glm::vec3 newOri, glm::vec3 customColor, float newScale, bool doNotLight, bool useCustomColor) 
+// {
+// 	// pos and ori need to update the physics object
+// 
+// 	//::g_pPhysics->setShapePos(newPos, m_vec_pMeshesToDraw[meshIdx]->uniqueID); // UNPHYS
+// 	//::g_pPhysics->setShapeOri(newOri, m_vec_pMeshesToDraw[meshIdx]->uniqueID);
+// 
+// 	//m_vec_pMeshesToDraw[meshIdx]->drawPosition = newPos;
+// 	//m_vec_pMeshesToDraw[meshIdx]->eulerOrientation = newOri;
+// 	//glm::vec3 oldOri = m_vec_pMeshesToDraw[meshIdx]->getEulerOrientation();
+// 	//glm::vec3 deltaOri = newOri - oldOri;
+// 	//m_vec_pMeshesToDraw[meshIdx]->adjustRotationAngleFromEuler(deltaOri);
+// 	//m_vec_pMeshesToDraw[meshIdx]->adjustRotationAngleFromEuler(glm::vec3(0.0f, 0.0f, 0.01f));
+// 	m_vec_pMeshesToDraw[meshIdx]->scale = glm::vec3(newScale, newScale, newScale);
+// 	m_vec_pMeshesToDraw[meshIdx]->bDoNotLight = doNotLight;
+// 	m_vec_pMeshesToDraw[meshIdx]->wholeObjectDebugColourRGBA = glm::vec4(customColor, 1);
+// 	m_vec_pMeshesToDraw[meshIdx]->bUseDebugColours = useCustomColor;
+// }
 
 void cGraphicsMain::addNewLight(char* friendlyName)
 {

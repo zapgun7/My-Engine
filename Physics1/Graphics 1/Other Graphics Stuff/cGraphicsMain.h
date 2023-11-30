@@ -40,7 +40,10 @@ public:
 	// Level Editor Calls
 	GLFWwindow* getWindow(void);
 	void getAvailableModels(std::vector<std::string>* ModelVec);
-	void getActiveMeshes(std::vector<cMesh*>* MeshVec);
+	void getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights);
+
+	// Level Editor Setting
+	void updateMesh(int meshID, std::string newFriendlyName, std::string newTextureNames[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor);  // Updates and existing object by reference to its friendly name (also from the gui)
 
 
 
@@ -51,9 +54,11 @@ private:
 	cMesh* m_pFindMeshByFriendlyName(std::string friendlyNameToFind);
 	void DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GLuint shaderProgramID);
 	bool LoadModels(void);
+	bool LoadTextures(void);
 
 	void addNewMesh(std::string fileName, char* friendlyName); // Adding new objects from the gui
-	void updateSelectedMesh(int meshIdx, std::string friendlyName, glm::vec3 newPos, glm::vec3 newOri, glm::vec3 customColor, float newScale, bool doNotLight, bool useCustomColor);  // Updates and existing object by reference to its friendly name (also from the gui)
+	//void updateSelectedMesh(int meshIdx, std::string friendlyName, glm::vec3 newPos, glm::vec3 newOri, glm::vec3 customColor, float newScale, bool doNotLight, bool useCustomColor);  // Updates and existing object by reference to its friendly name (also from the gui)
+	
 	void addNewLight(char* friendlyName);
 	void updateSelectedLight(int lightIdx, glm::vec4 newPos, glm::vec4 newDiff, glm::vec4 newSpec, glm::vec4 newAtten, glm::vec4 newDir, glm::vec4 newParam1, glm::vec4 newParam2);
 	void duplicateMesh(int meshIdx, char* newName); // Duplicates the currently selected mesh
@@ -68,6 +73,7 @@ private:
 
 
 	std::vector<std::string> m_AvailableModels; // String of model file names to choose from
+	std::vector<std::string> m_AvailableTextures;
 
 	//cPlayer* m_player;
 

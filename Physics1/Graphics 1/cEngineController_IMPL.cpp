@@ -49,6 +49,9 @@ bool cEngineController_IMPL::Initialize(void)
 
 	this->m_pTheEditor = new cLevelEditor(m_pTheGraphics->getWindow());
 
+	this->m_pTheSceneManager = new cSceneManagement();
+	this->m_pTheSceneManager->Initialize();
+
 	// TODO set physics VAOManager
 
 	return true;
@@ -60,9 +63,26 @@ void cEngineController_IMPL::getAvailableModels(std::vector<std::string>* ModelV
 	return;
 }
 
-void cEngineController_IMPL::getActiveMeshes(std::vector<cMesh*>* MeshVec)
+void cEngineController_IMPL::getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights)
 {
-	m_pTheGraphics->getActiveMeshes(MeshVec);
+	m_pTheGraphics->getActiveMeshNLights(MeshVec, TheLights);
+	return;
+}
+
+void cEngineController_IMPL::getAvailableSaves(std::vector<std::string>* SaveVec)
+{
+	std::vector<std::string> tempVec = m_pTheSceneManager->getAvailableSaves();
+	for (unsigned int i = 0; i < tempVec.size(); i++)
+	{
+		SaveVec->push_back(tempVec[i]);
+	}
+
+	return;
+}
+
+void cEngineController_IMPL::setMeshData(int meshID, std::string newFriendlyName, std::string newTextureNames[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor)
+{
+	m_pTheGraphics->updateMesh(meshID, newFriendlyName, newTextureNames, newRatios, isVisible, isWireframe, doNotLight, useDebugColor, debugColor);
 	return;
 }
 

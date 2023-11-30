@@ -1,7 +1,10 @@
 #include "cLevelEditor.h"
 
 #include "Other Graphics Stuff/cMesh.h" // For the mesh vec
+#include "Other Graphics Stuff/cLightManager.h" // For the lights (pointer, but for now will just get it every update)
+//#include "cEngineController.h" // Callbacks to edit object parameters
 
+#include <iostream>
 
 
 // cLevelEditor* cLevelEditor::GetInstance(void)
@@ -15,7 +18,7 @@
 
 cLevelEditor::~cLevelEditor()
 {
-	delete m_pSceneManager;
+	//delete m_pSceneManager;
 }
 
 void cLevelEditor::Update()
@@ -26,24 +29,27 @@ void cLevelEditor::Update()
 
 	// Data Retrieval
 	std::vector<cMesh*> MeshVec;
-	m_pEngineController->getActiveMeshes(&MeshVec);
+	cLightManager TheLights;
+	m_pEngineController->getActiveMeshNLights(&MeshVec, &TheLights);
+
+	std::vector<std::string> AvailableSaves;
+	m_pEngineController->getAvailableSaves(&AvailableSaves);
+
 
 	// Start the Dear ImGui frame
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	
 
 	RootWindow(MeshVec);
 
 	if (m_ShowMeshEditor)
 		MeshEditor(MeshVec);
 	if (m_ShowLightEditor)
-		LightEditor();
+		LightEditor(&TheLights);
 	if (m_ShowSceneManager)
-		SceneManager();
-
+		SceneManager(AvailableSaves);
 
 
 
@@ -219,7 +225,13 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec)
 	 		}
 	 
 	 
-	 
+			int meshID = -1;
+			std::string friendlyName = "";
+			std::string* textureNames = nullptr; //[cMesh::NUM_TEXTURES];
+			float* textureRatios = nullptr; //[cMesh::NUM_TEXTURES];
+			bool isVisible = false;
+			bool isWireframe = false;
+
 	 		float xPos = 0;
 	 		float yPos = 0;
 	 		float zPos = 0;
@@ -244,6 +256,13 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec)
 	 			scale = ActiveMeshVec[m_mesh_obj_idx]->scale.x;
 	 			customColor = glm::vec3(ActiveMeshVec[m_mesh_obj_idx]->wholeObjectDebugColourRGBA);
 	 			useCustomColor = ActiveMeshVec[m_mesh_obj_idx]->bUseDebugColours;
+
+				meshID = ActiveMeshVec[m_mesh_obj_idx]->uniqueID;
+				friendlyName = ActiveMeshVec[m_mesh_obj_idx]->friendlyName;
+				textureNames = ActiveMeshVec[m_mesh_obj_idx]->textureName;
+				textureRatios = ActiveMeshVec[m_mesh_obj_idx]->textureRatios;
+				isVisible = ActiveMeshVec[m_mesh_obj_idx]->bIsVisible;
+				isWireframe = ActiveMeshVec[m_mesh_obj_idx]->bIsWireframe;
 	 		}
 	 
 	 		ImGui::SeparatorText("Position");
@@ -284,21 +303,176 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec)
 	 		{
 	 			glm::vec3 newPos = glm::vec3(xPos, yPos, zPos);
 	 			glm::vec3 newOri = glm::vec3(xOri, yOri, zOri);
+				// This will call 2 functions: graphics and physics
+
+				m_pEngineController->setMeshData(meshID, friendlyName, textureNames, textureRatios, isVisible, isWireframe, doNotLight, useCustomColor, glm::vec4(customColor, 1));
 	 			//updateSelectedMesh(mesh_obj_idx, "A NEW FRIENDLY NAME", newPos, newOri, customColor, scale, doNotLight, useCustomColor);
 	 		}
 	 		ImGui::End();
 }
 
 // Window for changing light properties
-void cLevelEditor::LightEditor()
+void cLevelEditor::LightEditor(cLightManager* TheLights)
 {
-
+ 	ImGui::Begin("Light Editor");
+ 
+ 	static int light_obj_idx = 0;
+ 	if (ImGui::BeginListBox("Available Objects"))
+ 	{
+ 		for (int n = 0; n < TheLights->NUMBER_OF_LIGHTS_IM_USING; n++)
+ 		{
+ 			const bool is_selected = (light_obj_idx == n);
+ 			if (ImGui::Selectable(TheLights->theLights[n].friendlyName.c_str(), is_selected))
+ 				light_obj_idx = n;
+ 
+ 			// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+ 			if (is_selected)
+ 				ImGui::SetItemDefaultFocus();
+ 		}
+ 		ImGui::EndListBox();
+ 	}
+// 		bool isExistingLight = true;
+// 		if (m_vec_pMeshesToDraw.size() > 0)
+// 			isExistingLight = false;
+ 
+ 
+ 	glm::vec4 lightPos = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+ 	glm::vec4 lightDir = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+ 	glm::vec4 lightDiff = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+ 	glm::vec4 lightSpec = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+ 	glm::vec4 lightAtten = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+ 	glm::vec4 lightParam1 = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+ 	glm::vec4 lightParam2 = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+// 		if (!isExistingLight)
+// 		{
+ 		lightPos = TheLights->theLights[light_obj_idx].position;
+ 		lightDir = TheLights->theLights[light_obj_idx].direction;
+ 		lightDiff = TheLights->theLights[light_obj_idx].diffuse;
+ 		lightSpec = TheLights->theLights[light_obj_idx].specular; // rgb = highlight colour, w = power
+ 		lightAtten = TheLights->theLights[light_obj_idx].atten; // x = constant, y = linear, z = quadratic, w = DistanceCutOff
+ 		lightParam1 = TheLights->theLights[light_obj_idx].param1; // x: light type    y: inner angle    z: outer angle
+ 		lightParam2 = TheLights->theLights[light_obj_idx].param2; // x: light on(1) or off(0)
+ 	/*}*/
+ 	static char lightname[32] = ""; 
+ 	//strcpy_s(lightname, TheLights.theLights[light_obj_idx].friendlyName.c_str()); // TODO too long a name will prob break this
+ 
+ 	ImGui::InputText("Light Name", lightname, 32);
+ 	if (ImGui::Button("Set New Name")) // Button to set new light friendlyname
+ 	{
+ 		if (strlen(lightname) > 0)
+			TheLights->theLights[light_obj_idx].friendlyName = lightname;
+ 	}
+ 
+ 	ImGui::SeparatorText("Position");
+ 	ImGui::DragFloat("X-Pos", &lightPos.x, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+ 	ImGui::DragFloat("Y-Pos", &lightPos.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+ 	ImGui::DragFloat("Z-Pos", &lightPos.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+ 	ImGui::SeparatorText("Direction");
+ 	ImGui::DragFloat("X-Dir", &lightDir.x, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+ 	ImGui::DragFloat("Y-Dir", &lightDir.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+ 	ImGui::DragFloat("Z-Dir", &lightDir.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+ 	ImGui::SeparatorText("Spotlight Cone");
+ 	ImGui::DragFloat("Inner Angle", &lightParam1.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+ 	ImGui::DragFloat("Outer Angle", &lightParam1.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+ 	ImGui::SeparatorText("Diffuse");
+ 	ImGui::DragFloat("Red Diffuse", &lightDiff.x, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+ 	ImGui::DragFloat("Green Diffuse", &lightDiff.y, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+ 	ImGui::DragFloat("Blue Diffuse", &lightDiff.z, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+ 	ImGui::SeparatorText("Specular");
+ 	ImGui::DragFloat("Red Specular", &lightSpec.x, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+ 	ImGui::DragFloat("Green Specular", &lightSpec.y, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+ 	ImGui::DragFloat("Blue Specular", &lightSpec.z, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+ 	ImGui::DragFloat("Spec Power", &lightSpec.w, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+ 	ImGui::SeparatorText("Attenuation");
+ 	ImGui::DragFloat("Constant", &lightAtten.x, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+ 	ImGui::DragFloat("Linear", &lightAtten.y, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+ 	ImGui::DragFloat("Quadratic", &lightAtten.z, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+ 	ImGui::DragFloat("Distance Cutoff", &lightAtten.w, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+ 
+ 	ImGui::SeparatorText("Other Light Options");
+ 	const char* lightTypes[] = { "Point Light", "Spot Light", "Directional Light"};
+ 	static int ltype_current_idx = 0;
+ 	ltype_current_idx = lightParam1.x; // Set selected light type to one stored in the light
+ 	const char* combo_preview_value = lightTypes[ltype_current_idx];
+ 	if (ImGui::BeginCombo("Light Types", combo_preview_value))
+ 	{
+ 		for (int n = 0; n < IM_ARRAYSIZE(lightTypes); n++)
+ 		{
+ 			const bool is_selected = (ltype_current_idx == n);
+ 			if (ImGui::Selectable(lightTypes[n], is_selected))
+ 				ltype_current_idx = n;
+ 
+ 			// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+ 			if (is_selected)
+ 				ImGui::SetItemDefaultFocus();
+ 		}
+ 		ImGui::EndCombo();
+ 	}
+ 	lightParam1.x = ltype_current_idx; // Set light type
+ 	ImGui::SameLine();
+ 	static bool lightOn = true;
+ 	if (lightParam2.x == 0)
+ 		lightOn = false;
+ 	else
+ 		lightOn = true;
+ 
+ 	ImGui::Checkbox("Toggle Light", &lightOn);
+ 	if (lightOn)
+ 		lightParam2.x = 1;
+ 	else
+ 		lightParam2.x = 0;
+ 
+ 
+// 		if (isExistingLight)
+// 		{
+ 		//updateSelectedLight(light_obj_idx, lightPos, lightDiff, lightSpec, lightAtten, lightDir, lightParam1, lightParam2); // TODO light update
+ 	/*}*/
+ 
+ 	ImGui::End();
 }
 
 // Window for scene management
-void cLevelEditor::SceneManager()
+void cLevelEditor::SceneManager(std::vector<std::string> AvailableSaves)
 {
-
+	ImGui::Begin("Scene Manager");
+	 
+	//availSaves = m_pSceneManager->getAvailableSaves(); // Update availible saves upon opening scene manager window
+	static int saves_idx = 0;
+	if (ImGui::BeginListBox("Available Saves")) // List of availible saves to load from
+	{
+	 	for (int n = 0; n < AvailableSaves.size(); n++)
+	 	{
+	 		const bool is_save_selected = (saves_idx == n);
+	 		if (ImGui::Selectable(AvailableSaves[n].c_str(), is_save_selected))
+	 			saves_idx = n;
+	 
+	 		// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+	 		if (is_save_selected)
+	 			ImGui::SetItemDefaultFocus();
+	 	}
+	 	ImGui::EndListBox();
+	}
+	 
+	if (ImGui::Button("Load Scene"))
+	{
+	 	//if (AvailableSaves.size() > 0)
+	 		//m_pSceneManager->loadScene(availSaves[saves_idx]); // Will load a selected item from a list in the future    // TODO load scene
+	}
+	 
+	 
+	static char saveNameBuf[32] = ""; ImGui::InputText("Save Name", saveNameBuf, 32);
+	ImGui::SameLine();
+	if (ImGui::Button("Save Current Scene"))
+	{
+	 	if (std::strlen(saveNameBuf) > 0)
+	 	{
+	 		//m_pSceneManager->saveScene(saveNameBuf, m_vec_pMeshesToDraw, m_pTheLights);  // TODO scene save
+	 		memset(saveNameBuf, 0, 32); // Reset buffer
+	 	}
+	 			
+	}
+	 
+	ImGui::End();
 }
 
 cLevelEditor::cLevelEditor(GLFWwindow* window)
@@ -307,8 +481,8 @@ cLevelEditor::cLevelEditor(GLFWwindow* window)
 	, m_ShowSceneManager(false)
 	, m_mesh_obj_idx(0)
 {
-	m_pSceneManager = new cSceneManagement();
-	m_pSceneManager->Initialize();
+	//m_pSceneManager = new cSceneManagement();
+	//m_pSceneManager->Initialize();
 
 	m_pEngineController = cEngineController::GetEngineController();
 
