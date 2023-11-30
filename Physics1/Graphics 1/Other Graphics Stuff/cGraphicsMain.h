@@ -29,13 +29,19 @@ public:
 	static cGraphicsMain* getGraphicsMain(void);
 
 
-	bool Update(); // return false when window is triggered to close
+	bool Update(double deltaTime); // return false when window is triggered to close
 	void Destroy();
 	//void addToDrawMesh(cMesh* newMesh);
 	void removeFromDrawMesh(int ID);
 	void switchScene(std::vector< cMesh* > newMeshVec, std::vector<cLight> newLights); // New mesh vector to copy over (will properly release all resources tied to the old one); vector of lights to copy over to the new one
 
 	void setCameraParams(glm::vec3 camPos, glm::vec3 camDir);
+
+	// Level Editor Calls
+	GLFWwindow* getWindow(void);
+	void getAvailableModels(std::vector<std::string>* ModelVec);
+	void getActiveMeshes(std::vector<cMesh*>* MeshVec);
+
 
 
 private:
@@ -74,8 +80,8 @@ private:
 	cShaderManager* m_pShaderThing;
 	GLuint m_shaderProgramID;
 
-	bool m_isShieldOn = false;
-	int m_explosionIDs = -1; // IDs for explosions and grey spheres, use negatives to separate from all other mesh ID's (which are in the positives)
+	//bool m_isShieldOn = false;
+	//int m_explosionIDs = -1; // IDs for explosions and grey spheres, use negatives to separate from all other mesh ID's (which are in the positives)
 	double m_lastTime;
 	GLFWwindow* m_window;
 	cVAOManager* m_pMeshManager = NULL;
@@ -94,7 +100,6 @@ private:
 	cInputHandler* m_InputHandler;
 
 	cSceneManagement* m_pSceneManager;
-	//AssimpHelper::cFileLoader* pHelper;
 
 	static cGraphicsMain* m_pTheOnlyGraphicsMain;
 };

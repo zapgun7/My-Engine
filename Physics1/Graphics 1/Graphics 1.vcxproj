@@ -24,7 +24,7 @@
     <ProjectGuid>{6e48a786-9dbc-470d-bf1c-856af80c8177}</ProjectGuid>
     <RootNamespace>Graphics1</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Physics 1</ProjectName>
+    <ProjectName>Engine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -147,7 +147,11 @@
     <ClCompile Include="..\include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Basic Shader Manager\cShader.cpp" />
     <ClCompile Include="Basic Shader Manager\cShaderManager.cpp" />
+    <ClCompile Include="cEngineController.cpp" />
+    <ClCompile Include="cEngineController_IMPL.cpp" />
+    <ClCompile Include="cHiResTimer.cpp" />
     <ClCompile Include="cInputHandler.cpp" />
+    <ClCompile Include="cLevelEditor.cpp" />
     <ClCompile Include="cPlayer.cpp" />
     <ClCompile Include="cSceneManagement.cpp" />
     <ClCompile Include="cSoundManager.cpp" />
@@ -158,7 +162,6 @@
     <ClCompile Include="Other Graphics Stuff\cLightManager.cpp" />
     <ClCompile Include="Other Graphics Stuff\cMesh.cpp" />
     <ClCompile Include="Other Graphics Stuff\glad.c" />
-    <ClCompile Include="Other Graphics Stuff\ScenePersistence.cpp" />
     <ClCompile Include="Physics\cPhysics.cpp" />
     <ClCompile Include="Physics\cPhysics_BasicTests.cpp" />
     <ClCompile Include="Physics\cPhysics_IntersectionTests.cpp" />
@@ -179,7 +182,11 @@
     <ClInclude Include="..\include\imgui\imstb_textedit.h" />
     <ClInclude Include="..\include\imgui\imstb_truetype.h" />
     <ClInclude Include="Basic Shader Manager\cShaderManager.h" />
+    <ClInclude Include="cEngineController.h" />
+    <ClInclude Include="cEngineController_IMPL.h" />
+    <ClInclude Include="cHiResTimer.h" />
     <ClInclude Include="cInputHandler.h" />
+    <ClInclude Include="cLevelEditor.h" />
     <ClInclude Include="cPlayer.h" />
     <ClInclude Include="cSoundManager.h" />
     <ClInclude Include="cSoundUtils.h" />

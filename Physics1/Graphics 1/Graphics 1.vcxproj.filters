@@ -47,6 +47,12 @@
     <Filter Include="Graphics Engine\TextureManager">
       <UniqueIdentifier>{a3102251-b31a-430e-a117-92cbb57a74c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine Controller">
+      <UniqueIdentifier>{b02e8bd3-c383-45e8-85a0-276f1af5ac1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dev">
+      <UniqueIdentifier>{90a600a9-55df-42cf-a465-bd47021d3536}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Basic Shader Manager\cShaderManager.cpp">
@@ -59,9 +65,6 @@
       <Filter>Graphics Engine\VAO Manager</Filter>
     </ClCompile>
     <ClCompile Include="Other Graphics Stuff\glad.c">
-      <Filter>Graphics Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Other Graphics Stuff\ScenePersistence.cpp">
       <Filter>Graphics Engine</Filter>
     </ClCompile>
     <ClCompile Include="Other Graphics Stuff\cLightManager.cpp">
@@ -135,6 +138,18 @@
     </ClCompile>
     <ClCompile Include="TextureManager\CTextureFromBMP.cpp">
       <Filter>Graphics Engine\TextureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="cEngineController.cpp">
+      <Filter>Engine Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="cEngineController_IMPL.cpp">
+      <Filter>Engine Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="cHiResTimer.cpp">
+      <Filter>Engine Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="cLevelEditor.cpp">
+      <Filter>Dev</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -221,6 +236,18 @@
     </ClInclude>
     <ClInclude Include="cVAOManager\sModelDrawInfo.h">
       <Filter>Graphics Engine\VAO Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="cEngineController.h">
+      <Filter>Engine Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="cEngineController_IMPL.h">
+      <Filter>Engine Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="cHiResTimer.h">
+      <Filter>Engine Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="cLevelEditor.h">
+      <Filter>Dev</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

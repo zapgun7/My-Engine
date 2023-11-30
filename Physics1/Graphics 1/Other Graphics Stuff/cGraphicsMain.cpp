@@ -23,7 +23,7 @@
 
 
 cGraphicsMain* cGraphicsMain::m_pTheOnlyGraphicsMain = NULL;
-extern cPhysics* g_pPhysics;
+//extern cPhysics* g_pPhysics;
 
 
 static void error_callback(int error, const char* description)
@@ -59,7 +59,7 @@ cGraphicsMain::cGraphicsMain()
 
 bool cGraphicsMain::Initialize()
 {
-	m_InputHandler = new cInputHandler();
+	m_InputHandler = new cInputHandler(); // Will eventually move these 2 somewhere that makes sense TODO
 	m_pSceneManager = new cSceneManagement();
 	m_pSceneManager->Initialize();
 
@@ -76,7 +76,7 @@ bool cGraphicsMain::Initialize()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-	m_window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
+	m_window = glfwCreateWindow(640, 480, "Ausgine Render", NULL, NULL);
 	if (!m_window)
 	{
 		glfwTerminate();
@@ -111,7 +111,7 @@ bool cGraphicsMain::Initialize()
 	m_shaderProgramID = m_pShaderThing->getIDFromFriendlyName("shader01");
 
 	m_pMeshManager = new cVAOManager();
-	::g_pPhysics->setVAOManager(m_pMeshManager);
+	//::g_pPhysics->setVAOManager(m_pMeshManager); //UNPHYS
 
 	m_pMeshManager->setBasePath("assets/models");
 
@@ -140,19 +140,19 @@ bool cGraphicsMain::Initialize()
 	m_lastTime = glfwGetTime();
 
 	//ImGui setup
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	m_io = ImGui::GetIO(); (void)m_io;
-	m_io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	m_io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+// 	IMGUI_CHECKVERSION();
+// 	ImGui::CreateContext();
+// 	m_io = ImGui::GetIO(); (void)m_io;
+// 	m_io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+// 	m_io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
 	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsDark();
 	//ImGui::StyleColorsLight();
 
 	// Setup Platform/Renderer backends
-	ImGui_ImplGlfw_InitForOpenGL(m_window, true);
-	ImGui_ImplOpenGL3_Init(glsl_version);
+	//ImGui_ImplGlfw_InitForOpenGL(m_window, true);
+	//ImGui_ImplOpenGL3_Init(glsl_version);
 	
 	////// Throw in some modles to test textures
 
@@ -180,18 +180,16 @@ bool cGraphicsMain::Initialize()
 
 
 
-bool cGraphicsMain::Update() // Main "loop" of the window. Not really a loop, just gets called every tick
+bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not really a loop, just gets called every tick
 {
 
-	//srand(time(NULL)); // better random
-
 	// Start the Dear ImGui frame
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-	static double lastTime = glfwGetTime();
-	double deltaTime = glfwGetTime() - lastTime;
-	lastTime = glfwGetTime();
+// 	ImGui_ImplOpenGL3_NewFrame();
+// 	ImGui_ImplGlfw_NewFrame();
+// 	ImGui::NewFrame();
+	//static double lastTime = glfwGetTime();
+	//double deltaTime = glfwGetTime() - lastTime;
+	//lastTime = glfwGetTime();
 
 
 	static bool enablePhysics = false; // Toggle physics update calls
@@ -205,7 +203,7 @@ bool cGraphicsMain::Update() // Main "loop" of the window. Not really a loop, ju
 
 
 	// Graphics update will find a better spot for it later TODO
-	::g_pPhysics->Update(deltaTime); 
+	//::g_pPhysics->Update(deltaTime); //UNPHYS
 	//::g_pPhysics->Update(0.001f); // DEBUG
 
 
@@ -225,404 +223,405 @@ bool cGraphicsMain::Update() // Main "loop" of the window. Not really a loop, ju
 	std::vector<std::string> availSaves;
 
 	// ---------------------------IMGUI WINDOWS---------------------------------------//
-	static int mesh_obj_idx = 0;
-	{
-		ImGui::Begin("Main Editor Window");
-
-		static int available_obj_idx = 0;
-		if (ImGui::BeginListBox("Available Objects"))
-		{
-			for (int n = 0; n < m_AvailableModels.size(); n++)
-			{
-				const bool is_selected = (available_obj_idx == n);
-				if (ImGui::Selectable(m_AvailableModels[n].c_str(), is_selected))
-					available_obj_idx = n;
-
-				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndListBox();
-		}
-		static char buf1[32] = ""; ImGui::InputText("Object Name", buf1, 32);
-		ImGui::SameLine();
-		if (ImGui::Button("AddObject")) // Button to add new object to the scene
-		{
-			if (std::strlen(buf1) > 0)
-			{
-				addNewMesh(m_AvailableModels[available_obj_idx], buf1);
-				memset(buf1, 0, 32);
-				mesh_obj_idx = m_vec_pMeshesToDraw.size() - 1;
-			}
-		}
-
-		if (ImGui::Button("Physics Toggle"))
-		{
-			if (enablePhysics)
-				enablePhysics = false;
-			else
-				enablePhysics = true;
-			::g_pPhysics->setPhysicsRunningState(enablePhysics);
-		}
-
-		ImGui::SameLine();
-		if (enablePhysics)
-			ImGui::Text("ON    ");
-		else
-			ImGui::Text("OFF   ");
-
-
-// 		ImGui::SameLine();
-// 		if (ImGui::Button("Player Toggle"))
+	
+// 	static int mesh_obj_idx = 0;
+// 	{
+// 		ImGui::Begin("Main Editor Window");
+// 
+// 		static int available_obj_idx = 0;
+// 		if (ImGui::BeginListBox("Available Objects"))
 // 		{
-// 			if (isPlayer)
-// 				isPlayer = false;
+// 			for (int n = 0; n < m_AvailableModels.size(); n++)
+// 			{
+// 				const bool is_selected = (available_obj_idx == n);
+// 				if (ImGui::Selectable(m_AvailableModels[n].c_str(), is_selected))
+// 					available_obj_idx = n;
+// 
+// 				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+// 				if (is_selected)
+// 					ImGui::SetItemDefaultFocus();
+// 			}
+// 			ImGui::EndListBox();
+// 		}
+// 		static char buf1[32] = ""; ImGui::InputText("Object Name", buf1, 32);
+// 		ImGui::SameLine();
+// 		if (ImGui::Button("AddObject")) // Button to add new object to the scene
+// 		{
+// 			if (std::strlen(buf1) > 0)
+// 			{
+// 				addNewMesh(m_AvailableModels[available_obj_idx], buf1);
+// 				memset(buf1, 0, 32);
+// 				mesh_obj_idx = m_vec_pMeshesToDraw.size() - 1;
+// 			}
+// 		}
+// 
+// 		if (ImGui::Button("Physics Toggle"))
+// 		{
+// 			if (enablePhysics)
+// 				enablePhysics = false;
 // 			else
-// 				isPlayer = true;
+// 				enablePhysics = true;
+// 			// ::g_pPhysics->setPhysicsRunningState(enablePhysics); //UNPHYS
+// 		}
+// 
+// 		ImGui::SameLine();
+// 		if (enablePhysics)
+// 			ImGui::Text("ON    ");
+// 		else
+// 			ImGui::Text("OFF   ");
+// 
+// 
+// // 		ImGui::SameLine();
+// // 		if (ImGui::Button("Player Toggle"))
+// // 		{
+// // 			if (isPlayer)
+// // 				isPlayer = false;
+// // 			else
+// // 				isPlayer = true;
+// // 		}
+// // 		ImGui::SameLine();
+// // 		if (isPlayer)
+// // 			ImGui::Text("Player");
+// // 		else
+// // 			ImGui::Text("FreeCam");
+// 
+// 		if (ImGui::Button("Mesh Editor"))
+// 		{
+// 			if (m_ShowMeshEditor)
+// 				m_ShowMeshEditor = false;
+// 			else
+// 				m_ShowMeshEditor = true;
+// 		}
+// 		if (ImGui::Button("Light Editor"))
+// 		{
+// 			if (m_ShowLightEditor)
+// 				m_ShowLightEditor = false;
+// 			else
+// 				m_ShowLightEditor = true;
+// 		}
+// 		if (ImGui::Button("Scene Manager"))
+// 		{
+// 			if (m_ShowSceneManager)
+// 				m_ShowSceneManager = false;
+// 			else
+// 				m_ShowSceneManager = true;
+// 		}
+// 		ImGui::Separator();
+// 		if (ImGui::Button("Faster"))
+// 		{
+// 			m_FlyCamSpeed += 0.1f;
+// 		}
+// 		ImGui::Text(std::to_string(m_FlyCamSpeed).c_str());
+// 		if (ImGui::Button("Slower"))
+// 		{
+// 			if (m_FlyCamSpeed > 0.1f)
+// 			m_FlyCamSpeed -= 0.1f;
+// 		}
+// 
+// 
+// 
+// 		ImGui::End();
+// 	}
+// 
+// 
+// 	if (m_ShowMeshEditor)
+// 	{
+// 		ImGui::Begin("Mesh Editor");
+// 
+// 		if (ImGui::BeginListBox("Available Objects")) // List of active meshes
+// 		{
+// 			for (int n = 0; n < m_vec_pMeshesToDraw.size(); n++)
+// 			{
+// 				const bool is_selected = (mesh_obj_idx == n);
+// 				if (ImGui::Selectable(m_vec_pMeshesToDraw[n]->friendlyName.c_str(), is_selected))
+// 					mesh_obj_idx = n;
+// 
+// 				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+// 				if (is_selected)
+// 					ImGui::SetItemDefaultFocus();
+// 			}
+// 			ImGui::EndListBox();
+// 		}
+// 		if (mesh_obj_idx >= m_vec_pMeshesToDraw.size()) // When changing scenes, this makes sure it doesn't go outta bounds
+// 			mesh_obj_idx = 0;
+// 		bool isExistingMesh = false; // Assert we have at least one mesh
+// 		if (m_vec_pMeshesToDraw.size() > 0)
+// 			isExistingMesh = true;
+// 
+// 		static bool doNotLight = false;
+// 		if (isExistingMesh)
+// 			doNotLight = m_vec_pMeshesToDraw[mesh_obj_idx]->bDoNotLight;
+// 
+// 		/////////// DUPLICATE MESH /////////////
+// 		static char dupeName[32] = ""; ImGui::InputText(":)", dupeName, 32);
+// 		ImGui::SameLine();
+// 		if (ImGui::Button("Duplicate"))
+// 		{
+// 			if ((isExistingMesh) && (std::strlen(dupeName) > 0))
+// 			{
+// 				duplicateMesh(mesh_obj_idx, dupeName);
+// 				mesh_obj_idx++; // Have new duplicate selected
+// 			}
 // 		}
 // 		ImGui::SameLine();
-// 		if (isPlayer)
-// 			ImGui::Text("Player");
+// 		ImGui::Checkbox("doNotLight", &doNotLight);
+// 
+// 		static bool toggalAllLight = false;
+// 		if (toggalAllLight)
+// 		{
+// 			if (ImGui::Button("AllMeshLighting: On"))
+// 			{
+// 				for (unsigned int i = 0; i < m_vec_pMeshesToDraw.size(); i++)
+// 					m_vec_pMeshesToDraw[i]->bDoNotLight = true;
+// 				toggalAllLight = false;
+// 			}
+// 		}
 // 		else
-// 			ImGui::Text("FreeCam");
-
-		if (ImGui::Button("Mesh Editor"))
-		{
-			if (m_ShowMeshEditor)
-				m_ShowMeshEditor = false;
-			else
-				m_ShowMeshEditor = true;
-		}
-		if (ImGui::Button("Light Editor"))
-		{
-			if (m_ShowLightEditor)
-				m_ShowLightEditor = false;
-			else
-				m_ShowLightEditor = true;
-		}
-		if (ImGui::Button("Scene Manager"))
-		{
-			if (m_ShowSceneManager)
-				m_ShowSceneManager = false;
-			else
-				m_ShowSceneManager = true;
-		}
-		ImGui::Separator();
-		if (ImGui::Button("Faster"))
-		{
-			m_FlyCamSpeed += 0.1f;
-		}
-		ImGui::Text(std::to_string(m_FlyCamSpeed).c_str());
-		if (ImGui::Button("Slower"))
-		{
-			if (m_FlyCamSpeed > 0.1f)
-			m_FlyCamSpeed -= 0.1f;
-		}
-
-
-
-		ImGui::End();
-	}
-
-
-	if (m_ShowMeshEditor)
-	{
-		ImGui::Begin("Mesh Editor");
-
-		if (ImGui::BeginListBox("Available Objects")) // List of active meshes
-		{
-			for (int n = 0; n < m_vec_pMeshesToDraw.size(); n++)
-			{
-				const bool is_selected = (mesh_obj_idx == n);
-				if (ImGui::Selectable(m_vec_pMeshesToDraw[n]->friendlyName.c_str(), is_selected))
-					mesh_obj_idx = n;
-
-				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndListBox();
-		}
-		if (mesh_obj_idx >= m_vec_pMeshesToDraw.size()) // When changing scenes, this makes sure it doesn't go outta bounds
-			mesh_obj_idx = 0;
-		bool isExistingMesh = false; // Assert we have at least one mesh
-		if (m_vec_pMeshesToDraw.size() > 0)
-			isExistingMesh = true;
-
-		static bool doNotLight = false;
-		if (isExistingMesh)
-			doNotLight = m_vec_pMeshesToDraw[mesh_obj_idx]->bDoNotLight;
-
-		/////////// DUPLICATE MESH /////////////
-		static char dupeName[32] = ""; ImGui::InputText(":)", dupeName, 32);
-		ImGui::SameLine();
-		if (ImGui::Button("Duplicate"))
-		{
-			if ((isExistingMesh) && (std::strlen(dupeName) > 0))
-			{
-				duplicateMesh(mesh_obj_idx, dupeName);
-				mesh_obj_idx++; // Have new duplicate selected
-			}
-		}
-		ImGui::SameLine();
-		ImGui::Checkbox("doNotLight", &doNotLight);
-
-		static bool toggalAllLight = false;
-		if (toggalAllLight)
-		{
-			if (ImGui::Button("AllMeshLighting: On"))
-			{
-				for (unsigned int i = 0; i < m_vec_pMeshesToDraw.size(); i++)
-					m_vec_pMeshesToDraw[i]->bDoNotLight = true;
-				toggalAllLight = false;
-			}
-		}
-		else
-		{
-			if (ImGui::Button("AllMeshLighting: Off"))
-			{
-				for (unsigned int i = 0; i < m_vec_pMeshesToDraw.size(); i++)
-					m_vec_pMeshesToDraw[i]->bDoNotLight = false;
-				toggalAllLight = true;
-			}
-		}
-
-
-
-		float xPos = 0;
-		float yPos = 0;
-		float zPos = 0;
-		float xOri = 0;
-		float yOri = 0;
-		float zOri = 0;
-		float scale = 0;
-		glm::vec3 customColor(0.0f, 0.0f, 0.0f);
-		bool useCustomColor;
-
-
-		if (isExistingMesh)
-		{
-			// TODO   this is fine for now, but we should be getting the values from the physics object instead. They should always match at this stage but who the hell knows?
-			xPos = m_vec_pMeshesToDraw[mesh_obj_idx]->drawPosition.x;
-			yPos = m_vec_pMeshesToDraw[mesh_obj_idx]->drawPosition.y;
-			zPos = m_vec_pMeshesToDraw[mesh_obj_idx]->drawPosition.z;
-			glm::vec3 meshEulerOri = m_vec_pMeshesToDraw[mesh_obj_idx]->getEulerOrientation();
-			xOri = meshEulerOri.x;
-			yOri = meshEulerOri.y;
-			zOri = meshEulerOri.z;
-			scale = m_vec_pMeshesToDraw[mesh_obj_idx]->scale.x;
-			customColor = glm::vec3(m_vec_pMeshesToDraw[mesh_obj_idx]->wholeObjectDebugColourRGBA);
-			useCustomColor = m_vec_pMeshesToDraw[mesh_obj_idx]->bUseDebugColours;
-		}
-
-		ImGui::SeparatorText("Position");
-		ImGui::DragFloat("X", &xPos, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-		ImGui::DragFloat("Y", &yPos, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-		ImGui::DragFloat("Z", &zPos, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-
-		ImGui::SeparatorText("Orientation");
-		ImGui::DragFloat("X-Rotation", &xOri, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-		ImGui::DragFloat("Y-Rotation", &yOri, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-		ImGui::DragFloat("Z-Rotation", &zOri, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-
-		ImGui::SeparatorText("Scale");
-		ImGui::DragFloat("Scale", &scale, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-
-		ImGui::SeparatorText("Custom Colors");
-		ImGui::DragFloat("Red", &customColor.x, 0.005f, 0.0f, 1.0f, "%.3f");
-		ImGui::DragFloat("Green", &customColor.y, 0.005f, 0.0f, 1.0f, "%.3f");
-		ImGui::DragFloat("Blue", &customColor.z, 0.005f, 0.0f, 1.0f, "%.3f");
-		ImGui::Checkbox("Use Custom Color", &useCustomColor);
-
-		ImGui::Separator();
-		if (ImGui::Button("Delete"))
-		{
-			if (isExistingMesh)
-			{
-				deleteMesh(mesh_obj_idx);
-				mesh_obj_idx--;
-				isExistingMesh = false;
-			}
-		}
-		ImGui::SameLine();
-		ImGui::Text("  Deletes currently selected mesh");
-		
-		// List all object attributes the user is able to edit
-
-		if (isExistingMesh)
-		{
-			glm::vec3 newPos = glm::vec3(xPos, yPos, zPos);
-			glm::vec3 newOri = glm::vec3(xOri, yOri, zOri);
-			updateSelectedMesh(mesh_obj_idx, "A NEW FRIENDLY NAME", newPos, newOri, customColor, scale, doNotLight, useCustomColor);
-		}
-		ImGui::End();
-	}
-
-	if (m_ShowLightEditor)
-	{
-		ImGui::Begin("Light Editor");
-
-		static int light_obj_idx = 0;
-		if (ImGui::BeginListBox("Available Objects"))
-		{
-			for (int n = 0; n < m_pTheLights->NUMBER_OF_LIGHTS_IM_USING; n++)
-			{
-				const bool is_selected = (light_obj_idx == n);
-				if (ImGui::Selectable(m_pTheLights->theLights[n].friendlyName.c_str(), is_selected))
-					light_obj_idx = n;
-
-				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndListBox();
-		}
-// 		bool isExistingLight = true;
-// 		if (m_vec_pMeshesToDraw.size() > 0)
-// 			isExistingLight = false;
-
-
-		glm::vec4 lightPos = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-		glm::vec4 lightDir = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-		glm::vec4 lightDiff = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-		glm::vec4 lightSpec = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-		glm::vec4 lightAtten = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-		glm::vec4 lightParam1 = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-		glm::vec4 lightParam2 = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-// 		if (!isExistingLight)
 // 		{
-			lightPos = m_pTheLights->theLights[light_obj_idx].position;
-			lightDir = m_pTheLights->theLights[light_obj_idx].direction;
-			lightDiff = m_pTheLights->theLights[light_obj_idx].diffuse;
-			lightSpec = m_pTheLights->theLights[light_obj_idx].specular; // rgb = highlight colour, w = power
-			lightAtten = m_pTheLights->theLights[light_obj_idx].atten; // x = constant, y = linear, z = quadratic, w = DistanceCutOff
-			lightParam1 = m_pTheLights->theLights[light_obj_idx].param1; // x: light type    y: inner angle    z: outer angle
-			lightParam2 = m_pTheLights->theLights[light_obj_idx].param2; // x: light on(1) or off(0)
-		/*}*/
-		static char lightname[32] = ""; 
-		//strcpy_s(lightname, m_pTheLights->theLights[light_obj_idx].friendlyName.c_str()); // TODO too long a name will prob break this
-
-		ImGui::InputText("Light Name", lightname, 32);
-		if (ImGui::Button("Set New Name")) // Button to set new light friendlyname
-		{
-			if (strlen(lightname) > 0)
-				m_pTheLights->theLights[light_obj_idx].friendlyName = lightname;
-		}
-
-		ImGui::SeparatorText("Position");
-		ImGui::DragFloat("X-Pos", &lightPos.x, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-		ImGui::DragFloat("Y-Pos", &lightPos.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-		ImGui::DragFloat("Z-Pos", &lightPos.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-		ImGui::SeparatorText("Direction");
-		ImGui::DragFloat("X-Dir", &lightDir.x, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-		ImGui::DragFloat("Y-Dir", &lightDir.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-		ImGui::DragFloat("Z-Dir", &lightDir.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-		ImGui::SeparatorText("Spotlight Cone");
-		ImGui::DragFloat("Inner Angle", &lightParam1.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-		ImGui::DragFloat("Outer Angle", &lightParam1.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-		ImGui::SeparatorText("Diffuse");
-		ImGui::DragFloat("Red Diffuse", &lightDiff.x, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
-		ImGui::DragFloat("Green Diffuse", &lightDiff.y, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
-		ImGui::DragFloat("Blue Diffuse", &lightDiff.z, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
-		ImGui::SeparatorText("Specular");
-		ImGui::DragFloat("Red Specular", &lightSpec.x, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
-		ImGui::DragFloat("Green Specular", &lightSpec.y, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
-		ImGui::DragFloat("Blue Specular", &lightSpec.z, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
-		ImGui::DragFloat("Spec Power", &lightSpec.w, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
-		ImGui::SeparatorText("Attenuation");
-		ImGui::DragFloat("Constant", &lightAtten.x, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
-		ImGui::DragFloat("Linear", &lightAtten.y, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
-		ImGui::DragFloat("Quadratic", &lightAtten.z, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
-		ImGui::DragFloat("Distance Cutoff", &lightAtten.w, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
-
-		ImGui::SeparatorText("Other Light Options");
-		const char* lightTypes[] = { "Point Light", "Spot Light", "Directional Light"};
-		static int ltype_current_idx = 0;
-		ltype_current_idx = lightParam1.x; // Set selected light type to one stored in the light
-		const char* combo_preview_value = lightTypes[ltype_current_idx];
-		if (ImGui::BeginCombo("Light Types", combo_preview_value))
-		{
-			for (int n = 0; n < IM_ARRAYSIZE(lightTypes); n++)
-			{
-				const bool is_selected = (ltype_current_idx == n);
-				if (ImGui::Selectable(lightTypes[n], is_selected))
-					ltype_current_idx = n;
-
-				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndCombo();
-		}
-		lightParam1.x = ltype_current_idx; // Set light type
-		ImGui::SameLine();
-		static bool lightOn = true;
-		if (lightParam2.x == 0)
-			lightOn = false;
-		else
-			lightOn = true;
-
-		ImGui::Checkbox("Toggle Light", &lightOn);
-		if (lightOn)
-			lightParam2.x = 1;
-		else
-			lightParam2.x = 0;
-
-
-// 		if (isExistingLight)
+// 			if (ImGui::Button("AllMeshLighting: Off"))
+// 			{
+// 				for (unsigned int i = 0; i < m_vec_pMeshesToDraw.size(); i++)
+// 					m_vec_pMeshesToDraw[i]->bDoNotLight = false;
+// 				toggalAllLight = true;
+// 			}
+// 		}
+// 
+// 
+// 
+// 		float xPos = 0;
+// 		float yPos = 0;
+// 		float zPos = 0;
+// 		float xOri = 0;
+// 		float yOri = 0;
+// 		float zOri = 0;
+// 		float scale = 0;
+// 		glm::vec3 customColor(0.0f, 0.0f, 0.0f);
+// 		bool useCustomColor;
+// 
+// 
+// 		if (isExistingMesh)
 // 		{
-			updateSelectedLight(light_obj_idx, lightPos, lightDiff, lightSpec, lightAtten, lightDir, lightParam1, lightParam2);
-		/*}*/
+// 			// TODO   this is fine for now, but we should be getting the values from the physics object instead. They should always match at this stage but who the hell knows?
+// 			xPos = m_vec_pMeshesToDraw[mesh_obj_idx]->drawPosition.x;
+// 			yPos = m_vec_pMeshesToDraw[mesh_obj_idx]->drawPosition.y;
+// 			zPos = m_vec_pMeshesToDraw[mesh_obj_idx]->drawPosition.z;
+// 			glm::vec3 meshEulerOri = m_vec_pMeshesToDraw[mesh_obj_idx]->getEulerOrientation();
+// 			xOri = meshEulerOri.x;
+// 			yOri = meshEulerOri.y;
+// 			zOri = meshEulerOri.z;
+// 			scale = m_vec_pMeshesToDraw[mesh_obj_idx]->scale.x;
+// 			customColor = glm::vec3(m_vec_pMeshesToDraw[mesh_obj_idx]->wholeObjectDebugColourRGBA);
+// 			useCustomColor = m_vec_pMeshesToDraw[mesh_obj_idx]->bUseDebugColours;
+// 		}
+// 
+// 		ImGui::SeparatorText("Position");
+// 		ImGui::DragFloat("X", &xPos, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+// 		ImGui::DragFloat("Y", &yPos, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+// 		ImGui::DragFloat("Z", &zPos, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+// 
+// 		ImGui::SeparatorText("Orientation");
+// 		ImGui::DragFloat("X-Rotation", &xOri, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+// 		ImGui::DragFloat("Y-Rotation", &yOri, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+// 		ImGui::DragFloat("Z-Rotation", &zOri, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+// 
+// 		ImGui::SeparatorText("Scale");
+// 		ImGui::DragFloat("Scale", &scale, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+// 
+// 		ImGui::SeparatorText("Custom Colors");
+// 		ImGui::DragFloat("Red", &customColor.x, 0.005f, 0.0f, 1.0f, "%.3f");
+// 		ImGui::DragFloat("Green", &customColor.y, 0.005f, 0.0f, 1.0f, "%.3f");
+// 		ImGui::DragFloat("Blue", &customColor.z, 0.005f, 0.0f, 1.0f, "%.3f");
+// 		ImGui::Checkbox("Use Custom Color", &useCustomColor);
+// 
+// 		ImGui::Separator();
+// 		if (ImGui::Button("Delete"))
+// 		{
+// 			if (isExistingMesh)
+// 			{
+// 				deleteMesh(mesh_obj_idx);
+// 				mesh_obj_idx--;
+// 				isExistingMesh = false;
+// 			}
+// 		}
+// 		ImGui::SameLine();
+// 		ImGui::Text("  Deletes currently selected mesh");
+// 		
+// 		// List all object attributes the user is able to edit
+// 
+// 		if (isExistingMesh)
+// 		{
+// 			glm::vec3 newPos = glm::vec3(xPos, yPos, zPos);
+// 			glm::vec3 newOri = glm::vec3(xOri, yOri, zOri);
+// 			updateSelectedMesh(mesh_obj_idx, "A NEW FRIENDLY NAME", newPos, newOri, customColor, scale, doNotLight, useCustomColor);
+// 		}
+// 		ImGui::End();
+// 	}
+// 
+// 	if (m_ShowLightEditor)
+// 	{
+// 		ImGui::Begin("Light Editor");
+// 
+// 		static int light_obj_idx = 0;
+// 		if (ImGui::BeginListBox("Available Objects"))
+// 		{
+// 			for (int n = 0; n < m_pTheLights->NUMBER_OF_LIGHTS_IM_USING; n++)
+// 			{
+// 				const bool is_selected = (light_obj_idx == n);
+// 				if (ImGui::Selectable(m_pTheLights->theLights[n].friendlyName.c_str(), is_selected))
+// 					light_obj_idx = n;
+// 
+// 				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+// 				if (is_selected)
+// 					ImGui::SetItemDefaultFocus();
+// 			}
+// 			ImGui::EndListBox();
+// 		}
+// // 		bool isExistingLight = true;
+// // 		if (m_vec_pMeshesToDraw.size() > 0)
+// // 			isExistingLight = false;
+// 
+// 
+// 		glm::vec4 lightPos = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+// 		glm::vec4 lightDir = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+// 		glm::vec4 lightDiff = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+// 		glm::vec4 lightSpec = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+// 		glm::vec4 lightAtten = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+// 		glm::vec4 lightParam1 = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+// 		glm::vec4 lightParam2 = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+// // 		if (!isExistingLight)
+// // 		{
+// 			lightPos = m_pTheLights->theLights[light_obj_idx].position;
+// 			lightDir = m_pTheLights->theLights[light_obj_idx].direction;
+// 			lightDiff = m_pTheLights->theLights[light_obj_idx].diffuse;
+// 			lightSpec = m_pTheLights->theLights[light_obj_idx].specular; // rgb = highlight colour, w = power
+// 			lightAtten = m_pTheLights->theLights[light_obj_idx].atten; // x = constant, y = linear, z = quadratic, w = DistanceCutOff
+// 			lightParam1 = m_pTheLights->theLights[light_obj_idx].param1; // x: light type    y: inner angle    z: outer angle
+// 			lightParam2 = m_pTheLights->theLights[light_obj_idx].param2; // x: light on(1) or off(0)
+// 		/*}*/
+// 		static char lightname[32] = ""; 
+// 		//strcpy_s(lightname, m_pTheLights->theLights[light_obj_idx].friendlyName.c_str()); // TODO too long a name will prob break this
+// 
+// 		ImGui::InputText("Light Name", lightname, 32);
+// 		if (ImGui::Button("Set New Name")) // Button to set new light friendlyname
+// 		{
+// 			if (strlen(lightname) > 0)
+// 				m_pTheLights->theLights[light_obj_idx].friendlyName = lightname;
+// 		}
+// 
+// 		ImGui::SeparatorText("Position");
+// 		ImGui::DragFloat("X-Pos", &lightPos.x, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+// 		ImGui::DragFloat("Y-Pos", &lightPos.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+// 		ImGui::DragFloat("Z-Pos", &lightPos.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+// 		ImGui::SeparatorText("Direction");
+// 		ImGui::DragFloat("X-Dir", &lightDir.x, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+// 		ImGui::DragFloat("Y-Dir", &lightDir.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+// 		ImGui::DragFloat("Z-Dir", &lightDir.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+// 		ImGui::SeparatorText("Spotlight Cone");
+// 		ImGui::DragFloat("Inner Angle", &lightParam1.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+// 		ImGui::DragFloat("Outer Angle", &lightParam1.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+// 		ImGui::SeparatorText("Diffuse");
+// 		ImGui::DragFloat("Red Diffuse", &lightDiff.x, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+// 		ImGui::DragFloat("Green Diffuse", &lightDiff.y, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+// 		ImGui::DragFloat("Blue Diffuse", &lightDiff.z, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+// 		ImGui::SeparatorText("Specular");
+// 		ImGui::DragFloat("Red Specular", &lightSpec.x, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+// 		ImGui::DragFloat("Green Specular", &lightSpec.y, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+// 		ImGui::DragFloat("Blue Specular", &lightSpec.z, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+// 		ImGui::DragFloat("Spec Power", &lightSpec.w, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+// 		ImGui::SeparatorText("Attenuation");
+// 		ImGui::DragFloat("Constant", &lightAtten.x, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+// 		ImGui::DragFloat("Linear", &lightAtten.y, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+// 		ImGui::DragFloat("Quadratic", &lightAtten.z, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+// 		ImGui::DragFloat("Distance Cutoff", &lightAtten.w, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+// 
+// 		ImGui::SeparatorText("Other Light Options");
+// 		const char* lightTypes[] = { "Point Light", "Spot Light", "Directional Light"};
+// 		static int ltype_current_idx = 0;
+// 		ltype_current_idx = lightParam1.x; // Set selected light type to one stored in the light
+// 		const char* combo_preview_value = lightTypes[ltype_current_idx];
+// 		if (ImGui::BeginCombo("Light Types", combo_preview_value))
+// 		{
+// 			for (int n = 0; n < IM_ARRAYSIZE(lightTypes); n++)
+// 			{
+// 				const bool is_selected = (ltype_current_idx == n);
+// 				if (ImGui::Selectable(lightTypes[n], is_selected))
+// 					ltype_current_idx = n;
+// 
+// 				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+// 				if (is_selected)
+// 					ImGui::SetItemDefaultFocus();
+// 			}
+// 			ImGui::EndCombo();
+// 		}
+// 		lightParam1.x = ltype_current_idx; // Set light type
+// 		ImGui::SameLine();
+// 		static bool lightOn = true;
+// 		if (lightParam2.x == 0)
+// 			lightOn = false;
+// 		else
+// 			lightOn = true;
+// 
+// 		ImGui::Checkbox("Toggle Light", &lightOn);
+// 		if (lightOn)
+// 			lightParam2.x = 1;
+// 		else
+// 			lightParam2.x = 0;
+// 
+// 
+// // 		if (isExistingLight)
+// // 		{
+// 			updateSelectedLight(light_obj_idx, lightPos, lightDiff, lightSpec, lightAtten, lightDir, lightParam1, lightParam2);
+// 		/*}*/
+// 
+// 		ImGui::End();
+// 	}
+// 
+// 	if (m_ShowSceneManager)
+// 	{
+// 		ImGui::Begin("Scene Manager");
+// 
+// 		availSaves = m_pSceneManager->getAvailableSaves(); // Update availible saves upon opening scene manager window
+// 		static int saves_idx = 0;
+// 		if (ImGui::BeginListBox("Available Saves")) // List of availible saves to load from
+// 		{
+// 			for (int n = 0; n < availSaves.size(); n++)
+// 			{
+// 				const bool is_save_selected = (saves_idx == n);
+// 				if (ImGui::Selectable(availSaves[n].c_str(), is_save_selected))
+// 					saves_idx = n;
+// 
+// 				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+// 				if (is_save_selected)
+// 					ImGui::SetItemDefaultFocus();
+// 			}
+// 			ImGui::EndListBox();
+// 		}
+// 
+// 		if (ImGui::Button("Load Scene"))
+// 		{
+// 			if (availSaves.size() > 0)
+// 				m_pSceneManager->loadScene(availSaves[saves_idx]); // Will load a selected item from a list in the future
+// 		}
+// 
+// 
+// 		static char saveNameBuf[32] = ""; ImGui::InputText("Save Name", saveNameBuf, 32);
+// 		ImGui::SameLine();
+// 		if (ImGui::Button("Save Current Scene"))
+// 		{
+// 			if (std::strlen(saveNameBuf) > 0)
+// 			{
+// 				m_pSceneManager->saveScene(saveNameBuf, m_vec_pMeshesToDraw, m_pTheLights);
+// 				memset(saveNameBuf, 0, 32); // Reset buffer
+// 			}
+// 			
+// 		}
+// 
+// 		ImGui::End();
+// 	}
 
-		ImGui::End();
-	}
-
-	if (m_ShowSceneManager)
-	{
-		ImGui::Begin("Scene Manager");
-
-		availSaves = m_pSceneManager->getAvailableSaves(); // Update availible saves upon opening scene manager window
-		static int saves_idx = 0;
-		if (ImGui::BeginListBox("Available Saves")) // List of availible saves to load from
-		{
-			for (int n = 0; n < availSaves.size(); n++)
-			{
-				const bool is_save_selected = (saves_idx == n);
-				if (ImGui::Selectable(availSaves[n].c_str(), is_save_selected))
-					saves_idx = n;
-
-				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-				if (is_save_selected)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndListBox();
-		}
-
-		if (ImGui::Button("Load Scene"))
-		{
-			if (availSaves.size() > 0)
-				m_pSceneManager->loadScene(availSaves[saves_idx]); // Will load a selected item from a list in the future
-		}
 
 
-		static char saveNameBuf[32] = ""; ImGui::InputText("Save Name", saveNameBuf, 32);
-		ImGui::SameLine();
-		if (ImGui::Button("Save Current Scene"))
-		{
-			if (std::strlen(saveNameBuf) > 0)
-			{
-				m_pSceneManager->saveScene(saveNameBuf, m_vec_pMeshesToDraw, m_pTheLights);
-				memset(saveNameBuf, 0, 32); // Reset buffer
-			}
-			
-		}
-
-		ImGui::End();
-	}
-
-
-
-	ImGui::Render();
+	//ImGui::Render();
 	// ---------------------------IMGUI END-------------------------------------------//
 
 
@@ -752,9 +751,9 @@ void cGraphicsMain::Destroy()
 	glfwDestroyWindow(m_window);
 	glfwTerminate();
 
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
+	//ImGui_ImplOpenGL3_Shutdown();
+	//ImGui_ImplGlfw_Shutdown();
+	//ImGui::DestroyContext();
 
 	exit(EXIT_SUCCESS);
 }
@@ -791,7 +790,7 @@ void cGraphicsMain::switchScene(std::vector< cMesh* > newMeshVec, std::vector<cL
 	m_vec_pMeshesToDraw = newMeshVec; // Set new mesh vector
 
 	// Delete all current physics objects
-	::g_pPhysics->deleteAllObjects();
+	//::g_pPhysics->deleteAllObjects(); //UNPHYS
 
 
 	for (cMesh* meshObj : m_vec_pMeshesToDraw) // Attach physics objects to all new objects
@@ -809,7 +808,7 @@ void cGraphicsMain::switchScene(std::vector< cMesh* > newMeshVec, std::vector<cL
 			newShape->position = meshObj->drawPosition;
 			newShape->oldPosition = meshObj->drawPosition;
 			newShape->restitution = 0.5f;
-			::g_pPhysics->AddShape(newShape);
+			// ::g_pPhysics->AddShape(newShape); //UNPHYS
 		}
 		else // Just make it an indirect triangle mesh
 		{
@@ -822,7 +821,7 @@ void cGraphicsMain::switchScene(std::vector< cMesh* > newMeshVec, std::vector<cL
 			newShape->setRotationFromEuler(meshObj->getEulerOrientation());
 			newShape->position = meshObj->drawPosition;
 			newShape->oldPosition = meshObj->drawPosition;
-			::g_pPhysics->AddShape(newShape);
+			//::g_pPhysics->AddShape(newShape); //UNPHYS
 		}
 		meshObj->uniqueID = newShape->getUniqueID(); // Set mesh ID to match associated physics object's ID
 	}
@@ -870,6 +869,31 @@ void cGraphicsMain::setCameraParams(glm::vec3 camPos, glm::vec3 camDir)
 {
 	m_cameraEye = camPos;
 	m_cameraTarget = camDir;
+	return;
+}
+
+GLFWwindow* cGraphicsMain::getWindow(void)
+{
+	return m_window;
+}
+
+void cGraphicsMain::getAvailableModels(std::vector<std::string>* ModelVec)
+{
+	//ModelVec = &m_AvailableModels; // Doesn't work
+	for (unsigned int i = 0; i < m_AvailableModels.size(); i++)
+	{
+		ModelVec->push_back(m_AvailableModels[i]);
+	}
+	return;
+}
+
+void cGraphicsMain::getActiveMeshes(std::vector<cMesh*>* MeshVec)
+{
+	// MeshVec = &m_vec_pMeshesToDraw; // No work :(
+	for (unsigned int i = 0; i < m_vec_pMeshesToDraw.size(); i++)
+	{
+		MeshVec->push_back(m_vec_pMeshesToDraw[i]);
+	}
 	return;
 }
 
@@ -1091,7 +1115,7 @@ void cGraphicsMain::addNewMesh(std::string fileName, char* friendlyName) // This
 		newShape->friendlyName = "Sphere";
 		newShape->acceleration.y = -20.0f;
 		newShape->restitution = 0.5f;
-		::g_pPhysics->AddShape(newShape);
+		//::g_pPhysics->AddShape(newShape); //UNPHYS
 	}
 // 	else if (fileName == "Flat_1x1_plane.ply")
 // 	{
@@ -1123,7 +1147,7 @@ void cGraphicsMain::addNewMesh(std::string fileName, char* friendlyName) // This
 		newShape->inverse_mass = 0.0f; // Idk what to set this
 		newShape->friendlyName = "Plane";
 		newShape->setRotationFromEuler(glm::vec3(0.0f));
- 		::g_pPhysics->AddShape(newShape);
+ 		//::g_pPhysics->AddShape(newShape); //UNPHYS
 	}
 	meshToAdd->uniqueID = newShape->getUniqueID(); // Set mesh ID to match associated physics object's ID
 
@@ -1135,8 +1159,8 @@ void cGraphicsMain::updateSelectedMesh(int meshIdx, std::string friendlyName, gl
 {
 	// pos and ori need to update the physics object
 
-	::g_pPhysics->setShapePos(newPos, m_vec_pMeshesToDraw[meshIdx]->uniqueID);
-	::g_pPhysics->setShapeOri(newOri, m_vec_pMeshesToDraw[meshIdx]->uniqueID);
+	//::g_pPhysics->setShapePos(newPos, m_vec_pMeshesToDraw[meshIdx]->uniqueID); // UNPHYS
+	//::g_pPhysics->setShapeOri(newOri, m_vec_pMeshesToDraw[meshIdx]->uniqueID);
 
 	//m_vec_pMeshesToDraw[meshIdx]->drawPosition = newPos;
 	//m_vec_pMeshesToDraw[meshIdx]->eulerOrientation = newOri;

@@ -21,7 +21,7 @@ public:
 	void AddShape(sPhsyicsProperties* pNewShape);
 	void DeleteShape(int shapeID); // Deletes the physics shape
 	std::vector< sPhsyicsProperties* > getPhysicsVec(void);
-	void setGraphics(void); // Lazy
+	//void setGraphics(void); // Lazy
 
 	void Update(double deltaTime);
 
@@ -67,7 +67,7 @@ private:
 	glm::vec3 m_ClosestPtPointTriangle(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c);
 
 	cVAOManager* m_pMeshManager = NULL;
-	cGraphicsMain* m_pGraphicsMain;
+	//cGraphicsMain* m_pGraphicsMain;
 
 	bool m_IsRunning = false; // If physics updates should be calculated. Pausing good for moving stuff around in editor then resuming physics
 

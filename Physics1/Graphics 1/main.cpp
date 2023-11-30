@@ -1,18 +1,28 @@
-#include "Other Graphics Stuff/cGraphicsMain.h"
-#include "Physics/cPhysics.h"
-#include "cSoundManager.h"
+//#include "Other Graphics Stuff/cGraphicsMain.h"
+//#include "Physics/cPhysics.h"
+//#include "cSoundManager.h"
+#include "cEngineController.h"
 #include <iostream>
 #include <time.h>
 
-cPhysics* g_pPhysics = NULL;
+// cPhysics* g_pPhysics = NULL;
 
 int main(int argc, char** argv)
 {
 	srand(time(NULL));
 
-	::g_pPhysics = new cPhysics();
-	cGraphicsMain* graphics = cGraphicsMain::getGraphicsMain();// This initializes it if not yet made 
-	g_pPhysics->setGraphics();
+	cEngineController* engineFace = cEngineController::GetEngineController();
+	if (!engineFace->Initialize())
+	{
+		std::cout << "Something went wrong in the initialization";
+		return 0;
+	}
+	engineFace->Run();
+	engineFace->Destroy();
+
+	//::g_pPhysics = new cPhysics();
+	//cGraphicsMain* graphics = cGraphicsMain::getGraphicsMain();// This initializes it if not yet made 
+	//g_pPhysics->setGraphics();
 
 // 	audio::cSoundManager* sounds = audio::cSoundManager::GetInstance();
 // 	sounds->Initialize();
@@ -24,8 +34,8 @@ int main(int argc, char** argv)
 
 	
 
-	while (graphics->Update() == 0)
-	{
+	//while (graphics->Update() == 0)
+	//{
 		// Running...
 
 		// Get xz forward vector to pass to listener attributes
@@ -37,8 +47,10 @@ int main(int argc, char** argv)
 		//sounds->Update();
 		
 
-	}
-	graphics->Destroy();
+	//}
+	//graphics->Destroy();
+
+
 
 	return 0;
 }

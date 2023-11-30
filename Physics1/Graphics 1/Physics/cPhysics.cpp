@@ -51,10 +51,10 @@ std::vector< sPhsyicsProperties* > cPhysics::getPhysicsVec(void)
 	return m_vec_pPhysicalProps;
 }
 
-void cPhysics::setGraphics(void)
-{
-	m_pGraphicsMain = cGraphicsMain::getGraphicsMain();
-}
+// void cPhysics::setGraphics(void)
+// {
+// 	m_pGraphicsMain = cGraphicsMain::getGraphicsMain();
+// }
 
 void cPhysics::setShapePos(glm::vec3 newPos, unsigned int ID)
 {
