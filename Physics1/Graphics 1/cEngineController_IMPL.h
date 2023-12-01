@@ -3,6 +3,7 @@
 
 #include "Other Graphics Stuff/cGraphicsMain.h"
 #include "Physics/cPhysics.h"
+#include "Physics/sPhsyicsProperties.h"
 #include "cSoundManager.h"
 #include "cHiResTimer.h"
 #include "cLevelEditor.h"
@@ -21,13 +22,16 @@ public:
 	//-------------- Calls for the Level Editor -----------------//
 
 	/// Data Retrieval ///
-	void getAvailableModels(std::vector<std::string>* ModelVec);
+	void getAvailableModels(std::vector<std::string>* ModelVec, std::vector<std::string>* TexVec);
 	void getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights);
 	void getAvailableSaves(std::vector<std::string>* SaveVec);
 
 	/// Data Setting ///
-	void setMeshData(int meshID, std::string newFriendlyName, std::string newTextureNames[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor);
+	void setMeshData(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor);
 
+
+	// Data Creation
+	void addNewObject(std::string meshName, char* friendlyName);
 
 private:
 	// All objects to represent various game components

@@ -20,7 +20,9 @@ public:
 
 	static const int NUM_TEXTURES = 8;
 	std::string textureName[NUM_TEXTURES];
+	int textureIdx[NUM_TEXTURES];
 	float textureRatios[NUM_TEXTURES];
+
 
 	///////////////////
 

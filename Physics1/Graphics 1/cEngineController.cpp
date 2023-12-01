@@ -38,6 +38,8 @@ bool cEngineController::Initialize()
 		return true;
 	return false;
 }
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////EDITOR CALLS/////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,9 +48,9 @@ bool cEngineController::Initialize()
 
 		/*********************************| DATA RETRIEVAL |**************************************/
 
-void cEngineController::getAvailableModels(std::vector<std::string>* ModelVec)
+void cEngineController::getAvailableModels(std::vector<std::string>* ModelVec, std::vector<std::string>* TexVec)
 {
-	m_pTheEngineController->getAvailableModels(ModelVec);
+	m_pTheEngineController->getAvailableModels(ModelVec, TexVec);
 	return;
 }
 
@@ -72,9 +74,15 @@ void cEngineController::getAvailableSaves(std::vector<std::string>* SaveVec)
 
 /*********************************| DATA SETTING |**************************************/
 
-void cEngineController::setMeshData(int meshID, std::string newFriendlyName, std::string newTextureNames[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor)
+void cEngineController::setMeshData(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor)
 {
-	m_pTheEngineController->setMeshData(meshID, newFriendlyName, newTextureNames, newRatios, isVisible, isWireframe, doNotLight, useDebugColor, debugColor);
+	m_pTheEngineController->setMeshData(meshID, newFriendlyName, newTextureIdx, newRatios, isVisible, isWireframe, doNotLight, useDebugColor, debugColor);
+	return;
+}
+
+void cEngineController::addNewObject(std::string meshName, char* friendlyName)
+{
+	m_pTheEngineController->addNewObject(meshName, friendlyName);
 	return;
 }
 

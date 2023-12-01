@@ -34,6 +34,11 @@ cMesh::cMesh()
 	textureRatios[6] = 0.0f;
 	textureRatios[7] = 0.0f;
 
+	for (unsigned int i = 0; i < cMesh::NUM_TEXTURES; i++)
+	{
+		textureIdx[i] = 0;
+	}
+
 
 }
 

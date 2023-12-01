@@ -87,6 +87,7 @@ void cLevelEditor::RootWindow(std::vector<cMesh*> ActiveMeshVec)
 		if (std::strlen(buf1) > 0)
 		{
 			//addNewMesh(m_AvailableModels[available_obj_idx], buf1);
+			m_pEngineController->addNewObject(m_AvailableModels[available_obj_idx], buf1);
 			memset(buf1, 0, 32);
 			m_mesh_obj_idx = ActiveMeshVec.size() - 1;
 		}
@@ -227,8 +228,9 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec)
 	 
 			int meshID = -1;
 			std::string friendlyName = "";
-			std::string* textureNames = nullptr; //[cMesh::NUM_TEXTURES];
-			float* textureRatios = nullptr; //[cMesh::NUM_TEXTURES];
+			std::string* textureNames = nullptr;
+			float* textureRatios = nullptr; 
+			int* textureIdx = nullptr;
 			bool isVisible = false;
 			bool isWireframe = false;
 
@@ -263,27 +265,91 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec)
 				textureRatios = ActiveMeshVec[m_mesh_obj_idx]->textureRatios;
 				isVisible = ActiveMeshVec[m_mesh_obj_idx]->bIsVisible;
 				isWireframe = ActiveMeshVec[m_mesh_obj_idx]->bIsWireframe;
+
+				textureIdx = ActiveMeshVec[m_mesh_obj_idx]->textureIdx;
 	 		}
-	 
+			// Position
 	 		ImGui::SeparatorText("Position");
 	 		ImGui::DragFloat("X", &xPos, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
 	 		ImGui::DragFloat("Y", &yPos, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
 	 		ImGui::DragFloat("Z", &zPos, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-	 
+			
+			// Orientation
 	 		ImGui::SeparatorText("Orientation");
 	 		ImGui::DragFloat("X-Rotation", &xOri, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
 	 		ImGui::DragFloat("Y-Rotation", &yOri, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
 	 		ImGui::DragFloat("Z-Rotation", &zOri, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-	 
+			
+			// Scale TODO separate into x y z
 	 		ImGui::SeparatorText("Scale");
 	 		ImGui::DragFloat("Scale", &scale, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
 	 
+			// Custom Color
 	 		ImGui::SeparatorText("Custom Colors");
 	 		ImGui::DragFloat("Red", &customColor.x, 0.005f, 0.0f, 1.0f, "%.3f");
 	 		ImGui::DragFloat("Green", &customColor.y, 0.005f, 0.0f, 1.0f, "%.3f");
 	 		ImGui::DragFloat("Blue", &customColor.z, 0.005f, 0.0f, 1.0f, "%.3f");
 	 		ImGui::Checkbox("Use Custom Color", &useCustomColor);
 	 
+			
+
+			//////// TEXTURES //////////
+
+			//char* textureBase[m_AvailableTextures.size()]
+			//const char* textures[] = { "Point Light", "Spot Light", "Directional Light" };
+
+			//const char* textures[];// = { m_AvailableTextures[0].c_str() , "Spot Light", "Directional Light" };
+			//textures[0] = m_AvailableTextures[0].c_str();
+
+			if (isExistingMesh)
+			{
+				static int textype_current_idx[8];
+
+				int textureCount = m_AvailableTextures.size();
+
+				ImGui::SeparatorText("Textures");
+				for (unsigned int i = 0; i < cMesh::NUM_TEXTURES; i++)
+				{
+					ImGui::Text("Tex%d: ", i);
+					ImGui::SameLine();
+					// Texture combo box here
+
+					textype_current_idx[i] = textureIdx[i]; // Set id of texture in the vector
+					const char* combo_preview_value = m_AvailableTextures[textype_current_idx[i]].c_str();
+					ImGui::PushItemWidth(-ImGui::GetContentRegionAvail().x * 0.5f); //ImGui::PushItemWidth(300);
+					if (ImGui::BeginCombo(("##", std::to_string(i).c_str()), combo_preview_value))
+					{
+						for (int n = 0; n < textureCount; n++)
+						{
+							const bool is_selected = (textype_current_idx[i] == n);
+							if (ImGui::Selectable(m_AvailableTextures[n].c_str(), is_selected))
+								textype_current_idx[i] = n;
+
+							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
+						}
+						ImGui::EndCombo();
+					}
+					ImGui::PopItemWidth();
+					ImGui::SameLine();
+					//Texture ratio here 0-1.0f slider   textureRatios
+					std::string sliderLabel = "Ratio" + std::to_string(i);
+					ImGui::PushItemWidth(100);
+					ImGui::DragFloat(sliderLabel.c_str(), &textureRatios[i], 0.01f, 0.0f, 1.0f, "%.2f");
+					ImGui::PopItemWidth();
+					
+
+				}
+				textureIdx = textype_current_idx; // Update new values to pass to update
+			}
+			
+
+
+			
+
+
+			// Keep delete button at the bottom
 	 		ImGui::Separator();
 	 		if (ImGui::Button("Delete"))
 	 		{
@@ -305,7 +371,7 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec)
 	 			glm::vec3 newOri = glm::vec3(xOri, yOri, zOri);
 				// This will call 2 functions: graphics and physics
 
-				m_pEngineController->setMeshData(meshID, friendlyName, textureNames, textureRatios, isVisible, isWireframe, doNotLight, useCustomColor, glm::vec4(customColor, 1));
+				m_pEngineController->setMeshData(meshID, friendlyName, textureIdx, textureRatios, isVisible, isWireframe, doNotLight, useCustomColor, glm::vec4(customColor, 1));
 	 			//updateSelectedMesh(mesh_obj_idx, "A NEW FRIENDLY NAME", newPos, newOri, customColor, scale, doNotLight, useCustomColor);
 	 		}
 	 		ImGui::End();
@@ -486,7 +552,7 @@ cLevelEditor::cLevelEditor(GLFWwindow* window)
 
 	m_pEngineController = cEngineController::GetEngineController();
 
-	m_pEngineController->getAvailableModels(&m_AvailableModels);
+	m_pEngineController->getAvailableModels(&m_AvailableModels, &m_AvailableTextures);
 
 	m_window = window;
 

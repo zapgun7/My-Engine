@@ -57,9 +57,9 @@ bool cEngineController_IMPL::Initialize(void)
 	return true;
 }
 
-void cEngineController_IMPL::getAvailableModels(std::vector<std::string>* ModelVec)
+void cEngineController_IMPL::getAvailableModels(std::vector<std::string>* ModelVec, std::vector<std::string>* TexVec)
 {
-	m_pTheGraphics->getAvailableModels(ModelVec);
+	m_pTheGraphics->getAvailableModels(ModelVec, TexVec);
 	return;
 }
 
@@ -80,9 +80,36 @@ void cEngineController_IMPL::getAvailableSaves(std::vector<std::string>* SaveVec
 	return;
 }
 
-void cEngineController_IMPL::setMeshData(int meshID, std::string newFriendlyName, std::string newTextureNames[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor)
+void cEngineController_IMPL::setMeshData(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor)
 {
-	m_pTheGraphics->updateMesh(meshID, newFriendlyName, newTextureNames, newRatios, isVisible, isWireframe, doNotLight, useDebugColor, debugColor);
+	m_pTheGraphics->updateMesh(meshID, newFriendlyName, newTextureIdx, newRatios, isVisible, isWireframe, doNotLight, useDebugColor, debugColor);
+	return;
+}
+
+void cEngineController_IMPL::addNewObject(std::string meshName, char* friendlyName)
+{
+	// Create cmesh and add to cGraphicsMain
+	// Create generic physics object and add to cPhysics
+	// Set physics generated id to mesh
+	// Set associated mesh to physics objectcMesh* newMesh
+	cMesh* newMesh = new cMesh();
+	newMesh->meshName = meshName;
+	newMesh->friendlyName = friendlyName;
+	m_pTheGraphics->addNewMesh(newMesh);
+
+
+
+	// Now physics
+	sPhsyicsProperties* newObject = new sPhsyicsProperties();
+	newObject->pTheAssociatedMesh = newMesh;
+	newObject->friendlyName = friendlyName;
+	m_pThePhysics->AddShape(newObject);
+
+
+	// Set unique id's matching
+	newMesh->uniqueID = newObject->getUniqueID();
+	
+
 	return;
 }
 

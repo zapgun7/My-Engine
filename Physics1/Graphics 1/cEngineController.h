@@ -28,13 +28,16 @@ public:
 	//-------------- Calls for the Level Editor -----------------//
 
 	/// Data Retrieval ///
-	void getAvailableModels(std::vector<std::string>* ModelVec); // Sets the provided variable with a vector of available models
+	void getAvailableModels(std::vector<std::string>* ModelVec, std::vector<std::string>* TexVec); // Sets the provided variable with a vector of available models
 	void getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights); // Sets provided vector with pointers to all active meshes
 	void getAvailableSaves(std::vector<std::string>* SaveVec);
 
 	/// Data Setting ///
-	void setMeshData(int meshID, std::string newFriendlyName, std::string newTextureNames[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor);
+	void setMeshData(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor);
 
+
+	/// Data Creation ///
+	void addNewObject(std::string meshName, char* friendlyName);
 
 private:
 	cEngineController();
