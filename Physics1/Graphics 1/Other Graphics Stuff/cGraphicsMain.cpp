@@ -499,7 +499,7 @@ void cGraphicsMain::getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightMan
 	{
 		MeshVec->push_back(m_vec_pMeshesToDraw[i]);
 	}
-	TheLights = m_pTheLights;
+	*TheLights = *m_pTheLights;
 
 	return;
 }
@@ -851,8 +851,9 @@ void cGraphicsMain::addNewLight(char* friendlyName)
 	m_pTheLights->theLights[newLightIdx].friendlyName = friendlyName; // Name the light
 }
 
-void cGraphicsMain::updateSelectedLight(int lightIdx, glm::vec4 newPos, glm::vec4 newDiff, glm::vec4 newSpec, glm::vec4 newAtten, glm::vec4 newDir, glm::vec4 newParam1, glm::vec4 newParam2)
+void cGraphicsMain::updateSelectedLight(int lightIdx, std::string friendlyName, glm::vec4 newPos, glm::vec4 newDiff, glm::vec4 newSpec, glm::vec4 newAtten, glm::vec4 newDir, glm::vec4 newParam1, glm::vec4 newParam2)
 {
+	m_pTheLights->theLights[lightIdx].friendlyName = friendlyName;
 	m_pTheLights->theLights[lightIdx].position = newPos;
 	m_pTheLights->theLights[lightIdx].diffuse = newDiff;
 	m_pTheLights->theLights[lightIdx].specular = newSpec;

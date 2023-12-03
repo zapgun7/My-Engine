@@ -100,6 +100,12 @@ void cEngineController_IMPL::setPhysData(int objID, glm::vec3 newPos, glm::vec3 
 	return;
 }
 
+void cEngineController_IMPL::setLightData(int lightIdx, std::string friendlyName, glm::vec4 newPos, glm::vec4 newDiff, glm::vec4 newSpec, glm::vec4 newAtten, glm::vec4 newDir, glm::vec4 newParam1, glm::vec4 newParam2)
+{
+	m_pTheGraphics->updateSelectedLight(lightIdx, friendlyName, newPos, newDiff, newSpec, newAtten, newDir, newParam1, newParam2);
+	return;
+}
+
 void cEngineController_IMPL::addNewObject(std::string meshName, char* friendlyName)
 {
 	// Create cmesh and add to cGraphicsMain

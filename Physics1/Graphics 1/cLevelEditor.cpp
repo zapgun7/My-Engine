@@ -416,7 +416,7 @@ void cLevelEditor::LightEditor(cLightManager* TheLights)
 // 		if (m_vec_pMeshesToDraw.size() > 0)
 // 			isExistingLight = false;
  
- 
+	std::string friendlyName = "";
  	glm::vec4 lightPos = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
  	glm::vec4 lightDir = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
  	glm::vec4 lightDiff = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -426,13 +426,14 @@ void cLevelEditor::LightEditor(cLightManager* TheLights)
  	glm::vec4 lightParam2 = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 // 		if (!isExistingLight)
 // 		{
- 		lightPos = TheLights->theLights[light_obj_idx].position;
- 		lightDir = TheLights->theLights[light_obj_idx].direction;
- 		lightDiff = TheLights->theLights[light_obj_idx].diffuse;
- 		lightSpec = TheLights->theLights[light_obj_idx].specular; // rgb = highlight colour, w = power
- 		lightAtten = TheLights->theLights[light_obj_idx].atten; // x = constant, y = linear, z = quadratic, w = DistanceCutOff
- 		lightParam1 = TheLights->theLights[light_obj_idx].param1; // x: light type    y: inner angle    z: outer angle
- 		lightParam2 = TheLights->theLights[light_obj_idx].param2; // x: light on(1) or off(0)
+	friendlyName = TheLights->theLights[light_obj_idx].friendlyName;
+ 	lightPos = TheLights->theLights[light_obj_idx].position;
+ 	lightDir = TheLights->theLights[light_obj_idx].direction;
+ 	lightDiff = TheLights->theLights[light_obj_idx].diffuse;
+ 	lightSpec = TheLights->theLights[light_obj_idx].specular; // rgb = highlight colour, w = power
+ 	lightAtten = TheLights->theLights[light_obj_idx].atten; // x = constant, y = linear, z = quadratic, w = DistanceCutOff
+ 	lightParam1 = TheLights->theLights[light_obj_idx].param1; // x: light type    y: inner angle    z: outer angle
+ 	lightParam2 = TheLights->theLights[light_obj_idx].param2; // x: light on(1) or off(0)
  	/*}*/
  	static char lightname[32] = ""; 
  	//strcpy_s(lightname, TheLights.theLights[light_obj_idx].friendlyName.c_str()); // TODO too long a name will prob break this
@@ -440,8 +441,9 @@ void cLevelEditor::LightEditor(cLightManager* TheLights)
  	ImGui::InputText("Light Name", lightname, 32);
  	if (ImGui::Button("Set New Name")) // Button to set new light friendlyname
  	{
- 		if (strlen(lightname) > 0)
-			TheLights->theLights[light_obj_idx].friendlyName = lightname;
+		if (strlen(lightname) > 0)
+			friendlyName = lightname;
+			//TheLights->theLights[light_obj_idx].friendlyName = lightname;
  	}
  
  	ImGui::SeparatorText("Position");
@@ -504,10 +506,11 @@ void cLevelEditor::LightEditor(cLightManager* TheLights)
  		lightParam2.x = 0;
  
  
-// 		if (isExistingLight)
-// 		{
- 		//updateSelectedLight(light_obj_idx, lightPos, lightDiff, lightSpec, lightAtten, lightDir, lightParam1, lightParam2); // TODO light update
- 	/*}*/
+	m_pEngineController->setLightData(light_obj_idx, friendlyName, lightPos, lightDiff, lightSpec, lightAtten, lightDir, lightParam1, lightParam2);
+//  		if (isExistingLight)
+//  		{
+//  			updateSelectedLight(light_obj_idx, lightPos, lightDiff, lightSpec, lightAtten, lightDir, lightParam1, lightParam2); // TODO light update
+//  		}
  
  	ImGui::End();
 }

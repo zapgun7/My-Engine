@@ -151,9 +151,9 @@ void main()
 
 	vec4 textureColour = 
 			  texture( texture_00, textureCoords.st ).rgba * textureMixRatio_0_3.x 	
-			+ texture( texture_01, textureCoords.st ).rgba * textureMixRatio_0_3.y
-			+ texture( texture_02, textureCoords.st ).rgba * textureMixRatio_0_3.z
-			+ texture( texture_03, textureCoords.st ).rgba * textureMixRatio_0_3.w;
+			//+ texture( texture_01, textureCoords.st ).rgba * textureMixRatio_0_3.y
+			+ texture( texture_02, textureCoords.st ).rgba * textureMixRatio_0_3.z;
+			//+ texture( texture_03, textureCoords.st ).rgba * textureMixRatio_0_3.w;
 
 	// Make the 'vertex colour' the texture colour we sampled...
 	vec4 vertexRGBA = textureColour;	
@@ -183,8 +183,19 @@ void main()
 	// RGB is the specular highglight colour (usually white or the colour of the light)
 	// 4th value is the specular POWER (STARTS at 1, and goes to 1000000s)
 	
-	vec4 vertexColourLit = calculateLightContrib( vertexRGBA.rgb, vertexWorldNormal.xyz, 
+	vec4 bumpMap = texture( texture_01, textureCoords.st ).rgba; // Should only have to add this to vertexWorldNormal in a way
+	//bumpMap -= (bumpMap/2);
+	bumpMap.xyz -= vec3(0.5f);
+	bumpMap.xyz = normalize(bumpMap.xyz);
+	bumpMap *= textureMixRatio_0_3.y;
+	bumpMap.xyz += vertexWorldNormal.xyz;
+	bumpMap.xyz = normalize(bumpMap.xyz);
+	
+	vec4 vertexColourLit = calculateLightContrib( vertexRGBA.rgb, bumpMap.xyz, 
 	                                              vertexWorldPos.xyz, vertexSpecular );
+	
+	//vec4 vertexColourLit = calculateLightContrib( vertexRGBA.rgb, vertexWorldNormal.xyz, 
+	//                                              vertexWorldPos.xyz, vertexSpecular );
 	// *************************************
 			
 	outputColour.rgb = vertexColourLit.rgb;
