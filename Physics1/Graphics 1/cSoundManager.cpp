@@ -245,7 +245,7 @@ void cSoundManager::SetChannelGroupVolume(unsigned int channelGroupId, float val
 	FMOD_ERROR_CHECK(result);
 }
 
-void cSoundManager::AddNewObject(sPhsyicsProperties* phyObj)
+void cSoundManager::AddNewObject(sPhysicsProperties* phyObj)
 {
 	if (!m_IsInitialized)
 		return;
@@ -270,7 +270,7 @@ void cSoundManager::UpdateAllObjects(void)
 
 	for (unsigned int i = 0; i < m_SoundObjs.size(); i++)
 	{
-		sPhsyicsProperties* obj = m_SoundObjs[i].object;
+		sPhysicsProperties* obj = m_SoundObjs[i].object;
 
 		FMOD_VECTOR FMODpos;
 		FMOD_VECTOR FMODvel;

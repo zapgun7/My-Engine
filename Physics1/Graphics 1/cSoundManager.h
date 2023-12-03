@@ -4,7 +4,7 @@
 #include <fmod/fmod.hpp>
 #include <vector>
 #include <map>
-#include "Physics/sPhsyicsProperties.h" // To bind an object to a channel to play sound through
+#include "Physics/sPhysicsProperties.h" // To bind an object to a channel to play sound through
 
 
 #define gdpAudioNamespaceBegin namespace audio {
@@ -24,7 +24,7 @@ enum DSPs
 struct s3DSound
 {
 	FMOD::Channel* channel; // To play 3d sound through
-	sPhsyicsProperties* object;
+	sPhysicsProperties* object;
 
 	FMOD::DSP* echo = nullptr;
 	FMOD::DSP* distortion = nullptr;
@@ -78,7 +78,7 @@ public:
 
 
 	// Sound Objects
-	void AddNewObject(sPhsyicsProperties* phyObj); // Should only need the object to initialize the object
+	void AddNewObject(sPhysicsProperties* phyObj); // Should only need the object to initialize the object
 	void UpdateAllObjects(void); // Updates 3d info on all objects in vec
 	void PlaySoundFromObject(int id, const char* soundName, bool isLooping);
 	void AddDSPToObject(int id, DSPs dsp);

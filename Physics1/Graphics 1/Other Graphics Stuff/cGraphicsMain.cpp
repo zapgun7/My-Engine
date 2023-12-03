@@ -157,18 +157,18 @@ bool cGraphicsMain::Initialize()
 	
 	////// Throw in some modles to test textures
 
-	cMesh* plane = new cMesh();
-	plane->meshName = "Big_Flat_Mesh.ply";
-	plane->friendlyName = "bigolplane";
-	plane->setDrawPosition(glm::vec3(0.0f, -30.0f, 0.0f));
-	plane->bDoNotLight = true;
-
-	//plane->textureName[0] = "Water_Texture_01.bmp";
-	plane->textureName[0] = "rosewood.bmp";
-	plane->textureRatios[0] = 1.0f;
-	plane->textureIdx[0] = 1;
-
-	m_vec_pMeshesToDraw.push_back(plane);
+// 	cMesh* plane = new cMesh();
+// 	plane->meshName = "Big_Flat_Mesh.ply";
+// 	plane->friendlyName = "bigolplane";
+// 	plane->setDrawPosition(glm::vec3(0.0f, -30.0f, 0.0f));
+// 	plane->bDoNotLight = true;
+// 
+// 	//plane->textureName[0] = "Water_Texture_01.bmp";
+// 	plane->textureName[0] = "rosewood.bmp";
+// 	plane->textureRatios[0] = 1.0f;
+// 	plane->textureIdx[0] = 1;
+// 
+// 	m_vec_pMeshesToDraw.push_back(plane);
 
 	
 
@@ -396,12 +396,12 @@ void cGraphicsMain::switchScene(std::vector< cMesh* > newMeshVec, std::vector<cL
 
 	for (cMesh* meshObj : m_vec_pMeshesToDraw) // Attach physics objects to all new objects
 	{
-		sPhsyicsProperties* newShape;
+		sPhysicsProperties* newShape;
 		if (meshObj->meshName == "Sphere_1_unit_Radius.ply")
 		{
-			newShape = new sPhsyicsProperties();
-			newShape->shapeType = sPhsyicsProperties::SPHERE;
-			newShape->setShape(new sPhsyicsProperties::sSphere(1.0f)); // Since a unit sphere, radius of .5 
+			newShape = new sPhysicsProperties();
+			newShape->shapeType = sPhysicsProperties::SPHERE;
+			newShape->setShape(new sPhysicsProperties::sSphere(1.0f)); // Since a unit sphere, radius of .5 
 			newShape->pTheAssociatedMesh = meshObj;
 			newShape->inverse_mass = 1.0f; // Idk what to set this
 			newShape->friendlyName = "Sphere";
@@ -413,9 +413,9 @@ void cGraphicsMain::switchScene(std::vector< cMesh* > newMeshVec, std::vector<cL
 		}
 		else // Just make it an indirect triangle mesh
 		{
-			newShape = new sPhsyicsProperties();
-			newShape->shapeType = sPhsyicsProperties::MESH_OF_TRIANGLES_INDIRECT;
-			newShape->setShape(new sPhsyicsProperties::sMeshOfTriangles_Indirect(meshObj->meshName));
+			newShape = new sPhysicsProperties();
+			newShape->shapeType = sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT;
+			newShape->setShape(new sPhysicsProperties::sMeshOfTriangles_Indirect(meshObj->meshName));
 			newShape->pTheAssociatedMesh = meshObj;
 			newShape->inverse_mass = 0.0f; // Idk what to set this
 			newShape->friendlyName = "IndirectMesh";

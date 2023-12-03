@@ -7,10 +7,10 @@
 
 #include <iostream>
 
-bool cPhysics::m_Sphere_Sphere_IntersectionTest(sPhsyicsProperties* pSphereA, sPhsyicsProperties* pSphereB)
+bool cPhysics::m_Sphere_Sphere_IntersectionTest(sPhysicsProperties* pSphereA, sPhysicsProperties* pSphereB)
 {
-	sPhsyicsProperties::sSphere* sphereA = (sPhsyicsProperties::sSphere*)(pSphereA->pShape);
-	sPhsyicsProperties::sSphere* sphereB = (sPhsyicsProperties::sSphere*)(pSphereB->pShape);
+	sPhysicsProperties::sSphere* sphereA = (sPhysicsProperties::sSphere*)(pSphereA->pShape);
+	sPhysicsProperties::sSphere* sphereB = (sPhysicsProperties::sSphere*)(pSphereB->pShape);
 
 	if (m_CheckExistingCollision(pSphereA, pSphereB))
 	{
@@ -105,31 +105,31 @@ bool cPhysics::m_Sphere_Sphere_IntersectionTest(sPhsyicsProperties* pSphereA, sP
 	return false;	
 }
 
-bool cPhysics::m_Sphere_Plane_IntersectionTest(sPhsyicsProperties* pSphere, sPhsyicsProperties* pPlane)
+bool cPhysics::m_Sphere_Plane_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pPlane)
 {
 	// TODO: Insert amazing code here 
 	return false;
 }
 
-bool cPhysics::m_Sphere_Triangle_IntersectionTest(sPhsyicsProperties* pSphere, sPhsyicsProperties* pTriangle)
+bool cPhysics::m_Sphere_Triangle_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriangle)
 {
 	// TODO: Insert amazing code here 
 	return false;
 }
 
-bool cPhysics::m_Sphere_AABB_IntersectionTest(sPhsyicsProperties* pSphere, sPhsyicsProperties* pAABB)
+bool cPhysics::m_Sphere_AABB_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pAABB)
 {
 	// TODO: Insert amazing code here 
 	return false;
 }
 
-bool cPhysics::m_Sphere_Capsule_IntersectionTest(sPhsyicsProperties* pSphere, sPhsyicsProperties* pCapsule)
+bool cPhysics::m_Sphere_Capsule_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pCapsule)
 {
 	// TODO: Insert amazing code here 
 	return false;
 }
 
-bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhsyicsProperties* pSphere_General, sPhsyicsProperties* pTriMesh_General)
+bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSphere_General, sPhysicsProperties* pTriMesh_General)
 {
 
 	// Do we have a mesh manager? 
@@ -145,10 +145,10 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhsyicsProperties* pSp
 	}
 
 	// Get the info about this shape, specifically
-	sPhsyicsProperties::sMeshOfTriangles_Indirect* pTriangleMesh = 
-						(sPhsyicsProperties::sMeshOfTriangles_Indirect*)(pTriMesh_General->pShape);
+	sPhysicsProperties::sMeshOfTriangles_Indirect* pTriangleMesh = 
+						(sPhysicsProperties::sMeshOfTriangles_Indirect*)(pTriMesh_General->pShape);
 
-	sPhsyicsProperties::sSphere* pSphere = (sPhsyicsProperties::sSphere*)(pSphere_General->pShape);
+	sPhysicsProperties::sSphere* pSphere = (sPhysicsProperties::sSphere*)(pSphere_General->pShape);
 
 	sModelDrawInfo theMeshDrawInfo;
 
@@ -356,9 +356,9 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhsyicsProperties* pSp
 //		theCollision.velocityAtCollision = reflectionVec;
 		
 		// TODO: We'll have a problem later: what deletes this?
-		sPhsyicsProperties* pTriangleWeHit = new sPhsyicsProperties();
+		sPhysicsProperties* pTriangleWeHit = new sPhysicsProperties();
 
-		pTriangleWeHit->setShape(new sPhsyicsProperties::sTriangle(closestTriangleVertices[0],
+		pTriangleWeHit->setShape(new sPhysicsProperties::sTriangle(closestTriangleVertices[0],
 																   closestTriangleVertices[1],
 																   closestTriangleVertices[2]));
 		theCollision.pObjectB = pTriangleWeHit;
@@ -375,7 +375,7 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhsyicsProperties* pSp
 	return false;
 }
 
-bool cPhysics::m_Sphere_TriMeshLocal_IntersectionTest(sPhsyicsProperties* pSphere, sPhsyicsProperties* pTriMesh)
+bool cPhysics::m_Sphere_TriMeshLocal_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriMesh)
 {
 	// TODO: Insert amazing code here 
 	return false;

@@ -10,9 +10,9 @@
 
 
 // This is where we are going to head...
-struct sPhsyicsProperties
+struct sPhysicsProperties
 {
-	sPhsyicsProperties();
+	sPhysicsProperties();
 
 	// How the physics item knows what type of object this is
 	enum eShape
@@ -190,9 +190,18 @@ struct sPhsyicsProperties
 		this->m_qOrientation *= qChange;
 	}
 
+	void setPosition(glm::vec3 newPosition)
+	{
+		position = newPosition;
+	}
+
 	glm::quat get_qOrientation(void)
 	{
 		return this->m_qOrientation;
+	}
+	glm::vec3 get_eOrientation(void)
+	{
+		return glm::degrees(glm::eulerAngles(m_qOrientation));
 	}
 private:
 	glm::quat m_qOrientation;

@@ -17,7 +17,7 @@ void cPhysics::setVAOManager(cVAOManager* pTheMeshManager)
 }
 
 
-void cPhysics::AddShape(sPhsyicsProperties* pNewShape)
+void cPhysics::AddShape(sPhysicsProperties* pNewShape)
 {
 	this->m_vec_pPhysicalProps.push_back(pNewShape);
 
@@ -46,9 +46,21 @@ void cPhysics::DeleteShape(int shapeID)
 	}
 }
 
-std::vector< sPhsyicsProperties* > cPhysics::getPhysicsVec(void)
+std::vector< sPhysicsProperties* > cPhysics::getPhysicsVec(void)
 {
 	return m_vec_pPhysicalProps;
+}
+
+void cPhysics::getPhysObj(int objID, sPhysicsProperties* theObj)
+{
+	for (unsigned int i = 0; i < m_vec_pPhysicalProps.size(); i++)
+	{
+		if (m_vec_pPhysicalProps[i]->getUniqueID() == objID)
+		{
+			theObj = m_vec_pPhysicalProps[i];
+			return;
+		}
+	}
 }
 
 // void cPhysics::setGraphics(void)
@@ -58,7 +70,7 @@ std::vector< sPhsyicsProperties* > cPhysics::getPhysicsVec(void)
 
 void cPhysics::setShapePos(glm::vec3 newPos, unsigned int ID)
 {
-	for (sPhsyicsProperties* physObj : m_vec_pPhysicalProps)
+	for (sPhysicsProperties* physObj : m_vec_pPhysicalProps)
 	{
 		if (physObj->getUniqueID() == ID)
 		{
@@ -71,11 +83,24 @@ void cPhysics::setShapePos(glm::vec3 newPos, unsigned int ID)
 
 void cPhysics::setShapeOri(glm::vec3 newOri, unsigned int ID) // Passed in ori is in euler
 {
-	for (sPhsyicsProperties* physObj : m_vec_pPhysicalProps)
+	for (sPhysicsProperties* physObj : m_vec_pPhysicalProps)
 	{
 		if (physObj->getUniqueID() == ID)
 		{
 			physObj->setRotationFromEuler(newOri);
+			return;
+		}
+	}
+}
+
+void cPhysics::setShapePori(glm::vec3 newPos, glm::vec3 newOri, unsigned int ID)
+{
+	for (sPhysicsProperties* physObj : m_vec_pPhysicalProps)
+	{
+		if (physObj->getUniqueID() == ID)
+		{
+			physObj->setRotationFromEuler(newOri);
+			physObj->setPosition(newPos);
 			return;
 		}
 	}
@@ -97,7 +122,7 @@ void cPhysics::deleteAllObjects(void)
 }
 
 
-bool cPhysics::m_CheckExistingCollision(sPhsyicsProperties* objB, sPhsyicsProperties* objA)
+bool cPhysics::m_CheckExistingCollision(sPhysicsProperties* objB, sPhysicsProperties* objA)
 {
 	for (unsigned int i = 0; i < m_vecCollisionsThisFrame.size(); i++)
 	{
@@ -109,9 +134,9 @@ bool cPhysics::m_CheckExistingCollision(sPhsyicsProperties* objB, sPhsyicsProper
 	return false;
 }
 
-sPhsyicsProperties* cPhysics::findShapeByUniqueID(unsigned int uniqueIDtoFind)
+sPhysicsProperties* cPhysics::findShapeByUniqueID(unsigned int uniqueIDtoFind)
 {
-	for (sPhsyicsProperties* pCurrentShape : this->m_vec_pPhysicalProps)
+	for (sPhysicsProperties* pCurrentShape : this->m_vec_pPhysicalProps)
 	{
 		if ( pCurrentShape->getUniqueID() == uniqueIDtoFind )
 		{
@@ -123,9 +148,9 @@ sPhsyicsProperties* cPhysics::findShapeByUniqueID(unsigned int uniqueIDtoFind)
 	return NULL;
 }
 
-sPhsyicsProperties* cPhysics::findShapeByFriendlyName(std::string friendlyNameToFind)
+sPhysicsProperties* cPhysics::findShapeByFriendlyName(std::string friendlyNameToFind)
 {
-	for (sPhsyicsProperties* pCurrentShape : this->m_vec_pPhysicalProps)
+	for (sPhysicsProperties* pCurrentShape : this->m_vec_pPhysicalProps)
 	{
 		if (pCurrentShape->friendlyName == friendlyNameToFind)
 		{
@@ -138,10 +163,10 @@ sPhsyicsProperties* cPhysics::findShapeByFriendlyName(std::string friendlyNameTo
 }
 
 // Vector is empty if none found
-std::vector<sPhsyicsProperties*> cPhysics::findShapesByType(sPhsyicsProperties::eShape shapeType)
+std::vector<sPhysicsProperties*> cPhysics::findShapesByType(sPhysicsProperties::eShape shapeType)
 {
-	std::vector<sPhsyicsProperties*> vecShapesFound;
-	for (sPhsyicsProperties* pCurrentShape : this->m_vec_pPhysicalProps)
+	std::vector<sPhysicsProperties*> vecShapesFound;
+	for (sPhysicsProperties* pCurrentShape : this->m_vec_pPhysicalProps)
 	{
 		if (pCurrentShape->shapeType == shapeType)
 		{
@@ -152,9 +177,9 @@ std::vector<sPhsyicsProperties*> cPhysics::findShapesByType(sPhsyicsProperties::
 }
 
 // Returns false if none found
-bool cPhysics::findShapesByType(sPhsyicsProperties::eShape shapeType, std::vector<sPhsyicsProperties*>& vecShapes)
+bool cPhysics::findShapesByType(sPhysicsProperties::eShape shapeType, std::vector<sPhysicsProperties*>& vecShapes)
 {
-	for (sPhsyicsProperties* pCurrentShape : this->m_vec_pPhysicalProps)
+	for (sPhysicsProperties* pCurrentShape : this->m_vec_pPhysicalProps)
 	{
 		if (pCurrentShape->shapeType == shapeType)
 		{

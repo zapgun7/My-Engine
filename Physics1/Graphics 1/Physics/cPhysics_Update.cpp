@@ -18,7 +18,7 @@ void cPhysics::Update(double deltaTime)
 //	}
 	if (!m_IsRunning) // If physics paused, update positions/orientations only and return; no collision detection
 	{
-		for (sPhsyicsProperties* pObject : this->m_vec_pPhysicalProps)
+		for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)
 		{
 			if (pObject->pTheAssociatedMesh)
 			{
@@ -34,7 +34,7 @@ void cPhysics::Update(double deltaTime)
 	}
 
 	// Perform the iteration loop
-	for (sPhsyicsProperties* pObject : this->m_vec_pPhysicalProps)
+	for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)
 	{
 		// Infinite mass? 
 		if (pObject->inverse_mass >= 0.0f)
@@ -75,10 +75,10 @@ void cPhysics::Update(double deltaTime)
 
 
 	// See which object is colliding with which object...
-	for (sPhsyicsProperties* pObjectA : this->m_vec_pPhysicalProps )
+	for (sPhysicsProperties* pObjectA : this->m_vec_pPhysicalProps )
 	{
 		
-		for (sPhsyicsProperties* pObjectB : this->m_vec_pPhysicalProps )
+		for (sPhysicsProperties* pObjectB : this->m_vec_pPhysicalProps )
 		{
 			// Are "A" and "B" the same object
 			if (pObjectA == pObjectB)
@@ -103,10 +103,10 @@ void cPhysics::Update(double deltaTime)
 			// What's the collision? 
 			switch (pObjectA->shapeType)
 			{
-			case sPhsyicsProperties::SPHERE:
+			case sPhysicsProperties::SPHERE:
 				switch (pObjectB->shapeType)
 				{
-				case sPhsyicsProperties::SPHERE:
+				case sPhysicsProperties::SPHERE:
 					// Sphere - Sphere
 					if (this->m_Sphere_Sphere_IntersectionTest(pObjectA, pObjectB))
 					{
@@ -114,19 +114,19 @@ void cPhysics::Update(double deltaTime)
 						// Explode asteroid here
 					}
 					break;
-				case sPhsyicsProperties::PLANE:
+				case sPhysicsProperties::PLANE:
 					// Shpere - Plane
 					break;
-				case sPhsyicsProperties::TRIANGLE:
+				case sPhysicsProperties::TRIANGLE:
 					// Sphere - Triangle
 					break;
-				case sPhsyicsProperties::AABB:
+				case sPhysicsProperties::AABB:
 					// Sphere - AABB
 					break;
-				case sPhsyicsProperties::CAPSULE:
+				case sPhysicsProperties::CAPSULE:
 					// Sphere - Capsule
 					break;
-				case sPhsyicsProperties::MESH_OF_TRIANGLES_INDIRECT:
+				case sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT:
 					// Sphere - Mesh triangle (indirect)
 					if ( this->m_Sphere_TriMeshIndirect_IntersectionTest( pObjectA, pObjectB))
 					{
@@ -134,7 +134,7 @@ void cPhysics::Update(double deltaTime)
 						// Explode asteroid here
 					}
 					break;
-				case sPhsyicsProperties::MESH_OF_TRIANGLES_LOCAL_VERTICES:
+				case sPhysicsProperties::MESH_OF_TRIANGLES_LOCAL_VERTICES:
 					// Shpere - Mesh (local vertices)
 					break;
 				}//switch (pObjectB->shapeType)
@@ -147,28 +147,28 @@ void cPhysics::Update(double deltaTime)
 // ??			case sPhsyicsProperties::AABB:
 // ??			break;
 
-			case sPhsyicsProperties::CAPSULE:
+			case sPhysicsProperties::CAPSULE:
 				switch (pObjectB->shapeType)
 				{
-				case sPhsyicsProperties::SPHERE:
+				case sPhysicsProperties::SPHERE:
 					// Capsule - Sphere
 					break;
-				case sPhsyicsProperties::PLANE:
+				case sPhysicsProperties::PLANE:
 					// Capsule - Plane
 					break;
-				case sPhsyicsProperties::TRIANGLE:
+				case sPhysicsProperties::TRIANGLE:
 					// Capsule - Triangle
 					break;
-				case sPhsyicsProperties::AABB:
+				case sPhysicsProperties::AABB:
 					// Capsule - AABB
 					break;
-				case sPhsyicsProperties::CAPSULE:
+				case sPhysicsProperties::CAPSULE:
 					// Capsule - Capsule
 					break;
-				case sPhsyicsProperties::MESH_OF_TRIANGLES_INDIRECT:
+				case sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT:
 					// Capsule - Mesh triangle (indirect)
 					break;
-				case sPhsyicsProperties::MESH_OF_TRIANGLES_LOCAL_VERTICES:
+				case sPhysicsProperties::MESH_OF_TRIANGLES_LOCAL_VERTICES:
 					// Capsule - Mesh (local vertices)
 					break;
 				}//switch (pObjectB->shapeType)
@@ -224,7 +224,7 @@ void cPhysics::Update(double deltaTime)
 
 
 	// Upadate the draw locations (and orientations) for all assocuated meshes
-	for (sPhsyicsProperties* pObject : this->m_vec_pPhysicalProps)
+	for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)
 	{
 		if (pObject->pTheAssociatedMesh)
 		{

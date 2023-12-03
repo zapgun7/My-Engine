@@ -85,7 +85,7 @@ std::vector<glm::vec3> cPlayer::Update(double deltaTime, GLFWwindow* theWindow, 
 	return camInfo;
 }
 
-void cPlayer::setAssociatedPhysObj(sPhsyicsProperties* theObj)
+void cPlayer::setAssociatedPhysObj(sPhysicsProperties* theObj)
 {
 	m_PlayerObject = theObj;
 	return;

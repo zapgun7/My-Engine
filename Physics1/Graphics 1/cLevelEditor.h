@@ -11,7 +11,7 @@
 #include <vector>
 #include <string>
 
-
+//struct sPhysicsProperties;
 
 class cLevelEditor
 {
@@ -24,7 +24,7 @@ public:
 
 	// Editor Windows
 	void RootWindow(std::vector<cMesh*> ActiveMeshVec);
-	void MeshEditor(std::vector<cMesh*> ActiveMeshVec);
+	void MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPhysicsProperties*> PhysVec);
 	void LightEditor(cLightManager* TheLights);
 	void SceneManager(std::vector<std::string> AvailableSaves);
 

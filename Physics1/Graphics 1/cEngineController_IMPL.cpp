@@ -63,9 +63,17 @@ void cEngineController_IMPL::getAvailableModels(std::vector<std::string>* ModelV
 	return;
 }
 
-void cEngineController_IMPL::getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights)
+void cEngineController_IMPL::getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights, std::vector<sPhysicsProperties*>* PhysVec)
 {
 	m_pTheGraphics->getActiveMeshNLights(MeshVec, TheLights);
+	std::vector<sPhysicsProperties*> tempVec;
+	tempVec = m_pThePhysics->getPhysicsVec();
+
+	for (unsigned int i = 0; i < tempVec.size(); i++)
+	{
+		PhysVec->push_back(tempVec[i]);
+	}
+	
 	return;
 }
 
@@ -86,6 +94,12 @@ void cEngineController_IMPL::setMeshData(int meshID, std::string newFriendlyName
 	return;
 }
 
+void cEngineController_IMPL::setPhysData(int objID, glm::vec3 newPos, glm::vec3 newOri)
+{
+	m_pThePhysics->setShapePori(newPos, newOri, objID);
+	return;
+}
+
 void cEngineController_IMPL::addNewObject(std::string meshName, char* friendlyName)
 {
 	// Create cmesh and add to cGraphicsMain
@@ -100,7 +114,7 @@ void cEngineController_IMPL::addNewObject(std::string meshName, char* friendlyNa
 
 
 	// Now physics
-	sPhsyicsProperties* newObject = new sPhsyicsProperties();
+	sPhysicsProperties* newObject = new sPhysicsProperties();
 	newObject->pTheAssociatedMesh = newMesh;
 	newObject->friendlyName = friendlyName;
 	m_pThePhysics->AddShape(newObject);

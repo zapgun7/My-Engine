@@ -4,6 +4,7 @@
 
 
 
+
 cEngineController* cEngineController::m_pEngineFace = nullptr;
 
 
@@ -54,9 +55,9 @@ void cEngineController::getAvailableModels(std::vector<std::string>* ModelVec, s
 	return;
 }
 
-void cEngineController::getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights)
+void cEngineController::getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights, std::vector<sPhysicsProperties*>* PhysVec)
 {
-	m_pTheEngineController->getActiveMeshNLights(MeshVec, TheLights);
+	m_pTheEngineController->getActiveMeshNLights(MeshVec, TheLights, PhysVec);
 	return;
 }
 
@@ -78,6 +79,11 @@ void cEngineController::setMeshData(int meshID, std::string newFriendlyName, int
 {
 	m_pTheEngineController->setMeshData(meshID, newFriendlyName, newTextureIdx, newRatios, isVisible, isWireframe, doNotLight, useDebugColor, debugColor);
 	return;
+}
+
+void cEngineController::setPhysData(int objID, glm::vec3 newPos, glm::vec3 newOri)
+{
+	m_pTheEngineController->setPhysData(objID, newPos, newOri);
 }
 
 void cEngineController::addNewObject(std::string meshName, char* friendlyName)

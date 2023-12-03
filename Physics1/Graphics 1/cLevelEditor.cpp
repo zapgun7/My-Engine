@@ -2,6 +2,7 @@
 
 #include "Other Graphics Stuff/cMesh.h" // For the mesh vec
 #include "Other Graphics Stuff/cLightManager.h" // For the lights (pointer, but for now will just get it every update)
+#include "Physics/sPhysicsProperties.h"
 //#include "cEngineController.h" // Callbacks to edit object parameters
 
 #include <iostream>
@@ -30,7 +31,10 @@ void cLevelEditor::Update()
 	// Data Retrieval
 	std::vector<cMesh*> MeshVec;
 	cLightManager TheLights;
-	m_pEngineController->getActiveMeshNLights(&MeshVec, &TheLights);
+	std::vector<sPhysicsProperties*> PhysVec;
+	
+	
+	m_pEngineController->getActiveMeshNLights(&MeshVec, &TheLights, &PhysVec);
 
 	std::vector<std::string> AvailableSaves;
 	m_pEngineController->getAvailableSaves(&AvailableSaves);
@@ -45,7 +49,7 @@ void cLevelEditor::Update()
 	RootWindow(MeshVec);
 
 	if (m_ShowMeshEditor)
-		MeshEditor(MeshVec);
+		MeshEditor(MeshVec, PhysVec);
 	if (m_ShowLightEditor)
 		LightEditor(&TheLights);
 	if (m_ShowSceneManager)
@@ -163,11 +167,11 @@ void cLevelEditor::RootWindow(std::vector<cMesh*> ActiveMeshVec)
 }
 
 // Window for changing graphical properties of objects
-void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec)
+void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPhysicsProperties*> PhysVec)
 {
 	ImGui::Begin("Mesh Editor");
 	 
-	 		if (ImGui::BeginListBox("Available Objects")) // List of active meshes
+	 		if (ImGui::BeginListBox("Available Objects")) // List of active meshes         // TODO should list physics objects as options
 	 		{
 	 			for (int n = 0; n < ActiveMeshVec.size(); n++)
 	 			{
@@ -226,7 +230,7 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec)
 	 		}
 	 
 	 
-			int meshID = -1;
+			int objID = -1;
 			std::string friendlyName = "";
 			std::string* textureNames = nullptr;
 			float* textureRatios = nullptr; 
@@ -247,26 +251,36 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec)
 	 
 	 		if (isExistingMesh)
 	 		{
-	 			// TODO   this is fine for now, but we should be getting the values from the physics object instead. They should always match at this stage but who the hell knows?
-	 			xPos = ActiveMeshVec[m_mesh_obj_idx]->drawPosition.x;
-	 			yPos = ActiveMeshVec[m_mesh_obj_idx]->drawPosition.y;
-	 			zPos = ActiveMeshVec[m_mesh_obj_idx]->drawPosition.z;
-	 			glm::vec3 meshEulerOri = ActiveMeshVec[m_mesh_obj_idx]->getEulerOrientation();
-	 			xOri = meshEulerOri.x;
-	 			yOri = meshEulerOri.y;
-	 			zOri = meshEulerOri.z;
-	 			scale = ActiveMeshVec[m_mesh_obj_idx]->scale.x;
-	 			customColor = glm::vec3(ActiveMeshVec[m_mesh_obj_idx]->wholeObjectDebugColourRGBA);
-	 			useCustomColor = ActiveMeshVec[m_mesh_obj_idx]->bUseDebugColours;
+				cMesh* selectedMesh = ActiveMeshVec[m_mesh_obj_idx];
+				sPhysicsProperties* selectedObj = PhysVec[m_mesh_obj_idx];
 
-				meshID = ActiveMeshVec[m_mesh_obj_idx]->uniqueID;
-				friendlyName = ActiveMeshVec[m_mesh_obj_idx]->friendlyName;
-				textureNames = ActiveMeshVec[m_mesh_obj_idx]->textureName;
-				textureRatios = ActiveMeshVec[m_mesh_obj_idx]->textureRatios;
-				isVisible = ActiveMeshVec[m_mesh_obj_idx]->bIsVisible;
-				isWireframe = ActiveMeshVec[m_mesh_obj_idx]->bIsWireframe;
 
-				textureIdx = ActiveMeshVec[m_mesh_obj_idx]->textureIdx;
+	 			// PHYSICS DATA
+				glm::vec3 objPosition = selectedObj->position;
+	 			xPos = objPosition.x;
+	 			yPos = objPosition.y;
+	 			zPos = objPosition.z;
+	 			glm::vec3 objEulerOri = selectedObj->get_eOrientation();
+	 			xOri = objEulerOri.x;
+	 			yOri = objEulerOri.y;
+	 			zOri = objEulerOri.z;
+
+				objID = selectedObj->getUniqueID();
+	 			
+
+				// GRAPHICS DATA
+				scale = selectedMesh->scale.x;
+	 			customColor = glm::vec3(selectedMesh->wholeObjectDebugColourRGBA);
+	 			useCustomColor = selectedMesh->bUseDebugColours;
+
+				
+				friendlyName = selectedMesh->friendlyName;
+				textureNames = selectedMesh->textureName;
+				textureRatios = selectedMesh->textureRatios;
+				isVisible = selectedMesh->bIsVisible;
+				isWireframe = selectedMesh->bIsWireframe;
+
+				textureIdx = selectedMesh->textureIdx;
 	 		}
 			// Position
 	 		ImGui::SeparatorText("Position");
@@ -371,7 +385,8 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec)
 	 			glm::vec3 newOri = glm::vec3(xOri, yOri, zOri);
 				// This will call 2 functions: graphics and physics
 
-				m_pEngineController->setMeshData(meshID, friendlyName, textureIdx, textureRatios, isVisible, isWireframe, doNotLight, useCustomColor, glm::vec4(customColor, 1));
+				m_pEngineController->setMeshData(objID, friendlyName, textureIdx, textureRatios, isVisible, isWireframe, doNotLight, useCustomColor, glm::vec4(customColor, 1));
+				m_pEngineController->setPhysData(objID, newPos, newOri);
 	 			//updateSelectedMesh(mesh_obj_idx, "A NEW FRIENDLY NAME", newPos, newOri, customColor, scale, doNotLight, useCustomColor);
 	 		}
 	 		ImGui::End();

@@ -8,11 +8,13 @@
 // Will instantiate all required parts: audio, graphics, physics, (NEW) imgui class
 // This will be the face of the real class (*_IMPL)
 // 
+//#include "Physics/sPhysicsProperties.h"
 
 //#include "cEngineController_IMPL.h"
 class cEngineController_IMPL; // Don't want to include everything the impl will
 class cMesh;
 class cLightManager;
+struct sPhysicsProperties;
 
 class cEngineController
 {
@@ -29,12 +31,12 @@ public:
 
 	/// Data Retrieval ///
 	void getAvailableModels(std::vector<std::string>* ModelVec, std::vector<std::string>* TexVec); // Sets the provided variable with a vector of available models
-	void getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights); // Sets provided vector with pointers to all active meshes
+	void getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights, std::vector<sPhysicsProperties*>* ThePhys); // Sets provided vector with pointers to all active meshes
 	void getAvailableSaves(std::vector<std::string>* SaveVec);
 
 	/// Data Setting ///
 	void setMeshData(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor);
-
+	void setPhysData(int objID, glm::vec3 newPos, glm::vec3 newOri);
 
 	/// Data Creation ///
 	void addNewObject(std::string meshName, char* friendlyName);

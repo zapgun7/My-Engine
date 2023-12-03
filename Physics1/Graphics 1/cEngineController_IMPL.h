@@ -3,7 +3,7 @@
 
 #include "Other Graphics Stuff/cGraphicsMain.h"
 #include "Physics/cPhysics.h"
-#include "Physics/sPhsyicsProperties.h"
+#include "Physics/sPhysicsProperties.h"
 #include "cSoundManager.h"
 #include "cHiResTimer.h"
 #include "cLevelEditor.h"
@@ -23,12 +23,12 @@ public:
 
 	/// Data Retrieval ///
 	void getAvailableModels(std::vector<std::string>* ModelVec, std::vector<std::string>* TexVec);
-	void getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights);
+	void getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights, std::vector<sPhysicsProperties*>* PhysVec);
 	void getAvailableSaves(std::vector<std::string>* SaveVec);
 
 	/// Data Setting ///
 	void setMeshData(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor);
-
+	void setPhysData(int objID, glm::vec3 newPos, glm::vec3 newOri);
 
 	// Data Creation
 	void addNewObject(std::string meshName, char* friendlyName);

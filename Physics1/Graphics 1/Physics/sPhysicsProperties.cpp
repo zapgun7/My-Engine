@@ -1,6 +1,6 @@
-#include "sPhsyicsProperties.h"
+#include "sPhysicsProperties.h"
 
-sPhsyicsProperties::sPhsyicsProperties()
+sPhysicsProperties::sPhysicsProperties()
 {
 	this->velocity = glm::vec3(0.0f);
 	this->acceleration = glm::vec3(0.0f);
@@ -12,12 +12,12 @@ sPhsyicsProperties::sPhsyicsProperties()
 	//
 	this->m_qOrientation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f)); // Set this to default, fricks up render otherwise
 
-	this->m_UniqueID = sPhsyicsProperties::m_nextUniqueID;
-	sPhsyicsProperties::m_nextUniqueID++;
+	this->m_UniqueID = sPhysicsProperties::m_nextUniqueID;
+	sPhysicsProperties::m_nextUniqueID++;
 
 }
 
-std::string sPhsyicsProperties::getShapeTypeAsString(void)
+std::string sPhysicsProperties::getShapeTypeAsString(void)
 {
 	switch (this->shapeType)
 	{
@@ -52,46 +52,46 @@ std::string sPhsyicsProperties::getShapeTypeAsString(void)
 }
 
 
-unsigned int sPhsyicsProperties::getUniqueID(void)
+unsigned int sPhysicsProperties::getUniqueID(void)
 {
 	return this->m_UniqueID;
 }
 
 //static 
-unsigned int sPhsyicsProperties::m_nextUniqueID = sPhsyicsProperties::FIRST_UNIQUE_ID;
+unsigned int sPhysicsProperties::m_nextUniqueID = sPhysicsProperties::FIRST_UNIQUE_ID;
 
 
-void sPhsyicsProperties::setShape(sSphere* pSphereProps)
+void sPhysicsProperties::setShape(sSphere* pSphereProps)
 {
 	this->pShape = (void*)pSphereProps;
 	return;
 }
 
-void sPhsyicsProperties::setShape(sPlane* pPlaneProps)
+void sPhysicsProperties::setShape(sPlane* pPlaneProps)
 {
 	this->pShape = (void*)pPlaneProps;
 	return;
 }
 
-void sPhsyicsProperties::setShape(sTriangle* pTriangleProps)
+void sPhysicsProperties::setShape(sTriangle* pTriangleProps)
 {
 	this->pShape = (void*)pTriangleProps;
 	return;
 }
 
-void sPhsyicsProperties::setShape(sCapsule* pCapsuleProps)
+void sPhysicsProperties::setShape(sCapsule* pCapsuleProps)
 {
 	this->pShape = (void*)pCapsuleProps;
 	return;
 }
 
-void sPhsyicsProperties::setShape(sMeshOfTriangles_Indirect* pTriangleMeshProps)
+void sPhysicsProperties::setShape(sMeshOfTriangles_Indirect* pTriangleMeshProps)
 {
 	this->pShape = (void*)pTriangleMeshProps;
 	return;
 }
 
-void sPhsyicsProperties::setShape(sMeshOfTriangles_LocalVertices* pTriangleMeshProps)
+void sPhysicsProperties::setShape(sMeshOfTriangles_LocalVertices* pTriangleMeshProps)
 {
 	this->pShape = (void*)pTriangleMeshProps;
 	return;
