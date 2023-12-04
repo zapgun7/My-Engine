@@ -29,6 +29,9 @@ uniform bool bUseVertexColours;		// If true, then DOESN'T use texture colours
 // 	but for clarity, we'll pass it separately...
 uniform float transparencyAlpha;
 
+uniform bool bUseReflect;
+uniform bool bUseRefract;
+
 uniform sampler2D texture_00;			// 2D meaning x,y or s,t or u,v
 uniform sampler2D texture_01;
 uniform sampler2D texture_02;
@@ -135,18 +138,38 @@ void main()
 		return;
 	}
 	
+	if (bUseReflect)
+	{
+		vec3 eyeVector = normalize(eyeLocation.xyz - vertexWorldPos.xyz);
+		vec3 reflectAngle = reflect( eyeVector, vertexWorldNormal.xyz);
+		vec4 skyBoxSampleColour = texture( skyBoxTexture, reflectAngle.xyz ).rgba;
+		outputColour.rgb = skyBoxSampleColour.rgb;
+		outputColour.a = 1.0f;
+		return;
+	}
+	else if (bUseRefract)
+	{
+		vec3 eyeVector = normalize(eyeLocation.xyz - vertexWorldPos.xyz);
+		vec3 reflectAngle = refract( eyeVector, vertexWorldNormal.xyz, 1.10);  //1.0 gives good results
+		vec4 skyBoxSampleColour = texture( skyBoxTexture, reflectAngle.xyz ).rgba;
+		outputColour.rgb = skyBoxSampleColour.rgb;
+		outputColour.a = 1.0f;
+		return;
+	}
+	
+	
 	// Reflect
 	// Reflects based on the eye position
-	// genType reflect( genType IncidentAngle, 	genType Nnormal);
-//	vec3 eyeVector = normalize(eyeLocation.xyz - vertexWorldPos.xyz);
-//	vec3 reflectAngle = reflect( eyeVector, vertexWorldNormal.xyz);
-//	vec3 reflectAngle = refract( eyeVector, vertexWorldNormal.xyz, 	1.333);
-//	
-//	vec4 skyBoxSampleColour = texture( skyBoxTexture, reflectAngle.xyz ).rgba;
+	 //genType reflect( genType IncidentAngle, genType Nnormal);
+	//vec3 eyeVector = normalize(eyeLocation.xyz - vertexWorldPos.xyz);
+	//vec3 reflectAngle = reflect( eyeVector, vertexWorldNormal.xyz);
+	//vec3 reflectAngle = refract( eyeVector, vertexWorldNormal.xyz, 	1.0);
 	
-//	outputColour.rgb = skyBoxSampleColour.rgb;
-//	outputColour.a = 1.0f;
-//	return;
+	//vec4 skyBoxSampleColour = texture( skyBoxTexture, reflectAngle.xyz ).rgba;
+	
+	//outputColour.rgb = skyBoxSampleColour.rgb;
+	//outputColour.a = 1.0f;
+	//return;
 	
 
 	vec4 textureColour = 
@@ -183,19 +206,19 @@ void main()
 	// RGB is the specular highglight colour (usually white or the colour of the light)
 	// 4th value is the specular POWER (STARTS at 1, and goes to 1000000s)
 	
-	vec4 bumpMap = texture( texture_01, textureCoords.st ).rgba; // Should only have to add this to vertexWorldNormal in a way
+	//vec3 bumpMap = normalize(texture( texture_01, textureCoords.st ).rgb * 2.0f - vec3(1.0f)); // Should only have to add this to vertexWorldNormal in a way
 	//bumpMap -= (bumpMap/2);
-	bumpMap.xyz -= vec3(0.5f);
-	bumpMap.xyz = normalize(bumpMap.xyz);
-	bumpMap *= textureMixRatio_0_3.y;
-	bumpMap.xyz += vertexWorldNormal.xyz;
-	bumpMap.xyz = normalize(bumpMap.xyz);
 	
-	vec4 vertexColourLit = calculateLightContrib( vertexRGBA.rgb, bumpMap.xyz, 
-	                                              vertexWorldPos.xyz, vertexSpecular );
+	//bumpMap.xyz = normalize(bumpMap.xyz);
+	//bumpMap *= textureMixRatio_0_3.y;
+	//bumpMap.xyz += vertexWorldNormal.xyz;
+	//bumpMap.xyz = normalize(bumpMap.xyz);
 	
-	//vec4 vertexColourLit = calculateLightContrib( vertexRGBA.rgb, vertexWorldNormal.xyz, 
+	//vec4 vertexColourLit = calculateLightContrib( vertexRGBA.rgb, bumpMap, 
 	//                                              vertexWorldPos.xyz, vertexSpecular );
+	
+	vec4 vertexColourLit = calculateLightContrib( vertexRGBA.rgb, vertexWorldNormal.xyz, 
+	                                              vertexWorldPos.xyz, vertexSpecular );
 	// *************************************
 			
 	outputColour.rgb = vertexColourLit.rgb;

@@ -71,6 +71,9 @@ public:
 	bool bIsWireframe;
 	bool bDoNotLight;
 
+	bool bUseReflect;
+	bool bUseRefract;
+
 	//void Update(double deltaTime);
 
 };

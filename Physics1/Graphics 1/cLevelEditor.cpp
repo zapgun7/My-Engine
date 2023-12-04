@@ -228,7 +228,45 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 				toggalAllLight = true;
 	 			}
 	 		}
-	 
+
+			if (isExistingMesh)
+			{
+				// REFLECT/REFRACT BUTTONS
+				ImGui::SameLine();
+
+				if (ActiveMeshVec[m_mesh_obj_idx]->bUseReflect)
+				{
+					if (ImGui::Button("Reflect: On"))
+					{
+						ActiveMeshVec[m_mesh_obj_idx]->bUseReflect = false;
+					}
+				}
+				else
+				{
+					if (ImGui::Button("Reflect: Off"))
+					{
+						ActiveMeshVec[m_mesh_obj_idx]->bUseReflect = true;
+					}
+				}
+
+				ImGui::SameLine();
+				if (ActiveMeshVec[m_mesh_obj_idx]->bUseRefract)
+				{
+					if (ImGui::Button("Refract: On"))
+					{
+						ActiveMeshVec[m_mesh_obj_idx]->bUseRefract = false;
+					}
+				}
+				else
+				{
+					if (ImGui::Button("Refract: Off"))
+					{
+						ActiveMeshVec[m_mesh_obj_idx]->bUseRefract = true;
+					}
+				}
+			}
+
+
 	 
 			int objID = -1;
 			std::string friendlyName = "";

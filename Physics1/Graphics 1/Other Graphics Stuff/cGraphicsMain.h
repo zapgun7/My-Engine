@@ -68,7 +68,7 @@ private:
 	void deleteMesh(int meshIDX);
 
 	void flyCameraInput(int width, int height);
-	float m_FlyCamSpeed = 0.2f;
+	float m_FlyCamSpeed = 1.0f;
 
 
 	void SetUpTextures(cMesh* pCurrentMesh, GLuint shaderProgramID);

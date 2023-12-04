@@ -287,7 +287,7 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 	glm::mat4 matProjection = glm::perspective(0.7f,
 		ratio,
 		0.01f,
-		1000.0f); // n/f plane
+		5000.0f); // n/f plane
 
 
 
@@ -331,6 +331,45 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 // 	double deltaTime = currentTime - m_lastTime;
 // 	//        std::cout << deltaTime << std::endl;
 // 	m_lastTime = currentTime;
+
+
+	// Quickly Draw hardcoded skybox
+	{
+		// HACK: I'm making this here, but hey...
+		cMesh theSkyBox;
+		theSkyBox.meshName = "Sphere_1_unit_Radius.ply";
+		theSkyBox.setUniformDrawScale(10.0f);
+
+		theSkyBox.setUniformDrawScale(4'000.0f);
+		theSkyBox.setDrawPosition(m_cameraEye);
+		//            theSkyBox.bIsWireframe = true;
+
+					// Depth test
+		//            glDisable(GL_DEPTH_TEST);       // Writes no matter what
+					// Write to depth buffer (depth mask)
+		//            glDepthMask(GL_FALSE);          // Won't write to the depth buffer
+
+					// uniform bool bIsSkyBox;
+		GLint bIsSkyBox_UL = glGetUniformLocation(m_shaderProgramID, "bIsSkyBox");
+		glUniform1f(bIsSkyBox_UL, (GLfloat)GL_TRUE);
+
+		// The normals for this sphere are facing "out" but we are inside the sphere
+		glCullFace(GL_FRONT);
+
+		DrawObject(&theSkyBox, glm::mat4(1.0f), m_shaderProgramID);
+
+		glUniform1f(bIsSkyBox_UL, (GLfloat)GL_FALSE);
+
+		// Put the culling back to "normal" (back facing are not drawn)
+		glCullFace(GL_BACK);
+	}
+
+
+
+	/// End of skybox
+
+
+
 
 	glfwPollEvents();
 
@@ -637,6 +676,31 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 		glUniform1f(bUseDebugColour_UL, (GLfloat)GL_FALSE);
 	}
 
+	/// REFLECTION & REFRACTION
+
+	GLint bUseReflect_UL = glGetUniformLocation(shaderProgramID, "bUseReflect");
+	if (pCurrentMesh->bUseReflect)
+	{
+		glUniform1f(bUseReflect_UL, (GLfloat)GL_TRUE);
+	}
+	else
+	{
+		glUniform1f(bUseReflect_UL, (GLfloat)GL_FALSE);
+	}
+
+	GLint bUseRefract_UL = glGetUniformLocation(shaderProgramID, "bUseRefract");
+	if (pCurrentMesh->bUseRefract)
+	{
+		glUniform1f(bUseRefract_UL, (GLfloat)GL_TRUE);
+	}
+	else
+	{
+		glUniform1f(bUseRefract_UL, (GLfloat)GL_FALSE);
+	}
+
+
+
+
 	//////////////////// TEXTURE STUFF /////////////////////////
 
 	GLint bUseVertexColours_UL = glGetUniformLocation(shaderProgramID, "bUseVertexColours");
@@ -718,6 +782,20 @@ bool cGraphicsMain::LoadTextures(void)
 	}
 
 	texturesToLoad.close();
+
+	// Load cubemap
+	m_pTextureManager->SetBasePath("assets/textures/CubeMaps");
+
+	std::string errors;
+	m_pTextureManager->CreateCubeTextureFromBMPFiles("SunnyDay",
+													 "TropicalSunnyDayLeft2048.bmp",
+													 "TropicalSunnyDayRight2048.bmp",
+													 "TropicalSunnyDayUp2048.bmp",
+													 "TropicalSunnyDayDown2048.bmp",
+													 "TropicalSunnyDayFront2048.bmp",
+													 "TropicalSunnyDayBack2048.bmp",
+													 true,
+													 errors);
 
 
 	return true;
