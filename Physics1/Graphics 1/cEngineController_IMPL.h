@@ -31,8 +31,11 @@ public:
 	void setPhysData(int objID, glm::vec3 newPos, glm::vec3 newOri);
 	void setLightData(int lightIdx, std::string friendlyName, glm::vec4 newPos, glm::vec4 newDiff, glm::vec4 newSpec, glm::vec4 newAtten, glm::vec4 newDir, glm::vec4 newParam1, glm::vec4 newParam2);
 
-	// Data Creation
+	// Data Creation ///
 	void addNewObject(std::string meshName, char* friendlyName);
+
+	/// Data Deletion ///
+	void deleteObject(int ID);
 
 private:
 	// All objects to represent various game components

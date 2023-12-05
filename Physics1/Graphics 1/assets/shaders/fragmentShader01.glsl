@@ -144,16 +144,16 @@ void main()
 		vec3 reflectAngle = reflect( eyeVector, vertexWorldNormal.xyz);
 		vec4 skyBoxSampleColour = texture( skyBoxTexture, reflectAngle.xyz ).rgba;
 		outputColour.rgb = skyBoxSampleColour.rgb;
-		outputColour.a = 1.0f;
+		outputColour.a = transparencyAlpha;
 		return;
 	}
 	else if (bUseRefract)
 	{
 		vec3 eyeVector = normalize(eyeLocation.xyz - vertexWorldPos.xyz);
-		vec3 reflectAngle = refract( eyeVector, vertexWorldNormal.xyz, 1.10);  //1.0 gives good results
+		vec3 reflectAngle = refract( eyeVector, vertexWorldNormal.xyz, 1.0);  //1.0 gives good results
 		vec4 skyBoxSampleColour = texture( skyBoxTexture, reflectAngle.xyz ).rgba;
 		outputColour.rgb = skyBoxSampleColour.rgb;
-		outputColour.a = 1.0f;
+		outputColour.a = transparencyAlpha;
 		return;
 	}
 	
@@ -196,6 +196,7 @@ void main()
 	if ( bDoNotLight )
 	{
 		outputColour = vertexRGBA;
+		outputColour.a = transparencyAlpha;
 		return;
 	}
 	
@@ -226,7 +227,8 @@ void main()
 	// Real gamma correction is a curve, but we'll Rock-n-Roll it here
 	outputColour.rgb *= 1.35f;
 	
-	outputColour.a = 1.0f;
+	//outputColour.a = 1.0f;
+	outputColour.a = transparencyAlpha;
 }
 
 

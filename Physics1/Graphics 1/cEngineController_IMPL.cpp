@@ -133,3 +133,10 @@ void cEngineController_IMPL::addNewObject(std::string meshName, char* friendlyNa
 	return;
 }
 
+void cEngineController_IMPL::deleteObject(int ID)
+{
+	m_pThePhysics->DeleteShape(ID);
+	m_pTheGraphics->removeFromDrawMesh(ID);
+	return;
+}
+

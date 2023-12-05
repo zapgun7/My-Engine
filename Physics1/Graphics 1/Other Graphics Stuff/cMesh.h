@@ -64,6 +64,8 @@ public:
 	bool bUseDebugColours;
 	glm::vec4 wholeObjectDebugColourRGBA;
 
+	float transparencyAlpha;
+
 	// Physics properties
 	// Physics update this:
 	//sPhsyicsProperties* pPhysProps;

@@ -42,6 +42,9 @@ public:
 	/// Data Creation ///
 	void addNewObject(std::string meshName, char* friendlyName);
 
+	/// Data Deletion ///
+	void deleteObject(int ID);
+
 private:
 	cEngineController();
 	static cEngineController* m_pEngineFace;

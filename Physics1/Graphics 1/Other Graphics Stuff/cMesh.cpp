@@ -23,6 +23,8 @@ cMesh::cMesh()
 	this->bUseDebugColours = false;
 	this->wholeObjectDebugColourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
+	this->transparencyAlpha = 1.0f;
+
 	this->bUseReflect = false;
 	this->bUseRefract = false;
 

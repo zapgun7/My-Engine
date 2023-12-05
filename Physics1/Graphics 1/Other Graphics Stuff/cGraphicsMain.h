@@ -65,8 +65,6 @@ private:
 	
 	void duplicateMesh(int meshIdx, char* newName); // Duplicates the currently selected mesh
 
-	void deleteMesh(int meshIDX);
-
 	void flyCameraInput(int width, int height);
 	float m_FlyCamSpeed = 1.0f;
 
@@ -96,6 +94,8 @@ private:
 	cBasicTextureManager* m_pTextureManager = NULL;
 
 	std::vector< cMesh* > m_vec_pMeshesToDraw;
+	std::vector < cMesh* > m_vec_pTransMeshesToDraw;
+	std::vector < cMesh* > m_vec_pAllMeshes; // All meshes, keeps them in order when passing to level editor
 
 	cLightManager* m_pTheLights;
 

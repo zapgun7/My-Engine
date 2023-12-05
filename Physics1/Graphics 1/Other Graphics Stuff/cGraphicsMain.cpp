@@ -184,48 +184,8 @@ bool cGraphicsMain::Initialize()
 
 bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not really a loop, just gets called every tick
 {
-
-	// Start the Dear ImGui frame
-// 	ImGui_ImplOpenGL3_NewFrame();
-// 	ImGui_ImplGlfw_NewFrame();
-// 	ImGui::NewFrame();
-	//static double lastTime = glfwGetTime();
-	//double deltaTime = glfwGetTime() - lastTime;
-	//lastTime = glfwGetTime();
-
-
-	static bool enablePhysics = false; // Toggle physics update calls
-	//static bool isPlayer = false; // Toggle between player control and freecam
-
-
-	float const velRandInterval = 0.1f;
-	static double timeTillVelRand = velRandInterval;
-
-	timeTillVelRand -= deltaTime;
-
-
-	// Graphics update will find a better spot for it later TODO
-	//::g_pPhysics->Update(deltaTime); //UNPHYS
-	//::g_pPhysics->Update(0.001f); // DEBUG
-
-
-
-// 	int tempVal = glfwGetKey(m_window, GLFW_KEY_P);
-// 	static bool isPressed = false;
-// 	if ((tempVal == GLFW_PRESS) && (!isPressed))
-// 	{
-// 		::g_pPhysics->Update(0.5f);
-// 		isPressed = true;
-// 	}
-// 	else if (tempVal != GLFW_PRESS)
-// 		isPressed = false;
-
 	// Check input for camera movement
 	m_InputHandler->queryKeys(m_window);
-	std::vector<std::string> availSaves;
-
-
-
 
 
 	float ratio;
@@ -253,26 +213,14 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 	// *****************************************************************
 			//uniform vec4 eyeLocation;
 
-// 	if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) // Lazy way to exit player mode
-// 	{
-// 		isPlayer = false;
-// 		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-// 	}
 
 
-	//std::vector<glm::vec3> newCamInfo;
 
-	//if (!isPlayer)
+
+
+
 	flyCameraInput(width, height); // UPDATE CAMERA STATS
-// 	else
-// 	{
-// 		newCamInfo = m_player->Update(deltaTime, m_window, m_cameraEye, m_cameraTarget, m_cameraRotation);
-// 
-// 		m_cameraEye = newCamInfo[0];
-// 		m_cameraTarget = newCamInfo[1];
-// 		m_cameraRotation = newCamInfo[2];
-// 		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-// 	}
+
 
 
 
@@ -315,6 +263,13 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 	for (unsigned int index = 0; index != m_vec_pMeshesToDraw.size(); index++) // Prob black or smthn
 	{
 		cMesh* pCurrentMesh = m_vec_pMeshesToDraw[index];
+		if (pCurrentMesh->transparencyAlpha < 0.99f)
+		{
+			m_vec_pTransMeshesToDraw.push_back(pCurrentMesh);
+			m_vec_pMeshesToDraw.erase(m_vec_pMeshesToDraw.begin() + index);
+			index--;
+			continue;
+		}
 
 		if (pCurrentMesh->bIsVisible)
 		{
@@ -364,10 +319,45 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 		glCullFace(GL_BACK);
 	}
 
-
-
 	/// End of skybox
 
+	// Now we draw all transparent meshes
+
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	for (unsigned int index = 0; index != m_vec_pTransMeshesToDraw.size(); index++)
+	{
+		cMesh* pCurrentMesh = m_vec_pTransMeshesToDraw[index];
+		if (pCurrentMesh->transparencyAlpha > 0.99f)
+		{
+			m_vec_pMeshesToDraw.push_back(pCurrentMesh);
+			m_vec_pTransMeshesToDraw.erase(m_vec_pTransMeshesToDraw.begin() + index);
+			index--;
+			continue;
+		}
+
+		if (pCurrentMesh->bIsVisible)
+		{
+			if (index < m_vec_pTransMeshesToDraw.size() - 1) // If not the last in vec, try to sort by distance
+			{
+				if (glm::distance(m_vec_pTransMeshesToDraw[index]->drawPosition, m_cameraEye) < glm::distance(m_vec_pTransMeshesToDraw[index + 1]->drawPosition, m_cameraEye))
+				{
+					cMesh* tempMesh = m_vec_pTransMeshesToDraw[index];
+					m_vec_pTransMeshesToDraw[index] = m_vec_pTransMeshesToDraw[index + 1];
+					m_vec_pTransMeshesToDraw[index + 1] = tempMesh;
+					pCurrentMesh = m_vec_pTransMeshesToDraw[index];
+				}
+			}
+
+			glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
+
+			DrawObject(pCurrentMesh, matModel, m_shaderProgramID);
+		}//if (pCurrentMesh->bIsVisible)
+
+	}
+	glDisable(GL_BLEND);
 
 
 
@@ -398,23 +388,35 @@ void cGraphicsMain::Destroy()
 	exit(EXIT_SUCCESS);
 }
 
-// Creates a new mesh to bind to an object; returns a pointer which the arena can associate to specific objects to animate them
-
-
-// void cGraphicsMain::addToDrawMesh(cMesh* newMesh)
-// {
-// 	m_vec_pMeshesToDraw.push_back(newMesh);
-// 	return;
-// }
 
 void cGraphicsMain::removeFromDrawMesh(int ID) // Shouldn't be used as it doesn't delete the physics obj
 {
+	// Scan through the all vec and just erase it m_vec_pAllMeshes
+	for (unsigned int i = 0; i < m_vec_pAllMeshes.size(); i++)
+	{
+		if (m_vec_pAllMeshes[i]->uniqueID == ID)
+		{
+			m_vec_pAllMeshes.erase(m_vec_pAllMeshes.begin() + i);
+			break;
+		}
+	}
+	// Scan through regular vec
 	for (unsigned int i = 0; i < m_vec_pMeshesToDraw.size(); i++)
 	{
 		if (m_vec_pMeshesToDraw[i]->uniqueID == ID)
 		{
 			delete m_vec_pMeshesToDraw[i]; // Prob breaks it
 			m_vec_pMeshesToDraw.erase(m_vec_pMeshesToDraw.begin() + i);
+			return;
+		}
+	}
+	// Scan through transparent vec
+	for (unsigned int i = 0; i < m_vec_pTransMeshesToDraw.size(); i++)
+	{
+		if (m_vec_pTransMeshesToDraw[i]->uniqueID == ID)
+		{
+			delete m_vec_pTransMeshesToDraw[i]; // Prob breaks it
+			m_vec_pTransMeshesToDraw.erase(m_vec_pTransMeshesToDraw.begin() + i);
 			return;
 		}
 	}
@@ -466,28 +468,6 @@ void cGraphicsMain::switchScene(std::vector< cMesh* > newMeshVec, std::vector<cL
 		meshObj->uniqueID = newShape->getUniqueID(); // Set mesh ID to match associated physics object's ID
 	}
 
-	// Load in default player object
-// 	cMesh* meshToAdd = new cMesh();
-// 	meshToAdd->meshName = "Sphere_1_unit_Radius.ply"; // Set object type
-// 	meshToAdd->friendlyName = "Player";
-// 	meshToAdd->bDoNotLight = true;
-// 
-// 	m_vec_pMeshesToDraw.push_back(meshToAdd);
-// 
-// 	// Create the physics object
-// 	sPhsyicsProperties* newShape = new sPhsyicsProperties();
-// 	newShape->shapeType = sPhsyicsProperties::SPHERE;
-// 	newShape->setShape(new sPhsyicsProperties::sSphere(1.0f)); // Since a unit sphere, radius of .5 
-// 	newShape->pTheAssociatedMesh = meshToAdd;
-// 	newShape->inverse_mass = 1.0f; // Idk what to set this
-// 	newShape->friendlyName = "Player";
-// 	newShape->acceleration.y = -20.0f;
-// 	newShape->position = glm::vec3(0, 10, 0);
-// 	::g_pPhysics->AddShape(newShape);
-// 	m_player->setAssociatedPhysObj(newShape);
-// 
-// 	meshToAdd->uniqueID = newShape->getUniqueID();
-
 
 	for (unsigned int i = 0; i < m_pTheLights->NUMBER_OF_LIGHTS_IM_USING; i++) // Iterate through all lights and replace them with the new ones. Just replace non UL values
 	//for (unsigned int i = 0; i < newLights.size(); i++) // Use this for updating files that contain less (total possible) than what it currently is
@@ -534,9 +514,10 @@ void cGraphicsMain::getAvailableModels(std::vector<std::string>* ModelVec, std::
 void cGraphicsMain::getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights)
 {
 	// MeshVec = &m_vec_pMeshesToDraw; // No work :(
-	for (unsigned int i = 0; i < m_vec_pMeshesToDraw.size(); i++)
+	for (unsigned int i = 0; i < m_vec_pAllMeshes.size(); i++)
 	{
-		MeshVec->push_back(m_vec_pMeshesToDraw[i]);
+		//MeshVec->push_back(m_vec_pMeshesToDraw[i]); 
+		MeshVec->push_back(m_vec_pAllMeshes[i]);
 	}
 	*TheLights = *m_pTheLights;
 
@@ -641,8 +622,6 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
-	//        glPointSize(10.0f);
-
 
 			// uniform bool bDoNotLight;
 	GLint bDoNotLight_UL = glGetUniformLocation(shaderProgramID, "bDoNotLight");
@@ -698,6 +677,10 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 		glUniform1f(bUseRefract_UL, (GLfloat)GL_FALSE);
 	}
 
+	/// ALPHA TRANSPARECY
+
+	GLint fTransparencyAlpha_UL = glGetUniformLocation(shaderProgramID, "transparencyAlpha");
+	glUniform1f(fTransparencyAlpha_UL, pCurrentMesh->transparencyAlpha);
 
 
 
@@ -806,66 +789,10 @@ bool cGraphicsMain::LoadTextures(void)
 void cGraphicsMain::addNewMesh(cMesh* newMesh) // Just adds new mesh pointer to the vector
 {
 	m_vec_pMeshesToDraw.push_back(newMesh);
+	m_vec_pAllMeshes.push_back(newMesh);
 
 
 	return;
-	// Create the mesh
-// 	cMesh* meshToAdd = new cMesh();
-// 	meshToAdd->meshName = fileName; // Set object type
-// 	meshToAdd->friendlyName = friendlyName;
-// 	meshToAdd->bDoNotLight = true;
-// 	
-// 
-// 	m_vec_pMeshesToDraw.push_back(meshToAdd);
-// 	//return;
-// 	
-// 	// Create the physics object
-// 
-// 	sPhsyicsProperties* newShape = new sPhsyicsProperties();
-// 	if (fileName == "Sphere_1_unit_Radius.ply")
-// 	{
-// 		newShape->shapeType = sPhsyicsProperties::SPHERE;
-// 		newShape->setShape(new sPhsyicsProperties::sSphere(1.0f)); // Since a unit sphere, radius of .5 
-// 		newShape->pTheAssociatedMesh = meshToAdd;
-// 		newShape->inverse_mass = 1.0f; // Idk what to set this
-// 		newShape->friendlyName = "Sphere";
-// 		newShape->acceleration.y = -20.0f;
-// 		newShape->restitution = 0.5f;
-// 		//::g_pPhysics->AddShape(newShape); //UNPHYS
-// 	}
-// 	else if (fileName == "Flat_1x1_plane.ply")
-// 	{
-// 		// Add matching physics object
-// 		newShape->shapeType = sPhsyicsProperties::PLANE;
-// 
-// 		//    pGroundMeshShape->setShape( new sPhsyicsProperties::sMeshOfTriangles_Indirect("HilbertRamp_stl (rotated).ply") );
-// 		//newShape->setShape(new sPhsyicsProperties::sMeshOfTriangles_Indirect(meshToAdd->meshName));
-// 		newShape->setShape(new sPhsyicsProperties::sPlane(glm::vec3(0, 1, 0))); // TODO calculate the actual normal later
-// 
-// 		// Tie this phsyics object to the associated mesh
-// 		newShape->pTheAssociatedMesh = meshToAdd;
-// 		// If it's infinite, the physics intrator ignores it
-// 		newShape->inverse_mass = 0.0f;  // Infinite, so won't move
-// 
-// 		//    pGroundMeshShape->acceleration.y = (-9.81f / 5.0f);
-// 
-// 		//    pGroundMeshShape->position.x = -10.0f;
-// 		newShape->position.y = -50.0f;
-// 		//    pGroundMeshShape->orientation.z = glm::radians(-45.0f);
-// 		newShape->friendlyName = "Plane";
-// 		::g_pPhysics->AddShape(newShape);
-// 	}
-// 	else // Just make it an indirect triangle mesh
-// 	{
-// 		newShape->shapeType = sPhsyicsProperties::MESH_OF_TRIANGLES_INDIRECT;
-// 		newShape->setShape(new sPhsyicsProperties::sMeshOfTriangles_Indirect(meshToAdd->meshName));
-// 		newShape->pTheAssociatedMesh = meshToAdd;
-// 		newShape->inverse_mass = 0.0f; // Idk what to set this
-// 		newShape->friendlyName = "Plane";
-// 		newShape->setRotationFromEuler(glm::vec3(0.0f));
-//  		//::g_pPhysics->AddShape(newShape); //UNPHYS
-// 	}
-// 	meshToAdd->uniqueID = newShape->getUniqueID(); // Set mesh ID to match associated physics object's ID
 }
 
 void cGraphicsMain::updateMesh(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor)
@@ -878,6 +805,14 @@ void cGraphicsMain::updateMesh(int meshID, std::string newFriendlyName, int newT
 		if (m_vec_pMeshesToDraw[i]->uniqueID == meshID)
 		{
 			meshToUpdate = m_vec_pMeshesToDraw[i];
+			break;
+		}
+	}
+	for (unsigned int i = 0; i < m_vec_pTransMeshesToDraw.size(); i++)
+	{
+		if (m_vec_pTransMeshesToDraw[i]->uniqueID == meshID)
+		{
+			meshToUpdate = m_vec_pTransMeshesToDraw[i];
 			break;
 		}
 	}
@@ -902,25 +837,6 @@ void cGraphicsMain::updateMesh(int meshID, std::string newFriendlyName, int newT
 	return;
 }
 
-// Updates values of selected object from the gui
-// void cGraphicsMain::updateSelectedMesh(int meshIdx, std::string friendlyName, glm::vec3 newPos, glm::vec3 newOri, glm::vec3 customColor, float newScale, bool doNotLight, bool useCustomColor) 
-// {
-// 	// pos and ori need to update the physics object
-// 
-// 	//::g_pPhysics->setShapePos(newPos, m_vec_pMeshesToDraw[meshIdx]->uniqueID); // UNPHYS
-// 	//::g_pPhysics->setShapeOri(newOri, m_vec_pMeshesToDraw[meshIdx]->uniqueID);
-// 
-// 	//m_vec_pMeshesToDraw[meshIdx]->drawPosition = newPos;
-// 	//m_vec_pMeshesToDraw[meshIdx]->eulerOrientation = newOri;
-// 	//glm::vec3 oldOri = m_vec_pMeshesToDraw[meshIdx]->getEulerOrientation();
-// 	//glm::vec3 deltaOri = newOri - oldOri;
-// 	//m_vec_pMeshesToDraw[meshIdx]->adjustRotationAngleFromEuler(deltaOri);
-// 	//m_vec_pMeshesToDraw[meshIdx]->adjustRotationAngleFromEuler(glm::vec3(0.0f, 0.0f, 0.01f));
-// 	m_vec_pMeshesToDraw[meshIdx]->scale = glm::vec3(newScale, newScale, newScale);
-// 	m_vec_pMeshesToDraw[meshIdx]->bDoNotLight = doNotLight;
-// 	m_vec_pMeshesToDraw[meshIdx]->wholeObjectDebugColourRGBA = glm::vec4(customColor, 1);
-// 	m_vec_pMeshesToDraw[meshIdx]->bUseDebugColours = useCustomColor;
-// }
 
 void cGraphicsMain::addNewLight(char* friendlyName)
 {
@@ -962,12 +878,6 @@ void cGraphicsMain::duplicateMesh(int meshIdx, char* newName) // TODO also dupli
 	m_vec_pMeshesToDraw.push_back(dupedMesh);
 }
 
-void cGraphicsMain::deleteMesh(int meshIDX)
-{
-	m_vec_pMeshesToDraw.erase(m_vec_pMeshesToDraw.begin() + meshIDX);
-
-	return;
-}
 
 void cGraphicsMain::flyCameraInput(int width, int height)
 {

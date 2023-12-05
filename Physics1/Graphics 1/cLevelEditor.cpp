@@ -284,13 +284,17 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 		float zOri = 0;
 	 		float scale = 0;
 	 		glm::vec3 customColor(0.0f, 0.0f, 0.0f);
-	 		bool useCustomColor;
+			float transparencyAlpha = 1.0f;
+	 		bool useCustomColor = false;
 	 
+
+			cMesh* selectedMesh = nullptr;
+			sPhysicsProperties* selectedObj = nullptr;
 	 
 	 		if (isExistingMesh)
 	 		{
-				cMesh* selectedMesh = ActiveMeshVec[m_mesh_obj_idx];
-				sPhysicsProperties* selectedObj = PhysVec[m_mesh_obj_idx];
+				selectedMesh = ActiveMeshVec[m_mesh_obj_idx];
+				selectedObj = PhysVec[m_mesh_obj_idx];
 
 
 	 			// PHYSICS DATA
@@ -310,6 +314,7 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 				scale = selectedMesh->scale.x;
 	 			customColor = glm::vec3(selectedMesh->wholeObjectDebugColourRGBA);
 	 			useCustomColor = selectedMesh->bUseDebugColours;
+				transparencyAlpha = selectedMesh->transparencyAlpha;
 
 				
 				friendlyName = selectedMesh->friendlyName;
@@ -341,6 +346,7 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 		ImGui::DragFloat("Red", &customColor.x, 0.005f, 0.0f, 1.0f, "%.3f");
 	 		ImGui::DragFloat("Green", &customColor.y, 0.005f, 0.0f, 1.0f, "%.3f");
 	 		ImGui::DragFloat("Blue", &customColor.z, 0.005f, 0.0f, 1.0f, "%.3f");
+			ImGui::DragFloat("Alpha", &transparencyAlpha, 0.01f, 0.0f, 1.0f, "%.3f");
 	 		ImGui::Checkbox("Use Custom Color", &useCustomColor);
 	 
 			
@@ -407,7 +413,7 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 		{
 	 			if (isExistingMesh)
 	 			{
-	 				//deleteMesh(mesh_obj_idx);
+					m_pEngineController->deleteObject(selectedMesh->uniqueID);
 					m_mesh_obj_idx--;
 	 				isExistingMesh = false;
 	 			}
@@ -421,9 +427,24 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 		{
 	 			glm::vec3 newPos = glm::vec3(xPos, yPos, zPos);
 	 			glm::vec3 newOri = glm::vec3(xOri, yOri, zOri);
+				selectedMesh->transparencyAlpha = transparencyAlpha;
+
+				selectedMesh->friendlyName = friendlyName;
+				for (unsigned int i = 0; i < selectedMesh->NUM_TEXTURES; i++)
+				{
+					selectedMesh->textureName[i] = m_AvailableTextures[textureIdx[i]];
+					selectedMesh->textureRatios[i] = textureRatios[i];
+					selectedMesh->textureIdx[i] = textureIdx[i];
+				}
+				selectedMesh->bIsVisible = isVisible;
+				selectedMesh->bIsWireframe = isWireframe;
+				selectedMesh->bDoNotLight = doNotLight;
+				selectedMesh->bUseDebugColours = useCustomColor;
+				selectedMesh->wholeObjectDebugColourRGBA = glm::vec4(customColor, 1);
+				
 				// This will call 2 functions: graphics and physics
 
-				m_pEngineController->setMeshData(objID, friendlyName, textureIdx, textureRatios, isVisible, isWireframe, doNotLight, useCustomColor, glm::vec4(customColor, 1));
+				//m_pEngineController->setMeshData(objID, friendlyName, textureIdx, textureRatios, isVisible, isWireframe, doNotLight, useCustomColor, glm::vec4(customColor, 1));
 				m_pEngineController->setPhysData(objID, newPos, newOri);
 	 			//updateSelectedMesh(mesh_obj_idx, "A NEW FRIENDLY NAME", newPos, newOri, customColor, scale, doNotLight, useCustomColor);
 	 		}
