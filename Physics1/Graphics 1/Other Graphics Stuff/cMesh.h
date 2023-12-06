@@ -25,13 +25,34 @@ public:
 
 
 	///////////////////
-
-
-
 	std::string meshName;
 
-	std::string friendlyName;		// "Ground"
+	std::string friendlyName;
+
+	bool bIsVisible;
+
+	bool bUseDebugColours;
+	glm::vec4 wholeObjectDebugColourRGBA;
+
+	float transparencyAlpha;
+	bool bUseDiscardMaskTex;
+
+	bool bIsWireframe;
+	bool bDoNotLight;
+
+	bool bUseReflect;
+	bool bUseRefract;
+
+	// These two will update at the draw call based off deltaTime
+	glm::vec3 uv_Offset_Scale; // The actual offset value      // Scale portion can effectively enable tiling :)
+	glm::vec2 uvOffsetSpeed; // per second speed of the uvoffset
+	 
+
+
 	int uniqueID; // This should match the physics object id; so create physics first then take that ID and set this one to it
+
+
+	 
 
 	// Draw loop uses this: 
 	glm::vec3 drawPosition;				
@@ -59,24 +80,7 @@ public:
 	// ENDOF: iPhysicsMeshTransformAccess interface
 
 
-	bool bIsVisible;
-
-	bool bUseDebugColours;
-	glm::vec4 wholeObjectDebugColourRGBA;
-
-	float transparencyAlpha;
-
-	// Physics properties
-	// Physics update this:
-	//sPhsyicsProperties* pPhysProps;
-
-	bool bIsWireframe;
-	bool bDoNotLight;
-
-	bool bUseReflect;
-	bool bUseRefract;
-
-	//void Update(double deltaTime);
+	
 
 };
 

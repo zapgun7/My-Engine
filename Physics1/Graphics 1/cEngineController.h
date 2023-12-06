@@ -14,6 +14,7 @@
 class cEngineController_IMPL; // Don't want to include everything the impl will
 class cMesh;
 class cLightManager;
+class cLight;
 struct sPhysicsProperties;
 
 class cEngineController
@@ -41,6 +42,9 @@ public:
 
 	/// Data Creation ///
 	void addNewObject(std::string meshName, char* friendlyName);
+	void saveScene(char* fileName);
+	void loadScene(std::string fileName);
+	void resetScene(std::vector<cMesh*> newMeshVec, std::vector<cLight> newLights, std::vector<sPhysicsProperties*> newPhysVec);
 
 	/// Data Deletion ///
 	void deleteObject(int ID);

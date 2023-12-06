@@ -258,6 +258,26 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 	GLint matView_UL = glGetUniformLocation(m_shaderProgramID, "matView");
 	glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(matView));
 
+	/////////// UV OFFSET UPDATE /////////////
+	for (unsigned int i = 0; i < m_vec_pAllMeshes.size(); i++)
+	{
+		m_vec_pAllMeshes[i]->uv_Offset_Scale.x += m_vec_pAllMeshes[i]->uvOffsetSpeed.x * deltaTime;
+		m_vec_pAllMeshes[i]->uv_Offset_Scale.y += m_vec_pAllMeshes[i]->uvOffsetSpeed.y * deltaTime;
+
+		// Keeps values within proper range (good for longevity)
+		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.x > 1.0f)
+			m_vec_pAllMeshes[i]->uv_Offset_Scale.x -= floor(m_vec_pAllMeshes[i]->uv_Offset_Scale.x);
+		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.x < 0.0f)
+			m_vec_pAllMeshes[i]->uv_Offset_Scale.x += ceil(m_vec_pAllMeshes[i]->uv_Offset_Scale.x);
+
+		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.y > 1.0f)
+			m_vec_pAllMeshes[i]->uv_Offset_Scale.y -= floor(m_vec_pAllMeshes[i]->uv_Offset_Scale.y);
+		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.y < 0.0f)
+			m_vec_pAllMeshes[i]->uv_Offset_Scale.y += ceil(m_vec_pAllMeshes[i]->uv_Offset_Scale.y);
+	}
+
+
+
 	// *********************************************************************
 	// Draw all the objects
 	for (unsigned int index = 0; index != m_vec_pMeshesToDraw.size(); index++) // Prob black or smthn
@@ -425,48 +445,52 @@ void cGraphicsMain::removeFromDrawMesh(int ID) // Shouldn't be used as it doesn'
 // Will replace all meshes and lights with the ones provided
 void cGraphicsMain::switchScene(std::vector< cMesh* > newMeshVec, std::vector<cLight> newLights) // TODO have to load in physics side of objects
 {
-	for (unsigned int i = 0; i < m_vec_pMeshesToDraw.size(); i++) // Delete all pointers to meshes
+	for (unsigned int i = 0; i < m_vec_pAllMeshes.size(); i++) // Delete all pointers to meshes
 	{
-		delete m_vec_pMeshesToDraw[i];
+		delete m_vec_pAllMeshes[i];
 	}
-	m_vec_pMeshesToDraw = newMeshVec; // Set new mesh vector
+	m_vec_pMeshesToDraw.clear();
+	m_vec_pTransMeshesToDraw.clear();
+
+	m_vec_pAllMeshes = newMeshVec; // Set new mesh vector
+	m_vec_pMeshesToDraw = newMeshVec;
 
 	// Delete all current physics objects
 	//::g_pPhysics->deleteAllObjects(); //UNPHYS
 
 
-	for (cMesh* meshObj : m_vec_pMeshesToDraw) // Attach physics objects to all new objects
-	{
-		sPhysicsProperties* newShape;
-		if (meshObj->meshName == "Sphere_1_unit_Radius.ply")
-		{
-			newShape = new sPhysicsProperties();
-			newShape->shapeType = sPhysicsProperties::SPHERE;
-			newShape->setShape(new sPhysicsProperties::sSphere(1.0f)); // Since a unit sphere, radius of .5 
-			newShape->pTheAssociatedMesh = meshObj;
-			newShape->inverse_mass = 1.0f; // Idk what to set this
-			newShape->friendlyName = "Sphere";
-			newShape->acceleration.y = -20.0f;
-			newShape->position = meshObj->drawPosition;
-			newShape->oldPosition = meshObj->drawPosition;
-			newShape->restitution = 0.5f;
-			// ::g_pPhysics->AddShape(newShape); //UNPHYS
-		}
-		else // Just make it an indirect triangle mesh
-		{
-			newShape = new sPhysicsProperties();
-			newShape->shapeType = sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT;
-			newShape->setShape(new sPhysicsProperties::sMeshOfTriangles_Indirect(meshObj->meshName));
-			newShape->pTheAssociatedMesh = meshObj;
-			newShape->inverse_mass = 0.0f; // Idk what to set this
-			newShape->friendlyName = "IndirectMesh";
-			newShape->setRotationFromEuler(meshObj->getEulerOrientation());
-			newShape->position = meshObj->drawPosition;
-			newShape->oldPosition = meshObj->drawPosition;
-			//::g_pPhysics->AddShape(newShape); //UNPHYS
-		}
-		meshObj->uniqueID = newShape->getUniqueID(); // Set mesh ID to match associated physics object's ID
-	}
+// 	for (cMesh* meshObj : m_vec_pMeshesToDraw) // Attach physics objects to all new objects
+// 	{
+// 		sPhysicsProperties* newShape;
+// 		if (meshObj->meshName == "Sphere_1_unit_Radius.ply")
+// 		{
+// 			newShape = new sPhysicsProperties();
+// 			newShape->shapeType = sPhysicsProperties::SPHERE;
+// 			newShape->setShape(new sPhysicsProperties::sSphere(1.0f)); // Since a unit sphere, radius of .5 
+// 			newShape->pTheAssociatedMesh = meshObj;
+// 			newShape->inverse_mass = 1.0f; // Idk what to set this
+// 			newShape->friendlyName = "Sphere";
+// 			newShape->acceleration.y = -20.0f;
+// 			newShape->position = meshObj->drawPosition;
+// 			newShape->oldPosition = meshObj->drawPosition;
+// 			newShape->restitution = 0.5f;
+// 			// ::g_pPhysics->AddShape(newShape); //UNPHYS
+// 		}
+// 		else // Just make it an indirect triangle mesh
+// 		{
+// 			newShape = new sPhysicsProperties();
+// 			newShape->shapeType = sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT;
+// 			newShape->setShape(new sPhysicsProperties::sMeshOfTriangles_Indirect(meshObj->meshName));
+// 			newShape->pTheAssociatedMesh = meshObj;
+// 			newShape->inverse_mass = 0.0f; // Idk what to set this
+// 			newShape->friendlyName = "IndirectMesh";
+// 			newShape->setRotationFromEuler(meshObj->getEulerOrientation());
+// 			newShape->position = meshObj->drawPosition;
+// 			newShape->oldPosition = meshObj->drawPosition;
+// 			//::g_pPhysics->AddShape(newShape); //UNPHYS
+// 		}
+// 		meshObj->uniqueID = newShape->getUniqueID(); // Set mesh ID to match associated physics object's ID
+// 	}
 
 
 	for (unsigned int i = 0; i < m_pTheLights->NUMBER_OF_LIGHTS_IM_USING; i++) // Iterate through all lights and replace them with the new ones. Just replace non UL values
@@ -511,7 +535,7 @@ void cGraphicsMain::getAvailableModels(std::vector<std::string>* ModelVec, std::
 	return;
 }
 
-void cGraphicsMain::getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights)
+void cGraphicsMain::getActiveMeshes(std::vector<cMesh*>* MeshVec)
 {
 	// MeshVec = &m_vec_pMeshesToDraw; // No work :(
 	for (unsigned int i = 0; i < m_vec_pAllMeshes.size(); i++)
@@ -519,6 +543,12 @@ void cGraphicsMain::getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightMan
 		//MeshVec->push_back(m_vec_pMeshesToDraw[i]); 
 		MeshVec->push_back(m_vec_pAllMeshes[i]);
 	}
+
+	return;
+}
+
+void cGraphicsMain::getActiveLights(cLightManager* TheLights)
+{
 	*TheLights = *m_pTheLights;
 
 	return;
@@ -655,6 +685,20 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 		glUniform1f(bUseDebugColour_UL, (GLfloat)GL_FALSE);
 	}
 
+	// Discard Mask bool
+	GLint bDiscardMaskTex_UL = glGetUniformLocation(shaderProgramID, "bUseDiscardMaskTexture");
+
+	if (pCurrentMesh->bUseDiscardMaskTex)
+	{
+		// Set uniform to true
+		glUniform1f(bDiscardMaskTex_UL, (GLfloat)GL_TRUE);
+	}
+	else
+	{
+		// Set uniform to false;
+		glUniform1f(bDiscardMaskTex_UL, (GLfloat)GL_FALSE);
+	}
+
 	/// REFLECTION & REFRACTION
 
 	GLint bUseReflect_UL = glGetUniformLocation(shaderProgramID, "bUseReflect");
@@ -691,6 +735,11 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 
 
 	SetUpTextures(pCurrentMesh, shaderProgramID);
+
+
+	// Pass in uv-offset
+	GLint uvOffset_UL = glGetUniformLocation(shaderProgramID, "uv_Offset_Scale");
+	glUniform3f(uvOffset_UL, pCurrentMesh->uv_Offset_Scale.x, pCurrentMesh->uv_Offset_Scale.y, pCurrentMesh->uv_Offset_Scale.z);
 
 	/////////////////////////////////////////////////////////////
 

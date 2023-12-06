@@ -32,9 +32,6 @@
     <Filter Include="Graphics Engine\ImGui\backends">
       <UniqueIdentifier>{813afed8-cc4c-4377-ad74-28645da30482}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Graphics Engine\SceneSave">
-      <UniqueIdentifier>{13d264ec-9916-40cf-8ba2-1d9b459b1941}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Physics">
       <UniqueIdentifier>{a3eb3f03-de0d-4d45-864d-edc647ca39f0}</UniqueIdentifier>
     </Filter>
@@ -52,6 +49,9 @@
     </Filter>
     <Filter Include="Dev">
       <UniqueIdentifier>{90a600a9-55df-42cf-a465-bd47021d3536}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine Controller\SceneSave">
+      <UniqueIdentifier>{13d264ec-9916-40cf-8ba2-1d9b459b1941}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -104,7 +104,7 @@
       <Filter>Graphics Engine\ImGui\backends</Filter>
     </ClCompile>
     <ClCompile Include="cSceneManagement.cpp">
-      <Filter>Graphics Engine\SceneSave</Filter>
+      <Filter>Engine Controller\SceneSave</Filter>
     </ClCompile>
     <ClCompile Include="Physics\sPhysicsProperties.cpp">
       <Filter>Physics</Filter>
@@ -205,7 +205,7 @@
       <Filter>Graphics Engine\ImGui\backends</Filter>
     </ClInclude>
     <ClInclude Include="cSceneManagement.h">
-      <Filter>Graphics Engine\SceneSave</Filter>
+      <Filter>Engine Controller\SceneSave</Filter>
     </ClInclude>
     <ClInclude Include="Physics\iPhysicsMeshTransformAccess.h">
       <Filter>Graphics Engine\Mesh</Filter>

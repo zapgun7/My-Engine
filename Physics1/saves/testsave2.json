@@ -1,64 +1,26 @@
 {
     "meshes": [
         {
-            "meshName": "Flat_1x1_plane.ply",
-            "friendlyName": "Plane1",
-            "drawPosition": [
-                0.0,
-                0.0,
-                0.0
+            "meshName": "Big_Flat_Mesh.ply",
+            "friendlyName": "planeland",
+            "texNames": [
+                "ChainLink.bmp",
+                "##",
+                "rosewood.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
             ],
-            "eulerOrientation": [
+            "texRatios": [
                 0.0,
-                -0.0,
-                -30.000001907348633
-            ],
-            "customColor": [
+                0.0,
                 1.0,
-                1.0,
-                1.0
-            ],
-            "scale": 1.0,
-            "isVisible": true,
-            "isWireframe": false,
-            "doNotLight": false,
-            "useCustomColor": false
-        },
-        {
-            "meshName": "Flat_1x1_plane.ply",
-            "friendlyName": "Plane2",
-            "drawPosition": [
                 0.0,
                 0.0,
-                0.0
-            ],
-            "eulerOrientation": [
-                0.0,
-                -0.0,
-                30.000001907348633
-            ],
-            "customColor": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "scale": 1.0,
-            "isVisible": true,
-            "isWireframe": false,
-            "doNotLight": false,
-            "useCustomColor": false
-        },
-        {
-            "meshName": "Flat_1x1_plane.ply",
-            "friendlyName": "Plane3",
-            "drawPosition": [
                 0.0,
                 0.0,
-                0.0
-            ],
-            "eulerOrientation": [
-                -30.000001907348633,
-                -0.0,
                 0.0
             ],
             "customColor": [
@@ -66,47 +28,47 @@
                 1.0,
                 1.0
             ],
-            "scale": 1.0,
-            "isVisible": true,
-            "isWireframe": false,
-            "doNotLight": false,
-            "useCustomColor": false
-        },
-        {
-            "meshName": "Flat_1x1_plane.ply",
-            "friendlyName": "Plane4",
-            "drawPosition": [
-                0.0,
-                0.0,
-                0.0
+            "uv_OS": [
+                0.5463433861732483,
+                0.9148581624031067,
+                5.0
             ],
-            "eulerOrientation": [
-                30.000001907348633,
-                -0.0,
-                0.0
-            ],
-            "customColor": [
-                1.0,
-                1.0,
-                1.0
+            "uv_Spd": [
+                0.20000000298023224,
+                0.10000000149011612
             ],
             "scale": 1.0,
             "isVisible": true,
             "isWireframe": false,
             "doNotLight": true,
-            "useCustomColor": false
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": true,
+            "reflect": false,
+            "refract": false,
+            "ID": 1
         },
         {
-            "meshName": "Sphere_1_unit_Radius.ply",
-            "friendlyName": "Sphere1",
-            "drawPosition": [
-                0.0,
-                35.95000076293945,
-                0.0
+            "meshName": "bathtub.ply",
+            "friendlyName": "tubby",
+            "texNames": [
+                "Water_Texture_01.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
             ],
-            "eulerOrientation": [
+            "texRatios": [
+                1.0,
                 0.0,
-                -0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
                 0.0
             ],
             "customColor": [
@@ -114,16 +76,62 @@
                 1.0,
                 1.0
             ],
+            "uv_OS": [
+                0.9732237458229065,
+                0.8224334716796875,
+                1.0
+            ],
+            "uv_Spd": [
+                0.05000000074505806,
+                0.07999999821186066
+            ],
             "scale": 1.0,
             "isVisible": true,
             "isWireframe": false,
             "doNotLight": true,
-            "useCustomColor": false
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 2
+        }
+    ],
+    "phys": [
+        {
+            "friendlyName": "planeland",
+            "shape_t": 0,
+            "pos": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                20.700000762939453
+            ],
+            "ID": 1
+        },
+        {
+            "friendlyName": "tubby",
+            "shape_t": 0,
+            "pos": [
+                21.799999237060547,
+                -33.95000076293945,
+                0.0
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 2
         }
     ],
     "lights": [
         {
-            "friendlyname": "DirLight",
+            "friendlyname": "---",
             "position": [
                 0.0,
                 0.0,
@@ -149,19 +157,19 @@
                 1.0
             ],
             "direction": [
-                0.20000000298023224,
+                0.0,
                 -1.0,
                 0.0,
                 1.0
             ],
             "param1": [
-                2.0,
+                0.0,
                 0.0,
                 0.0,
                 1.0
             ],
             "param2": [
-                1.0,
+                0.0,
                 0.0,
                 0.0,
                 1.0

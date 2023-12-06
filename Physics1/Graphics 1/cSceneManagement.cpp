@@ -36,10 +36,11 @@ void cSceneManagement::Initialize()
 	//m_GraphicsMain = cGraphicsMain::getGraphicsMain();
 	m_saveFilePath = "../saves/";
 	updateAvailableSaves();
+	m_pEngineController = cEngineController::GetEngineController();
 	// Maybe should initialize string vec to store available save states?
 }
 
-bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, cLightManager* Lights)
+bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, cLightManager* Lights, std::vector< sPhysicsProperties* > PhysVec)
 {
 	Document output;
 	output.SetObject();
@@ -50,7 +51,9 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 	Value vec(kArrayType); // Array to hold pos, orientation, etc.
 	std::string str;
 	glm::vec3 vec3;
-	float num;
+	glm::vec2 vec2;
+	int num;
+	float flt;
 	bool state;
 
 	for (unsigned int i = 0; i < MeshVec.size(); i++) //Iterate through all meshes
@@ -59,33 +62,67 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 		str = MeshVec[i]->meshName; // filename
 		string.SetString(str.c_str(), str.length(), output.GetAllocator());
 		meshobj.AddMember("meshName", string, output.GetAllocator()); // Add meshname
+
 		str = MeshVec[i]->friendlyName; // friendlyname
 		string.SetString(str.c_str(), str.length(), output.GetAllocator());
 		meshobj.AddMember("friendlyName", string, output.GetAllocator()); // Add friendlyname
-		// Pos, orientation(euler)
-		vec3 = MeshVec[i]->drawPosition; // Draw position
-		vec.PushBack(vec3.x, output.GetAllocator());
-		vec.PushBack(vec3.y, output.GetAllocator());
-		vec.PushBack(vec3.z, output.GetAllocator());
-		meshobj.AddMember("drawPosition", vec, output.GetAllocator()); // Add drawPosition
-		vec.SetArray(); // Clear the vec
-		vec3 = MeshVec[i]->eulerOrientation; // Draw orientation
-		vec.PushBack(vec3.x, output.GetAllocator());
-		vec.PushBack(vec3.y, output.GetAllocator());
-		vec.PushBack(vec3.z, output.GetAllocator());
-		meshobj.AddMember("eulerOrientation", vec, output.GetAllocator()); // Add eulerOrientation
-		vec.SetArray(); // Clear the vec
 
+		// Texture Info: name array, ratio array
+		for (unsigned int e = 0; e < cMesh::NUM_TEXTURES; e++)
+		{
+			string.SetString(MeshVec[i]->textureName[e].c_str(), MeshVec[i]->textureName[e].length(), output.GetAllocator());
+			vec.PushBack(string, output.GetAllocator());
+		}
+		meshobj.AddMember("texNames", vec, output.GetAllocator()); // Add texture names
+		vec.SetArray(); // Clear array
+
+		for (unsigned int e = 0; e < cMesh::NUM_TEXTURES; e++)
+			vec.PushBack(MeshVec[i]->textureRatios[e], output.GetAllocator());
+		meshobj.AddMember("texRatios", vec, output.GetAllocator()); // Add texture names
+		vec.SetArray();
+
+		// Pos, orientation(euler)
+// 		vec3 = MeshVec[i]->drawPosition; // Draw position
+// 		vec.PushBack(vec3.x, output.GetAllocator());
+// 		vec.PushBack(vec3.y, output.GetAllocator());
+// 		vec.PushBack(vec3.z, output.GetAllocator());
+// 		meshobj.AddMember("drawPosition", vec, output.GetAllocator()); // Add drawPosition
+// 		vec.SetArray(); // Clear the vec
+// 		vec3 = MeshVec[i]->eulerOrientation; // Draw orientation
+// 		vec.PushBack(vec3.x, output.GetAllocator());
+// 		vec.PushBack(vec3.y, output.GetAllocator());
+// 		vec.PushBack(vec3.z, output.GetAllocator());
+// 		meshobj.AddMember("eulerOrientation", vec, output.GetAllocator()); // Add eulerOrientation
+// 		vec.SetArray(); // Clear the vec
+
+		//////// Now add all the vec2's and 3's //////
+
+		// Custom Color
 		vec3 = MeshVec[i]->wholeObjectDebugColourRGBA; // Custom Color
 		vec.PushBack(vec3.x, output.GetAllocator());
 		vec.PushBack(vec3.y, output.GetAllocator());
 		vec.PushBack(vec3.z, output.GetAllocator());
 		meshobj.AddMember("customColor", vec, output.GetAllocator()); // Add custom color
-		vec.SetArray(); // Clear the vec
+		vec.SetArray();
+
+		// UV Offset and scale
+		vec3 = MeshVec[i]->uv_Offset_Scale;
+		vec.PushBack(vec3.x, output.GetAllocator());
+		vec.PushBack(vec3.y, output.GetAllocator());
+		vec.PushBack(vec3.z, output.GetAllocator());
+		meshobj.AddMember("uv_OS", vec, output.GetAllocator());
+		vec.SetArray();
+		
+		// UV Offset speed
+		vec2 = MeshVec[i]->uvOffsetSpeed;
+		vec.PushBack(vec2.x, output.GetAllocator());
+		vec.PushBack(vec2.y, output.GetAllocator());
+		meshobj.AddMember("uv_Spd", vec, output.GetAllocator());
+		vec.SetArray();
 
 		// Scale and bools
-		num = MeshVec[i]->scale.x; // scale
-		meshobj.AddMember("scale", num, output.GetAllocator()); // Add scale
+		flt = MeshVec[i]->scale.x; // scale
+		meshobj.AddMember("scale", flt, output.GetAllocator()); // Add scale
 		state = MeshVec[i]->bIsVisible;
 		meshobj.AddMember("isVisible", state, output.GetAllocator()); // Add isVisible
 		state = MeshVec[i]->bIsWireframe;
@@ -95,10 +132,70 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 		state = MeshVec[i]->bUseDebugColours;
 		meshobj.AddMember("useCustomColor", state, output.GetAllocator()); // Add useCustomColor
 
+		// Transparency Alpha
+		flt = MeshVec[i]->transparencyAlpha;
+		meshobj.AddMember("tAlph", flt, output.GetAllocator());
+		// Discard Mask
+		state = MeshVec[i]->bUseDiscardMaskTex;
+		meshobj.AddMember("dMask", state, output.GetAllocator());
+		// Reflect/Refract
+		state = MeshVec[i]->bUseReflect;
+		meshobj.AddMember("reflect", state, output.GetAllocator());
+		state = MeshVec[i]->bUseRefract;
+		meshobj.AddMember("refract", state, output.GetAllocator());
+
+		// The id that will bind it to the physics obj
+		num = MeshVec[i]->uniqueID;
+		meshobj.AddMember("ID", num, output.GetAllocator());
+
+
 		meshes.PushBack(meshobj, output.GetAllocator()); // Add to array of objects
 		meshobj.SetObject(); // Clear mesh object for next iteration
 	}
 	output.AddMember("meshes", meshes, output.GetAllocator()); // Add array of objects to root object
+
+
+	// Physics data
+	Value phys(kArrayType);
+	Value physobj(kObjectType);
+
+	for (unsigned int i = 0; i < PhysVec.size(); i++)
+	{
+		// Friendly Name
+		str = PhysVec[i]->friendlyName; // friendlyname
+		string.SetString(str.c_str(), str.length(), output.GetAllocator());
+		physobj.AddMember("friendlyName", string, output.GetAllocator()); // Add friendlyname
+
+		// Shape Type
+		num = PhysVec[i]->shapeType;
+		physobj.AddMember("shape_t", num, output.GetAllocator());
+
+		// Position
+		vec3 = PhysVec[i]->position;
+		vec.PushBack(vec3.x, output.GetAllocator());
+		vec.PushBack(vec3.y, output.GetAllocator());
+		vec.PushBack(vec3.z, output.GetAllocator());
+		physobj.AddMember("pos", vec, output.GetAllocator());
+		vec.SetArray();
+
+		// Euler Orientation
+		vec3 = PhysVec[i]->get_eOrientation();
+		vec.PushBack(vec3.x, output.GetAllocator());
+		vec.PushBack(vec3.y, output.GetAllocator());
+		vec.PushBack(vec3.z, output.GetAllocator());
+		physobj.AddMember("ori", vec, output.GetAllocator());
+		vec.SetArray();
+
+		// Unique ID
+		num = PhysVec[i]->getUniqueID();
+		physobj.AddMember("ID", num, output.GetAllocator());
+
+		phys.PushBack(physobj, output.GetAllocator());
+		physobj.SetObject();
+
+	}
+	output.AddMember("phys", phys, output.GetAllocator());
+
 
 
 	// Lights time (so much data oh god; just a lotta vec4s)
@@ -204,6 +301,7 @@ void cSceneManagement::loadScene(std::string fileName)
 	cGraphicsMain* graphicsMain = cGraphicsMain::getGraphicsMain(); // Get the one and only graphics main
 	std::vector<cMesh*> newMeshVec; // New mesh vector to replace the old
 	std::vector<cLight> newLights; // New light data to be copied over to existing light manager
+	std::vector<sPhysicsProperties*> newPhysVec;
 
 	FILE* fp = fopen((m_saveFilePath + fileName + ".json").c_str(), "rb");
 	//char readBuffer[65536];
@@ -221,22 +319,50 @@ void cSceneManagement::loadScene(std::string fileName)
 		newMesh->meshName = itr->value.GetString(); // Set meshname
 		itr = meshes[i].FindMember("friendlyName");
 		newMesh->friendlyName = itr->value.GetString(); // Set friendlyName
-		// Position and Orientation
-		itr = meshes[i].FindMember("drawPosition");
-		newMesh->drawPosition.x = itr->value[0].GetFloat();
-		newMesh->drawPosition.y = itr->value[1].GetFloat();
-		newMesh->drawPosition.z = itr->value[2].GetFloat();
-		itr = meshes[i].FindMember("eulerOrientation");
-		newMesh->eulerOrientation.x = itr->value[0].GetFloat();
-		newMesh->eulerOrientation.y = itr->value[1].GetFloat();
-		newMesh->eulerOrientation.z = itr->value[2].GetFloat();
+
+		// Texture Names
+		itr = meshes[i].FindMember("texNames");
+		for (unsigned int e = 0; e < itr->value.Size(); e++)
+		{
+			newMesh->textureName[e] = itr->value[e].GetString();
+		}
+		// Texture Ratios
+		itr = meshes[i].FindMember("texRatios");
+		for (unsigned int e = 0; e < itr->value.Size(); e++)
+		{
+			newMesh->textureRatios[e] = itr->value[e].GetFloat();
+		}
+
+
+// 		// Position and Orientation
+// 		itr = meshes[i].FindMember("drawPosition");
+// 		newMesh->drawPosition.x = itr->value[0].GetFloat();
+// 		newMesh->drawPosition.y = itr->value[1].GetFloat();
+// 		newMesh->drawPosition.z = itr->value[2].GetFloat();
+// 		itr = meshes[i].FindMember("eulerOrientation");
+// 		newMesh->eulerOrientation.x = itr->value[0].GetFloat();
+// 		newMesh->eulerOrientation.y = itr->value[1].GetFloat();
+// 		newMesh->eulerOrientation.z = itr->value[2].GetFloat();
 		itr = meshes[i].FindMember("customColor");
 		newMesh->wholeObjectDebugColourRGBA.x = itr->value[0].GetFloat();
 		newMesh->wholeObjectDebugColourRGBA.y = itr->value[1].GetFloat();
 		newMesh->wholeObjectDebugColourRGBA.z = itr->value[2].GetFloat();
+
+		// UV offset and scale
+		itr = meshes[i].FindMember("uv_OS");
+		newMesh->uv_Offset_Scale.x = itr->value[0].GetFloat();
+		newMesh->uv_Offset_Scale.y = itr->value[1].GetFloat();
+		newMesh->uv_Offset_Scale.z = itr->value[2].GetFloat();
+
+		// UV Offset speed
+		itr = meshes[i].FindMember("uv_Spd");
+		newMesh->uvOffsetSpeed.x = itr->value[0].GetFloat();
+		newMesh->uvOffsetSpeed.y = itr->value[1].GetFloat();
+
+
 		// Scale and bools
-		//itr = meshes[i].FindMember("scale");
-		//newMesh->scale = itr->value.GetFloat();
+		itr = meshes[i].FindMember("scale");
+		newMesh->scale = glm::vec3(itr->value.GetFloat());
 		itr = meshes[i].FindMember("isVisible");
 		newMesh->bIsVisible = itr->value.GetBool();
 		itr = meshes[i].FindMember("isWireframe");
@@ -246,10 +372,71 @@ void cSceneManagement::loadScene(std::string fileName)
 		itr = meshes[i].FindMember("useCustomColor");
 		newMesh->bUseDebugColours = itr->value.GetBool();
 
-		newMesh->setRotationFromEuler(newMesh->eulerOrientation);
+		// Transparency Alpha
+		itr = meshes[i].FindMember("tAlph");
+		newMesh->transparencyAlpha = itr->value.GetFloat();
+
+		// Discard Mask
+		itr = meshes[i].FindMember("dMask");
+		newMesh->bUseDiscardMaskTex = itr->value.GetBool();
+
+		// Reflect/Refract
+		itr = meshes[i].FindMember("reflect");
+		newMesh->bUseReflect = itr->value.GetBool();
+		itr = meshes[i].FindMember("refract");
+		newMesh->bUseRefract = itr->value.GetBool();
+
+		// Unique ID from last instance
+		itr = meshes[i].FindMember("ID");
+		newMesh->uniqueID = itr->value.GetInt();
+
+
+		//newMesh->setRotationFromEuler(newMesh->eulerOrientation);
 
 		newMeshVec.push_back(newMesh); // Add complete new mesh to vector
 	}
+	
+	// Physics
+
+	const Value& phys = input["phys"]; // Array of physics objects
+
+	for (unsigned int i = 0; i < phys.Size(); i++)
+	{
+		sPhysicsProperties* newPhys = new sPhysicsProperties();
+
+		// Friendly Name
+		itr = phys[i].FindMember("friendlyName");
+		newPhys->friendlyName = itr->value.GetString();
+
+		// Shape Type
+		itr = phys[i].FindMember("shape_t");
+		newPhys->shapeType = (sPhysicsProperties::eShape)itr->value.GetInt();
+
+		// Position
+		itr = phys[i].FindMember("pos");
+		newPhys->position.x = itr->value[0].GetFloat();
+		newPhys->position.y = itr->value[1].GetFloat();
+		newPhys->position.y = itr->value[2].GetFloat();
+
+		// Orientation
+		itr = phys[i].FindMember("ori");
+		newPhys->setRotationFromEuler(glm::vec3(itr->value[0].GetFloat(), itr->value[1].GetFloat(), itr->value[2].GetFloat()));
+
+		itr = phys[i].FindMember("ID");
+		int num = itr->value.GetInt();
+		for (unsigned int e = 0; e < newMeshVec.size(); e++) // Bind related mesh to physics object: ID and set associated mesh
+		{
+			if (newMeshVec[e]->uniqueID == num)
+			{
+				newMeshVec[e]->uniqueID = newPhys->getUniqueID();
+				newPhys->pTheAssociatedMesh = newMeshVec[e];
+				break;
+			}
+		}
+
+		newPhysVec.push_back(newPhys);
+	}
+
 
 	// Lights
 
@@ -304,9 +491,10 @@ void cSceneManagement::loadScene(std::string fileName)
 	//is.Flush();
 	//delete fp;   // deleting this breaks subsequent loads
 	delete[] readBuffer;
-	graphicsMain->switchScene(newMeshVec, newLights);
+	//graphicsMain->switchScene(newMeshVec, newLights);
+	m_pEngineController->resetScene(newMeshVec, newLights, newPhysVec);
 
-
+	return;
 }
 
 // Refreshes the private vector of available saves

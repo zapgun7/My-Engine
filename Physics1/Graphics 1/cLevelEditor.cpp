@@ -272,9 +272,10 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 			std::string friendlyName = "";
 			std::string* textureNames = nullptr;
 			float* textureRatios = nullptr; 
-			int* textureIdx = nullptr;
+			int textureIdx[cMesh::NUM_TEXTURES] = { 0 };
 			bool isVisible = false;
 			bool isWireframe = false;
+			bool useDiscardMask = false;
 
 	 		float xPos = 0;
 	 		float yPos = 0;
@@ -284,6 +285,10 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 		float zOri = 0;
 	 		float scale = 0;
 	 		glm::vec3 customColor(0.0f, 0.0f, 0.0f);
+			glm::vec2 uvOffsetSpeed = glm::vec2(0);
+			float uvXSpeed = 0;
+			float uvYSpeed = 0;
+			float uvScale = 1.0f;
 			float transparencyAlpha = 1.0f;
 	 		bool useCustomColor = false;
 	 
@@ -315,6 +320,13 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 			customColor = glm::vec3(selectedMesh->wholeObjectDebugColourRGBA);
 	 			useCustomColor = selectedMesh->bUseDebugColours;
 				transparencyAlpha = selectedMesh->transparencyAlpha;
+				useDiscardMask = selectedMesh->bUseDiscardMaskTex;
+
+				uvOffsetSpeed = selectedMesh->uvOffsetSpeed;
+				uvXSpeed = uvOffsetSpeed.x;
+				uvYSpeed = uvOffsetSpeed.y;
+				uvScale = selectedMesh->uv_Offset_Scale.z;
+				
 
 				
 				friendlyName = selectedMesh->friendlyName;
@@ -323,7 +335,21 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 				isVisible = selectedMesh->bIsVisible;
 				isWireframe = selectedMesh->bIsWireframe;
 
-				textureIdx = selectedMesh->textureIdx;
+				//textureIdx = selectedMesh->textureIdx;
+				for (unsigned int i = 0; i < cMesh::NUM_TEXTURES; i++)
+				{
+					if (selectedMesh->textureName[i] != "##")
+					{
+						for (unsigned int e = 0; e < m_AvailableTextures.size(); e++)
+						{
+							if (selectedMesh->textureName[i] == m_AvailableTextures[e])
+							{
+								textureIdx[i] = e;
+								break;
+							}
+						}
+					}
+				}
 	 		}
 			// Position
 	 		ImGui::SeparatorText("Position");
@@ -353,12 +379,6 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 
 			//////// TEXTURES //////////
 
-			//char* textureBase[m_AvailableTextures.size()]
-			//const char* textures[] = { "Point Light", "Spot Light", "Directional Light" };
-
-			//const char* textures[];// = { m_AvailableTextures[0].c_str() , "Spot Light", "Directional Light" };
-			//textures[0] = m_AvailableTextures[0].c_str();
-
 			if (isExistingMesh)
 			{
 				static int textype_current_idx[8];
@@ -366,6 +386,23 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 				int textureCount = m_AvailableTextures.size();
 
 				ImGui::SeparatorText("Textures");
+				ImGui::SameLine();
+				// Toggle Button to Use Mask Discard
+				if (useDiscardMask)
+				{
+					if (ImGui::Button("MaskDiscard: ON"))
+					{
+						selectedMesh->bUseDiscardMaskTex = false;
+					}
+				}
+				else
+				{
+					if (ImGui::Button("MaskDiscard: OFF"))
+					{
+						selectedMesh->bUseDiscardMaskTex = true;
+					}
+				}
+
 				for (unsigned int i = 0; i < cMesh::NUM_TEXTURES; i++)
 				{
 					ImGui::Text("Tex%d: ", i);
@@ -399,7 +436,16 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 					
 
 				}
-				textureIdx = textype_current_idx; // Update new values to pass to update
+				//textureIdx = textype_current_idx; // Update new values to pass to update
+
+				// UV-Offset Speed
+				ImGui::PushItemWidth(100);
+				ImGui::DragFloat("uvX_Spd", &uvXSpeed, 0.001f, -10.0f, 10.0f, "%.3f");
+				ImGui::SameLine();
+				ImGui::DragFloat("uvY_Spd", &uvYSpeed, 0.001f, -10.0f, 10.0f, "%.3f");
+				ImGui::SameLine();
+				ImGui::DragFloat("uv_Scale", &uvScale, 0.001f, 0.01f, 40.0f, "%.3f");
+				ImGui::PopItemWidth();
 			}
 			
 
@@ -441,6 +487,9 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 				selectedMesh->bDoNotLight = doNotLight;
 				selectedMesh->bUseDebugColours = useCustomColor;
 				selectedMesh->wholeObjectDebugColourRGBA = glm::vec4(customColor, 1);
+
+				selectedMesh->uvOffsetSpeed = glm::vec2(uvXSpeed, uvYSpeed);
+				selectedMesh->uv_Offset_Scale.z = uvScale;
 				
 				// This will call 2 functions: graphics and physics
 
@@ -598,7 +647,8 @@ void cLevelEditor::SceneManager(std::vector<std::string> AvailableSaves)
 	 
 	if (ImGui::Button("Load Scene"))
 	{
-	 	//if (AvailableSaves.size() > 0)
+		if (AvailableSaves.size() > 0)
+			m_pEngineController->loadScene(AvailableSaves[saves_idx]);
 	 		//m_pSceneManager->loadScene(availSaves[saves_idx]); // Will load a selected item from a list in the future    // TODO load scene
 	}
 	 
@@ -610,6 +660,7 @@ void cLevelEditor::SceneManager(std::vector<std::string> AvailableSaves)
 	 	if (std::strlen(saveNameBuf) > 0)
 	 	{
 	 		//m_pSceneManager->saveScene(saveNameBuf, m_vec_pMeshesToDraw, m_pTheLights);  // TODO scene save
+			m_pEngineController->saveScene(saveNameBuf);
 	 		memset(saveNameBuf, 0, 32); // Reset buffer
 	 	}
 	 			

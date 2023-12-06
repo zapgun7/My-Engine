@@ -40,7 +40,8 @@ public:
 	// Level Editor Calls
 	GLFWwindow* getWindow(void);
 	void getAvailableModels(std::vector<std::string>* ModelVec, std::vector<std::string>* TexVec);
-	void getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights);
+	void getActiveMeshes(std::vector<cMesh*>* MeshVec);
+	void getActiveLights(cLightManager* TheLights);
 
 	// Level Editor Setting
 	void updateMesh(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor);  // Updates and existing object by reference to its friendly name (also from the gui)

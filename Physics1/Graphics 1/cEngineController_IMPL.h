@@ -33,6 +33,9 @@ public:
 
 	// Data Creation ///
 	void addNewObject(std::string meshName, char* friendlyName);
+	void saveScene(char* fileName);
+	void loadScene(std::string fileName);
+	void resetScene(std::vector<cMesh*> newMeshVec, std::vector<cLight> newLights, std::vector<sPhysicsProperties*> newPhysVec);
 
 	/// Data Deletion ///
 	void deleteObject(int ID);

@@ -98,6 +98,24 @@ void cEngineController::addNewObject(std::string meshName, char* friendlyName)
 	return;
 }
 
+void cEngineController::saveScene(char* fileName)
+{
+	m_pTheEngineController->saveScene(fileName);
+	return;
+}
+
+void cEngineController::loadScene(std::string fileName)
+{
+	m_pTheEngineController->loadScene(fileName);
+	return;
+}
+
+void cEngineController::resetScene(std::vector<cMesh*> newMeshVec, std::vector<cLight> newLights, std::vector<sPhysicsProperties*> newPhysVec)
+{
+	m_pTheEngineController->resetScene(newMeshVec, newLights, newPhysVec);
+	return;
+}
+
 void cEngineController::deleteObject(int ID)
 {
 	m_pTheEngineController->deleteObject(ID);

@@ -24,9 +24,13 @@ cMesh::cMesh()
 	this->wholeObjectDebugColourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	this->transparencyAlpha = 1.0f;
+	this->bUseDiscardMaskTex = false;
 
 	this->bUseReflect = false;
 	this->bUseRefract = false;
+
+	this->uv_Offset_Scale = glm::vec3(0.0f, 0.0f, 1.0f);
+	this->uvOffsetSpeed = glm::vec2(0);
 
 	
 	// These all add up to 1.0f

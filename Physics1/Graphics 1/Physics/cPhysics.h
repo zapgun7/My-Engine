@@ -35,7 +35,9 @@ public:
 	void setShapeOri(glm::vec3 newOri, unsigned int ID);
 	void setShapePori(glm::vec3 newPos, glm::vec3 newOri, unsigned int ID);
 	void setPhysicsRunningState(bool isRunning); // Update whether the physics simulation is paused
+
 	void deleteAllObjects(void); // Used in loading new scenes
+	void switchScenes(std::vector<sPhysicsProperties*> newPhysVec);
 
 	////////////////////////////////////////
 

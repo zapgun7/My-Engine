@@ -65,7 +65,8 @@ void cEngineController_IMPL::getAvailableModels(std::vector<std::string>* ModelV
 
 void cEngineController_IMPL::getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights, std::vector<sPhysicsProperties*>* PhysVec)
 {
-	m_pTheGraphics->getActiveMeshNLights(MeshVec, TheLights);
+	m_pTheGraphics->getActiveMeshes(MeshVec);
+	m_pTheGraphics->getActiveLights(TheLights);
 	std::vector<sPhysicsProperties*> tempVec;
 	tempVec = m_pThePhysics->getPhysicsVec();
 
@@ -129,6 +130,35 @@ void cEngineController_IMPL::addNewObject(std::string meshName, char* friendlyNa
 	// Set unique id's matching
 	newMesh->uniqueID = newObject->getUniqueID();
 	
+
+	return;
+}
+
+void cEngineController_IMPL::saveScene(char* fileName)
+{
+	std::vector<cMesh*> meshVec; 
+	m_pTheGraphics->getActiveMeshes(&meshVec);
+	cLightManager lights;
+	m_pTheGraphics->getActiveLights(&lights);
+	std::vector<sPhysicsProperties*> physVec = m_pThePhysics->getPhysicsVec();
+
+	m_pTheSceneManager->saveScene(fileName, meshVec, &lights, physVec);
+
+	return;
+}
+
+void cEngineController_IMPL::loadScene(std::string fileName)
+{
+	m_pTheSceneManager->loadScene(fileName);
+	return;
+}
+
+void cEngineController_IMPL::resetScene(std::vector<cMesh*> newMeshVec, std::vector<cLight> newLights, std::vector<sPhysicsProperties*> newPhysVec)
+{
+	m_pTheGraphics->switchScene(newMeshVec, newLights);
+	m_pThePhysics->switchScenes(newPhysVec);
+
+	// Will have to reset audio too whenever that gets used
 
 	return;
 }

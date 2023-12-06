@@ -122,6 +122,13 @@ void cPhysics::deleteAllObjects(void)
 }
 
 
+void cPhysics::switchScenes(std::vector<sPhysicsProperties*> newPhysVec)
+{
+	deleteAllObjects();
+	m_vec_pPhysicalProps = newPhysVec;
+	return;
+}
+
 bool cPhysics::m_CheckExistingCollision(sPhysicsProperties* objB, sPhysicsProperties* objA)
 {
 	for (unsigned int i = 0; i < m_vecCollisionsThisFrame.size(); i++)

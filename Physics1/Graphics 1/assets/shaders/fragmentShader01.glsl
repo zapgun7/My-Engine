@@ -59,7 +59,8 @@ uniform sampler2D maskSamplerTexture01;
 uniform vec4 textureMixRatio_0_3;		// 1, 0, 0, 0 
 uniform vec4 textureMixRatio_4_7;
 
-//uniform samplerCube skyBox;
+// uv-offset
+uniform vec3 uv_Offset_Scale;
 
 
 struct sLight
@@ -119,9 +120,10 @@ void main()
 
 	if ( bUseDiscardMaskTexture )
 	{
-		float maskValue = texture( maskSamplerTexture01, textureCoords.st ).r;
+		vec3 maskValues = texture( maskSamplerTexture01, (textureCoords.st + uv_Offset_Scale.xy) * uv_Offset_Scale.z ).rgb;
+		float maskValue = maskValues.r + maskValues.g + maskValues.b; // Ensure it is pure black that gets removed
 		// If "black" then discard
-		if ( maskValue < 0.1f )
+		if ( maskValue < 0.02f )
 		{
 			discard;
 //			outputColour.rgba = vec4( 1.0f, 0.0f, 0.0f, 1.0f );
@@ -173,7 +175,7 @@ void main()
 	
 
 	vec4 textureColour = 
-			  texture( texture_00, textureCoords.st ).rgba * textureMixRatio_0_3.x 	
+			  texture( texture_00, (textureCoords.st + uv_Offset_Scale.xy) * uv_Offset_Scale.z ).rgba * textureMixRatio_0_3.x 	
 			//+ texture( texture_01, textureCoords.st ).rgba * textureMixRatio_0_3.y
 			+ texture( texture_02, textureCoords.st ).rgba * textureMixRatio_0_3.z;
 			//+ texture( texture_03, textureCoords.st ).rgba * textureMixRatio_0_3.w;
