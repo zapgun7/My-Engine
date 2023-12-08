@@ -5,10 +5,16 @@
 #include <iostream>
 #include <time.h>
 
-// cPhysics* g_pPhysics = NULL;
+// Test Includes
+#include "Physics/cAABB.h"
+#include "Physics/sTriangle.h"
+
+void testArea();
 
 int main(int argc, char** argv)
 {
+	testArea();
+	return 0;
 	srand(time(NULL));
 
 	cEngineController* engineFace = cEngineController::GetEngineController();
@@ -20,37 +26,33 @@ int main(int argc, char** argv)
 	engineFace->Run();
 	engineFace->Destroy();
 
-	//::g_pPhysics = new cPhysics();
-	//cGraphicsMain* graphics = cGraphicsMain::getGraphicsMain();// This initializes it if not yet made 
-	//g_pPhysics->setGraphics();
-
-// 	audio::cSoundManager* sounds = audio::cSoundManager::GetInstance();
-// 	sounds->Initialize();
-// 	sounds->LoadSound("demoman_laugh.mp3");
-// 	sounds->LoadSound("laser1.wav");
-// 	sounds->LoadSound("baby.wav");
-// 	sounds->CreateChannelGroup("Default");
-
-
-	
-
-	//while (graphics->Update() == 0)
-	//{
-		// Running...
-
-		// Get xz forward vector to pass to listener attributes
-		//glm::vec3 forwardTest = glm::vec3(graphics->m_cameraTarget.x, 0, graphics->m_cameraTarget.z);
-		//forwardTest = glm::normalize(forwardTest);
-		// Set listener attributes
-		//sounds->SetListenerAttribs(graphics->m_cameraEye, glm::vec3(0), glm::vec3(0, 1, 0), forwardTest);// Setting velocity to 0 for now
-		// General audio update, also updates all 3d sound objects
-		//sounds->Update();
-		
-
-	//}
-	//graphics->Destroy();
-
-
-
 	return 0;
+}
+
+
+void testArea()
+{
+	cAABB* testAABB = new cAABB();
+	std::vector<sTriangle_A> testVec;
+	std::vector<sTriangle_A> testVecSend;
+
+	glm::vec3 boxMin(-2);
+	glm::vec3 boxMax(2);
+
+	sTriangle_A tempTri;
+	tempTri.vertices[0] = glm::vec3(0, -1, 4);
+	tempTri.vertices[1] = glm::vec3(0, -4, 1);
+	tempTri.vertices[2] = glm::vec3(0, -4, 4);
+	testVecSend.push_back(tempTri);
+
+	testVec = testAABB->trisInBox(&testVecSend, boxMin, boxMax);
+
+	std::cout << testVec.size() << std::endl;
+
+
+
+	//testVec = testAABB->trisInBox()
+
+
+	return;
 }

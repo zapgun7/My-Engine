@@ -162,9 +162,12 @@
     <ClCompile Include="Other Graphics Stuff\cLightManager.cpp" />
     <ClCompile Include="Other Graphics Stuff\cMesh.cpp" />
     <ClCompile Include="Other Graphics Stuff\glad.c" />
+    <ClCompile Include="Physics\cAABB.cpp" />
     <ClCompile Include="Physics\cPhysics.cpp" />
+    <ClCompile Include="Physics\cPhysics_AABB_Subdivide.cpp" />
     <ClCompile Include="Physics\cPhysics_BasicTests.cpp" />
     <ClCompile Include="Physics\cPhysics_IntersectionTests.cpp" />
+    <ClCompile Include="Physics\cPhysics_SweepPrune.cpp" />
     <ClCompile Include="Physics\cPhysics_Update.cpp" />
     <ClCompile Include="Physics\sPhysicsProperties.cpp" />
     <ClCompile Include="TextureManager\C24BitBMPpixel.cpp" />
@@ -198,9 +201,11 @@
     <ClInclude Include="Other Graphics Stuff\GLWF_CallBacks.h" />
     <ClInclude Include="Other Graphics Stuff\OpenGLCommon.h" />
     <ClInclude Include="cSceneManagement.h" />
+    <ClInclude Include="Physics\cAABB.h" />
     <ClInclude Include="Physics\cPhysics.h" />
     <ClInclude Include="Physics\iPhysicsMeshTransformAccess.h" />
     <ClInclude Include="Physics\sPhysicsProperties.h" />
+    <ClInclude Include="Physics\sTriangle.h" />
     <ClInclude Include="TextureManager\C24BitBMPpixel.h" />
     <ClInclude Include="TextureManager\cBasicTextureManager.h" />
     <ClInclude Include="TextureManager\CTextureFromBMP.h" />
