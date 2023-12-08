@@ -162,7 +162,6 @@
     <ClCompile Include="Other Graphics Stuff\cLightManager.cpp" />
     <ClCompile Include="Other Graphics Stuff\cMesh.cpp" />
     <ClCompile Include="Other Graphics Stuff\glad.c" />
-    <ClCompile Include="Physics\cAABB.cpp" />
     <ClCompile Include="Physics\cPhysics.cpp" />
     <ClCompile Include="Physics\cPhysics_AABB_Subdivide.cpp" />
     <ClCompile Include="Physics\cPhysics_BasicTests.cpp" />

@@ -37,9 +37,12 @@ public:
 
 	void setCameraParams(glm::vec3 camPos, glm::vec3 camDir);
 
+	cVAOManager* getVAOManager(void); // For setting the physics' vaoManager
+
 	// Level Editor Calls
 	GLFWwindow* getWindow(void);
-	void getAvailableModels(std::vector<std::string>* ModelVec, std::vector<std::string>* TexVec);
+	void getAvailableModels(std::vector<std::string>* ModelVec);
+	void getAvailableTextures(std::vector<std::string>* TexVec);
 	void getActiveMeshes(std::vector<cMesh*>* MeshVec);
 	void getActiveLights(cLightManager* TheLights);
 

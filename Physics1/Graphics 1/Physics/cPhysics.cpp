@@ -17,6 +17,18 @@ void cPhysics::setVAOManager(cVAOManager* pTheMeshManager)
 }
 
 
+void cPhysics::generateAABBs(std::vector<std::string> models)
+{
+	for (std::vector<std::string>::iterator itModel = models.begin();
+		 itModel != models.end();
+		 itModel++)
+	{
+		cAABB* newAABB = new cAABB();
+		newAABB->StartMakeTree(*itModel, m_pMeshManager, 50);
+		m_map_ModelAABBs[*itModel] = newAABB;
+	}
+}
+
 void cPhysics::AddShape(sPhysicsProperties* pNewShape)
 {
 	this->m_vec_pPhysicalProps.push_back(pNewShape);

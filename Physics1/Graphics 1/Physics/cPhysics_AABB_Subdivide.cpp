@@ -5,18 +5,162 @@
 
 #include "cAABB.h"
 
-#include "sTriangle.h"
+//#include "sTriangle.h"
+#include <iostream>
+
+#include "../cVAOManager/sModelDrawInfo.h"
+#include "../cVAOManager/cVAOManager.h"
 
 //#include <vector>
 
 bool BoxBoxIntersectTest(glm::vec3 B1minXYZ, glm::vec3 B1maxXYZ, glm::vec3 B2minXYZ, glm::vec3 B2maxXYZ);
 bool BoxBoxIntersectTest2(glm::vec3 B1ctr, glm::vec3 B1ext, glm::vec3 B2ctr, glm::vec3 B2ext);
 
-void cAABB::MakeTree(std::vector<sTriangle_A>* parentTris, unsigned int maxTri)
+bool cAABB::StartMakeTree(std::string modelName, cVAOManager* borrowedManager, unsigned int maxTri)
 {
+	// Start by getting the model draw info
+	sModelDrawInfo meshDrawInfo;
+	if (!borrowedManager->FindDrawInfoByModelName(modelName, meshDrawInfo))
+	{
+		// Didn't find it!!
+		return false;
+	}
+	glm::vec3 maxXYZ = meshDrawInfo.maxExtents_XYZ;
+	glm::vec3 minXYZ = meshDrawInfo.minExtents_XYZ;
 
+	this->centerPosition = (maxXYZ + minXYZ) * 0.5f;
+	this->halfLengths = maxXYZ - this->centerPosition;
+
+	std::vector<sTriangle_A> modelTriangles;
+	for (unsigned int i = 0; i < meshDrawInfo.numberOfIndices; i += 3)
+	{
+		sTriangle_A currTri;
+		currTri.vertices[0].x = meshDrawInfo.pVertices[meshDrawInfo.pIndices[i]].x;
+		currTri.vertices[0].y = meshDrawInfo.pVertices[meshDrawInfo.pIndices[i]].y;
+		currTri.vertices[0].z = meshDrawInfo.pVertices[meshDrawInfo.pIndices[i]].z;
+
+		currTri.vertices[1].x = meshDrawInfo.pVertices[meshDrawInfo.pIndices[i + 1]].x;
+		currTri.vertices[1].y = meshDrawInfo.pVertices[meshDrawInfo.pIndices[i + 1]].y;
+		currTri.vertices[1].z = meshDrawInfo.pVertices[meshDrawInfo.pIndices[i + 1]].z;
+
+		currTri.vertices[2].x = meshDrawInfo.pVertices[meshDrawInfo.pIndices[i + 2]].x;
+		currTri.vertices[2].y = meshDrawInfo.pVertices[meshDrawInfo.pIndices[i + 2]].y;
+		currTri.vertices[2].z = meshDrawInfo.pVertices[meshDrawInfo.pIndices[i + 2]].z;
+
+		modelTriangles.push_back(currTri);
+	}
+
+	this->MakeTree(&modelTriangles, maxTri, true);
+	
+	return true;
 }
 
+void cAABB::MakeTree(std::vector<sTriangle_A>* parentTris, unsigned int maxTri, bool isRoot)
+{
+	// Start by getting a vector of all triangles that lie within this box
+	std::vector<sTriangle_A> boxedTris;
+	if (!isRoot)
+		boxedTris = trisInBox(parentTris, this->XYZMin(), this->XYZMax());
+	else
+		boxedTris = *parentTris;
+
+	if (boxedTris.size() <= maxTri)
+	{
+		// This AABB doesn't have TOO many triangles, so we store them and return
+		triangles = boxedTris;
+		return;
+	}
+
+	// Still too many triangles, we need to create 8 new children
+	// Map keys will be 1-8
+	// This works clock-wise starting in -x -z, starting at -y then +y
+	// #: xyz
+	// 1: ---
+	// 2: -+-
+	// 3: --+
+	// 4: -++
+	// 5: +-+
+	// 6: +++
+	// 7: +--
+	// 8: ++-
+	glm::vec3 newHalflengths = this->halfLengths * 0.5f; // Only need to calculate this once, as all new children will share this
+
+	// 1 //
+	cAABB* AABB1 = new cAABB();
+	AABB1->centerPosition.x = this->centerPosition.x - (this->halfLengths.x / 2); // -x
+	AABB1->centerPosition.y = this->centerPosition.y - (this->halfLengths.y / 2); // -y
+	AABB1->centerPosition.z = this->centerPosition.z - (this->halfLengths.z / 2); // -z
+	AABB1->halfLengths = newHalflengths;
+	AABB1->MakeTree(&boxedTris, maxTri, false);
+	mapChild_pAABBs[1] = AABB1;
+
+	// 2 //
+	cAABB* AABB2 = new cAABB();
+	AABB2->centerPosition.x = this->centerPosition.x - (this->halfLengths.x / 2); // -x
+	AABB2->centerPosition.y = this->centerPosition.y + (this->halfLengths.y / 2); // +y
+	AABB2->centerPosition.z = this->centerPosition.z - (this->halfLengths.z / 2); // -z
+	AABB2->halfLengths = newHalflengths;
+	AABB2->MakeTree(&boxedTris, maxTri, false);
+	mapChild_pAABBs[2] = AABB2;
+
+	// 3 //
+	cAABB* AABB3 = new cAABB();
+	AABB3->centerPosition.x = this->centerPosition.x - (this->halfLengths.x / 2); // -x
+	AABB3->centerPosition.y = this->centerPosition.y - (this->halfLengths.y / 2); // -y
+	AABB3->centerPosition.z = this->centerPosition.z + (this->halfLengths.z / 2); // +z
+	AABB3->halfLengths = newHalflengths;
+	AABB3->MakeTree(&boxedTris, maxTri, false);
+	mapChild_pAABBs[3] = AABB3;
+
+	// 4 //
+	cAABB* AABB4 = new cAABB();
+	AABB4->centerPosition.x = this->centerPosition.x - (this->halfLengths.x / 2); // -x
+	AABB4->centerPosition.y = this->centerPosition.y + (this->halfLengths.y / 2); // +y
+	AABB4->centerPosition.z = this->centerPosition.z + (this->halfLengths.z / 2); // +z
+	AABB4->halfLengths = newHalflengths;
+	AABB4->MakeTree(&boxedTris, maxTri, false);
+	mapChild_pAABBs[4] = AABB4;
+
+	// 5 //
+	cAABB* AABB5 = new cAABB();
+	AABB5->centerPosition.x = this->centerPosition.x + (this->halfLengths.x / 2); // +x
+	AABB5->centerPosition.y = this->centerPosition.y - (this->halfLengths.y / 2); // -y
+	AABB5->centerPosition.z = this->centerPosition.z + (this->halfLengths.z / 2); // +z
+	AABB5->halfLengths = newHalflengths;
+	AABB5->MakeTree(&boxedTris, maxTri, false);
+	mapChild_pAABBs[5] = AABB5;
+
+	// 6 //
+	cAABB* AABB6 = new cAABB();
+	AABB6->centerPosition.x = this->centerPosition.x + (this->halfLengths.x / 2); // +x
+	AABB6->centerPosition.y = this->centerPosition.y + (this->halfLengths.y / 2); // +y
+	AABB6->centerPosition.y = this->centerPosition.z + (this->halfLengths.z / 2); // +z
+	AABB6->halfLengths = newHalflengths;
+	AABB6->MakeTree(&boxedTris, maxTri, false);
+	mapChild_pAABBs[6] = AABB6;
+
+	// 7 //
+	cAABB* AABB7 = new cAABB();
+	AABB7->centerPosition.x = this->centerPosition.x + (this->halfLengths.x / 2); // +x
+	AABB7->centerPosition.y = this->centerPosition.y - (this->halfLengths.y / 2); // -y
+	AABB7->centerPosition.z = this->centerPosition.z - (this->halfLengths.z / 2); // -z
+	AABB7->halfLengths = newHalflengths;
+	AABB7->MakeTree(&boxedTris, maxTri, false);
+	mapChild_pAABBs[7] = AABB7;
+
+	// 8 //
+	cAABB* AABB8 = new cAABB();
+	AABB8->centerPosition.x = this->centerPosition.x + (this->halfLengths.x / 2); // +x
+	AABB8->centerPosition.y = this->centerPosition.y + (this->halfLengths.y / 2); // +y
+	AABB8->centerPosition.z = this->centerPosition.z - (this->halfLengths.z / 2); // -z
+	AABB8->halfLengths = newHalflengths;
+	AABB8->MakeTree(&boxedTris, maxTri, false);
+	mapChild_pAABBs[8] = AABB8;
+
+	return;
+}
+
+// Returns vector of triangles that intersect with the box (from the provided triangles)
 std::vector<sTriangle_A> cAABB::trisInBox(std::vector<sTriangle_A>* triangles, glm::vec3 minCorner, glm::vec3 maxCorner)
 {
 	// Make object we'll return at the end

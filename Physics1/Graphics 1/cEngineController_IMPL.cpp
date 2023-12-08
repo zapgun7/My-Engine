@@ -1,6 +1,6 @@
 
 #include "cEngineController_IMPL.h"
-
+#include <iostream>
 
 cEngineController_IMPL::cEngineController_IMPL()
 {
@@ -52,14 +52,19 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pTheSceneManager = new cSceneManagement();
 	this->m_pTheSceneManager->Initialize();
 
-	// TODO set physics VAOManager
+
+	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
+	std::vector<std::string> tempModelVec;
+	m_pTheGraphics->getAvailableModels(&tempModelVec);
+	this->m_pThePhysics->generateAABBs(tempModelVec);
 
 	return true;
 }
 
 void cEngineController_IMPL::getAvailableModels(std::vector<std::string>* ModelVec, std::vector<std::string>* TexVec)
 {
-	m_pTheGraphics->getAvailableModels(ModelVec, TexVec);
+	m_pTheGraphics->getAvailableModels(ModelVec);
+	m_pTheGraphics->getAvailableTextures(TexVec);
 	return;
 }
 

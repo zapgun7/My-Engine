@@ -1,3 +1,4 @@
+Flat_1x1_plane.ply
 bathtub.ply
 Big_Flat_Mesh.ply
 Sphere_1_unit_Radius.ply

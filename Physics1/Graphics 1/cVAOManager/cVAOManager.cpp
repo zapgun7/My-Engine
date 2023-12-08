@@ -234,6 +234,8 @@ bool cVAOManager::m_LoadTheFile(std::string theFileName, sModelDrawInfo& drawInf
 
 
 
+	glm::vec3 maxXYZ(scene->mMeshes[0]->mVertices[0].x, scene->mMeshes[0]->mVertices[0].y, scene->mMeshes[0]->mVertices[0].z);
+	glm::vec3 minXYZ = maxXYZ;
 
 	drawInfo.pVertices = new sVertex[drawInfo.numberOfVertices];
 	for (unsigned int vertIndex = 0; vertIndex != drawInfo.numberOfVertices; vertIndex++)
@@ -243,6 +245,17 @@ bool cVAOManager::m_LoadTheFile(std::string theFileName, sModelDrawInfo& drawInf
 		drawInfo.pVertices[vertIndex].y = scene->mMeshes[0]->mVertices[vertIndex].y;
 		drawInfo.pVertices[vertIndex].z = scene->mMeshes[0]->mVertices[vertIndex].z;
 		drawInfo.pVertices[vertIndex].w = 1.0f;
+
+		// Quick min/max check
+		if (minXYZ.x > drawInfo.pVertices[vertIndex].x) minXYZ.x = drawInfo.pVertices[vertIndex].x;
+		else if (maxXYZ.x < drawInfo.pVertices[vertIndex].x) maxXYZ.x = drawInfo.pVertices[vertIndex].x;
+
+		if (minXYZ.y > drawInfo.pVertices[vertIndex].y) minXYZ.y = drawInfo.pVertices[vertIndex].y;
+		else if (maxXYZ.y < drawInfo.pVertices[vertIndex].y) maxXYZ.y = drawInfo.pVertices[vertIndex].y;
+
+		if (minXYZ.z > drawInfo.pVertices[vertIndex].z) minXYZ.z = drawInfo.pVertices[vertIndex].z;
+		else if (maxXYZ.z < drawInfo.pVertices[vertIndex].z) maxXYZ.z = drawInfo.pVertices[vertIndex].z;
+
 
 		// Normals
         drawInfo.pVertices[vertIndex].nx = scene->mMeshes[0]->mNormals[vertIndex].x;
@@ -273,6 +286,11 @@ bool cVAOManager::m_LoadTheFile(std::string theFileName, sModelDrawInfo& drawInf
         }
 	}
 
+	// Set the calculated min/max
+	drawInfo.maxExtents_XYZ = maxXYZ;
+	drawInfo.minExtents_XYZ = minXYZ;
+
+
 	// Allocate an array for all the indices (which is 3x the number of triangles)
 	// Element array is an 1D array of integers
 	drawInfo.pIndices = new unsigned int[drawInfo.numberOfIndices];
@@ -287,6 +305,7 @@ bool cVAOManager::m_LoadTheFile(std::string theFileName, sModelDrawInfo& drawInf
 
 		elementIndex += 3;      // Next "triangle"
 	}
+
 
 
 	return true;
@@ -344,4 +363,27 @@ bool cVAOManager::UpdateVAOBuffers(std::string fileName,
 
 
     return true;
+}
+
+
+// Prob will never use this, more efficient to scan for min and max when loading in the vertices! (only realized after making this oh well)
+void sModelDrawInfo::calcExtents()
+{
+	glm::vec3 maxXYZ (this->pVertices[0].x, this->pVertices[0].y, this->pVertices[0].z);
+	glm::vec3 minXYZ = maxXYZ;
+
+	for (unsigned int i = 1; i < this->numberOfVertices; i++)
+	{
+		if (minXYZ.x > this->pVertices[i].x) minXYZ.x = this->pVertices[i].x;
+		else if (maxXYZ.x < this->pVertices[i].x) maxXYZ.x = this->pVertices[i].x;
+
+		if (minXYZ.y > this->pVertices[i].y) minXYZ.y = this->pVertices[i].y;
+		else if (maxXYZ.y < this->pVertices[i].y) maxXYZ.y = this->pVertices[i].y;
+
+		if (minXYZ.z > this->pVertices[i].z) minXYZ.z = this->pVertices[i].z;
+		else if (maxXYZ.z < this->pVertices[i].z) maxXYZ.z = this->pVertices[i].z;
+	}
+
+	this->maxExtents_XYZ = maxXYZ;
+	this->minExtents_XYZ = minXYZ;
 }

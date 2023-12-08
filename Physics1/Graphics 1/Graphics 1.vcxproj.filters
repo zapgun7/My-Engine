@@ -160,9 +160,6 @@
     <ClCompile Include="Physics\cPhysics_SweepPrune.cpp">
       <Filter>Physics\AABB</Filter>
     </ClCompile>
-    <ClCompile Include="Physics\cAABB.cpp">
-      <Filter>Physics\AABB</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basic Shader Manager\cShaderManager.h">

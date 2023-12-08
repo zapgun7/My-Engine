@@ -6,10 +6,12 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "sTriangle.h"
 
 // These would also store triangle info, 
 //	either the actual vertices of the triangle, or the index to the triangle...
-struct sTriangle_A;
+//struct sTriangle_A;
+class cVAOManager;
 
 
 class cAABB
@@ -24,27 +26,65 @@ public:
 
 
 	// Extremity value getters
-	float xMax();
-	float xMin();
-	float yMax();
-	float yMin();
-	float zMax();
-	float zMin();
-	glm::vec3 XYZMax();
-	glm::vec3 XYZMin();
+	float xMax(void)
+	{
+		return this->centerPosition.x + this->halfLengths.x;
+	}
+	float xMin(void)
+	{
+		return this->centerPosition.x - this->halfLengths.x;
+	}
+	float yMax(void)
+	{
+		return this->centerPosition.y + this->halfLengths.y;
+	}
+	float yMin(void)
+	{
+		return this->centerPosition.y - this->halfLengths.y;
+	}
+	float zMax(void)
+	{
+		return this->centerPosition.z + this->halfLengths.z;
+	}
+	float zMin(void)
+	{
+		return this->centerPosition.z - this->halfLengths.z;
+	}
+	glm::vec3 XYZMax(void)
+	{
+		return this->centerPosition + this->halfLengths;
+	}
+	glm::vec3 XYZMin(void)
+	{
+		return this->centerPosition - this->halfLengths;
+	}
 
 	// Other Getters
-	glm::vec3 XYZcenter();
-	float Xcenter();
-	float Ycenter();
-	float Zcenter();
+	glm::vec3 XYZcenter(void)
+	{
+		return this->centerPosition;
+	}
+	float Xcenter(void)
+	{
+		return this->centerPosition.x;
+	}
+	float Ycenter(void)
+	{
+		return this->centerPosition.y;
+	}
+	float Zcenter(void)
+	{
+		return this->centerPosition.z;
+	}
 
 	// Subdivide Functions
-	void MakeTree(std::vector<sTriangle_A>* parentTris, unsigned int maxTri);
+	bool StartMakeTree(std::string modelName, cVAOManager* borrowedManager, unsigned int maxTri); // This will determine the size of the root AABB and generate the vector of all triangles
+	void MakeTree(std::vector<sTriangle_A>* parentTris, unsigned int maxTri, bool isRoot);
 	std::vector<sTriangle_A> trisInBox(std::vector<sTriangle_A>* triangles, glm::vec3 minCorner, glm::vec3 maxCorner);
 
+	std::vector<sTriangle_A> triangles; // Triangles in this box; only leafs will have data here
 
-	std::map< unsigned int, cAABB* > vecChild_pAABBs; // 8 Child AABB's
+	std::map< unsigned int, cAABB* > mapChild_pAABBs; // 8 Child AABB's
 
 
 };

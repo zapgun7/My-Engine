@@ -6,6 +6,8 @@
 #include "../cVAOManager/cVAOManager.h"		// For the mesh indirect
 #include <vector>
 #include "../Other Graphics Stuff/cGraphicsMain.h"
+#include "cAABB.h"
+
 
 class cPhysics
 {
@@ -14,6 +16,7 @@ public:
 	~cPhysics();
 
 	void setVAOManager(cVAOManager* pTheMeshManager);
+	void generateAABBs(std::vector<std::string> models); // Will generate an AABB oct-tree for all models
 
 	// Once you pass this in, the cPhysics handles the lifetime
 	// (i.e. IT will call delete)
@@ -68,6 +71,8 @@ private:
 	bool m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriMesh);
 	bool m_Sphere_TriMeshLocal_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriMesh);
 
+
+	std::map<std::string, cAABB*> m_map_ModelAABBs; // Map of AABB oct-treeified models
 
 	// The basic tests
 	bool m_TestSphereTriangle(float sphereRadius, glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 sphereCentre);

@@ -6,15 +6,16 @@
 #include <time.h>
 
 // Test Includes
-#include "Physics/cAABB.h"
-#include "Physics/sTriangle.h"
+// #include "Physics/cAABB.h"
+// #include "Physics/sTriangle.h"
+// #include "cVAOManager/cVAOManager.h"
 
-void testArea();
+//void testArea();
 
 int main(int argc, char** argv)
 {
-	testArea();
-	return 0;
+// 	testArea();
+// 	return 0;
 	srand(time(NULL));
 
 	cEngineController* engineFace = cEngineController::GetEngineController();
@@ -30,29 +31,30 @@ int main(int argc, char** argv)
 }
 
 
-void testArea()
-{
-	cAABB* testAABB = new cAABB();
-	std::vector<sTriangle_A> testVec;
-	std::vector<sTriangle_A> testVecSend;
-
-	glm::vec3 boxMin(-2);
-	glm::vec3 boxMax(2);
-
-	sTriangle_A tempTri;
-	tempTri.vertices[0] = glm::vec3(0, -1, 4);
-	tempTri.vertices[1] = glm::vec3(0, -4, 1);
-	tempTri.vertices[2] = glm::vec3(0, -4, 4);
-	testVecSend.push_back(tempTri);
-
-	testVec = testAABB->trisInBox(&testVecSend, boxMin, boxMax);
-
-	std::cout << testVec.size() << std::endl;
-
-
-
-	//testVec = testAABB->trisInBox()
-
-
-	return;
-}
+// void testArea()
+// {
+// 
+// // 	cAABB* testAABB = new cAABB();
+// // 	std::vector<sTriangle_A> testVec;
+// // 	std::vector<sTriangle_A> testVecSend;
+// // 
+// // 	glm::vec3 boxMin(-2);
+// // 	glm::vec3 boxMax(2);
+// // 
+// // 	sTriangle_A tempTri;
+// // 	tempTri.vertices[0] = glm::vec3(0, -1, 4);
+// // 	tempTri.vertices[1] = glm::vec3(0, -4, 1);
+// // 	tempTri.vertices[2] = glm::vec3(0, -4, 4);
+// // 	testVecSend.push_back(tempTri);
+// // 
+// // 	testVec = testAABB->trisInBox(&testVecSend, boxMin, boxMax);
+// // 
+// // 	std::cout << testVec.size() << std::endl;
+// 
+// 
+// 
+// 	//testVec = testAABB->trisInBox()
+// 
+// 
+// 	return;
+// }

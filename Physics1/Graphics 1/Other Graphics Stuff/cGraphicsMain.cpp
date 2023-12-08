@@ -516,18 +516,28 @@ void cGraphicsMain::setCameraParams(glm::vec3 camPos, glm::vec3 camDir)
 	return;
 }
 
+cVAOManager* cGraphicsMain::getVAOManager(void)
+{
+	return m_pMeshManager;
+}
+
 GLFWwindow* cGraphicsMain::getWindow(void)
 {
 	return m_window;
 }
 
-void cGraphicsMain::getAvailableModels(std::vector<std::string>* ModelVec, std::vector<std::string>* TexVec)
+void cGraphicsMain::getAvailableModels(std::vector<std::string>* ModelVec)
 {
 	//ModelVec = &m_AvailableModels; // Doesn't work
 	for (unsigned int i = 0; i < m_AvailableModels.size(); i++)
 	{
 		ModelVec->push_back(m_AvailableModels[i]);
 	}
+	return;
+}
+
+void cGraphicsMain::getAvailableTextures(std::vector<std::string>* TexVec)
+{
 	for (unsigned int i = 0; i < m_AvailableTextures.size(); i++)
 	{
 		TexVec->push_back(m_AvailableTextures[i]);
