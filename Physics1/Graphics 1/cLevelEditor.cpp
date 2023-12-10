@@ -214,7 +214,8 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 			if ((isExistingMesh) && (std::strlen(dupeName) > 0))
 	 			{
 	 				//duplicateMesh(m_mesh_obj_idx, dupeName);
-					m_mesh_obj_idx++; // Have new duplicate selected
+					PhysVec[m_mesh_obj_idx]->setRotationFromEuler(glm::degrees(glm::eulerAngles(glm::inverse(PhysVec[m_mesh_obj_idx]->get_qOrientation()))));
+					//m_mesh_obj_idx++; // Have new duplicate selected
 	 			}
 	 		}
 	 		ImGui::SameLine();

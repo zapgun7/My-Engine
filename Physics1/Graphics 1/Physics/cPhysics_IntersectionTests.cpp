@@ -161,7 +161,44 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 
 	// TODO create another sPhysicsProperties for the sphere and reverse the TriMesh's transform on it before passing 
 
-	std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sphereCollision(pSphere_General); 
+	sPhysicsProperties reverseTransformedSphere = *pSphere_General;
+
+	glm::mat4 matRevModelT = glm::mat4(1.0f);
+	glm::mat4 matRevModelR = glm::mat4(1.0f);
+	glm::mat4 matRevTranslate = glm::translate(glm::mat4(1.0f),
+											glm::vec3(-pTriMesh_General->position.x,
+													  -pTriMesh_General->position.y,
+													  -pTriMesh_General->position.z));
+	glm::mat4 matModelRT = glm::mat4(1.0f);
+	glm::mat4 matModelR = glm::mat4(1.0f);
+	glm::mat4 matTranslate = glm::translate(glm::mat4(1.0f),
+											glm::vec3(pTriMesh_General->position.x,
+													  pTriMesh_General->position.y,
+													  pTriMesh_General->position.z));
+
+
+	glm::mat4 matRevRotation = glm::mat4(glm::inverse(pTriMesh_General->get_qOrientation()));
+	glm::mat4 matRotation = glm::mat4(pTriMesh_General->get_qOrientation());
+
+
+	// For transforming relative to the base-triangles
+	matRevModelT *= matRevTranslate;
+	//matRevModelT *= matRevRotation;
+	matRevModelR *= matRevRotation;
+
+	// For converting back
+	matModelRT *= matTranslate;
+	matModelRT *= matRotation;
+	matModelR *= matRotation;
+
+	//reverseTransformedSphere.oldPosition = (matRevModelRT * glm::vec4(reverseTransformedSphere.oldPosition, 1.0f));
+	reverseTransformedSphere.position = (matRevModelT * glm::vec4(reverseTransformedSphere.position, 1.0f));
+	reverseTransformedSphere.position = (matRevModelR * glm::vec4(reverseTransformedSphere.position, 1.0f));
+	reverseTransformedSphere.velocity = (matRevModelR * glm::vec4(reverseTransformedSphere.velocity, 1.0f));
+	
+
+	//std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sphereCollision(pSphere_General); 
+	std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sphereCollision(&reverseTransformedSphere);
 
 
 
@@ -312,11 +349,14 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 
 		// ******************************************************
 
-		glm::vec3 thisTriangleClosestPoint = this->m_ClosestPtPointTriangle(pSphere_General->position,
-			itTri->vertices[0], itTri->vertices[1], itTri->vertices[2]);
+		//glm::vec3 thisTriangleClosestPoint = this->m_ClosestPtPointTriangle(pSphere_General->position,
+		//	itTri->vertices[0], itTri->vertices[1], itTri->vertices[2]);
+		glm::vec3 thisTriangleClosestPoint = this->m_ClosestPtPointTriangle(reverseTransformedSphere.position,
+				itTri->vertices[0], itTri->vertices[1], itTri->vertices[2]);
 
 		// Is this the closest so far
-		float distanceToThisTriangle = glm::distance(thisTriangleClosestPoint, pSphere_General->position);
+		//float distanceToThisTriangle = glm::distance(thisTriangleClosestPoint, pSphere_General->position);
+		float distanceToThisTriangle = glm::distance(thisTriangleClosestPoint, reverseTransformedSphere.position);
 
 		if (distanceToThisTriangle < closestDistanceSoFar) // TODO Keep track of all triangles that are in/touching the sphere, figure out which one it hit first
 		{
@@ -363,7 +403,8 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 
 		// Calculate the current "direction" vector 
 		// We're using the velocity
-		glm::vec3 sphereDirection = pSphere_General->velocity;
+		//glm::vec3 sphereDirection = pSphere_General->velocity;
+		glm::vec3 sphereDirection = reverseTransformedSphere.velocity;
 		// Normalize... 
 		sphereDirection = glm::normalize(sphereDirection);
 
@@ -380,7 +421,8 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 		glm::vec3 reflectionVec = glm::reflect(sphereDirection, triNormal);
 
 		// Update the  velocity based on this reflection vector
-		float sphereSpeed = glm::length(pSphere_General->velocity);
+		//float sphereSpeed = glm::length(pSphere_General->velocity);
+		float sphereSpeed = glm::length(reverseTransformedSphere.velocity);
 		glm::vec3 newVelocity = reflectionVec * sphereSpeed;
 
 		// RESTITUTION CALCULATION
@@ -397,13 +439,27 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 		newVelocity += (restitutionVelLoss * (1.0f - pSphere_General->restitution)) * restAppDegree; // Subtract said vector from newVelocity, scaled with its restitution (0 restitution = no bounce, 1 = full bounce)
 
 
+		// TODO will have to rotate the velocity vector back
+		newVelocity = (matModelR * glm::vec4(newVelocity, 1.0f));
 		pSphere_General->velocity = newVelocity;
 
 
 		// Re-position the sphere where it would be if it perfectly bounced off the triangle
 		float distToCorrect = (pSphere->radius - closestDistanceSoFar) * 2; // Get length we need to move the sphere by
-		glm::vec3 moveDir = glm::normalize((pSphere_General->position - closestContactPoint));
-		pSphere_General->position += (moveDir * distToCorrect);
+		//glm::vec3 moveDir = glm::normalize((pSphere_General->position - closestContactPoint));
+		//pSphere_General->position += (moveDir * distToCorrect);
+		glm::vec3 moveDir = glm::normalize((reverseTransformedSphere.position - closestContactPoint));
+
+		//glm::vec3 oldPos = reverseTransformedSphere.position;
+		reverseTransformedSphere.position += (moveDir * distToCorrect);
+
+		// TODO reverse the rotation of this vector
+		glm::vec3 deltaPos = (moveDir * distToCorrect);
+		deltaPos = (matModelR * glm::vec4(deltaPos, 1.0f));
+
+		////////// RE-REVERSING UPDATED POSITION /////////
+		//pSphere_General->position = (matModel * glm::vec4(reverseTransformedSphere.position, 1.0f));
+		pSphere_General->position += deltaPos;
 
 
 		// We add this "collision event" to the list or queue of collisions
