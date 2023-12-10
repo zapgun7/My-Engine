@@ -30,7 +30,8 @@ bool cAABB::StartMakeTree(std::string modelName, cVAOManager* borrowedManager, u
 
 	this->centerPosition = (maxXYZ + minXYZ) * 0.5f;
 	this->halfLengths = maxXYZ - this->centerPosition;
-
+	
+	int ID = 0;
 	std::vector<sTriangle_A> modelTriangles;
 	for (unsigned int i = 0; i < meshDrawInfo.numberOfIndices; i += 3)
 	{
@@ -46,6 +47,8 @@ bool cAABB::StartMakeTree(std::string modelName, cVAOManager* borrowedManager, u
 		currTri.vertices[2].x = meshDrawInfo.pVertices[meshDrawInfo.pIndices[i + 2]].x;
 		currTri.vertices[2].y = meshDrawInfo.pVertices[meshDrawInfo.pIndices[i + 2]].y;
 		currTri.vertices[2].z = meshDrawInfo.pVertices[meshDrawInfo.pIndices[i + 2]].z;
+
+		currTri.ID = ID++;
 
 		modelTriangles.push_back(currTri);
 	}
@@ -72,23 +75,32 @@ void cAABB::MakeTree(std::vector<sTriangle_A>* parentTris, unsigned int maxTri, 
 	}
 
 	// Still too many triangles, we need to create 8 new children
-	// Map keys will be 1-8
+	// Map keys will be 0-7
 	// This works clock-wise starting in -x -z, starting at -y then +y
 	// #: xyz
-	// 1: ---
-	// 2: -+-
-	// 3: --+
-	// 4: -++
-	// 5: +-+
-	// 6: +++
-	// 7: +--
-	// 8: ++-
+	// 0: ---
+	// 1: -+-
+	// 2: --+
+	// 3: -++
+	// 4: +-+
+	// 5: +++
+	// 6: +--
+	// 7: ++-
 	glm::vec3 newHalflengths = this->halfLengths * 0.5f; // Only need to calculate this once, as all new children will share this
+
+	// 0 //
+	cAABB* AABB0 = new cAABB();
+	AABB0->centerPosition.x = this->centerPosition.x - (this->halfLengths.x / 2); // -x
+	AABB0->centerPosition.y = this->centerPosition.y - (this->halfLengths.y / 2); // -y
+	AABB0->centerPosition.z = this->centerPosition.z - (this->halfLengths.z / 2); // -z
+	AABB0->halfLengths = newHalflengths;
+	AABB0->MakeTree(&boxedTris, maxTri, false);
+	mapChild_pAABBs[0] = AABB0;
 
 	// 1 //
 	cAABB* AABB1 = new cAABB();
 	AABB1->centerPosition.x = this->centerPosition.x - (this->halfLengths.x / 2); // -x
-	AABB1->centerPosition.y = this->centerPosition.y - (this->halfLengths.y / 2); // -y
+	AABB1->centerPosition.y = this->centerPosition.y + (this->halfLengths.y / 2); // +y
 	AABB1->centerPosition.z = this->centerPosition.z - (this->halfLengths.z / 2); // -z
 	AABB1->halfLengths = newHalflengths;
 	AABB1->MakeTree(&boxedTris, maxTri, false);
@@ -97,8 +109,8 @@ void cAABB::MakeTree(std::vector<sTriangle_A>* parentTris, unsigned int maxTri, 
 	// 2 //
 	cAABB* AABB2 = new cAABB();
 	AABB2->centerPosition.x = this->centerPosition.x - (this->halfLengths.x / 2); // -x
-	AABB2->centerPosition.y = this->centerPosition.y + (this->halfLengths.y / 2); // +y
-	AABB2->centerPosition.z = this->centerPosition.z - (this->halfLengths.z / 2); // -z
+	AABB2->centerPosition.y = this->centerPosition.y - (this->halfLengths.y / 2); // -y
+	AABB2->centerPosition.z = this->centerPosition.z + (this->halfLengths.z / 2); // +z
 	AABB2->halfLengths = newHalflengths;
 	AABB2->MakeTree(&boxedTris, maxTri, false);
 	mapChild_pAABBs[2] = AABB2;
@@ -106,7 +118,7 @@ void cAABB::MakeTree(std::vector<sTriangle_A>* parentTris, unsigned int maxTri, 
 	// 3 //
 	cAABB* AABB3 = new cAABB();
 	AABB3->centerPosition.x = this->centerPosition.x - (this->halfLengths.x / 2); // -x
-	AABB3->centerPosition.y = this->centerPosition.y - (this->halfLengths.y / 2); // -y
+	AABB3->centerPosition.y = this->centerPosition.y + (this->halfLengths.y / 2); // +y
 	AABB3->centerPosition.z = this->centerPosition.z + (this->halfLengths.z / 2); // +z
 	AABB3->halfLengths = newHalflengths;
 	AABB3->MakeTree(&boxedTris, maxTri, false);
@@ -114,8 +126,8 @@ void cAABB::MakeTree(std::vector<sTriangle_A>* parentTris, unsigned int maxTri, 
 
 	// 4 //
 	cAABB* AABB4 = new cAABB();
-	AABB4->centerPosition.x = this->centerPosition.x - (this->halfLengths.x / 2); // -x
-	AABB4->centerPosition.y = this->centerPosition.y + (this->halfLengths.y / 2); // +y
+	AABB4->centerPosition.x = this->centerPosition.x + (this->halfLengths.x / 2); // +x
+	AABB4->centerPosition.y = this->centerPosition.y - (this->halfLengths.y / 2); // -y
 	AABB4->centerPosition.z = this->centerPosition.z + (this->halfLengths.z / 2); // +z
 	AABB4->halfLengths = newHalflengths;
 	AABB4->MakeTree(&boxedTris, maxTri, false);
@@ -124,7 +136,7 @@ void cAABB::MakeTree(std::vector<sTriangle_A>* parentTris, unsigned int maxTri, 
 	// 5 //
 	cAABB* AABB5 = new cAABB();
 	AABB5->centerPosition.x = this->centerPosition.x + (this->halfLengths.x / 2); // +x
-	AABB5->centerPosition.y = this->centerPosition.y - (this->halfLengths.y / 2); // -y
+	AABB5->centerPosition.y = this->centerPosition.y + (this->halfLengths.y / 2); // +y
 	AABB5->centerPosition.z = this->centerPosition.z + (this->halfLengths.z / 2); // +z
 	AABB5->halfLengths = newHalflengths;
 	AABB5->MakeTree(&boxedTris, maxTri, false);
@@ -133,8 +145,8 @@ void cAABB::MakeTree(std::vector<sTriangle_A>* parentTris, unsigned int maxTri, 
 	// 6 //
 	cAABB* AABB6 = new cAABB();
 	AABB6->centerPosition.x = this->centerPosition.x + (this->halfLengths.x / 2); // +x
-	AABB6->centerPosition.y = this->centerPosition.y + (this->halfLengths.y / 2); // +y
-	AABB6->centerPosition.y = this->centerPosition.z + (this->halfLengths.z / 2); // +z
+	AABB6->centerPosition.y = this->centerPosition.y - (this->halfLengths.y / 2); // -y
+	AABB6->centerPosition.z = this->centerPosition.z - (this->halfLengths.z / 2); // -z
 	AABB6->halfLengths = newHalflengths;
 	AABB6->MakeTree(&boxedTris, maxTri, false);
 	mapChild_pAABBs[6] = AABB6;
@@ -142,20 +154,11 @@ void cAABB::MakeTree(std::vector<sTriangle_A>* parentTris, unsigned int maxTri, 
 	// 7 //
 	cAABB* AABB7 = new cAABB();
 	AABB7->centerPosition.x = this->centerPosition.x + (this->halfLengths.x / 2); // +x
-	AABB7->centerPosition.y = this->centerPosition.y - (this->halfLengths.y / 2); // -y
+	AABB7->centerPosition.y = this->centerPosition.y + (this->halfLengths.y / 2); // +y
 	AABB7->centerPosition.z = this->centerPosition.z - (this->halfLengths.z / 2); // -z
 	AABB7->halfLengths = newHalflengths;
 	AABB7->MakeTree(&boxedTris, maxTri, false);
 	mapChild_pAABBs[7] = AABB7;
-
-	// 8 //
-	cAABB* AABB8 = new cAABB();
-	AABB8->centerPosition.x = this->centerPosition.x + (this->halfLengths.x / 2); // +x
-	AABB8->centerPosition.y = this->centerPosition.y + (this->halfLengths.y / 2); // +y
-	AABB8->centerPosition.z = this->centerPosition.z - (this->halfLengths.z / 2); // -z
-	AABB8->halfLengths = newHalflengths;
-	AABB8->MakeTree(&boxedTris, maxTri, false);
-	mapChild_pAABBs[8] = AABB8;
 
 	return;
 }

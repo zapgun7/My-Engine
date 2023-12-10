@@ -74,6 +74,7 @@ public:
 	// STARTOF: From: iPhysicsMeshTransformAccess interface
 	virtual glm::vec3 getDrawPosition(void);
 	virtual glm::vec3 getDrawOrientation(void);
+	virtual std::string getMeshName(void);
 	virtual void setDrawPosition(const glm::vec3& newPosition);
 	virtual void setDrawOrientation(const glm::vec3& newOrientation);
 	virtual void setDrawOrientation(const glm::quat& newOrientation);

@@ -112,6 +112,12 @@ void cEngineController_IMPL::setLightData(int lightIdx, std::string friendlyName
 	return;
 }
 
+void cEngineController_IMPL::setPhysicsRunning(bool isRunning)
+{
+	m_pThePhysics->setPhysicsRunningState(isRunning);
+	return;
+}
+
 void cEngineController_IMPL::addNewObject(std::string meshName, char* friendlyName)
 {
 	// Create cmesh and add to cGraphicsMain

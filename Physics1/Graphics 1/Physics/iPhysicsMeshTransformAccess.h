@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <string>
 
 // Used by the Physics system: 
 //	Read and Write access to position, orientation, and scale
@@ -21,6 +22,7 @@ public:
 
 	virtual glm::vec3 getDrawPosition(void) = 0;
 	virtual glm::vec3 getDrawOrientation(void) = 0;
+	virtual std::string getMeshName(void) = 0;
 
 	// Used by Phsyics (and anything else) that needs to update the DRAW position
 	virtual void setDrawPosition(const glm::vec3& newPosition) = 0;

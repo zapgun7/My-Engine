@@ -29,6 +29,22 @@ void cPhysics::generateAABBs(std::vector<std::string> models)
 	}
 }
 
+cAABB* cPhysics::findAABBByModelName(std::string modelName)
+{
+	std::map< std::string,
+		cAABB* >::iterator
+		itAABB = this->m_map_ModelAABBs.find(modelName);
+
+	// Find it? 
+	if (itAABB == this->m_map_ModelAABBs.end())
+	{
+		// Nope
+		return nullptr;
+	}
+
+	return itAABB->second;
+}
+
 void cPhysics::AddShape(sPhysicsProperties* pNewShape)
 {
 	this->m_vec_pPhysicalProps.push_back(pNewShape);

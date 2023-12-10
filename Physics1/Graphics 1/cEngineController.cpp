@@ -92,6 +92,12 @@ void cEngineController::setLightData(int lightIdx, std::string friendlyName, glm
 	return;
 }
 
+void cEngineController::setPhysicsRunning(bool isRunning)
+{
+	m_pTheEngineController->setPhysicsRunning(isRunning);
+	return;
+}
+
 void cEngineController::addNewObject(std::string meshName, char* friendlyName)
 {
 	m_pTheEngineController->addNewObject(meshName, friendlyName);

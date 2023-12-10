@@ -25,6 +25,7 @@ public:
 	// Editor Windows
 	void RootWindow(std::vector<cMesh*> ActiveMeshVec);
 	void MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPhysicsProperties*> PhysVec);
+	void PhysEditor(std::vector<sPhysicsProperties*> PhysVec);
 	void LightEditor(cLightManager* TheLights);
 	void SceneManager(std::vector<std::string> AvailableSaves);
 
@@ -35,6 +36,7 @@ private:
 	bool m_ShowMeshEditor;   // 
 	bool m_ShowLightEditor;  // Windows to edit existing meshes and lights respectively
 	bool m_ShowSceneManager; //
+	bool m_ShowPhysicsEditor;//
 
 	// Stored Info
 	std::vector<std::string> m_AvailableModels;
@@ -42,6 +44,7 @@ private:
 
 	// Saved Navigation Info
 	int m_mesh_obj_idx;
+	int m_phys_obj_idx;
 
 
 

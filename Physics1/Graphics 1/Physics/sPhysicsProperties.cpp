@@ -11,6 +11,7 @@ sPhysicsProperties::sPhysicsProperties()
 	this->shapeType = UNKNOWN_OR_UNDEFINED;
 	//
 	this->m_qOrientation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f)); // Set this to default, fricks up render otherwise
+	this->restitution = 0.0f;
 
 	this->m_UniqueID = sPhysicsProperties::m_nextUniqueID;
 	sPhysicsProperties::m_nextUniqueID++;

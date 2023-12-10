@@ -50,6 +50,8 @@ void cLevelEditor::Update()
 
 	if (m_ShowMeshEditor)
 		MeshEditor(MeshVec, PhysVec);
+	if (m_ShowPhysicsEditor)
+		PhysEditor(PhysVec);
 	if (m_ShowLightEditor)
 		LightEditor(&TheLights);
 	if (m_ShowSceneManager)
@@ -97,20 +99,22 @@ void cLevelEditor::RootWindow(std::vector<cMesh*> ActiveMeshVec)
 		}
 	}
 
-	if (ImGui::Button("Physics Toggle TODO"))
+	static bool enablePhysics = false;
+
+	if (ImGui::Button("Physics Toggle"))
 	{
-// 		if (enablePhysics)
-// 			enablePhysics = false;
-// 		else
-// 			enablePhysics = true;
-		// ::g_pPhysics->setPhysicsRunningState(enablePhysics); //UNPHYS
+		if (enablePhysics)
+			enablePhysics = false;
+		else
+			enablePhysics = true;
+		m_pEngineController->setPhysicsRunning(enablePhysics);
 	}
 
-// 	ImGui::SameLine();
-// 	if (enablePhysics)
-// 		ImGui::Text("ON    ");
-// 	else
-// 		ImGui::Text("OFF   ");
+	ImGui::SameLine();
+	if (enablePhysics)
+		ImGui::Text("ON    ");
+	else
+		ImGui::Text("OFF   ");
 
 
 	// 		ImGui::SameLine();
@@ -133,6 +137,13 @@ void cLevelEditor::RootWindow(std::vector<cMesh*> ActiveMeshVec)
 			m_ShowMeshEditor = false;
 		else
 			m_ShowMeshEditor = true;
+	}
+	if (ImGui::Button("Physics Editor"))
+	{
+		if (m_ShowPhysicsEditor)
+			m_ShowPhysicsEditor = false;
+		else
+			m_ShowPhysicsEditor = true;
 	}
 	if (ImGui::Button("Light Editor"))
 	{
@@ -500,6 +511,127 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 		ImGui::End();
 }
 
+
+void cLevelEditor::PhysEditor(std::vector<sPhysicsProperties*> PhysVec)
+{
+	ImGui::Begin("Physics Editor");
+	if (ImGui::BeginListBox("Physics Objects")) // List of active objects
+	{
+		for (int n = 0; n < PhysVec.size(); n++)
+		{
+			const bool is_selected = (m_phys_obj_idx == n);
+			if (ImGui::Selectable(PhysVec[n]->friendlyName.c_str(), is_selected))
+				m_phys_obj_idx = n;
+
+			// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+			if (is_selected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndListBox();
+	}
+	if (m_phys_obj_idx >= PhysVec.size()) // When changing scenes, this makes sure it doesn't go outta bounds
+		m_phys_obj_idx = 0;
+	bool isExistingObj = false; // Assert we have at least one mesh
+	if (PhysVec.size() > 0)
+		isExistingObj = true;
+
+	// Initialize variables to edit
+	unsigned int shapeType = 0;
+	float inv_mass = 0.0f;
+	glm::vec3 objAccel = glm::vec3(0);
+	sPhysicsProperties* currObj = nullptr;
+
+	if (isExistingObj)
+	{
+		currObj = PhysVec[m_phys_obj_idx];
+
+
+		shapeType = (unsigned int)PhysVec[m_phys_obj_idx]->shapeType;
+		objAccel = currObj->acceleration;
+		inv_mass = currObj->inverse_mass;
+	}
+
+
+
+
+	const char* shapeTypes[] = { "UNKNOWN_OR_UNDEFINED", "SPHERE", "PLANE", "TRIANGLE", "AABB", "CAPSULE", "MESH_OF_TRIANGLES_INDIRECT", "MESH_OF_TRIANGLES_LOCAL_VERTICES"};
+	static int stype_current_idx = 0;
+	stype_current_idx = shapeType; // Set selected light type to one stored in the light
+	const char* combo_preview_value = shapeTypes[stype_current_idx];
+	if (ImGui::BeginCombo("Shape Types", combo_preview_value))
+	{
+		for (int n = 0; n < IM_ARRAYSIZE(shapeTypes); n++)
+		{
+			const bool is_selected = (stype_current_idx == n);
+			if (ImGui::Selectable(shapeTypes[n], is_selected))
+				stype_current_idx = n;
+
+			// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+			if (is_selected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+	shapeType = stype_current_idx; // Set shape type
+
+
+	ImGui::SeparatorText("----Shape-Specific Options----");
+	if (isExistingObj)
+	{
+		if (currObj->shapeType == sPhysicsProperties::SPHERE)
+		{
+			// Radius
+			float radius = ((sPhysicsProperties::sSphere*)currObj->pShape)->radius;
+			ImGui::DragFloat("Radius", &radius, 0.1f, 0.0f, FLT_MAX, "%.3f");
+			((sPhysicsProperties::sSphere*)currObj->pShape)->radius = radius;
+		}
+		else if (currObj->shapeType == sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT)
+		{
+			// Idk meshname?
+		}
+	}
+
+	ImGui::SeparatorText("----General Options----");
+	if (isExistingObj)
+	{
+		// Mass 
+		ImGui::DragFloat("InvMass", &inv_mass, 0.1f, -1.0f, FLT_MAX, "%.3f");
+		ImGui::Separator();
+		// Acceleration
+		ImGui::DragFloat("AccelX", &objAccel.x, 0.1f, 0.0f, FLT_MAX, "%.3f");
+		ImGui::DragFloat("AccelY", &objAccel.y, 0.1f, 0.0f, FLT_MAX, "%.3f");
+		ImGui::DragFloat("AccelZ", &objAccel.z, 0.1f, 0.0f, FLT_MAX, "%.3f");
+		
+
+	}
+
+	// Setting the values
+	if (isExistingObj)
+	{
+		if (currObj->shapeType != (sPhysicsProperties::eShape)shapeType)
+		{
+			currObj->shapeType = (sPhysicsProperties::eShape)shapeType;
+			switch (currObj->shapeType)
+			{
+			case(sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT):
+				currObj->setShape(new sPhysicsProperties::sMeshOfTriangles_Indirect(currObj->pTheAssociatedMesh->getMeshName()));
+				break;
+			case(sPhysicsProperties::SPHERE):
+				currObj->setShape(new sPhysicsProperties::sSphere(1.0f));
+				break;
+			}
+			
+		}
+
+		// General Updates
+		currObj->acceleration = objAccel;
+		currObj->inverse_mass = inv_mass;
+	}
+
+
+	ImGui::End();
+}
+
 // Window for changing light properties
 void cLevelEditor::LightEditor(cLightManager* TheLights)
 {
@@ -674,6 +806,7 @@ cLevelEditor::cLevelEditor(GLFWwindow* window)
 	, m_ShowMeshEditor(false)
 	, m_ShowSceneManager(false)
 	, m_mesh_obj_idx(0)
+	, m_phys_obj_idx(0)
 {
 	//m_pSceneManager = new cSceneManagement();
 	//m_pSceneManager->Initialize();

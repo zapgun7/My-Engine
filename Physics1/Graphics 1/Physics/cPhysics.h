@@ -73,6 +73,7 @@ private:
 
 
 	std::map<std::string, cAABB*> m_map_ModelAABBs; // Map of AABB oct-treeified models
+	cAABB* findAABBByModelName(std::string modelName);
 
 	// The basic tests
 	bool m_TestSphereTriangle(float sphereRadius, glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 sphereCentre);

@@ -115,6 +115,11 @@ glm::vec3 cMesh::getDrawOrientation(void)
 	return glm::eulerAngles(this->get_qOrientation());
 }
 
+std::string cMesh::getMeshName(void)
+{
+	return meshName;
+}
+
 void cMesh::setDrawOrientation(const glm::vec3& newOrientation)
 {
 	//	this->drawOrientation = newOrientation;

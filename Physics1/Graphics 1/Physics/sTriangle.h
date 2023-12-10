@@ -7,4 +7,5 @@
 struct sTriangle_A
 {
 	glm::vec3 vertices[3];
+	unsigned int ID;
 };

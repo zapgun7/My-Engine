@@ -157,7 +157,7 @@
     <ClCompile Include="Physics\cPhysics_AABB_Subdivide.cpp">
       <Filter>Physics\AABB</Filter>
     </ClCompile>
-    <ClCompile Include="Physics\cPhysics_SweepPrune.cpp">
+    <ClCompile Include="Physics\cPhysics_AABB_Traversal.cpp">
       <Filter>Physics\AABB</Filter>
     </ClCompile>
   </ItemGroup>
