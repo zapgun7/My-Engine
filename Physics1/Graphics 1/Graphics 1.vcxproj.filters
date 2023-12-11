@@ -56,6 +56,12 @@
     <Filter Include="Physics\AABB">
       <UniqueIdentifier>{c42d4f2c-f0c7-444a-a32c-044b0b79d404}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lua">
+      <UniqueIdentifier>{4772ea61-dc08-49d6-a258-621c0b6b86c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua\Factory">
+      <UniqueIdentifier>{e8b23959-bd0c-4135-8ce3-4b6a42fc1f9e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Basic Shader Manager\cShaderManager.cpp">
@@ -160,6 +166,21 @@
     <ClCompile Include="Physics\cPhysics_AABB_Traversal.cpp">
       <Filter>Physics\AABB</Filter>
     </ClCompile>
+    <ClCompile Include="Lua\cCommand_MoveTo.cpp">
+      <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\cCommandGroup.cpp">
+      <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\cLuaBrain.cpp">
+      <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\cLuaOtherBrain.cpp">
+      <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\cCommandFactory.cpp">
+      <Filter>Lua\Factory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basic Shader Manager\cShaderManager.h">
@@ -263,6 +284,24 @@
     </ClInclude>
     <ClInclude Include="Physics\cAABB.h">
       <Filter>Physics\AABB</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\cCommand_MoveTo.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\cCommandGroup.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\cCommandManager.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\cLuaBrain.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\iCommand.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\cCommandFactory.h">
+      <Filter>Lua\Factory</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

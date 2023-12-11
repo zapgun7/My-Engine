@@ -314,6 +314,9 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 				selectedObj = PhysVec[m_mesh_obj_idx];
 
 
+
+
+
 	 			// PHYSICS DATA
 				glm::vec3 objPosition = selectedObj->position;
 	 			xPos = objPosition.x;
@@ -348,18 +351,40 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 				isWireframe = selectedMesh->bIsWireframe;
 
 				//textureIdx = selectedMesh->textureIdx;
-				for (unsigned int i = 0; i < cMesh::NUM_TEXTURES; i++)
+// 				for (unsigned int i = 0; i < cMesh::NUM_TEXTURES; i++)
+// 				{
+// 					if (selectedMesh->textureName[i] != "##")
+// 					{
+// 						for (unsigned int e = 0; e < m_AvailableTextures.size(); e++)
+// 						{
+// 							if (selectedMesh->textureName[i] == m_AvailableTextures[e])
+// 							{
+// 								textureIdx[i] = e;
+// 								break;
+// 							}
+// 						}
+// 					}
+// 				}
+				// Quickly initialize the int array representing textures
+				for (unsigned int i = 0; i < 8; i++)
 				{
-					if (selectedMesh->textureName[i] != "##")
+					if (selectedMesh->textureName[i] == "")
 					{
-						for (unsigned int e = 0; e < m_AvailableTextures.size(); e++)
+						textureIdx[i] = 0;
+						continue;
+					}
+					// Assuming it has some actual texture
+					int texNum = 0;
+					for (std::vector<std::string>::iterator itTexName = m_AvailableTextures.begin();
+						itTexName != m_AvailableTextures.end();
+						itTexName++)
+					{
+						if (selectedMesh->textureName[i] == *itTexName)
 						{
-							if (selectedMesh->textureName[i] == m_AvailableTextures[e])
-							{
-								textureIdx[i] = e;
-								break;
-							}
+							textureIdx[i] = texNum;
+							break;
 						}
+						texNum++;
 					}
 				}
 	 		}
@@ -390,10 +415,11 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 			
 
 			//////// TEXTURES //////////
+			int textype_current_idx[8];
 
 			if (isExistingMesh)
 			{
-				static int textype_current_idx[8];
+				
 
 				int textureCount = m_AvailableTextures.size();
 
@@ -490,9 +516,10 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 				selectedMesh->friendlyName = friendlyName;
 				for (unsigned int i = 0; i < selectedMesh->NUM_TEXTURES; i++)
 				{
-					selectedMesh->textureName[i] = m_AvailableTextures[textureIdx[i]];
+					//selectedMesh->textureName[i] = m_AvailableTextures[textureIdx[i]];
+					selectedMesh->textureName[i] = m_AvailableTextures[textype_current_idx[i]];
 					selectedMesh->textureRatios[i] = textureRatios[i];
-					selectedMesh->textureIdx[i] = textureIdx[i];
+					//selectedMesh->textureIdx[i] = textureIdx[i];
 				}
 				selectedMesh->bIsVisible = isVisible;
 				selectedMesh->bIsWireframe = isWireframe;

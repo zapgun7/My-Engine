@@ -31,6 +31,7 @@ void cEngineController_IMPL::Run(void)
 	while (!shouldClose)
 	{
 		double deltaTime = m_pTheTimer->getFrameTime();
+		m_pLuaBrain->UpdateActiveCommands(deltaTime);
 		m_pTheEditor->Update();
 		m_pThePhysics->Update(deltaTime);
 		shouldClose = m_pTheGraphics->Update(deltaTime);
@@ -55,8 +56,11 @@ bool cEngineController_IMPL::Initialize(void)
 
 	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
 	std::vector<std::string> tempModelVec;
-	m_pTheGraphics->getAvailableModels(&tempModelVec);
-	this->m_pThePhysics->generateAABBs(tempModelVec);
+	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
+	//this->m_pThePhysics->generateAABBs(tempModelVec);
+
+	this->m_pLuaBrain = new cLuaBrain();
+	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
 
 	return true;
 }
@@ -161,6 +165,15 @@ void cEngineController_IMPL::saveScene(char* fileName)
 void cEngineController_IMPL::loadScene(std::string fileName)
 {
 	m_pTheSceneManager->loadScene(fileName);
+
+
+// 	std::vector<sPhysicsProperties*> physVec = m_pThePhysics->getPhysicsVec();
+// 	m_pLuaBrain->setPhysVec(physVec);
+// 	for (int i = 0; i < 10; i++)
+// 	{
+// 		m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', 20, 60, -30, .5)");
+// 		m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', -30, 10, 20, .5)");
+// 	}
 	return;
 }
 

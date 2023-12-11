@@ -8,6 +8,7 @@
 #include "cHiResTimer.h"
 #include "cLevelEditor.h"
 #include "cSceneManagement.h"
+#include "Lua/cLuaBrain.h"
 
 class cEngineController_IMPL
 {
@@ -41,6 +42,7 @@ public:
 	/// Data Deletion ///
 	void deleteObject(int ID);
 
+
 private:
 	// All objects to represent various game components
 	cGraphicsMain* m_pTheGraphics;
@@ -49,5 +51,6 @@ private:
 	cHiResTimer* m_pTheTimer;
 	cLevelEditor* m_pTheEditor;
 	cSceneManagement* m_pTheSceneManager;
+	cLuaBrain* m_pLuaBrain;
 	// Scene manager should be controlled by imgui or some game controller that loads levels
 };
