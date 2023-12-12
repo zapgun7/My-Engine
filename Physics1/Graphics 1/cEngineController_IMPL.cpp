@@ -149,6 +149,14 @@ void cEngineController_IMPL::addNewObject(std::string meshName, char* friendlyNa
 	return;
 }
 
+void cEngineController_IMPL::addCustomObject(cMesh* newMesh, sPhysicsProperties* newObj)
+{
+	m_pTheGraphics->addNewMesh(newMesh);
+	m_pThePhysics->AddShape(newObj);
+
+	return;
+}
+
 void cEngineController_IMPL::saveScene(char* fileName)
 {
 	std::vector<cMesh*> meshVec; 

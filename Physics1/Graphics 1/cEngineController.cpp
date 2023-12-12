@@ -104,6 +104,12 @@ void cEngineController::addNewObject(std::string meshName, char* friendlyName)
 	return;
 }
 
+void cEngineController::addCustomObject(cMesh* newMesh, sPhysicsProperties* newObj)
+{
+	m_pTheEngineController->addCustomObject(newMesh, newObj);
+	return;
+}
+
 void cEngineController::saveScene(char* fileName)
 {
 	m_pTheEngineController->saveScene(fileName);

@@ -223,6 +223,11 @@ public:
 //	glm::vec3 momentOfWhatever;
 //	glm::vec3 rotationalSpeed;
 
+	void setUniqueID(unsigned int newID)
+	{
+		m_UniqueID = newID;
+	}
+
 	unsigned int getUniqueID(void);
 private:
 	unsigned int m_UniqueID;

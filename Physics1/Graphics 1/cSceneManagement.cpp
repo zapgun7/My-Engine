@@ -416,7 +416,7 @@ void cSceneManagement::loadScene(std::string fileName)
 		itr = phys[i].FindMember("pos");
 		newPhys->position.x = itr->value[0].GetFloat();
 		newPhys->position.y = itr->value[1].GetFloat();
-		newPhys->position.y = itr->value[2].GetFloat();
+		newPhys->position.z = itr->value[2].GetFloat();
 
 		// Orientation
 		itr = phys[i].FindMember("ori");

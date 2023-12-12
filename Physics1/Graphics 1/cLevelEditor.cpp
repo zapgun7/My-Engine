@@ -214,8 +214,31 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 			if ((isExistingMesh) && (std::strlen(dupeName) > 0))
 	 			{
 	 				//duplicateMesh(m_mesh_obj_idx, dupeName);
-					PhysVec[m_mesh_obj_idx]->setRotationFromEuler(glm::degrees(glm::eulerAngles(glm::inverse(PhysVec[m_mesh_obj_idx]->get_qOrientation()))));
-					//m_mesh_obj_idx++; // Have new duplicate selected
+					cMesh* newDupe = new cMesh();
+					memcpy(newDupe, ActiveMeshVec[m_mesh_obj_idx], sizeof(cMesh));
+					newDupe->friendlyName = dupeName;
+
+
+					sPhysicsProperties* newDupePhys = new sPhysicsProperties();
+					int newID = newDupePhys->getUniqueID();
+					for (std::vector<sPhysicsProperties*>::iterator itPhys = PhysVec.begin();
+						itPhys != PhysVec.end();
+						itPhys++)
+					{
+						if (newDupe->uniqueID == (*itPhys)->getUniqueID())
+						{
+							memcpy(newDupePhys, *itPhys, sizeof(sPhysicsProperties));
+							break;
+						}
+					}
+					newDupePhys->setUniqueID(newID);
+					newDupe->uniqueID = newID;
+					m_pEngineController->addCustomObject(newDupe, newDupePhys);
+
+
+					m_mesh_obj_idx = ActiveMeshVec.size(); // Have new duplicate selected
+					ImGui::End();
+					return;
 	 			}
 	 		}
 	 		ImGui::SameLine();

@@ -35,6 +35,7 @@ public:
 
 	// Data Creation ///
 	void addNewObject(std::string meshName, char* friendlyName);
+	void addCustomObject(cMesh* newMesh, sPhysicsProperties* newObj);
 	void saveScene(char* fileName);
 	void loadScene(std::string fileName);
 	void resetScene(std::vector<cMesh*> newMeshVec, std::vector<cLight> newLights, std::vector<sPhysicsProperties*> newPhysVec);
