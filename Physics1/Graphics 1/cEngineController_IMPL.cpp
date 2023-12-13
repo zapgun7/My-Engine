@@ -175,12 +175,13 @@ void cEngineController_IMPL::loadScene(std::string fileName)
 	m_pTheSceneManager->loadScene(fileName);
 
 
-// 	std::vector<sPhysicsProperties*> physVec = m_pThePhysics->getPhysicsVec();
-// 	m_pLuaBrain->setPhysVec(physVec);
+ 	std::vector<sPhysicsProperties*> physVec = m_pThePhysics->getPhysicsVec();
+ 	m_pLuaBrain->setPhysVec(physVec);
 // 	for (int i = 0; i < 10; i++)
 // 	{
-// 		m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', 20, 60, -30, .5)");
-// 		m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', -30, 10, 20, .5)");
+	m_pLuaBrain->RunScriptImmediately("AddSerialOrient('ramp', 0, 720, 0, 4, 1, 3)");
+ 	//m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', 0, 1000, 0, 0, 0, 0)");
+	//m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', 0, 0, 0, 5, .1, 4)");
 // 	}
 	return;
 }

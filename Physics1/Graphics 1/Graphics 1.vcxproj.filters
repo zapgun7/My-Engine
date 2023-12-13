@@ -62,6 +62,9 @@
     <Filter Include="Lua\Factory">
       <UniqueIdentifier>{e8b23959-bd0c-4135-8ce3-4b6a42fc1f9e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lua\Commands">
+      <UniqueIdentifier>{6dcb74dd-9232-4dc4-a676-cbe580f40484}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Basic Shader Manager\cShaderManager.cpp">
@@ -166,9 +169,6 @@
     <ClCompile Include="Physics\cPhysics_AABB_Traversal.cpp">
       <Filter>Physics\AABB</Filter>
     </ClCompile>
-    <ClCompile Include="Lua\cCommand_MoveTo.cpp">
-      <Filter>Lua</Filter>
-    </ClCompile>
     <ClCompile Include="Lua\cCommandGroup.cpp">
       <Filter>Lua</Filter>
     </ClCompile>
@@ -180,6 +180,12 @@
     </ClCompile>
     <ClCompile Include="Lua\cCommandFactory.cpp">
       <Filter>Lua\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\cCommand_MoveTo.cpp">
+      <Filter>Lua\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\cCommand_Orient.cpp">
+      <Filter>Lua\Commands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -285,9 +291,6 @@
     <ClInclude Include="Physics\cAABB.h">
       <Filter>Physics\AABB</Filter>
     </ClInclude>
-    <ClInclude Include="Lua\cCommand_MoveTo.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
     <ClInclude Include="Lua\cCommandGroup.h">
       <Filter>Lua</Filter>
     </ClInclude>
@@ -302,6 +305,12 @@
     </ClInclude>
     <ClInclude Include="Lua\cCommandFactory.h">
       <Filter>Lua\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\cCommand_MoveTo.h">
+      <Filter>Lua\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\cCommand_Orient.h">
+      <Filter>Lua\Commands</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -7,7 +7,9 @@
 
 #include "iCommand.h"
 #include "cCommand_MoveTo.h"
+#include "cCommand_Orient.h"
 #include "cCommandFactory.h"
+
 
 
 // Global info on objects in the system
@@ -114,7 +116,7 @@ sPhysicsProperties* findPhys(int ID)
 
 // Command Adding
 
-
+/// MOVE ///
 int lua_AddSerialMoveObjectCommand(lua_State* L)
 {
 	std::string objFriendlyName(lua_tostring(L, 1));
@@ -125,7 +127,7 @@ int lua_AddSerialMoveObjectCommand(lua_State* L)
 		return 0;
 	}
 
-	initInfo* info = new initInfo();
+	initMoveInfo* info = new initMoveInfo();
 
 	info->theObj = theObj;
 	info->startPos = theObj->position;
@@ -133,6 +135,8 @@ int lua_AddSerialMoveObjectCommand(lua_State* L)
 	info->destPos.y = (float)lua_tonumber(L, 3);
 	info->destPos.z = (float)lua_tonumber(L, 4);
 	info->timeInSeconds = (float)lua_tonumber(L, 5);
+	info->rampUpTime = (float)lua_tonumber(L, 6);
+	info->rampDownTime = (float)lua_tonumber(L, 7);
 
 	iCommand* newCommand = ::g_CommandFactory->makeCommand(Move, info);
 	::g_vecSerialCommands.push_back(newCommand);
@@ -141,6 +145,34 @@ int lua_AddSerialMoveObjectCommand(lua_State* L)
 	return 0;
 }
 
+/// ORIENT ///
+int lua_AddSerialOrientObjectCommand(lua_State* L)
+{
+	std::string objFriendlyName(lua_tostring(L, 1));
+	sPhysicsProperties* theObj = findPhys(objFriendlyName);
+	if (theObj == NULL)
+	{
+		std::cout << "Couldn't find object by that name" << std::endl;
+		return 0;
+	}
+
+	initOrientInfo* info = new initOrientInfo();
+
+	info->theObj = theObj;
+	info->startOri = theObj->position;
+	info->destOri.x = (float)lua_tonumber(L, 2);
+	info->destOri.y = (float)lua_tonumber(L, 3);
+	info->destOri.z = (float)lua_tonumber(L, 4);
+	info->timeInSeconds = (float)lua_tonumber(L, 5);
+	info->rampUpTime = (float)lua_tonumber(L, 6);
+	info->rampDownTime = (float)lua_tonumber(L, 7);
+
+	iCommand* newCommand = ::g_CommandFactory->makeCommand(Orient, info);
+	::g_vecSerialCommands.push_back(newCommand);
+	delete info;
+
+	return 0;
+}
 
 /// Transform Setting
 

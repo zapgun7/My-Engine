@@ -15,6 +15,7 @@
 
 //int lua_TestThing(lua_State* L);
 int lua_AddSerialMoveObjectCommand(lua_State* L);
+int lua_AddSerialOrientObjectCommand(lua_State* L);
 
 cLuaBrain::cLuaBrain()
 {
@@ -61,6 +62,10 @@ cLuaBrain::cLuaBrain()
 // 	lua_setglobal( this->m_pLuaState, "SetMeshPositionByFriendlyName" );
  	lua_pushcfunction(this->m_pLuaState, lua_AddSerialMoveObjectCommand);
  	lua_setglobal(this->m_pLuaState, "AddSerialMove");
+
+	lua_pushcfunction(this->m_pLuaState, lua_AddSerialOrientObjectCommand);
+	lua_setglobal(this->m_pLuaState, "AddSerialOrient");
+
 
 	return;
 }

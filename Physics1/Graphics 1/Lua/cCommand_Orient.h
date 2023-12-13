@@ -7,40 +7,41 @@
 
 #include "iCommand.h"
 
-enum moveState
+enum oriState
 {
-	RAMPUP,
-	STEADY,
-	RAMPDOWN,
-	DONE
+	ORIRAMPUP,
+	ORISTEADY,
+	ORIRAMPDOWN,
+	ORIDONE
 };
 
-struct initMoveInfo
+
+struct initOrientInfo
 {
-	initMoveInfo()
-		: startPos(glm::vec3(0))
-		, destPos(glm::vec3(0))
+	initOrientInfo()
+		: startOri(glm::vec3(0))
+		, destOri(glm::vec3(0))
+		, timeInSeconds(0)
 		, rampUpTime(0)
 		, rampDownTime(0)
-		, timeInSeconds(0)
 		, theObj(nullptr)
 	{};
 
-	glm::vec3 startPos;
-	glm::vec3 destPos;
+	glm::vec3 startOri;
+	glm::vec3 destOri;
 	float timeInSeconds, rampUpTime, rampDownTime;
 	sPhysicsProperties* theObj;
 	// Can add other stuff to specify easing functions l8r
 };
 
-class cCommand_MoveTo : public iCommand
+class cCommand_Orient : public iCommand
 {
 public:
 	//cCommand_MoveTo(sPhysicsProperties* pPhysToMove, 
 	//				glm::vec3 startXYZ, glm::vec3 endXYZ, 
 	//				float timeToMove);
-	cCommand_MoveTo();
-	virtual ~cCommand_MoveTo();
+	cCommand_Orient();
+	virtual ~cCommand_Orient();
 
 	virtual void Initialize(void* initStruct);
 
@@ -54,25 +55,28 @@ public:
 
 private:
 	// Can't call default constructor
-	
 
-	glm::vec3 m_startXYZ, m_endXYZ;
+
+	glm::vec3 m_startOriEuler, m_endOriEuler;
 	float m_TimeToMove;
-	sPhysicsProperties* m_pThePhysObj; 
-	float rUT, rDT;
+	sPhysicsProperties* m_pThePhysObj;
+	float rUT, rDT; // Time it takes to ramp up and down
 	float rUSpd, rDSpd;
 
-	glm::vec3 steadyStartPos, rampDownStartPos;
+	glm::vec3 steadyStartOri, rampDownStartOri;
 
 	// These are calculated
 	float m_distance;
 	float m_MaxSpeed;
 	glm::vec3 rampAcceleration;
 	glm::vec3 rampDecelleration;
+
 	glm::vec3 m_direction;
+	//glm::vec3 m_RotateVelocity;
+	//glm::quat m_qRotationalVelocity;
+	//float m_speed;
 
-
-	moveState m_state;
+	oriState m_state;
 
 	double m_elapsedTime;
 };

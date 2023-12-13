@@ -213,26 +213,54 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 		{
 	 			if ((isExistingMesh) && (std::strlen(dupeName) > 0))
 	 			{
-	 				//duplicateMesh(m_mesh_obj_idx, dupeName);
+					//duplicateMesh(m_mesh_obj_idx, dupeName);
+					cMesh* meshToCopy = ActiveMeshVec[m_mesh_obj_idx];
 					cMesh* newDupe = new cMesh();
-					memcpy(newDupe, ActiveMeshVec[m_mesh_obj_idx], sizeof(cMesh));
+
+					/// MESH COPYING ///
+					for (unsigned int i = 0; i < cMesh::NUM_TEXTURES; i++)
+					{
+						newDupe->textureName[i] = meshToCopy->textureName[i];
+						newDupe->textureRatios[i] = meshToCopy->textureRatios[i];
+					}
+					newDupe->meshName = meshToCopy->meshName;
+					newDupe->bIsVisible = meshToCopy->bIsVisible;
+					newDupe->bUseDebugColours = meshToCopy->bUseDebugColours;
+					newDupe->wholeObjectDebugColourRGBA = meshToCopy->wholeObjectDebugColourRGBA;
+					newDupe->transparencyAlpha = meshToCopy->transparencyAlpha;
+					newDupe->bUseDiscardMaskTex = meshToCopy->bUseDiscardMaskTex;
+					newDupe->bIsWireframe = meshToCopy->bIsWireframe;
+					newDupe->bDoNotLight = meshToCopy->bDoNotLight;
+					newDupe->bUseReflect = meshToCopy->bUseReflect;
+					newDupe->bUseRefract = meshToCopy->bUseRefract;
+					newDupe->uv_Offset_Scale = meshToCopy->uv_Offset_Scale;
+					newDupe->uvOffsetSpeed = meshToCopy->uvOffsetSpeed;
+					newDupe->scale = meshToCopy->scale;
+					newDupe->uniqueID = meshToCopy->uniqueID; // For copying the physics
+
+
+					//memcpy(newDupe, ActiveMeshVec[m_mesh_obj_idx], sizeof(cMesh));
 					newDupe->friendlyName = dupeName;
 
 
 					sPhysicsProperties* newDupePhys = new sPhysicsProperties();
-					int newID = newDupePhys->getUniqueID();
+					//int newID = newDupePhys->getUniqueID();
 					for (std::vector<sPhysicsProperties*>::iterator itPhys = PhysVec.begin();
 						itPhys != PhysVec.end();
 						itPhys++)
 					{
 						if (newDupe->uniqueID == (*itPhys)->getUniqueID())
 						{
-							memcpy(newDupePhys, *itPhys, sizeof(sPhysicsProperties));
+							//memcpy(newDupePhys, *itPhys, sizeof(sPhysicsProperties));
+							newDupePhys->friendlyName = dupeName;
+							newDupePhys->position = (*itPhys)->position;
+							newDupePhys->setRotationFromQuat((*itPhys)->get_qOrientation());
 							break;
 						}
 					}
-					newDupePhys->setUniqueID(newID);
-					newDupe->uniqueID = newID;
+					newDupePhys->pTheAssociatedMesh = newDupe;
+					newDupe->uniqueID = newDupePhys->getUniqueID();
+
 					m_pEngineController->addCustomObject(newDupe, newDupePhys);
 
 
