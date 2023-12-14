@@ -112,9 +112,9 @@ bool cCommandGroup::m_isDoneSerial(void)
 // 	return false;
 	if (!m_vecSerialCommands.empty())
 	{
-		return true;
+		return false;
 	}
-	return false;
+	return true;
 }
 
 

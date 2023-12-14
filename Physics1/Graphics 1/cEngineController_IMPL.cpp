@@ -221,14 +221,15 @@ void cEngineController_IMPL::loadScene(std::string fileName)
 
 
 	// 1: parallel   2:group  3:obj1  4:obj2   5: duration   6: lerp t/f  789: offset
-	m_pLuaBrain->RunScriptImmediately("AddGroupMove(false, 'testgroup', 'sph1', 0, -300, 0, 4, 1, 1)");
-	m_pLuaBrain->RunScriptImmediately("AddGroupMove(false, 'testgroup', 'sph1', 0, 200, 0, 4, 1, 1)");
-	m_pLuaBrain->RunScriptImmediately("AddGroupFollow(true, 'testgroup', 'sph2', 'sph1', 10, false, 100)");
-	m_pLuaBrain->RunScriptImmediately("AddGroupLookAt(true, 'testgroup', 'cam', 'sph1', 8, true)");
+// 	m_pLuaBrain->RunScriptImmediately("AddGroupMove(false, 'testgroup', 'sph1', 0, -300, 0, 4, 1, 1)");
+// 	m_pLuaBrain->RunScriptImmediately("AddGroupMove(false, 'testgroup', 'sph1', 0, 200, 0, 4, 1, 1)");
+// 	m_pLuaBrain->RunScriptImmediately("AddGroupFollow(true, 'testgroup', 'sph2', 'sph1', 10, false, 100)");
+// 	m_pLuaBrain->RunScriptImmediately("AddGroupLookAt(true, 'testgroup', 'cam', 'sph1', 8, true)");
+// 	m_pLuaBrain->RunScriptImmediately("GroupPush(false, 'testgroup')");
+
+	m_pLuaBrain->RunScriptImmediately("AddGroupMove(false, 'testgroup', 'sph1', 20, 20, 20, 2, .5, .5)");
+	m_pLuaBrain->RunScriptImmediately("AddGroupBezMove(false, 'testgroup', 'sph1', -20, 10, -50, -30, 50, 4, 1, 1)");
 	m_pLuaBrain->RunScriptImmediately("GroupPush(false, 'testgroup')");
-
-
-
 
 
 

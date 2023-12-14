@@ -18,6 +18,7 @@ int lua_AddSerialMoveObjectCommand(lua_State* L);
 int lua_AddSerialOrientObjectCommand(lua_State* L);
 
 int lua_AddMoveToGroup(lua_State* L);
+int lua_AddBezierMoveToGroup(lua_State* L);
 int lua_AddOrientToGroup(lua_State* L);
 int lua_AddFollowToGroup(lua_State* L);
 int lua_AddLookAtToGroup(lua_State* L);
@@ -75,6 +76,9 @@ cLuaBrain::cLuaBrain()
 
 	lua_pushcfunction(this->m_pLuaState, lua_AddMoveToGroup);
 	lua_setglobal(this->m_pLuaState, "AddGroupMove");
+
+	lua_pushcfunction(this->m_pLuaState, lua_AddBezierMoveToGroup);
+	lua_setglobal(this->m_pLuaState, "AddGroupBezMove");
 
 	lua_pushcfunction(this->m_pLuaState, lua_AddOrientToGroup);
 	lua_setglobal(this->m_pLuaState, "AddGroupOrient");

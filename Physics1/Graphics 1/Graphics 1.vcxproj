@@ -162,6 +162,7 @@
     <ClCompile Include="Lua\cCommand_Follow.cpp" />
     <ClCompile Include="Lua\cCommand_LookAt.cpp" />
     <ClCompile Include="Lua\cCommand_MoveTo.cpp" />
+    <ClCompile Include="Lua\cCommand_MoveToBezier.cpp" />
     <ClCompile Include="Lua\cCommand_Orient.cpp" />
     <ClCompile Include="Lua\cLuaBrain.cpp" />
     <ClCompile Include="Lua\cLuaOtherBrain.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="Lua\cCommand_Follow.h" />
     <ClInclude Include="Lua\cCommand_LookAt.h" />
     <ClInclude Include="Lua\cCommand_MoveTo.h" />
+    <ClInclude Include="Lua\cCommand_MoveToBezier.h" />
     <ClInclude Include="Lua\cCommand_Orient.h" />
     <ClInclude Include="Lua\cLuaBrain.h" />
     <ClInclude Include="Lua\iCommand.h" />
