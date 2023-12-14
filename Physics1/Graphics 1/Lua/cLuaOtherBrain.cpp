@@ -8,7 +8,10 @@
 #include "iCommand.h"
 #include "cCommand_MoveTo.h"
 #include "cCommand_Orient.h"
+#include "cCommand_Follow.h"
+#include "cCommand_LookAt.h"
 #include "cCommandFactory.h"
+#include "cCommandGroup.h"
 
 
 
@@ -19,6 +22,9 @@ std::vector<sPhysicsProperties*> g_vecPhys;
 // Command Vectors
 std::vector<iCommand*> g_vecSerialCommands; // Run only the first every update
 std::vector<iCommand*> g_vecParallelCommands; // Run all of these every update
+
+// Command Groups
+std::map<std::string, iCommand*> g_mapGroupCommands;
 
 
 // Command Factory
@@ -59,8 +65,11 @@ void cLuaBrain::UpdateActiveCommands(double deltaTime)
 		if ((*itParallel)->Update(deltaTime))
 		{
 			itParallel = ::g_vecParallelCommands.erase(itParallel);
-			itParallel--; // This puts it 1 before the next one to update
+			if (itParallel != ::g_vecParallelCommands.end())
+				itParallel--; // This puts it 1 before the next one to update
 		}
+		if (itParallel == ::g_vecParallelCommands.end())
+			break;
 	}
 
 	return;
@@ -111,6 +120,35 @@ sPhysicsProperties* findPhys(int ID)
 	}
 	// Didn't find it
 	return NULL;
+}
+
+/// Group Finding ///
+iCommand* findGroup(std::string friendlyName)
+{
+	for (std::map<std::string, iCommand*>::iterator itMap = ::g_mapGroupCommands.begin();
+		itMap != ::g_mapGroupCommands.end();
+		itMap++)
+	{
+		if (itMap->first == friendlyName)
+			return itMap->second;
+	}
+
+	return nullptr;
+}
+
+/// Group Deletion ///
+void removeGroup(std::string friendlyName)
+{
+	std::map<std::string, iCommand*>::iterator itMap = ::g_mapGroupCommands.find(friendlyName);
+
+	if (itMap == g_mapGroupCommands.end())
+	{
+		std::cout << "No group found" << std::endl;
+		return;
+	}
+
+	::g_mapGroupCommands.erase(itMap);
+	return;
 }
 
 
@@ -173,6 +211,233 @@ int lua_AddSerialOrientObjectCommand(lua_State* L)
 
 	return 0;
 }
+
+///////// GROUP COMMANDS //////////
+
+// First parameter is t/f for if it is parallel, second is group friendlyName, third is object friendly name
+int lua_AddMoveToGroup(lua_State* L)
+{
+	bool isParallel(lua_toboolean(L, 1));
+	std::string groupFriendlyName(lua_tostring(L, 2));
+
+	iCommand* commandGroup = findGroup(groupFriendlyName);
+	if (commandGroup == nullptr)
+	{
+		commandGroup = new cCommandGroup();
+		::g_mapGroupCommands[groupFriendlyName] = commandGroup;
+	}
+
+	std::string objFriendlyName(lua_tostring(L, 3));
+	sPhysicsProperties* theObj = findPhys(objFriendlyName);
+	if (theObj == NULL)
+	{
+		std::cout << "Couldn't find object by that name" << std::endl;
+		return 0;
+	}
+
+	initMoveInfo* info = new initMoveInfo();
+
+	info->theObj = theObj;
+	info->startPos = theObj->position;
+	info->destPos.x = (float)lua_tonumber(L, 4);
+	info->destPos.y = (float)lua_tonumber(L, 5);
+	info->destPos.z = (float)lua_tonumber(L, 6);
+	info->timeInSeconds = (float)lua_tonumber(L, 7);
+	info->rampUpTime = (float)lua_tonumber(L, 8);
+	info->rampDownTime = (float)lua_tonumber(L, 9);
+
+	iCommand* newCommand = ::g_CommandFactory->makeCommand(Move, info);
+
+	if (isParallel)
+		((cCommandGroup*)commandGroup)->AddParallelCommand(newCommand);
+	else
+		((cCommandGroup*)commandGroup)->AddSerialCommand(newCommand);
+
+
+	delete info;
+
+	
+	return 0;
+}
+
+int lua_AddOrientToGroup(lua_State* L)
+{
+	bool isParallel(lua_toboolean(L, 1));
+	std::string groupFriendlyName(lua_tostring(L, 2));
+
+	iCommand* commandGroup = findGroup(groupFriendlyName);
+	if (commandGroup == nullptr)
+	{
+		commandGroup = new cCommandGroup();
+		g_mapGroupCommands[groupFriendlyName] = commandGroup;
+	}
+
+	std::string objFriendlyName(lua_tostring(L, 3));
+	sPhysicsProperties* theObj = findPhys(objFriendlyName);
+	if (theObj == NULL)
+	{
+		std::cout << "Couldn't find object by that name" << std::endl;
+		return 0;
+	}
+
+	initOrientInfo* info = new initOrientInfo();
+
+	info->theObj = theObj;
+	info->startOri = theObj->position;
+	info->destOri.x = (float)lua_tonumber(L, 4);
+	info->destOri.y = (float)lua_tonumber(L, 5);
+	info->destOri.z = (float)lua_tonumber(L, 6);
+	info->timeInSeconds = (float)lua_tonumber(L, 7);
+	info->rampUpTime = (float)lua_tonumber(L, 8);
+	info->rampDownTime = (float)lua_tonumber(L, 9);
+
+	iCommand* newCommand = ::g_CommandFactory->makeCommand(Orient, info);
+
+	if (isParallel)
+		((cCommandGroup*)commandGroup)->AddParallelCommand(newCommand);
+	else
+		((cCommandGroup*)commandGroup)->AddSerialCommand(newCommand);
+
+
+	delete info;
+
+
+	return 0;
+}
+
+// 1: parallel   2:group  3:obj1  4:obj2   5: duration   6: lerp t/f  789: offset
+int lua_AddFollowToGroup(lua_State* L)
+{
+	bool isParallel(lua_toboolean(L, 1));
+	std::string groupFriendlyName(lua_tostring(L, 2));
+
+	iCommand* commandGroup = findGroup(groupFriendlyName);
+	if (commandGroup == nullptr)
+	{
+		commandGroup = new cCommandGroup();
+		g_mapGroupCommands[groupFriendlyName] = commandGroup;
+	}
+
+	std::string objFriendlyName(lua_tostring(L, 3));
+	sPhysicsProperties* theObj = findPhys(objFriendlyName);
+	if (theObj == NULL)
+	{
+		std::cout << "Couldn't find object by that name" << std::endl;
+		return 0;
+	}
+
+	std::string objFriendlyName2(lua_tostring(L, 4));
+	sPhysicsProperties* theObj2 = findPhys(objFriendlyName2);
+	if (theObj2 == NULL)
+	{
+		std::cout << "Couldn't find other object by that name" << std::endl;
+		return 0;
+	}
+
+	initFollowInfo* info = new initFollowInfo();
+
+	info->theObj = theObj;
+	info->theOtherObj = theObj2;
+	info->timeInSeconds = (float)lua_tonumber(L, 5);
+	info->isLERP = (bool)lua_toboolean(L, 6);
+	info->offset.x = (float)lua_tonumber(L, 7);
+	info->offset.y = (float)lua_tonumber(L, 8);
+	info->offset.z = (float)lua_tonumber(L, 9);
+
+
+	iCommand* newCommand = ::g_CommandFactory->makeCommand(Follow, info);
+
+	if (isParallel)
+		((cCommandGroup*)commandGroup)->AddParallelCommand(newCommand);
+	else
+		((cCommandGroup*)commandGroup)->AddSerialCommand(newCommand);
+
+
+	delete info;
+
+
+	return 0;
+}
+
+int lua_AddLookAtToGroup(lua_State* L)
+{
+	bool isParallel(lua_toboolean(L, 1));
+	std::string groupFriendlyName(lua_tostring(L, 2));
+
+	iCommand* commandGroup = findGroup(groupFriendlyName);
+	if (commandGroup == nullptr)
+	{
+		commandGroup = new cCommandGroup();
+		g_mapGroupCommands[groupFriendlyName] = commandGroup;
+	}
+
+	std::string objFriendlyName(lua_tostring(L, 3));
+	sPhysicsProperties* theObj = findPhys(objFriendlyName);
+	if (theObj == NULL)
+	{
+		std::cout << "Couldn't find object by that name" << std::endl;
+		return 0;
+	}
+
+	std::string objFriendlyName2(lua_tostring(L, 4));
+	sPhysicsProperties* theObj2 = findPhys(objFriendlyName2);
+	if (theObj2 == NULL)
+	{
+		std::cout << "Couldn't find other object by that name" << std::endl;
+		return 0;
+	}
+
+	initLookAtInfo* info = new initLookAtInfo();
+
+	info->theObj = theObj;
+	info->theOtherObj = theObj2;
+	info->timeInSeconds = (float)lua_tonumber(L, 5);
+	info->isLERP = (bool)lua_toboolean(L, 6);
+	info->offset.x = (float)lua_tonumber(L, 7);
+	info->offset.y = (float)lua_tonumber(L, 8);
+	info->offset.z = (float)lua_tonumber(L, 9);
+
+
+	iCommand* newCommand = ::g_CommandFactory->makeCommand(LookAt, info);
+
+	if (isParallel)
+		((cCommandGroup*)commandGroup)->AddParallelCommand(newCommand);
+	else
+		((cCommandGroup*)commandGroup)->AddSerialCommand(newCommand);
+
+
+	delete info;
+
+
+	return 0;
+}
+
+// Pushes group id'd by group name to serial/parallel vector
+int lua_PushGroup(lua_State* L) // 1 = parallel/serial  2 = group name
+{
+	bool isParallel(lua_toboolean(L, 1));
+	std::string groupFriendlyName(lua_tostring(L, 2));
+
+	iCommand* commandGroup = findGroup(groupFriendlyName);
+	if (commandGroup == nullptr)
+	{
+		std::cout << "Cannot find group with that name" << std::endl;
+		return 0;
+	}
+
+	if (isParallel)
+		::g_vecParallelCommands.push_back(commandGroup);
+	else
+		::g_vecSerialCommands.push_back(commandGroup);
+
+	// Now we need to remove the group from the map
+
+	removeGroup(groupFriendlyName);
+}
+
+///////// END OF GROUPS /////////////
+
+
 
 /// Transform Setting
 

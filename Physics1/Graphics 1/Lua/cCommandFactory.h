@@ -6,7 +6,9 @@
 
 enum CommandType {
 	Move,
-	Orient
+	Orient,
+	Follow,
+	LookAt
 };
 
 class cCommandFactory

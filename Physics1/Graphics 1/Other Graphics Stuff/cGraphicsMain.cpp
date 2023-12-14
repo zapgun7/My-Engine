@@ -219,7 +219,7 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 
 
 
-	flyCameraInput(width, height); // UPDATE CAMERA STATS
+	//flyCameraInput(width, height); // UPDATE CAMERA STATS
 
 
 
@@ -852,6 +852,14 @@ void cGraphicsMain::addNewMesh(cMesh* newMesh) // Just adds new mesh pointer to 
 
 
 	return;
+}
+
+void cGraphicsMain::UpdateCamera(glm::vec3 position, glm::quat qRotation)
+{
+	m_cameraEye = position;
+	m_qCameraRotation = qRotation;
+
+	m_cameraTarget = glm::vec3(0, 0, 1) * m_qCameraRotation;
 }
 
 void cGraphicsMain::updateMesh(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor)

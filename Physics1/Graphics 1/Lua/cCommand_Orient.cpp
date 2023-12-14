@@ -32,6 +32,12 @@ void cCommand_Orient::Initialize(void* initStruct)
 
 bool cCommand_Orient::Update(double deltaTime)
 {
+	if (this->m_pThePhysObj == nullptr)
+	{
+		m_state == ORIDONE;
+		return true;
+	}
+
 	if (m_elapsedTime == 0)
 	{
 		PreStart();

@@ -59,7 +59,7 @@ public:
 
 private:
 	std::map< std::string /*scriptName*/, 
-			  std::string /*scriptSource*/ > m_mapScripts;
+			  std::string /*scriptSource*/ > m_mapScripts; 
 
 //	static std::vector< cGameObject* >* m_p_vecGOs;
 	// returns nullptr if not found

@@ -11,30 +11,6 @@ cCommand_MoveTo::~cCommand_MoveTo()
 
 }
 
-// cCommand_MoveTo::cCommand_MoveTo(sPhysicsProperties* pThePhys,
-// 								 glm::vec3 startXYZ,
-// 								 glm::vec3 endXYZ, 
-// 								 float timeToMove)
-// {
-// 	this->m_startXYZ = startXYZ;
-// 	this->m_endXYZ = endXYZ;
-// 	this->m_TimeToMove = timeToMove;
-// 
-// 	this->m_pThePhysObj = pThePhys;
-// 
-// 
-// 	this->m_rayFromStartToEnd = this->m_endXYZ - this->m_startXYZ;
-// 
-// 	this->m_direction = glm::normalize(this->m_rayFromStartToEnd);
-// 
-// 	float totalDistance = glm::distance(this->m_endXYZ, this->m_startXYZ);
-// 	this->m_speed = totalDistance / timeToMove;
-// 
-// 	this->m_velocity = this->m_direction * this->m_speed;
-// 
-// 	this->m_elapsedTime = 0.0;
-// }
-
 void cCommand_MoveTo::Initialize(void* initStruct)
 {
 	initMoveInfo* info = (initMoveInfo*)initStruct;
@@ -58,6 +34,12 @@ void cCommand_MoveTo::Initialize(void* initStruct)
 
 bool cCommand_MoveTo::Update(double deltaTime)
 {
+	if (this->m_pThePhysObj == nullptr)
+	{
+		m_state == DONE;
+		return true;
+	}
+
 	if (m_elapsedTime == 0)
 	{
 		PreStart();

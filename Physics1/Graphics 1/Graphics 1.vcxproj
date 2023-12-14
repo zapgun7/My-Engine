@@ -159,6 +159,8 @@
     <ClCompile Include="cVAOManager\cVAOManager.cpp" />
     <ClCompile Include="Lua\cCommandFactory.cpp" />
     <ClCompile Include="Lua\cCommandGroup.cpp" />
+    <ClCompile Include="Lua\cCommand_Follow.cpp" />
+    <ClCompile Include="Lua\cCommand_LookAt.cpp" />
     <ClCompile Include="Lua\cCommand_MoveTo.cpp" />
     <ClCompile Include="Lua\cCommand_Orient.cpp" />
     <ClCompile Include="Lua\cLuaBrain.cpp" />
@@ -203,6 +205,8 @@
     <ClInclude Include="Lua\cCommandFactory.h" />
     <ClInclude Include="Lua\cCommandGroup.h" />
     <ClInclude Include="Lua\cCommandManager.h" />
+    <ClInclude Include="Lua\cCommand_Follow.h" />
+    <ClInclude Include="Lua\cCommand_LookAt.h" />
     <ClInclude Include="Lua\cCommand_MoveTo.h" />
     <ClInclude Include="Lua\cCommand_Orient.h" />
     <ClInclude Include="Lua\cLuaBrain.h" />

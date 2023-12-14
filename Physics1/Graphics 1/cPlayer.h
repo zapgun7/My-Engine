@@ -14,18 +14,16 @@
 class cPlayer
 {
 public:
-	cPlayer();
+	cPlayer(GLFWwindow* window);
 	~cPlayer();
 
+	void Update(double deltaTime, glm::vec3* cameraPosition, glm::quat* cameraRotation); // Updates these based on inputs in the last frame
 
-
-	std::vector<glm::vec3> Update(double deltaTime, GLFWwindow* theWindow, glm::vec3 currCamPos, glm::vec3 currCamDir, glm::vec3 currCamRot); // Returns updated camera data to be applied thereafter
-
-	void setAssociatedPhysObj(sPhysicsProperties* theObj);
-
+	
 
 private:
-	sPhysicsProperties* m_PlayerObject; // The object we'll update velocity to 
 
-	float const m_MoveSpeed = 20.0f;
+	GLFWwindow* m_window; // Reference to the thing we get inputs from, DUHH
+	float m_CameraSpeed = 20.0f; // While it's not an actual player
+	float m_InverseSensitivity = 10.0f; // Higher = slower turning
 };

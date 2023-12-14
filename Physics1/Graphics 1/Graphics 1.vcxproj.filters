@@ -187,6 +187,12 @@
     <ClCompile Include="Lua\cCommand_Orient.cpp">
       <Filter>Lua\Commands</Filter>
     </ClCompile>
+    <ClCompile Include="Lua\cCommand_Follow.cpp">
+      <Filter>Lua\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\cCommand_LookAt.cpp">
+      <Filter>Lua\Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basic Shader Manager\cShaderManager.h">
@@ -310,6 +316,12 @@
       <Filter>Lua\Commands</Filter>
     </ClInclude>
     <ClInclude Include="Lua\cCommand_Orient.h">
+      <Filter>Lua\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\cCommand_Follow.h">
+      <Filter>Lua\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\cCommand_LookAt.h">
       <Filter>Lua\Commands</Filter>
     </ClInclude>
   </ItemGroup>

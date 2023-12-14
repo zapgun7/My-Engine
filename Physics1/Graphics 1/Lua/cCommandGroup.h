@@ -5,7 +5,7 @@
 
 #include "iCommand.h"
 
-class cCommandGroup
+class cCommandGroup : public iCommand
 {
 public:
 	cCommandGroup();
@@ -16,8 +16,18 @@ public:
 	void AddSerialCommand(iCommand* pTheCommand);
 	void AddParallelCommand(iCommand* pTheCommand);
 
-	bool Update(double deltaTime);
-	bool isDone(void);
+	virtual bool Update(double deltaTime);
+	virtual bool isDone(void);
+
+	virtual void Initialize(void* initStruct);
+
+	// Call every frame
+	//virtual bool Update(double deltaTime);
+	// Also called every frame. Returns true when done
+	//virtual bool isDone(void);
+
+	virtual bool PreStart(void);
+	virtual bool PostEnd(void);
 
 private:
 	std::vector< iCommand* > m_vecSerialCommands;

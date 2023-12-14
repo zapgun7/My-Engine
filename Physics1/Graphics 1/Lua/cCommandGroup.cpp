@@ -23,9 +23,27 @@ bool cCommandGroup::isDone(void)
 
 
 
+void cCommandGroup::Initialize(void* initStruct)
+{
+	// Nothing for now
+}
+
+bool cCommandGroup::PreStart(void)
+{
+	// Nothing for now
+	return true;
+}
+
+bool cCommandGroup::PostEnd(void)
+{
+	// Nothing for now
+	return false;
+}
+
 void cCommandGroup::AddSerialCommand(iCommand* pTheCommand)
 {
 	this->m_vecSerialCommands.push_back(pTheCommand);
+
 	return;
 }
 
@@ -33,44 +51,66 @@ void cCommandGroup::AddSerialCommand(iCommand* pTheCommand)
 
 bool cCommandGroup::m_UpdateSerial(double deltaTime)
 {
-	// Are there any more commands? 
-	if (this->m_itNextSerialCommand != this->m_vecSerialCommands.end() )
+
+	if (!m_vecSerialCommands.empty())
 	{
-		// get pointer to this command by dereferncing the iterator
-		
-		iCommand* pCurrentCommand = *this->m_itNextSerialCommand;
-
-		// Yes, there's a current command 
-		pCurrentCommand->Update(deltaTime);
-
-		// Done? 
-		if ( pCurrentCommand->isDone() )
+		if (m_vecSerialCommands[0]->Update(deltaTime))
 		{
-			// Maybe delete it? (who "owns" this command)
-			// (I'd think that the command group would "own" this 
-			//  command - be "responsible for" - so would call delete
-			pCurrentCommand->PostEnd();
-			delete pCurrentCommand;
-			// Move to next command
-			this->m_itNextSerialCommand++;
-			// Call PreStart()???
+			m_vecSerialCommands.erase(m_vecSerialCommands.begin());
 		}
-	}//if (this->m_itNextSerialCommand
 
-	// How do I know if all the commands are done
-	// Is the iterator at the end of the vector? 
-	if (this->m_itNextSerialCommand == this->m_vecSerialCommands.end())
-	{
-		return true;
 	}
+	
+	if (!m_vecSerialCommands.empty())
+		return true;
+	else
+		return false;
 
-	// We're not done. there are more commands to do
-	return false;
+
+// 	Are there any more commands? 
+// 		if (this->m_itNextSerialCommand != this->m_vecSerialCommands.end() )
+// 		{
+// 			// get pointer to this command by dereferncing the iterator
+// 			
+// 			iCommand* pCurrentCommand = *this->m_itNextSerialCommand;
+// 	
+// 			// Yes, there's a current command 
+// 			pCurrentCommand->Update(deltaTime);
+// 	
+// 			// Done? 
+// 			if ( pCurrentCommand->isDone() )
+// 			{
+// 				// Maybe delete it? (who "owns" this command)
+// 				// (I'd think that the command group would "own" this 
+// 				//  command - be "responsible for" - so would call delete
+// 				pCurrentCommand->PostEnd();
+// 				delete pCurrentCommand;
+// 				// Move to next command
+// 	
+// 				this->m_itNextSerialCommand++;
+// 				// Call PreStart()???
+// 			}
+// 		}//if (this->m_itNextSerialCommand
+// 	
+// 		// How do I know if all the commands are done
+// 		// Is the iterator at the end of the vector? 
+// 		if (this->m_itNextSerialCommand == this->m_vecSerialCommands.end())
+// 		{
+// 			return true;
+// 		}
+// 	
+// 		// We're not done. there are more commands to do
+// 		return false;
 }
 
 bool cCommandGroup::m_isDoneSerial(void)
 {
-	if (this->m_itNextSerialCommand == this->m_vecSerialCommands.end())
+// 	if (this->m_itNextSerialCommand == this->m_vecSerialCommands.end())
+// 	{
+// 		return true;
+// 	}
+// 	return false;
+	if (!m_vecSerialCommands.empty())
 	{
 		return true;
 	}

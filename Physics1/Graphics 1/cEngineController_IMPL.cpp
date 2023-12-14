@@ -31,6 +31,16 @@ void cEngineController_IMPL::Run(void)
 	while (!shouldClose)
 	{
 		double deltaTime = m_pTheTimer->getFrameTime();
+
+		// Messy, but will do this here
+		glm::vec3 camPos = m_TheCamera->position;
+		glm::quat camQuat = m_TheCamera->get_qOrientation();
+		m_ThePlayer->Update(deltaTime, &camPos, &camQuat);
+		m_TheCamera->position = camPos;
+		m_TheCamera->setRotationFromQuat(camQuat);
+		m_pTheGraphics->UpdateCamera(camPos, camQuat);
+		// End of messy
+		
 		m_pLuaBrain->UpdateActiveCommands(deltaTime);
 		m_pTheEditor->Update();
 		m_pThePhysics->Update(deltaTime);
@@ -61,6 +71,11 @@ bool cEngineController_IMPL::Initialize(void)
 
 	this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
+
+	// Make the camera object
+	m_TheCamera = new sPhysicsProperties();
+	m_TheCamera->friendlyName = "cam";
+	m_ThePlayer = new cPlayer(m_pTheGraphics->getWindow());
 
 	return true;
 }
@@ -176,13 +191,48 @@ void cEngineController_IMPL::loadScene(std::string fileName)
 
 
  	std::vector<sPhysicsProperties*> physVec = m_pThePhysics->getPhysicsVec();
+	physVec.push_back(m_TheCamera); // Add camera
  	m_pLuaBrain->setPhysVec(physVec);
 // 	for (int i = 0; i < 10; i++)
 // 	{
-	m_pLuaBrain->RunScriptImmediately("AddSerialOrient('ramp', 0, 720, 0, 4, 1, 3)");
+// 	m_pLuaBrain->RunScriptImmediately("AddSerialOrient('ramp', 0, 360, 0, 2, .9, .9)");
+// 	m_pLuaBrain->RunScriptImmediately("AddSerialOrient('ramp', 0, -360, 0, 4, .5, .5)");
+// 	m_pLuaBrain->RunScriptImmediately("AddSerialOrient('ramp', 0, 360, 0, 2, .9, .9)");
+	//m_pLuaBrain->RunScriptImmediately("AddSerialOrient('ramp', 0, 0, 0, 2, 1, 1)");
  	//m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', 0, 1000, 0, 0, 0, 0)");
-	//m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', 0, 0, 0, 5, .1, 4)");
+// 	m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', -100, -100, 100, 2, 1, 1)");
+// 	m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', 100, 100, -100, 2, 1, 1)");
+// 	m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', -100, -100, 100, 2, 1, 1)");
+// 	m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', 100, 100, -100, 2, 1, 1)");
 // 	}
+	
+								// AddGroupMove(t/f, 'group', 'obj', x, y, z, T, tU, tD)
+// 	m_pLuaBrain->RunScriptImmediately("AddGroupMove(true, 'testgroup', 'ramp', 0, 300, 0, 4, 1, 1)");
+// 	m_pLuaBrain->RunScriptImmediately("AddGroupOrient(true, 'testgroup', 'ramp', 0, 360, 0, 4, 1, 1)");
+// 	m_pLuaBrain->RunScriptImmediately("GroupPush(false, 'testgroup')");
+// 
+// 	m_pLuaBrain->RunScriptImmediately("AddGroupMove(true, 'testgroup', 'ramp', 0, -300, 0, 4, 1, 1)");
+// 	m_pLuaBrain->RunScriptImmediately("AddGroupOrient(true, 'testgroup', 'ramp', 0, -360, 0, 4, 1, 1)");
+// 	m_pLuaBrain->RunScriptImmediately("GroupPush(false, 'testgroup')");
+// 
+// 	m_pLuaBrain->RunScriptImmediately("AddGroupMove(true, 'testgroup', 'ramp', 0, 300, 0, 4, 1, 1)");
+// 	m_pLuaBrain->RunScriptImmediately("AddGroupOrient(true, 'testgroup', 'ramp', 0, 360, 0, 4, 1, 1)");
+// 	m_pLuaBrain->RunScriptImmediately("GroupPush(false, 'testgroup')");
+
+
+	// 1: parallel   2:group  3:obj1  4:obj2   5: duration   6: lerp t/f  789: offset
+	m_pLuaBrain->RunScriptImmediately("AddGroupMove(false, 'testgroup', 'sph1', 0, -300, 0, 4, 1, 1)");
+	m_pLuaBrain->RunScriptImmediately("AddGroupMove(false, 'testgroup', 'sph1', 0, 200, 0, 4, 1, 1)");
+	m_pLuaBrain->RunScriptImmediately("AddGroupFollow(true, 'testgroup', 'sph2', 'sph1', 10, false, 100)");
+	m_pLuaBrain->RunScriptImmediately("AddGroupLookAt(true, 'testgroup', 'cam', 'sph1', 8, true)");
+	m_pLuaBrain->RunScriptImmediately("GroupPush(false, 'testgroup')");
+
+
+
+
+
+
+
 	return;
 }
 

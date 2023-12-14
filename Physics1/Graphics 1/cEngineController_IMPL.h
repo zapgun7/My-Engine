@@ -9,6 +9,7 @@
 #include "cLevelEditor.h"
 #include "cSceneManagement.h"
 #include "Lua/cLuaBrain.h"
+#include "cPlayer.h"
 
 class cEngineController_IMPL
 {
@@ -54,4 +55,7 @@ private:
 	cSceneManagement* m_pTheSceneManager;
 	cLuaBrain* m_pLuaBrain;
 	// Scene manager should be controlled by imgui or some game controller that loads levels
+
+	sPhysicsProperties* m_TheCamera; // Just gonna put this here for now
+	cPlayer* m_ThePlayer;
 };

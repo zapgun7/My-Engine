@@ -53,6 +53,9 @@ public:
 	// Level Editor Adding
 	void addNewMesh(cMesh* newMesh); // Adding new objects from the gui
 
+
+	void UpdateCamera(glm::vec3 position, glm::quat qRotation);
+
 private:
 	cGraphicsMain();
 	bool Initialize();
@@ -83,6 +86,7 @@ private:
 
 	glm::vec3 m_cameraEye;
 	glm::vec3 m_cameraTarget;
+	glm::quat m_qCameraRotation;
 	glm::vec3 m_cameraRotation;
 	glm::vec3 m_upVector;
 

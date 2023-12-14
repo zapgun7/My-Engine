@@ -17,6 +17,13 @@
 int lua_AddSerialMoveObjectCommand(lua_State* L);
 int lua_AddSerialOrientObjectCommand(lua_State* L);
 
+int lua_AddMoveToGroup(lua_State* L);
+int lua_AddOrientToGroup(lua_State* L);
+int lua_AddFollowToGroup(lua_State* L);
+int lua_AddLookAtToGroup(lua_State* L);
+int lua_PushGroup(lua_State* L);
+
+
 cLuaBrain::cLuaBrain()
 {
 //	this->m_p_vecGOs = nullptr;
@@ -65,6 +72,21 @@ cLuaBrain::cLuaBrain()
 
 	lua_pushcfunction(this->m_pLuaState, lua_AddSerialOrientObjectCommand);
 	lua_setglobal(this->m_pLuaState, "AddSerialOrient");
+
+	lua_pushcfunction(this->m_pLuaState, lua_AddMoveToGroup);
+	lua_setglobal(this->m_pLuaState, "AddGroupMove");
+
+	lua_pushcfunction(this->m_pLuaState, lua_AddOrientToGroup);
+	lua_setglobal(this->m_pLuaState, "AddGroupOrient");
+
+	lua_pushcfunction(this->m_pLuaState, lua_AddFollowToGroup);
+	lua_setglobal(this->m_pLuaState, "AddGroupFollow");
+
+ 	lua_pushcfunction(this->m_pLuaState, lua_AddLookAtToGroup);
+ 	lua_setglobal(this->m_pLuaState, "AddGroupLookAt");
+
+	lua_pushcfunction(this->m_pLuaState, lua_PushGroup);
+	lua_setglobal(this->m_pLuaState, "GroupPush");
 
 
 	return;
