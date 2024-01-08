@@ -109,8 +109,6 @@ bool cCommand_MoveToBezier::Update(double deltaTime)
 	lineAPos += m_startXYZ;
 	lineBPos += bezierPoint;
 
-	std::cout << "X: " << lineBPos.x << " Y: " << lineBPos.y << " Z: " << lineBPos.z << std::endl;
-
 	// Find line between these two points
 	glm::vec3 thePoint = lineBPos - lineAPos;
 	thePoint *= ratio;

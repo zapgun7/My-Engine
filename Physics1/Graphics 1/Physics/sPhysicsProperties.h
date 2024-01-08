@@ -181,7 +181,14 @@ struct sPhysicsProperties
 //	glm::vec3 orientation = glm::vec3(0.0f);
 	void setRotationFromEuler(glm::vec3 newEulerAngleXYZ)
 	{
-		this->m_qOrientation = glm::quat(glm::radians(newEulerAngleXYZ));
+		glm::quat quatX = glm::quat(glm::vec3(glm::radians(newEulerAngleXYZ.x), 0, 0));
+		glm::quat quatY = glm::quat(glm::vec3(0, glm::radians(newEulerAngleXYZ.y), 0));
+		glm::quat quatZ = glm::quat(glm::vec3(0, 0, glm::radians(newEulerAngleXYZ.z)));
+
+		this->m_qOrientation = quatX * quatY * quatZ;
+
+
+		//this->m_qOrientation = glm::quat(glm::radians(newEulerAngleXYZ));
 	}
 
 	void setRotationFromQuat(glm::quat newQuat)

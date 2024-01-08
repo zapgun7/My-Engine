@@ -20,10 +20,10 @@ public:
 	cLevelEditor(GLFWwindow* window);
 	~cLevelEditor();
 
-	void Update(); // The running loop of the editor
+	void Update(double deltaTime); // The running loop of the editor
 
 	// Editor Windows
-	void RootWindow(std::vector<cMesh*> ActiveMeshVec);
+	void RootWindow(std::vector<cMesh*> ActiveMeshVec, double dt);
 	void MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPhysicsProperties*> PhysVec);
 	void PhysEditor(std::vector<sPhysicsProperties*> PhysVec);
 	void LightEditor(cLightManager* TheLights);
@@ -38,6 +38,9 @@ private:
 	bool m_ShowSceneManager; //
 	bool m_ShowPhysicsEditor;//
 
+	bool m_RenderDebug;
+	bool m_JustDeleted; // Bandaid fix
+
 	// Stored Info
 	std::vector<std::string> m_AvailableModels;
 	std::vector<std::string> m_AvailableTextures;
@@ -45,6 +48,7 @@ private:
 	// Saved Navigation Info
 	int m_mesh_obj_idx;
 	int m_phys_obj_idx;
+	int m_light_obj_idx;
 
 
 

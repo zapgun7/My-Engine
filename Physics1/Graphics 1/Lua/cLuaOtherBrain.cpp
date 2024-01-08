@@ -11,6 +11,7 @@
 #include "cCommand_Orient.h"
 #include "cCommand_Follow.h"
 #include "cCommand_LookAt.h"
+#include "cCommand_SetTransform.h"
 #include "cCommandFactory.h"
 #include "cCommandGroup.h"
 
@@ -333,13 +334,16 @@ int lua_AddOrientToGroup(lua_State* L)
 	initOrientInfo* info = new initOrientInfo();
 
 	info->theObj = theObj;
-	info->startOri = theObj->position;
-	info->destOri.x = (float)lua_tonumber(L, 4);
-	info->destOri.y = (float)lua_tonumber(L, 5);
-	info->destOri.z = (float)lua_tonumber(L, 6);
-	info->timeInSeconds = (float)lua_tonumber(L, 7);
-	info->rampUpTime = (float)lua_tonumber(L, 8);
-	info->rampDownTime = (float)lua_tonumber(L, 9);
+	//info->startOri = theObj->get_eOrientation();
+	info->startOri.x = (float)lua_tonumber(L, 4);
+	info->startOri.y = (float)lua_tonumber(L, 5);
+	info->startOri.z = (float)lua_tonumber(L, 6);
+	info->destOri.x = (float)lua_tonumber(L, 7);
+	info->destOri.y = (float)lua_tonumber(L, 8);
+	info->destOri.z = (float)lua_tonumber(L, 9);
+	info->timeInSeconds = (float)lua_tonumber(L, 10);
+	info->rampUpTime = (float)lua_tonumber(L, 11);
+	info->rampDownTime = (float)lua_tonumber(L, 12);
 
 	iCommand* newCommand = ::g_CommandFactory->makeCommand(Orient, info);
 
@@ -462,6 +466,49 @@ int lua_AddLookAtToGroup(lua_State* L)
 	return 0;
 }
 
+//1: isParallel  2: Group name   3: Object Name   4: bool isTranslate    567: xyz
+int lua_AddSetTransformToGroup(lua_State* L)
+{
+	bool isParallel(lua_toboolean(L, 1));
+	std::string groupFriendlyName(lua_tostring(L, 2));
+
+	iCommand* commandGroup = findGroup(groupFriendlyName);
+	if (commandGroup == nullptr)
+	{
+		commandGroup = new cCommandGroup();
+		g_mapGroupCommands[groupFriendlyName] = commandGroup;
+	}
+
+	std::string objFriendlyName(lua_tostring(L, 3));
+	sPhysicsProperties* theObj = findPhys(objFriendlyName);
+	if (theObj == NULL)
+	{
+		std::cout << "Couldn't find object by that name" << std::endl;
+		return 0;
+	}
+
+	initTransformInfo* info = new initTransformInfo();
+
+	info->theObj = theObj;
+	info->isTranslate = (bool)lua_toboolean(L, 4);
+	info->transformData.x = (float)lua_tonumber(L, 5);
+	info->transformData.y = (float)lua_tonumber(L, 6);
+	info->transformData.z = (float)lua_tonumber(L, 7);
+
+	iCommand* newCommand = ::g_CommandFactory->makeCommand(Transform, info);
+
+	if (isParallel)
+		((cCommandGroup*)commandGroup)->AddParallelCommand(newCommand);
+	else
+		((cCommandGroup*)commandGroup)->AddSerialCommand(newCommand);
+
+
+	delete info;
+
+
+	return 0;
+}
+
 // Pushes group id'd by group name to serial/parallel vector
 int lua_PushGroup(lua_State* L) // 1 = parallel/serial  2 = group name
 {
@@ -485,26 +532,44 @@ int lua_PushGroup(lua_State* L) // 1 = parallel/serial  2 = group name
 	removeGroup(groupFriendlyName);
 }
 
+
+// 1: isParallel   2: Group to push   3: Group pushing into
+int lua_PushGroupIntoGroup(lua_State* L)
+{
+	bool isParallel(lua_toboolean(L, 1));
+	std::string groupFriendlyName(lua_tostring(L, 2));
+
+	iCommand* commandGroup = findGroup(groupFriendlyName);
+	if (commandGroup == nullptr)
+	{
+		std::cout << "Cannot find group with that name" << std::endl;
+		return 0;
+	}
+
+	std::string groupFriendlyName2(lua_tostring(L, 3));
+
+	iCommand* commandGroup2 = findGroup(groupFriendlyName2);
+	if (commandGroup2 == nullptr)
+	{
+		std::cout << "Cannot find group with that name" << std::endl;
+		return 0;
+	}
+
+	if (isParallel)
+		//::g_vecParallelCommands.push_back(commandGroup);
+		((cCommandGroup*)commandGroup2)->AddParallelCommand(commandGroup);
+	else
+		//::g_vecSerialCommands.push_back(commandGroup);
+		((cCommandGroup*)commandGroup2)->AddSerialCommand(commandGroup);
+
+	// Now we need to remove the group from the map
+	removeGroup(groupFriendlyName);
+}
+
 ///////// END OF GROUPS /////////////
 
 
 
 /// Transform Setting
 
-int lua_SetObjPositionByFriendlyName(lua_State* L)
-{
-	std::string ObjFriendlyName(lua_tostring(L, 1));
-	sPhysicsProperties* theObj = findPhys(ObjFriendlyName);
 
-	if (theObj == NULL)
-		return 0;
-
-	glm::vec3 newLocationXYZ;
-	newLocationXYZ.x = (float)lua_tonumber(L, 2);
-	newLocationXYZ.y = (float)lua_tonumber(L, 3);
-	newLocationXYZ.z = (float)lua_tonumber(L, 4);
-
-	theObj->position = newLocationXYZ;
-
-	return 0;
-}

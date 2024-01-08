@@ -9,7 +9,8 @@ enum CommandType {
 	BezMove,
 	Orient,
 	Follow,
-	LookAt
+	LookAt,
+	Transform
 
 };
 

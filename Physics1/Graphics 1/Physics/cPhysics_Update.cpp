@@ -16,6 +16,10 @@ void cPhysics::Update(double deltaTime)
 //		// ...and so on...
 //
 //	}
+
+	deltaTime *= 5.0f;
+
+
 	if (!m_IsRunning) // If physics paused, update positions/orientations only and return; no collision detection
 	{
 		for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)
@@ -87,18 +91,6 @@ void cPhysics::Update(double deltaTime)
 				continue;
 			}
 
-// We could do the matrix this way...
-//			if ((pObjectA->shapeType == sPhsyicsProperties::SPHERE) &&
-//				(pObjectA->shapeType == sPhsyicsProperties::PLANE))
-//			{
-//
-//			}// Sphere - Plane
-//
-//			if ((pObjectA->shapeType == sPhsyicsProperties::SPHERE) &&
-//				(pObjectA->shapeType == sPhsyicsProperties::SPHERE))
-//			{
-//
-//			}// Sphere - Sphere
 
 			// What's the collision? 
 			switch (pObjectA->shapeType)

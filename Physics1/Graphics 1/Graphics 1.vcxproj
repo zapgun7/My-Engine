@@ -164,6 +164,7 @@
     <ClCompile Include="Lua\cCommand_MoveTo.cpp" />
     <ClCompile Include="Lua\cCommand_MoveToBezier.cpp" />
     <ClCompile Include="Lua\cCommand_Orient.cpp" />
+    <ClCompile Include="Lua\cCommand_SetTransform.cpp" />
     <ClCompile Include="Lua\cLuaBrain.cpp" />
     <ClCompile Include="Lua\cLuaOtherBrain.cpp" />
     <ClCompile Include="main.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="Lua\cCommand_MoveTo.h" />
     <ClInclude Include="Lua\cCommand_MoveToBezier.h" />
     <ClInclude Include="Lua\cCommand_Orient.h" />
+    <ClInclude Include="Lua\cCommand_SetTransform.h" />
     <ClInclude Include="Lua\cLuaBrain.h" />
     <ClInclude Include="Lua\iCommand.h" />
     <ClInclude Include="Other Graphics Stuff\cGraphicsMain.h" />

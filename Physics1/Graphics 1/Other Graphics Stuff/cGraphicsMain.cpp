@@ -51,8 +51,9 @@ cGraphicsMain::cGraphicsMain()
 	m_cameraTarget = glm::vec3(1.0f, -0.2f, 0.0f);
 	m_cameraRotation = glm::vec3(0.0, 0.0f, 0.0f);
 	m_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
-	m_ShowLightEditor = false;
-	m_ShowMeshEditor = false;
+	renderDebug = true;
+	selectedMesh = -1;
+	selectedLight = -1;
 	//m_player = new cPlayer();
 	//m_io = ImGui::GetIO();
 }
@@ -217,8 +218,6 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 
 
 
-
-
 	//flyCameraInput(width, height); // UPDATE CAMERA STATS
 
 
@@ -234,8 +233,8 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 	//       //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
 	glm::mat4 matProjection = glm::perspective(0.7f,
 		ratio,
-		0.01f,
-		5000.0f); // n/f plane
+		0.1f,
+		1100.0f); // n/f plane
 
 
 
@@ -265,15 +264,15 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 		m_vec_pAllMeshes[i]->uv_Offset_Scale.y += m_vec_pAllMeshes[i]->uvOffsetSpeed.y * deltaTime;
 
 		// Keeps values within proper range (good for longevity)
-		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.x > 1.0f)
-			m_vec_pAllMeshes[i]->uv_Offset_Scale.x -= floor(m_vec_pAllMeshes[i]->uv_Offset_Scale.x);
-		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.x < 0.0f)
-			m_vec_pAllMeshes[i]->uv_Offset_Scale.x += ceil(m_vec_pAllMeshes[i]->uv_Offset_Scale.x);
-
-		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.y > 1.0f)
-			m_vec_pAllMeshes[i]->uv_Offset_Scale.y -= floor(m_vec_pAllMeshes[i]->uv_Offset_Scale.y);
-		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.y < 0.0f)
-			m_vec_pAllMeshes[i]->uv_Offset_Scale.y += ceil(m_vec_pAllMeshes[i]->uv_Offset_Scale.y);
+// 		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.x > 1.0f)
+// 			m_vec_pAllMeshes[i]->uv_Offset_Scale.x -= floor(m_vec_pAllMeshes[i]->uv_Offset_Scale.x);
+// 		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.x < 0.0f)
+// 			m_vec_pAllMeshes[i]->uv_Offset_Scale.x += ceil(m_vec_pAllMeshes[i]->uv_Offset_Scale.x);
+// 
+// 		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.y > 1.0f)
+// 			m_vec_pAllMeshes[i]->uv_Offset_Scale.y -= floor(m_vec_pAllMeshes[i]->uv_Offset_Scale.y);
+// 		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.y < 0.0f)
+// 			m_vec_pAllMeshes[i]->uv_Offset_Scale.y += ceil(m_vec_pAllMeshes[i]->uv_Offset_Scale.y);
 	}
 
 
@@ -313,9 +312,9 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 		// HACK: I'm making this here, but hey...
 		cMesh theSkyBox;
 		theSkyBox.meshName = "Sphere_1_unit_Radius.ply";
-		theSkyBox.setUniformDrawScale(10.0f);
+		//theSkyBox.setUniformDrawScale(10.0f);
 
-		theSkyBox.setUniformDrawScale(4'000.0f);
+		theSkyBox.setUniformDrawScale(1000.0f);
 		theSkyBox.setDrawPosition(m_cameraEye);
 		//            theSkyBox.bIsWireframe = true;
 
@@ -380,6 +379,47 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 	glDisable(GL_BLEND);
 
 
+
+	// Now draw debug stuff
+	glDisable(GL_DEPTH_TEST);
+
+	if (renderDebug)
+	{
+		glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
+		cMesh basicSphere;
+		basicSphere.meshName = "Sphere_1_unit_Radius.ply";
+		basicSphere.bDoNotLight = true;
+		basicSphere.bUseDebugColours = true;
+		basicSphere.wholeObjectDebugColourRGBA = glm::vec4(0, 1, 0, 1); // Green
+		basicSphere.bIsWireframe = true;
+
+		// Start by drawing a basic sphere at all the active light locations
+		for (unsigned int i = 0; i < m_pTheLights->NUMBER_OF_LIGHTS_IM_USING; i++)
+		{
+			if (m_pTheLights->theLights[i].param2.x == 1) // If light is on
+			{
+				if (selectedLight == i) // Have different color for selected light
+					basicSphere.wholeObjectDebugColourRGBA = glm::vec4(1, 0, 0, 1);
+
+				basicSphere.drawPosition = m_pTheLights->theLights[i].position;
+				DrawObject(&basicSphere, matModel, m_shaderProgramID);
+				basicSphere.wholeObjectDebugColourRGBA = glm::vec4(0, 1, 0, 1);
+			}
+		}
+
+		// Draw a Cyan sphere at the selected mesh position
+		if (selectedMesh > -1)
+		{
+			basicSphere.drawPosition = m_vec_pAllMeshes[selectedMesh]->drawPosition;
+			basicSphere.wholeObjectDebugColourRGBA = glm::vec4(0, .5, .5, 1);
+			DrawObject(&basicSphere, matModel, m_shaderProgramID);
+		}
+
+
+	}
+
+
+	glEnable(GL_DEPTH_TEST);
 
 	glfwPollEvents();
 
@@ -454,43 +494,6 @@ void cGraphicsMain::switchScene(std::vector< cMesh* > newMeshVec, std::vector<cL
 
 	m_vec_pAllMeshes = newMeshVec; // Set new mesh vector
 	m_vec_pMeshesToDraw = newMeshVec;
-
-	// Delete all current physics objects
-	//::g_pPhysics->deleteAllObjects(); //UNPHYS
-
-
-// 	for (cMesh* meshObj : m_vec_pMeshesToDraw) // Attach physics objects to all new objects
-// 	{
-// 		sPhysicsProperties* newShape;
-// 		if (meshObj->meshName == "Sphere_1_unit_Radius.ply")
-// 		{
-// 			newShape = new sPhysicsProperties();
-// 			newShape->shapeType = sPhysicsProperties::SPHERE;
-// 			newShape->setShape(new sPhysicsProperties::sSphere(1.0f)); // Since a unit sphere, radius of .5 
-// 			newShape->pTheAssociatedMesh = meshObj;
-// 			newShape->inverse_mass = 1.0f; // Idk what to set this
-// 			newShape->friendlyName = "Sphere";
-// 			newShape->acceleration.y = -20.0f;
-// 			newShape->position = meshObj->drawPosition;
-// 			newShape->oldPosition = meshObj->drawPosition;
-// 			newShape->restitution = 0.5f;
-// 			// ::g_pPhysics->AddShape(newShape); //UNPHYS
-// 		}
-// 		else // Just make it an indirect triangle mesh
-// 		{
-// 			newShape = new sPhysicsProperties();
-// 			newShape->shapeType = sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT;
-// 			newShape->setShape(new sPhysicsProperties::sMeshOfTriangles_Indirect(meshObj->meshName));
-// 			newShape->pTheAssociatedMesh = meshObj;
-// 			newShape->inverse_mass = 0.0f; // Idk what to set this
-// 			newShape->friendlyName = "IndirectMesh";
-// 			newShape->setRotationFromEuler(meshObj->getEulerOrientation());
-// 			newShape->position = meshObj->drawPosition;
-// 			newShape->oldPosition = meshObj->drawPosition;
-// 			//::g_pPhysics->AddShape(newShape); //UNPHYS
-// 		}
-// 		meshObj->uniqueID = newShape->getUniqueID(); // Set mesh ID to match associated physics object's ID
-// 	}
 
 
 	for (unsigned int i = 0; i < m_pTheLights->NUMBER_OF_LIGHTS_IM_USING; i++) // Iterate through all lights and replace them with the new ones. Just replace non UL values
@@ -924,6 +927,14 @@ void cGraphicsMain::updateSelectedLight(int lightIdx, std::string friendlyName, 
 	m_pTheLights->theLights[lightIdx].param2 = newParam2;
 
 	return;
+}
+
+void cGraphicsMain::updateDebugStates(bool useDebug, int selMesh, int selLight)
+{
+	renderDebug = useDebug;
+	selectedMesh = selMesh;
+	selectedLight = selLight;
+	// Other things here for selected mesh object and selected light
 }
 
 void cGraphicsMain::duplicateMesh(int meshIdx, char* newName) // TODO also duplicate physics properties

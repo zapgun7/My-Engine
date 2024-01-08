@@ -97,6 +97,8 @@ void cPlayer::Update(double deltaTime, glm::vec3* cameraPosition, glm::quat* cam
 			*cameraPosition -= glm::normalize(glm::cross(glm::vec3(0, 1, 0), forwardVector)) * m_CameraSpeed * (float)deltaTime;
 		}
 	}
+
+	return;
 }
 
 

@@ -142,10 +142,18 @@ void main()
 	
 	if (bUseReflect)
 	{
+		//vec3 eyeVector = normalize(eyeLocation.xyz - vertexWorldPos.xyz);
+		//vec3 reflectAngle = reflect( eyeVector, vertexWorldNormal.xyz);
+		//vec4 skyBoxSampleColour = texture( skyBoxTexture, reflectAngle.xyz ).rgba;
+		//outputColour.rgb = skyBoxSampleColour.rgb;
+		//outputColour.a = transparencyAlpha;
+		//return;
+		vec4 textureColour = texture( texture_00, (textureCoords.st + uv_Offset_Scale.xy) * uv_Offset_Scale.z ).rgba * textureMixRatio_0_3.x ;
+		float reflectRatio = 1 - textureMixRatio_0_3.x;
 		vec3 eyeVector = normalize(eyeLocation.xyz - vertexWorldPos.xyz);
 		vec3 reflectAngle = reflect( eyeVector, vertexWorldNormal.xyz);
-		vec4 skyBoxSampleColour = texture( skyBoxTexture, reflectAngle.xyz ).rgba;
-		outputColour.rgb = skyBoxSampleColour.rgb;
+		vec4 skyBoxSampleColour = texture( skyBoxTexture, reflectAngle.xyz ).rgba * reflectRatio;
+		outputColour.rgb = skyBoxSampleColour.rgb + textureColour.rgb;
 		outputColour.a = transparencyAlpha;
 		return;
 	}

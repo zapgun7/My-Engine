@@ -5,6 +5,7 @@
 #include "cCommand_Orient.h"
 #include "cCommand_Follow.h"
 #include "cCommand_LookAt.h"
+#include "cCommand_SetTransform.h"
 
 iCommand* cCommandFactory::makeCommand(CommandType type, void* pOldSchoolRulz)
 {
@@ -40,6 +41,12 @@ iCommand* cCommandFactory::makeCommand(CommandType type, void* pOldSchoolRulz)
 	case LookAt:
 	{
 		newCommand = new cCommand_LookAt();
+		newCommand->Initialize(pOldSchoolRulz);
+		return newCommand;
+	}
+	case Transform:
+	{
+		newCommand = new cCommand_SetTransform();
 		newCommand->Initialize(pOldSchoolRulz);
 		return newCommand;
 	}

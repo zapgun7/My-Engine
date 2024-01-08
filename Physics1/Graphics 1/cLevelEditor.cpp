@@ -22,7 +22,7 @@ cLevelEditor::~cLevelEditor()
 	//delete m_pSceneManager;
 }
 
-void cLevelEditor::Update()
+void cLevelEditor::Update(double deltaTime)
 {
 	// Start by getting all info from physics, graphics, audio, etc.
 	// Use that info to display and be able to modify that info
@@ -47,7 +47,7 @@ void cLevelEditor::Update()
 	ImGui::NewFrame();
 
 
-	RootWindow(MeshVec);
+	RootWindow(MeshVec, deltaTime);
 
 	if (m_ShowMeshEditor)
 		MeshEditor(MeshVec, PhysVec);
@@ -60,6 +60,20 @@ void cLevelEditor::Update()
 
 
 
+	// Debug Render
+	int selectedMesh = m_mesh_obj_idx;
+	int selectedLight = m_light_obj_idx;
+
+
+	if ((!m_ShowMeshEditor) || (MeshVec.empty()) || (m_JustDeleted))
+		selectedMesh = -1;
+	if (!m_ShowLightEditor)
+		selectedLight = -1;
+
+	m_pEngineController->updateDebugMode(m_RenderDebug, selectedMesh, selectedLight);
+	m_JustDeleted = false;
+
+
 	// ImGui Last steps to render
 	ImGui::Render();
 
@@ -68,9 +82,11 @@ void cLevelEditor::Update()
 }
 
 // Base window to access the other windows
-void cLevelEditor::RootWindow(std::vector<cMesh*> ActiveMeshVec)
+void cLevelEditor::RootWindow(std::vector<cMesh*> ActiveMeshVec, double dt)
 {
 	ImGui::Begin("Main Editor Window");
+
+	ImGui::Text("FPS: %.2f", 1.0f / dt);
 
 	static int available_obj_idx = 0;
 	if (ImGui::BeginListBox("Available Objects"))
@@ -113,6 +129,20 @@ void cLevelEditor::RootWindow(std::vector<cMesh*> ActiveMeshVec)
 
 	ImGui::SameLine();
 	if (enablePhysics)
+		ImGui::Text("ON    ");
+	else
+		ImGui::Text("OFF   ");
+
+if (ImGui::Button("Debug Render"))
+	{
+		if (m_RenderDebug)
+			m_RenderDebug = false;
+		else
+			m_RenderDebug = true;
+	}
+
+	ImGui::SameLine();
+	if (m_RenderDebug)
 		ImGui::Text("ON    ");
 	else
 		ImGui::Text("OFF   ");
@@ -173,6 +203,8 @@ void cLevelEditor::RootWindow(std::vector<cMesh*> ActiveMeshVec)
 // 			m_FlyCamSpeed -= 0.1f;
 	}
 
+
+	
 
 
 	ImGui::End();
@@ -442,9 +474,9 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 		}
 			// Position
 	 		ImGui::SeparatorText("Position");
-	 		ImGui::DragFloat("X", &xPos, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-	 		ImGui::DragFloat("Y", &yPos, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-	 		ImGui::DragFloat("Z", &zPos, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+	 		ImGui::DragFloat("X", &xPos, 0.05f, -FLT_MAX, +FLT_MAX, "%.3f");
+	 		ImGui::DragFloat("Y", &yPos, 0.05f, -FLT_MAX, +FLT_MAX, "%.3f");
+	 		ImGui::DragFloat("Z", &zPos, 0.05f, -FLT_MAX, +FLT_MAX, "%.3f");
 			
 			// Orientation
 	 		ImGui::SeparatorText("Orientation");
@@ -552,6 +584,7 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 					m_pEngineController->deleteObject(selectedMesh->uniqueID);
 					m_mesh_obj_idx--;
 	 				isExistingMesh = false;
+					m_JustDeleted = true;
 	 			}
 	 		}
 	 		ImGui::SameLine();
@@ -564,6 +597,7 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 			glm::vec3 newPos = glm::vec3(xPos, yPos, zPos);
 	 			glm::vec3 newOri = glm::vec3(xOri, yOri, zOri);
 				selectedMesh->transparencyAlpha = transparencyAlpha;
+				selectedMesh->scale = glm::vec3(scale);
 
 				selectedMesh->friendlyName = friendlyName;
 				for (unsigned int i = 0; i < selectedMesh->NUM_TEXTURES; i++)
@@ -717,14 +751,13 @@ void cLevelEditor::LightEditor(cLightManager* TheLights)
 {
  	ImGui::Begin("Light Editor");
  
- 	static int light_obj_idx = 0;
  	if (ImGui::BeginListBox("Available Objects"))
  	{
  		for (int n = 0; n < TheLights->NUMBER_OF_LIGHTS_IM_USING; n++)
  		{
- 			const bool is_selected = (light_obj_idx == n);
+ 			const bool is_selected = (m_light_obj_idx == n);
  			if (ImGui::Selectable(TheLights->theLights[n].friendlyName.c_str(), is_selected))
- 				light_obj_idx = n;
+				m_light_obj_idx = n;
  
  			// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
  			if (is_selected)
@@ -746,14 +779,14 @@ void cLevelEditor::LightEditor(cLightManager* TheLights)
  	glm::vec4 lightParam2 = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 // 		if (!isExistingLight)
 // 		{
-	friendlyName = TheLights->theLights[light_obj_idx].friendlyName;
- 	lightPos = TheLights->theLights[light_obj_idx].position;
- 	lightDir = TheLights->theLights[light_obj_idx].direction;
- 	lightDiff = TheLights->theLights[light_obj_idx].diffuse;
- 	lightSpec = TheLights->theLights[light_obj_idx].specular; // rgb = highlight colour, w = power
- 	lightAtten = TheLights->theLights[light_obj_idx].atten; // x = constant, y = linear, z = quadratic, w = DistanceCutOff
- 	lightParam1 = TheLights->theLights[light_obj_idx].param1; // x: light type    y: inner angle    z: outer angle
- 	lightParam2 = TheLights->theLights[light_obj_idx].param2; // x: light on(1) or off(0)
+	friendlyName = TheLights->theLights[m_light_obj_idx].friendlyName;
+ 	lightPos = TheLights->theLights[m_light_obj_idx].position;
+ 	lightDir = TheLights->theLights[m_light_obj_idx].direction;
+ 	lightDiff = TheLights->theLights[m_light_obj_idx].diffuse;
+ 	lightSpec = TheLights->theLights[m_light_obj_idx].specular; // rgb = highlight colour, w = power
+ 	lightAtten = TheLights->theLights[m_light_obj_idx].atten; // x = constant, y = linear, z = quadratic, w = DistanceCutOff
+ 	lightParam1 = TheLights->theLights[m_light_obj_idx].param1; // x: light type    y: inner angle    z: outer angle
+ 	lightParam2 = TheLights->theLights[m_light_obj_idx].param2; // x: light on(1) or off(0)
  	/*}*/
  	static char lightname[32] = ""; 
  	//strcpy_s(lightname, TheLights.theLights[light_obj_idx].friendlyName.c_str()); // TODO too long a name will prob break this
@@ -826,7 +859,7 @@ void cLevelEditor::LightEditor(cLightManager* TheLights)
  		lightParam2.x = 0;
  
  
-	m_pEngineController->setLightData(light_obj_idx, friendlyName, lightPos, lightDiff, lightSpec, lightAtten, lightDir, lightParam1, lightParam2);
+	m_pEngineController->setLightData(m_light_obj_idx, friendlyName, lightPos, lightDiff, lightSpec, lightAtten, lightDir, lightParam1, lightParam2);
 //  		if (isExistingLight)
 //  		{
 //  			updateSelectedLight(light_obj_idx, lightPos, lightDiff, lightSpec, lightAtten, lightDir, lightParam1, lightParam2); // TODO light update
@@ -887,6 +920,9 @@ cLevelEditor::cLevelEditor(GLFWwindow* window)
 	, m_ShowSceneManager(false)
 	, m_mesh_obj_idx(0)
 	, m_phys_obj_idx(0)
+	, m_light_obj_idx(0)
+	, m_RenderDebug(false)
+	, m_JustDeleted(false)
 {
 	//m_pSceneManager = new cSceneManagement();
 	//m_pSceneManager->Initialize();

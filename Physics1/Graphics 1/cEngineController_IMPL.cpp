@@ -40,9 +40,9 @@ void cEngineController_IMPL::Run(void)
 		m_TheCamera->setRotationFromQuat(camQuat);
 		m_pTheGraphics->UpdateCamera(camPos, camQuat);
 		// End of messy
-		
+
 		m_pLuaBrain->UpdateActiveCommands(deltaTime);
-		m_pTheEditor->Update();
+		m_pTheEditor->Update(deltaTime);
 		m_pThePhysics->Update(deltaTime);
 		shouldClose = m_pTheGraphics->Update(deltaTime);
 		m_pTheSound->Update();
@@ -67,7 +67,7 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
 	std::vector<std::string> tempModelVec;
 	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
-	//this->m_pThePhysics->generateAABBs(tempModelVec);
+	this->m_pThePhysics->generateAABBs(tempModelVec);
 
 	this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
@@ -137,6 +137,12 @@ void cEngineController_IMPL::setPhysicsRunning(bool isRunning)
 	return;
 }
 
+void cEngineController_IMPL::updateDebugMode(bool useDebug, int selcetedMesh, int selectedLight)
+{
+	m_pTheGraphics->updateDebugStates(useDebug, selcetedMesh, selectedLight);
+	return;
+}
+
 void cEngineController_IMPL::addNewObject(std::string meshName, char* friendlyName)
 {
 	// Create cmesh and add to cGraphicsMain
@@ -189,50 +195,9 @@ void cEngineController_IMPL::loadScene(std::string fileName)
 {
 	m_pTheSceneManager->loadScene(fileName);
 
-
- 	std::vector<sPhysicsProperties*> physVec = m_pThePhysics->getPhysicsVec();
-	physVec.push_back(m_TheCamera); // Add camera
- 	m_pLuaBrain->setPhysVec(physVec);
-// 	for (int i = 0; i < 10; i++)
-// 	{
-// 	m_pLuaBrain->RunScriptImmediately("AddSerialOrient('ramp', 0, 360, 0, 2, .9, .9)");
-// 	m_pLuaBrain->RunScriptImmediately("AddSerialOrient('ramp', 0, -360, 0, 4, .5, .5)");
-// 	m_pLuaBrain->RunScriptImmediately("AddSerialOrient('ramp', 0, 360, 0, 2, .9, .9)");
-	//m_pLuaBrain->RunScriptImmediately("AddSerialOrient('ramp', 0, 0, 0, 2, 1, 1)");
- 	//m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', 0, 1000, 0, 0, 0, 0)");
-// 	m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', -100, -100, 100, 2, 1, 1)");
-// 	m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', 100, 100, -100, 2, 1, 1)");
-// 	m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', -100, -100, 100, 2, 1, 1)");
-// 	m_pLuaBrain->RunScriptImmediately("AddSerialMove('ramp', 100, 100, -100, 2, 1, 1)");
-// 	}
-	
-								// AddGroupMove(t/f, 'group', 'obj', x, y, z, T, tU, tD)
-// 	m_pLuaBrain->RunScriptImmediately("AddGroupMove(true, 'testgroup', 'ramp', 0, 300, 0, 4, 1, 1)");
-// 	m_pLuaBrain->RunScriptImmediately("AddGroupOrient(true, 'testgroup', 'ramp', 0, 360, 0, 4, 1, 1)");
-// 	m_pLuaBrain->RunScriptImmediately("GroupPush(false, 'testgroup')");
-// 
-// 	m_pLuaBrain->RunScriptImmediately("AddGroupMove(true, 'testgroup', 'ramp', 0, -300, 0, 4, 1, 1)");
-// 	m_pLuaBrain->RunScriptImmediately("AddGroupOrient(true, 'testgroup', 'ramp', 0, -360, 0, 4, 1, 1)");
-// 	m_pLuaBrain->RunScriptImmediately("GroupPush(false, 'testgroup')");
-// 
-// 	m_pLuaBrain->RunScriptImmediately("AddGroupMove(true, 'testgroup', 'ramp', 0, 300, 0, 4, 1, 1)");
-// 	m_pLuaBrain->RunScriptImmediately("AddGroupOrient(true, 'testgroup', 'ramp', 0, 360, 0, 4, 1, 1)");
-// 	m_pLuaBrain->RunScriptImmediately("GroupPush(false, 'testgroup')");
-
-
-	// 1: parallel   2:group  3:obj1  4:obj2   5: duration   6: lerp t/f  789: offset
-// 	m_pLuaBrain->RunScriptImmediately("AddGroupMove(false, 'testgroup', 'sph1', 0, -300, 0, 4, 1, 1)");
-// 	m_pLuaBrain->RunScriptImmediately("AddGroupMove(false, 'testgroup', 'sph1', 0, 200, 0, 4, 1, 1)");
-// 	m_pLuaBrain->RunScriptImmediately("AddGroupFollow(true, 'testgroup', 'sph2', 'sph1', 10, false, 100)");
-// 	m_pLuaBrain->RunScriptImmediately("AddGroupLookAt(true, 'testgroup', 'cam', 'sph1', 8, true)");
-// 	m_pLuaBrain->RunScriptImmediately("GroupPush(false, 'testgroup')");
-
-	m_pLuaBrain->RunScriptImmediately("AddGroupMove(false, 'testgroup', 'sph1', 20, 20, 20, 2, .5, .5)");
-	m_pLuaBrain->RunScriptImmediately("AddGroupBezMove(false, 'testgroup', 'sph1', -20, 10, -50, -30, 50, 4, 1, 1)");
-	m_pLuaBrain->RunScriptImmediately("GroupPush(false, 'testgroup')");
-
-
-
+ 	//std::vector<sPhysicsProperties*> physVec = m_pThePhysics->getPhysicsVec();
+	//physVec.push_back(m_TheCamera); // Add camera
+ 	//m_pLuaBrain->setPhysVec(physVec);
 
 	return;
 }

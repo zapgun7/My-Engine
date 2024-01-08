@@ -71,13 +71,15 @@ private:
 	bool m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriMesh);
 	bool m_Sphere_TriMeshLocal_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriMesh);
 
-
+	// Oct-Tree AABBs
 	std::map<std::string, cAABB*> m_map_ModelAABBs; // Map of AABB oct-treeified models
 	cAABB* findAABBByModelName(std::string modelName);
 
 	// The basic tests
 	bool m_TestSphereTriangle(float sphereRadius, glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 sphereCentre);
 	glm::vec3 m_ClosestPtPointTriangle(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c);
+	float m_ClosestPtSegmentSegment(glm::vec3 p1, glm::vec3 q1, glm::vec3 p2, glm::vec3 q2, float& s, float& t, glm::vec3& c1, glm::vec3& c2);
+	glm::vec3 m_ClosestPtLineSegTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 a, glm::vec3 b, glm::vec3 c);
 
 	cVAOManager* m_pMeshManager = NULL;
 	//cGraphicsMain* m_pGraphicsMain;

@@ -430,6 +430,22 @@ void cSceneManagement::loadScene(std::string fileName)
 			{
 				newMeshVec[e]->uniqueID = newPhys->getUniqueID();
 				newPhys->pTheAssociatedMesh = newMeshVec[e];
+
+				// We also properly set the shape here
+				switch (newPhys->shapeType)
+				{
+				case(sPhysicsProperties::SPHERE):
+				{
+					newPhys->setShape(new sPhysicsProperties::sSphere(1.0f)); // TODO set this to proper radius
+					break;
+				}
+				case(sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT):
+				{
+					newPhys->setShape(new sPhysicsProperties::sMeshOfTriangles_Indirect(newPhys->pTheAssociatedMesh->getMeshName()));
+					break;
+				}
+				}
+
 				break;
 			}
 		}

@@ -128,7 +128,7 @@ bool cCommand_Orient::PreStart(void)
 // 	return false;
 
 	// Re-initialize variables
-	m_startOriEuler = m_pThePhysObj->get_eOrientation();
+	//m_startOriEuler = m_pThePhysObj->get_eOrientation();
 
 	m_distance = glm::length(m_endOriEuler - m_startOriEuler);
 	this->m_direction = glm::normalize(m_endOriEuler - m_startOriEuler);

@@ -266,8 +266,17 @@ bool cVAOManager::m_LoadTheFile(std::string theFileName, sModelDrawInfo& drawInf
 		// UV Coords
 // 		drawInfo.pVertices[vertIndex].u = scene->mMeshes[0]->mTextureCoords[vertIndex]->x;
 // 		drawInfo.pVertices[vertIndex].v = scene->mMeshes[0]->mTextureCoords[vertIndex]->y;
+
+// 		if (scene->mMeshes[0]->HasTextureCoords(vertIndex))
+// 		{
 		drawInfo.pVertices[vertIndex].u = scene->mMeshes[0]->mTextureCoords[0][vertIndex].x;
 		drawInfo.pVertices[vertIndex].v = scene->mMeshes[0]->mTextureCoords[0][vertIndex].y;
+// 		}
+// 		else
+// 		{
+// 			drawInfo.pVertices[vertIndex].u = 0.0f;
+// 			drawInfo.pVertices[vertIndex].v = 0.0f;
+// 		}
 
 
         if (scene->mMeshes[0]->HasVertexColors(vertIndex))
@@ -279,9 +288,9 @@ bool cVAOManager::m_LoadTheFile(std::string theFileName, sModelDrawInfo& drawInf
         }
         else
         {
-            drawInfo.pVertices[vertIndex].r = 150;
-            drawInfo.pVertices[vertIndex].g = 150;
-            drawInfo.pVertices[vertIndex].b = 150;
+            drawInfo.pVertices[vertIndex].r = 0.5;
+            drawInfo.pVertices[vertIndex].g = 0.5;
+            drawInfo.pVertices[vertIndex].b = 0.5;
             drawInfo.pVertices[vertIndex].a = 255;
         }
 	}

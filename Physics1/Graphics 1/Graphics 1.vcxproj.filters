@@ -196,6 +196,9 @@
     <ClCompile Include="Lua\cCommand_MoveToBezier.cpp">
       <Filter>Lua\Commands</Filter>
     </ClCompile>
+    <ClCompile Include="Lua\cCommand_SetTransform.cpp">
+      <Filter>Lua\Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basic Shader Manager\cShaderManager.h">
@@ -328,6 +331,9 @@
       <Filter>Lua\Commands</Filter>
     </ClInclude>
     <ClInclude Include="Lua\cCommand_MoveToBezier.h">
+      <Filter>Lua\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\cCommand_SetTransform.h">
       <Filter>Lua\Commands</Filter>
     </ClInclude>
   </ItemGroup>

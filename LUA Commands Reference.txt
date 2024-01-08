@@ -1,0 +1,73 @@
+AddGroupMove(
+bool isParallel, 
+string groupName, 
+string objName, 
+float destX, 
+float destY, 
+float destZ, 
+float duration, 
+float accelTime, 
+float deccelTime)
+
+
+AddGroupBezMove(
+bool isParallel, 
+string groupName, 
+string objName, 
+float destX, 
+float destY, 
+float destZ, 
+float bezOffsetX, 
+float bezOffsetY, 
+float duration, 
+float accelTime, 
+float deccelTime)
+
+AddGroupOrient(
+bool isParallel,
+string groupName,
+string objName,
+float startX, 
+float startY, 
+float startZ,
+float destX, 
+float destY, 
+float destZ,
+float duration, 
+float accelTime, 
+float deccelTime)
+
+AddGroupFollow(
+bool isParallel,
+string groupName,
+string obj1Name,
+string obj2Name,
+float duration,
+bool isLERP,
+float offsetX
+float offsetY
+float offsetZ)
+
+AddGroupLookAt(
+bool isParallel,
+string groupName,
+string obj1Name,
+string obj2Name,
+float duration,
+bool isLERP,
+float offsetX,
+float offsetY,
+float offsetZ)
+
+SetTransform(
+bool isParallel,
+string groupName,
+string objName,
+bool isTranslate,
+float transDataX,
+float transDataY,
+float transDataZ)
+
+GroupPush(
+bool isParallel,
+string groupName)

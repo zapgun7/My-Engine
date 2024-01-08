@@ -1,12 +1,6 @@
-rosewood.bmp
-rosewood_n.bmp
-Water_Texture_01.bmp
-Ground_01.bmp
-Ground_01_n.bmp
-Ground_02.bmp
-Ground_02_n.bmp
-Ground_03.bmp
-Ground_03_n.bmp
-Ground_04.bmp
-Ground_04_n.bmp
 ChainLink.bmp
+cyan.bmp
+purple.bmp
+red.bmp
+water.bmp
+metal_s01.bmp

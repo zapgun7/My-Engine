@@ -22,7 +22,9 @@ int lua_AddBezierMoveToGroup(lua_State* L);
 int lua_AddOrientToGroup(lua_State* L);
 int lua_AddFollowToGroup(lua_State* L);
 int lua_AddLookAtToGroup(lua_State* L);
+int lua_AddSetTransformToGroup(lua_State* L);
 int lua_PushGroup(lua_State* L);
+int lua_PushGroupIntoGroup(lua_State* L);
 
 
 cLuaBrain::cLuaBrain()
@@ -89,8 +91,14 @@ cLuaBrain::cLuaBrain()
  	lua_pushcfunction(this->m_pLuaState, lua_AddLookAtToGroup);
  	lua_setglobal(this->m_pLuaState, "AddGroupLookAt");
 
+	lua_pushcfunction(this->m_pLuaState, lua_AddSetTransformToGroup);
+	lua_setglobal(this->m_pLuaState, "SetTransform");
+
 	lua_pushcfunction(this->m_pLuaState, lua_PushGroup);
 	lua_setglobal(this->m_pLuaState, "GroupPush");
+
+	lua_pushcfunction(this->m_pLuaState, lua_PushGroupIntoGroup);
+	lua_setglobal(this->m_pLuaState, "GroupPushGroup");
 
 
 	return;

@@ -49,12 +49,20 @@ public:
 	// Level Editor Setting
 	void updateMesh(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor);  // Updates and existing object by reference to its friendly name (also from the gui)
 	void updateSelectedLight(int lightIdx, std::string friendlyName, glm::vec4 newPos, glm::vec4 newDiff, glm::vec4 newSpec, glm::vec4 newAtten, glm::vec4 newDir, glm::vec4 newParam1, glm::vec4 newParam2);
+	void updateDebugStates(bool useDebug, int selectedMesh, int selectedLight);
 
 	// Level Editor Adding
 	void addNewMesh(cMesh* newMesh); // Adding new objects from the gui
 
 
 	void UpdateCamera(glm::vec3 position, glm::quat qRotation);
+
+
+	// Bools for debugging mode or whatever for the level editor!
+	bool renderDebug;
+	int selectedMesh;  // -1 if nothing selected
+	int selectedLight; //
+	
 
 private:
 	cGraphicsMain();
@@ -107,10 +115,7 @@ private:
 
 	cLightManager* m_pTheLights;
 
-	// ImGui
-	bool m_ShowMeshEditor;   // 
-	bool m_ShowLightEditor;  // Windows to edit existing meshes and lights respectively
-	bool m_ShowSceneManager; //
+	
 
 	ImGuiIO m_io; // ImGui io
 	cInputHandler* m_InputHandler;

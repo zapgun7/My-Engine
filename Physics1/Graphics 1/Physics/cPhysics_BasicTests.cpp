@@ -1,5 +1,15 @@
 #include "cPhysics.h"
 
+
+float Clamp(float n, float min, float max)
+{
+	if (n < min) return min;
+	if (n > max) return max;
+	return n;
+}
+
+
+
 //== = Section 5.2.7: ============================================================ =
 //
 // Returns true if sphere s intersects triangle ABC, false otherwise.
@@ -80,57 +90,112 @@ glm::vec3 cPhysics::m_ClosestPtPointTriangle(glm::vec3 p, glm::vec3 a, glm::vec3
 	return u * a + v * b + w * c;
 }
 
-// The OG code from the book:
-//Point ClosestPtPointTriangle(Point p, Point a, Point b, Point c)
-//{
-//	Vector ab = b - a;
-//	Vector ac = c - a;
-//	Vector bc = c - b;
-//
-//	// Compute parametric position s for projection P' of P on AB,
-//	// P' = A + s*AB, s = snom/(snom+sdenom)
-//	float snom = Dot(p - a, ab), sdenom = Dot(p - b, a - b);
-//
-//	// Compute parametric position t for projection P' of P on AC,
-//	// P' = A + t*AC, s = tnom/(tnom+tdenom)
-//	float tnom = Dot(p - a, ac), tdenom = Dot(p - c, a - c);
-//
-//	if (snom <= 0.0f && tnom <= 0.0f) return a; // Vertex region early out
-//
-//	// Compute parametric position u for projection P' of P on BC,
-//	// P' = B + u*BC, u = unom/(unom+udenom)
-//	float unom = Dot(p - b, bc), udenom = Dot(p - c, b - c);
-//
-//	if (sdenom <= 0.0f && unom <= 0.0f) return b; // Vertex region early out
-//	if (tdenom <= 0.0f && udenom <= 0.0f) return c; // Vertex region early out
-//
-//
-//	// P is outside (or on) AB if the triple scalar product [N PA PB] <= 0
-//	Vector n = Cross(b - a, c - a);
-//	float vc = Dot(n, Cross(a - p, b - p));
-//	// If P outside AB and within feature region of AB,
-//	// return projection of P onto AB
-//	if (vc <= 0.0f && snom >= 0.0f && sdenom >= 0.0f)
-//		return a + snom / (snom + sdenom) * ab;
-//
-//	// P is outside (or on) BC if the triple scalar product [N PB PC] <= 0
-//	float va = Dot(n, Cross(b - p, c - p));
-//	// If P outside BC and within feature region of BC,
-//	// return projection of P onto BC
-//	if (va <= 0.0f && unom >= 0.0f && udenom >= 0.0f)
-//		return b + unom / (unom + udenom) * bc;
-//
-//	// P is outside (or on) CA if the triple scalar product [N PC PA] <= 0
-//	float vb = Dot(n, Cross(c - p, a - p));
-//	// If P outside CA and within feature region of CA,
-//	// return projection of P onto CA
-//	if (vb <= 0.0f && tnom >= 0.0f && tdenom >= 0.0f)
-//		return a + tnom / (tnom + tdenom) * ac;
-//
-//	// P must project inside face region. Compute Q using barycentric coordinates
-//	float u = va / (va + vb + vc);
-//	float v = vb / (va + vb + vc);
-//	float w = 1.0f - u - v; // = vc / (va + vb + vc)
-//	return u * a + v * b + w * c;
-//}
+// Returns distance as a float
+// Sets c1 and c2 points as the closest points of each segment
+// S1(s) = P1 + s * (Q1 - P1)
+// S2(t) = P2 + t * (Q2 - P2)
+float cPhysics::m_ClosestPtSegmentSegment(glm::vec3 p1, glm::vec3 q1, glm::vec3 p2, glm::vec3 q2, float& s, float& t, glm::vec3& c1, glm::vec3& c2)
+{
+	// Direction vectors of both segments
+	glm::vec3 d1 = q1 - p1;
+	glm::vec3 d2 = q2 - p2;
+	
+	glm::vec3 r = p1 - p2;
+	float a = glm::dot(d1, d1); // Squared length of S1
+	float e = glm::dot(d2, d2); // Squared length of S2
+	float f = glm::dot(d2, r);
+
+
+	// Check if either or both points degenerate into points
+	if (a <= std::numeric_limits<double>::epsilon() && e <= std::numeric_limits<double>::epsilon())
+	{
+		// Both segments degenerate into points
+		s = 0.0f;
+		t = 0.0f;
+		c1 = p1;
+		c2 = p2;
+		return glm::dot(c1 - c2, c1 - c2);
+	}
+	if (a <= std::numeric_limits<double>::epsilon())
+	{
+		// First segment degenerates into a point
+		s = 0.0f;
+		t = f / e;
+		t = Clamp(t, 0.0f, 1.0f);
+	}
+	else
+	{
+		float c = glm::dot(d1, r);
+		if (e <= std::numeric_limits<double>::epsilon())
+		{
+			// Second segment degenerates into a point
+			t = 0.0f;
+			s = Clamp(-c / a, 0.0f, 1.0f);
+		}
+		else
+		{
+			// General nondegenerate case starts here
+			float b = glm::dot(d1, d2);
+			float denom = a * e - b * b;
+
+			// If segments not parallel, compute closest point on L1 to L2 and
+			// clamp to segment S1. Else pick arbitrary s (here 0)
+			if (denom != 0.0f)
+			{
+				s = Clamp((b * f - c * e) / denom, 0.0f, 1.0f);
+			}
+			else s = 0.0f;
+
+			// Compute point on L2 closest to S1(s) using
+			// t = dot((P1 + D1 * s) - P2, D2) / dot(D2, D2) = b*s + f) / e
+			//t = (b * s + f) / e;
+			float tnom = b * s + f;
+
+			// If t in [0, 1] dont. Else clamp t, recompute s for new value
+			// of t using s = dot((P2 + D2 * t) - P1, D1) / dot(D1, D1) = (t * b - c) / a
+			// and clamp s to [0, 1]
+// 			if (t < 0.0f)
+// 			{
+// 				t = 0.0f;
+// 				s = Clamp(-c / a, 0.0f, 1.0f);
+// 			}
+// 			else if (t > 1.0f) 
+// 			{
+// 				t = 1.0f;
+// 				s = Clamp((b - c) / a, 0.0f, 1.0f);
+// 			}
+			if (tnom < 0.0f)
+			{
+				t = 0.0f;
+				s = Clamp(-c / a, 0.0f, 1.0f);
+			}
+			else if (tnom > e)
+			{
+				t = 1.0f;
+				s = Clamp((b - c) / a, 0.0f, 1.0f);
+			}
+			else
+			{
+				t = tnom / e;
+			}
+		}
+	}
+
+	c1 = p1 + d1 * s;
+	c2 = p2 + d2 * t;
+	return glm::dot(c1 - c2, c1 - c2);
+}
+
+
+
+// Gets the closest point on the triangle to the line segment
+glm::vec3 cPhysics::m_ClosestPtLineSegTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 a, glm::vec3 b, glm::vec3 c)
+{
+
+
+
+
+
+	return glm::vec3(0);
+}
 

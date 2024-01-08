@@ -1,5 +1,5 @@
-HilbertRamp.ply
-Flat_1x1_plane.ply
-bathtub.ply
 Big_Flat_Mesh.ply
+Flat_1x1_plane.ply
 Sphere_1_unit_Radius.ply
+rusty_ship.ply
+Terrain.ply

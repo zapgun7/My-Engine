@@ -98,6 +98,12 @@ void cEngineController::setPhysicsRunning(bool isRunning)
 	return;
 }
 
+void cEngineController::updateDebugMode(bool useDebug, int selcetedMesh, int selectedLight)
+{
+	m_pTheEngineController->updateDebugMode(useDebug, selcetedMesh, selectedLight);
+	return;
+}
+
 void cEngineController::addNewObject(std::string meshName, char* friendlyName)
 {
 	m_pTheEngineController->addNewObject(meshName, friendlyName);

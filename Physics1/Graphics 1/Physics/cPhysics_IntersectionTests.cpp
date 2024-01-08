@@ -192,142 +192,24 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 	matModelR *= matRotation;
 
 	//reverseTransformedSphere.oldPosition = (matRevModelRT * glm::vec4(reverseTransformedSphere.oldPosition, 1.0f));
+
+
+	// Transform current to fit default triangle mesh
 	reverseTransformedSphere.position = (matRevModelT * glm::vec4(reverseTransformedSphere.position, 1.0f));
 	reverseTransformedSphere.position = (matRevModelR * glm::vec4(reverseTransformedSphere.position, 1.0f));
+
+	// Do it to old position too for continuous collision detection
+	reverseTransformedSphere.oldPosition = (matRevModelT * glm::vec4(reverseTransformedSphere.oldPosition, 1.0f));
+	reverseTransformedSphere.oldPosition = (matRevModelR * glm::vec4(reverseTransformedSphere.oldPosition, 1.0f));
+
+	// Rotate velocity to match default tri mesh
 	reverseTransformedSphere.velocity = (matRevModelR * glm::vec4(reverseTransformedSphere.velocity, 1.0f));
 	
 
-	//std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sphereCollision(pSphere_General); 
+
+	// Recursive AABB function to return near triangles
 	std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sphereCollision(&reverseTransformedSphere);
 
-
-
-	// Old code to compare speeds
-
-// 	sModelDrawInfo theMeshDrawInfo;
-// 
-// 	// Find the raw mesh information from the VAO manager
-// 	if (!this->m_pMeshManager->FindDrawInfoByModelName(pTriangleMesh->meshName, theMeshDrawInfo))
-// 	{
-// 		// Didn't find it
-// 		return false;
-// 	}
-// 	//std::cout << theMeshDrawInfo.pVertices[0].x << "|" << theMeshDrawInfo.pVertices[0].y << "|" << theMeshDrawInfo.pVertices[0].z << std::endl;
-// 
-// //	glm::vec3 closestPointToTriangle = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
-// 	float closestDistanceSoFar = FLT_MAX;
-// 	glm::vec3 closestTriangleVertices[3] = { glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f) };
-// 	glm::vec3 closestContactPoint = glm::vec3(0.0f);
-// 	unsigned int indexOfClosestTriangle = INT_MAX;
-// 
-// 
-// 	// We now have the mesh object location and the detailed mesh information 
-// 					// Which triangle is closest to this sphere (right now)
-// 	for (unsigned int index = 0; index != theMeshDrawInfo.numberOfIndices; index += 3)
-// 	{
-// 		glm::vec3 verts[3];
-// 
-// 		// This is TERRIBLE for cache misses
-// 		verts[0].x = theMeshDrawInfo.pVertices[theMeshDrawInfo.pIndices[index]].x;
-// 		verts[0].y = theMeshDrawInfo.pVertices[theMeshDrawInfo.pIndices[index]].y;
-// 		verts[0].z = theMeshDrawInfo.pVertices[theMeshDrawInfo.pIndices[index]].z;
-// 
-// 		verts[1].x = theMeshDrawInfo.pVertices[theMeshDrawInfo.pIndices[index + 1]].x;
-// 		verts[1].y = theMeshDrawInfo.pVertices[theMeshDrawInfo.pIndices[index + 1]].y;
-// 		verts[1].z = theMeshDrawInfo.pVertices[theMeshDrawInfo.pIndices[index + 1]].z;
-// 
-// 		verts[2].x = theMeshDrawInfo.pVertices[theMeshDrawInfo.pIndices[index + 2]].x;
-// 		verts[2].y = theMeshDrawInfo.pVertices[theMeshDrawInfo.pIndices[index + 2]].y;
-// 		verts[2].z = theMeshDrawInfo.pVertices[theMeshDrawInfo.pIndices[index + 2]].z;
-// 
-// 		// Transform this object in world space using the same technique we did to render it
-// 		// 
-// 		// Here's the key line: 	
-// 		// 
-// 		//		vertexWorldPos = matModel * vec4( vPos.xyz, 1.0f);
-// 		// 
-// 		// THIS BLOCK OF CODE IS FROM DrawObject()
-// 
-// 		glm::mat4 matModel = glm::mat4(1.0f);
-// 
-// 
-// 		// Translation
-// 		glm::mat4 matTranslate = glm::translate(glm::mat4(1.0f),
-// 			glm::vec3(pTriMesh_General->position.x,
-// 				pTriMesh_General->position.y,
-// 				pTriMesh_General->position.z));
-// 
-// 		// Rotation matrix generation
-// //		glm::mat4 matRotateX = glm::rotate(glm::mat4(1.0f),
-// //										   pTriMesh_General->orientation.x,
-// //										   glm::vec3(1.0f, 0.0, 0.0f));
-// //
-// //
-// //		glm::mat4 matRotateY = glm::rotate(glm::mat4(1.0f),
-// //										   pTriMesh_General->orientation.y,
-// //										   glm::vec3(0.0f, 1.0, 0.0f));
-// //
-// //		glm::mat4 matRotateZ = glm::rotate(glm::mat4(1.0f),
-// //										   pTriMesh_General->orientation.z,
-// //										   glm::vec3(0.0f, 0.0, 1.0f));
-// 		glm::mat4 matRotation = glm::mat4(pTriMesh_General->get_qOrientation());
-// 
-// 		// Scaling matrix
-// //		glm::mat4 matScale = glm::scale(glm::mat4(1.0f),
-// //										glm::vec3(pTriMesh->scale,
-// //												  pTriMesh->scale,
-// //												  pTriMesh->scale));
-// //		--------------------------------------------------------------
-// 
-// 		// Combine all these transformation
-// 		//matModel = matModel * matTranslate;
-// 
-// 		matModel *= matTranslate;
-// 
-// 		//		matModel = matModel * matRotateX;
-// 		//		matModel = matModel * matRotateY;
-// 		//		matModel = matModel * matRotateZ;
-// 
-// 		matModel *= matRotation;
-// 
-// 		//		matModel = matModel * matScale;
-// 
-// 
-// 				// vertexWorldPos = matModel * vec4(vPos.xyz, 1.0f);
-// 
-// 		glm::vec4 vertsWorld[3];
-// 		vertsWorld[0] = (matModel * glm::vec4(verts[0], 1.0f));
-// 		vertsWorld[1] = (matModel * glm::vec4(verts[1], 1.0f));
-// 		vertsWorld[2] = (matModel * glm::vec4(verts[2], 1.0f));
-// 
-// 
-// 		// And make sure you multiply the normal by the inverse transpose
-// 		// OR recalculate it right here! 
-// 
-// 		// ******************************************************
-// 
-// 		glm::vec3 thisTriangleClosestPoint = this->m_ClosestPtPointTriangle(pSphere_General->position,
-// 			vertsWorld[0], vertsWorld[1], vertsWorld[2]);
-// 
-// 		// Is this the closest so far
-// 		float distanceToThisTriangle = glm::distance(thisTriangleClosestPoint, pSphere_General->position);
-// 
-// 		if (distanceToThisTriangle < closestDistanceSoFar) // TODO Keep track of all triangles that are in/touching the sphere, figure out which one it hit first
-// 		{
-// 			// this one is closer
-// 			closestDistanceSoFar = distanceToThisTriangle;
-// 			// Make note of the triangle index
-// 			indexOfClosestTriangle = index;
-// 			// 
-// 			closestTriangleVertices[0] = vertsWorld[0];
-// 			closestTriangleVertices[1] = vertsWorld[1];
-// 			closestTriangleVertices[2] = vertsWorld[2];
-// 
-// 			closestContactPoint = thisTriangleClosestPoint;
-// 		}
-// 
-// 
-// 	} //for ( unsigned int index...
 
 // The new and improved code
 
