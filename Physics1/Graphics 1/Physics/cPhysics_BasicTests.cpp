@@ -191,6 +191,49 @@ float cPhysics::m_ClosestPtSegmentSegment(glm::vec3 p1, glm::vec3 q1, glm::vec3 
 // Gets the closest point on the triangle to the line segment
 glm::vec3 cPhysics::m_ClosestPtLineSegTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 a, glm::vec3 b, glm::vec3 c)
 {
+	// Compare 3 edges of triangle with segment with above function
+	// For each endpoint, if they project into triangle compute point to plane distance
+	// Last test would be checking for an intersection
+
+	glm::vec3 ab = b - a;
+	glm::vec3 ac = c - a;
+	glm::vec3 line = p2 - p1;
+
+
+	// Should start by checking if both endpoints lie in the triangle if projected onto it
+	// If both do, either the endpoint is the closest point or it intersects and we can return
+
+
+	// Start by getting the normal of the triangle
+	glm::vec3 triNorm = glm::cross(ab, ac);
+
+	// If line is parallel to triangle
+	if (glm::dot(line, triNorm) <= 0)
+	{
+		// Calculate point(on line) to plane distance and return
+	}
+
+
+
+
+
+	float s, t;
+	glm::vec3 c1, c2;
+
+	float smallestDistanceSoFar = FLT_MAX;
+	float currDist;
+
+	// First edge
+	currDist = m_ClosestPtSegmentSegment(p1, p2, a, b, s, t, c1, c2);
+	if (currDist < smallestDistanceSoFar) smallestDistanceSoFar = currDist;
+
+	// Second edge
+	currDist = m_ClosestPtSegmentSegment(p1, p2, b, c, s, t, c1, c2);
+	if (currDist < smallestDistanceSoFar) smallestDistanceSoFar = currDist;
+
+	// Third edge
+	currDist = m_ClosestPtSegmentSegment(p1, p2, c, a, s, t, c1, c2);
+	if (currDist < smallestDistanceSoFar) smallestDistanceSoFar = currDist;
 
 
 
