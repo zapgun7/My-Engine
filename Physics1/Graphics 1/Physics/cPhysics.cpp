@@ -22,19 +22,19 @@ void cPhysics::generateAABBs(std::vector<std::string> models)
 	// Temp test area
 	// float m_ClosestPtSegmentSegment(glm::vec3 p1, glm::vec3 q1, glm::vec3 p2, glm::vec3 q2, float& s, float& t, glm::vec3& c1, glm::vec3& c2)
 
-	float returnVal, s, t;
-	glm::vec3 c1, c2;
-
-	glm::vec3 p1(0, -1, 0);
-	glm::vec3 q1(0, 1, 0);
-
-	glm::vec3 p2(-1, 0, 1);
-	glm::vec3 q2(1, 0, 1);
-
-	returnVal = m_ClosestPtSegmentSegment(p1, q1, p2, q2, s, t, c1, c2);
-
-
-	printf("Distance %.3f", returnVal);
+// 	float returnVal, s, t;
+// 	glm::vec3 c1, c2;
+// 
+// 	glm::vec3 p1(0, -1, 0);
+// 	glm::vec3 q1(0, 1, 0);
+// 
+// 	glm::vec3 p2(-1, 0, 1);
+// 	glm::vec3 q2(1, 0, 1);
+// 
+// 	returnVal = m_ClosestPtSegmentSegment(p1, q1, p2, q2, s, t, c1, c2);
+// 
+// 
+// 	printf("Distance %.3f", returnVal);
 
 
 	for (std::vector<std::string>::iterator itModel = models.begin();

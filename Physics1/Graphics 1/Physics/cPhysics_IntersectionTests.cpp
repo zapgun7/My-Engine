@@ -208,7 +208,7 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 
 
 	// Recursive AABB function to return near triangles
-	std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sphereCollision(&reverseTransformedSphere);
+	std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sphereCollision(&reverseTransformedSphere); // TODO make this capsule detection for the sphere sweep
 
 
 // The new and improved code
@@ -221,9 +221,47 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 
 	// We now have the mesh object location and the detailed mesh information 
 					// Which triangle is closest to this sphere (right now)
-	//for (unsigned int index = 0; index != theMeshDrawInfo.numberOfIndices; index += 3)
-	for(std::vector<sTriangle_A>::iterator itTri = trisToCheck.begin(); 
-		itTri != trisToCheck.end(); 
+// 	for(std::vector<sTriangle_A>::iterator itTri = trisToCheck.begin(); 
+// 		itTri != trisToCheck.end(); 
+// 		itTri++)
+// 	{
+// 		// And make sure you multiply the normal by the inverse transpose
+// 		// OR recalculate it right here! 
+// 
+// 		// ******************************************************
+// 
+// 		//glm::vec3 thisTriangleClosestPoint = this->m_ClosestPtPointTriangle(pSphere_General->position,
+// 		//	itTri->vertices[0], itTri->vertices[1], itTri->vertices[2]);
+// 		glm::vec3 thisTriangleClosestPoint = this->m_ClosestPtPointTriangle(reverseTransformedSphere.position,
+// 				itTri->vertices[0], itTri->vertices[1], itTri->vertices[2]);
+// 
+// 		// Is this the closest so far
+// 		//float distanceToThisTriangle = glm::distance(thisTriangleClosestPoint, pSphere_General->position);
+// 		float distanceToThisTriangle = glm::distance(thisTriangleClosestPoint, reverseTransformedSphere.position);
+// 
+// 		if (distanceToThisTriangle < closestDistanceSoFar) // TODO Keep track of all triangles that are in/touching the sphere, figure out which one it hit first
+// 		{
+// 			// this one is closer
+// 			closestDistanceSoFar = distanceToThisTriangle;
+// 			// Make note of the triangle index
+// 			//indexOfClosestTriangle = index;
+// 			// 
+// 			closestTriangleVertices[0] = itTri->vertices[0];
+// 			closestTriangleVertices[1] = itTri->vertices[1];
+// 			closestTriangleVertices[2] = itTri->vertices[2];
+// 
+// 			closestContactPoint = thisTriangleClosestPoint;
+// 		}
+// 
+// 
+// 	} //for ( unsigned int index...
+
+	float earliestTime = FLT_MAX; // Time (0-1) over current update the sphere collides
+	glm::vec3 hitNorm; // Normal used to calculate reflection
+
+	// The newest code for dealing with continuous collision detection
+	for (std::vector<sTriangle_A>::iterator itTri = trisToCheck.begin();
+		itTri != trisToCheck.end();
 		itTri++)
 	{
 		// And make sure you multiply the normal by the inverse transpose
@@ -233,26 +271,45 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 
 		//glm::vec3 thisTriangleClosestPoint = this->m_ClosestPtPointTriangle(pSphere_General->position,
 		//	itTri->vertices[0], itTri->vertices[1], itTri->vertices[2]);
-		glm::vec3 thisTriangleClosestPoint = this->m_ClosestPtPointTriangle(reverseTransformedSphere.position,
-				itTri->vertices[0], itTri->vertices[1], itTri->vertices[2]);
+		//glm::vec3 thisTriangleClosestPoint = this->m_ClosestPtPointTriangle(reverseTransformedSphere.position,
+		//	itTri->vertices[0], itTri->vertices[1], itTri->vertices[2]);
 
 		// Is this the closest so far
 		//float distanceToThisTriangle = glm::distance(thisTriangleClosestPoint, pSphere_General->position);
-		float distanceToThisTriangle = glm::distance(thisTriangleClosestPoint, reverseTransformedSphere.position);
+		//float distanceToThisTriangle = glm::distance(thisTriangleClosestPoint, reverseTransformedSphere.position);
 
-		if (distanceToThisTriangle < closestDistanceSoFar) // TODO Keep track of all triangles that are in/touching the sphere, figure out which one it hit first
+		float t; // Time (0-1) over current update the sphere collides
+		glm::vec3 hn; // Normal used to calculate reflection
+
+		if (!m_TestMovingSphereTriangle(&reverseTransformedSphere, &*itTri, t, hn))
 		{
-			// this one is closer
-			closestDistanceSoFar = distanceToThisTriangle;
-			// Make note of the triangle index
-			//indexOfClosestTriangle = index;
-			// 
-			closestTriangleVertices[0] = itTri->vertices[0];
-			closestTriangleVertices[1] = itTri->vertices[1];
-			closestTriangleVertices[2] = itTri->vertices[2];
-
-			closestContactPoint = thisTriangleClosestPoint;
+			// No collision, go to next triangle
+			continue;
 		}
+
+
+		// Collision confirmed within update range
+
+		if (t < earliestTime) // If this collision happens sooner than the one stored
+		{
+			earliestTime = t;
+			hitNorm = hn;
+		}
+
+
+// 		if (distanceToThisTriangle < closestDistanceSoFar) // TODO Keep track of all triangles that are in/touching the sphere, figure out which one it hit first
+// 		{
+// 			// this one is closer
+// 			closestDistanceSoFar = distanceToThisTriangle;
+// 			// Make note of the triangle index
+// 			//indexOfClosestTriangle = index;
+// 			// 
+// 			closestTriangleVertices[0] = itTri->vertices[0];
+// 			closestTriangleVertices[1] = itTri->vertices[1];
+// 			closestTriangleVertices[2] = itTri->vertices[2];
+// 
+// 			closestContactPoint = thisTriangleClosestPoint;
+// 		}
 
 
 	} //for ( unsigned int index...
@@ -263,62 +320,152 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 	//   | |_| | | (_| |  \ V  V /  __/ | | | | | |_  | |_| |  | | (_| | | | | (_| | |  __/_| 
 	//   |____/|_|\__,_|   \_/\_/ \___| |_| |_|_|\__|  \__|_|  |_|\__,_|_| |_|\__, |_|\___(_) 
 	//                                                                        |___/           
+ 
+	// Old code
 
-	if (closestDistanceSoFar < pSphere->radius)
+// 	if (closestDistanceSoFar < pSphere->radius)
+// 	{
+// 		// Hit it!
+// 		// Take the normal of that triangle and bounce the sphere along it
+// 
+// 		// How do we calculate the new direction after the "bounce"? 
+// 		// 
+// 		// Answer: it's based on the REFLECTION vector around the normal.
+// 		// The sphere is travelling along its VELOCITY vector (at this moment)
+// 		//	and will "bounce off" along an angle reflected by the normal
+// 
+// 		// The object HAS PENETRATED the triangle
+// 		// Instead of using the CURRENT location, 
+// 		//	calculate everything based on the LAST location of the object. 
+// 		// i.e. JUST BEFORE the object collided.
+// 		
+// // Add whatever information we might need later to do something for the response.
+// 
+// 
+// 		// Calculate the current "direction" vector 
+// 		// We're using the velocity
+// 		//glm::vec3 sphereDirection = pSphere_General->velocity;
+// 		glm::vec3 sphereDirection = reverseTransformedSphere.velocity;
+// 		// Normalize... 
+// 		sphereDirection = glm::normalize(sphereDirection);
+// 
+// 		// Calcualte the current normal from the TRANSFORMED vertices
+// 		glm::vec3 edgeA = closestTriangleVertices[1] - closestTriangleVertices[0];
+// 		glm::vec3 edgeB = closestTriangleVertices[2] - closestTriangleVertices[0];
+// 
+// 		glm::vec3 triNormal = glm::normalize(glm::cross(edgeA, edgeB));
+// 
+// 		// Calculate the reflection vector from the normal	
+// 		// https://registry.khronos.org/OpenGL-Refpages/gl4/html/reflect.xhtml
+// 		// 1st parameter is the "incident" vector
+// 		// 2nd parameter is the "normal" vector
+// 		glm::vec3 reflectionVec = glm::reflect(sphereDirection, triNormal);
+// 
+// 		// Update the  velocity based on this reflection vector
+// 		//float sphereSpeed = glm::length(pSphere_General->velocity);
+// 		float sphereSpeed = glm::length(reverseTransformedSphere.velocity);
+// 		glm::vec3 newVelocity = reflectionVec * sphereSpeed;
+// 
+// 		// RESTITUTION CALCULATION
+// 		//newVelocity.y *= 0.5f;
+// 
+// 		// Degree between sphere dir and tri norm: 180 is absolute restitution application, 90 is none (parallel to it)
+// 		float degToNorm = glm::degrees(abs(acos(glm::dot(sphereDirection, triNormal) / glm::length(sphereDirection) * glm::length(triNormal)))); 
+// 
+// 		//degToNorm -= 90; // Now we're working with 90: total restitution app.   0: no app
+// 		float restAppDegree = degToNorm - 90; // Multiplier (1.0 - 0.0) to influence effects of the restitution application
+// 		restAppDegree /= 90;
+// 
+// 		glm::vec3 restitutionVelLoss = -triNormal * newVelocity; // Calculate vector we want to reduce velocity on (negative normal of surface it's bouncing on)
+// 		newVelocity += (restitutionVelLoss * (1.0f - pSphere_General->restitution)) * restAppDegree; // Subtract said vector from newVelocity, scaled with its restitution (0 restitution = no bounce, 1 = full bounce)
+// 
+// 
+// 		// TODO will have to rotate the velocity vector back
+// 		newVelocity = (matModelR * glm::vec4(newVelocity, 1.0f));
+// 		pSphere_General->velocity = newVelocity;
+// 
+// 
+// 		// Re-position the sphere where it would be if it perfectly bounced off the triangle
+// 		float distToCorrect = (pSphere->radius - closestDistanceSoFar) * 2; // Get length we need to move the sphere by
+// 		//glm::vec3 moveDir = glm::normalize((pSphere_General->position - closestContactPoint));
+// 		//pSphere_General->position += (moveDir * distToCorrect);
+// 		glm::vec3 moveDir = glm::normalize((reverseTransformedSphere.position - closestContactPoint));
+// 
+// 		//glm::vec3 oldPos = reverseTransformedSphere.position;
+// 		reverseTransformedSphere.position += (moveDir * distToCorrect);
+// 
+// 		// TODO reverse the rotation of this vector
+// 		glm::vec3 deltaPos = (moveDir * distToCorrect);
+// 		deltaPos = (matModelR * glm::vec4(deltaPos, 1.0f));
+// 
+// 		////////// RE-REVERSING UPDATED POSITION /////////
+// 		//pSphere_General->position = (matModel * glm::vec4(reverseTransformedSphere.position, 1.0f));
+// 		pSphere_General->position += deltaPos;
+// 
+// 
+// 		// We add this "collision event" to the list or queue of collisions
+// 		sCollisionEvent theCollision;
+// 		
+// 		theCollision.pObjectA = pSphere_General;
+// 		// 
+// 		theCollision.contactPoint = closestContactPoint;
+// 		theCollision.reflectionNormal = reflectionVec;
+// //		theCollision.velocityAtCollision = reflectionVec;
+// 		
+// 		// TODO: We'll have a problem later: what deletes this?
+// 		sPhysicsProperties* pTriangleWeHit = new sPhysicsProperties();
+// 
+// 		pTriangleWeHit->setShape(new sPhysicsProperties::sTriangle(closestTriangleVertices[0],
+// 																   closestTriangleVertices[1],
+// 																   closestTriangleVertices[2]));
+// 		theCollision.pObjectB = pTriangleWeHit;
+// 		
+// 		this->m_vecCollisionsThisFrame.push_back(theCollision);
+// 
+// // Or we 
+// //		pSphere_General->velocity = glm::vec3(0.0f);
+// 
+// 		return true;
+// 	}
+
+// New code, doesn't care about triangle info, just the hit norm
+	if (earliestTime <= 1.0f) // If earliest collision detected is within the update range
 	{
-		// Hit it!
-		// Take the normal of that triangle and bounce the sphere along it
-
-		// How do we calculate the new direction after the "bounce"? 
-		// 
-		// Answer: it's based on the REFLECTION vector around the normal.
-		// The sphere is travelling along its VELOCITY vector (at this moment)
-		//	and will "bounce off" along an angle reflected by the normal
-
-		// The object HAS PENETRATED the triangle
-		// Instead of using the CURRENT location, 
-		//	calculate everything based on the LAST location of the object. 
-		// i.e. JUST BEFORE the object collided.
-		
-// Add whatever information we might need later to do something for the response.
-
-
-		// Calculate the current "direction" vector 
-		// We're using the velocity
-		//glm::vec3 sphereDirection = pSphere_General->velocity;
+		///// Sphere Direction Vector /////
 		glm::vec3 sphereDirection = reverseTransformedSphere.velocity;
 		// Normalize... 
 		sphereDirection = glm::normalize(sphereDirection);
 
-		// Calcualte the current normal from the TRANSFORMED vertices
-		glm::vec3 edgeA = closestTriangleVertices[1] - closestTriangleVertices[0];
-		glm::vec3 edgeB = closestTriangleVertices[2] - closestTriangleVertices[0];
+		glm::vec3 sphereStep = reverseTransformedSphere.position - reverseTransformedSphere.oldPosition; // The movement of the sphere over the update
 
-		glm::vec3 triNormal = glm::normalize(glm::cross(edgeA, edgeB));
 
-		// Calculate the reflection vector from the normal	
-		// https://registry.khronos.org/OpenGL-Refpages/gl4/html/reflect.xhtml
-		// 1st parameter is the "incident" vector
-		// 2nd parameter is the "normal" vector
-		glm::vec3 reflectionVec = glm::reflect(sphereDirection, triNormal);
+	// 	Calcualte the current normal from the TRANSFORMED vertices
+	// 		glm::vec3 edgeA = closestTriangleVertices[1] - closestTriangleVertices[0];
+	// 		glm::vec3 edgeB = closestTriangleVertices[2] - closestTriangleVertices[0];
+	// 	
+	// 		glm::vec3 triNormal = glm::normalize(glm::cross(edgeA, edgeB));
+
+
+		///// Reflection Vector calculated with hitNorm /////
+		glm::vec3 reflectionVec = glm::reflect(sphereDirection, hitNorm); // I think this is normalized???
 
 		// Update the  velocity based on this reflection vector
-		//float sphereSpeed = glm::length(pSphere_General->velocity);
 		float sphereSpeed = glm::length(reverseTransformedSphere.velocity);
 		glm::vec3 newVelocity = reflectionVec * sphereSpeed;
 
-		// RESTITUTION CALCULATION
-		//newVelocity.y *= 0.5f;
 
-		// Degree between sphere dir and tri norm: 180 is absolute restitution application, 90 is none (parallel to it)
-		float degToNorm = glm::degrees(abs(acos(glm::dot(sphereDirection, triNormal) / glm::length(sphereDirection) * glm::length(triNormal)))); 
+
+		// Degree between sphere dir and hit norm: 180 is absolute restitution application, 90 is none (parallel to it)
+		float degToNorm = glm::degrees(abs(acos(glm::dot(sphereDirection, hitNorm) / glm::length(sphereDirection) * glm::length(hitNorm))));
 
 		//degToNorm -= 90; // Now we're working with 90: total restitution app.   0: no app
 		float restAppDegree = degToNorm - 90; // Multiplier (1.0 - 0.0) to influence effects of the restitution application
 		restAppDegree /= 90;
 
-		glm::vec3 restitutionVelLoss = -triNormal * newVelocity; // Calculate vector we want to reduce velocity on (negative normal of surface it's bouncing on)
+		glm::vec3 restitutionVelLoss = -hitNorm * newVelocity; // Calculate vector we want to reduce velocity on (negative normal of surface it's bouncing on)
 		newVelocity += (restitutionVelLoss * (1.0f - pSphere_General->restitution)) * restAppDegree; // Subtract said vector from newVelocity, scaled with its restitution (0 restitution = no bounce, 1 = full bounce)
+
+		// At this point we're done with changing velocity based on collision, now to transform all values back
 
 
 		// TODO will have to rotate the velocity vector back
@@ -327,44 +474,71 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 
 
 		// Re-position the sphere where it would be if it perfectly bounced off the triangle
-		float distToCorrect = (pSphere->radius - closestDistanceSoFar) * 2; // Get length we need to move the sphere by
+		//float distToCorrect = (pSphere->radius - closestDistanceSoFar) * 2; // Get length we need to move the sphere by
 		//glm::vec3 moveDir = glm::normalize((pSphere_General->position - closestContactPoint));
 		//pSphere_General->position += (moveDir * distToCorrect);
-		glm::vec3 moveDir = glm::normalize((reverseTransformedSphere.position - closestContactPoint));
+		//glm::vec3 moveDir = glm::normalize((reverseTransformedSphere.position - closestContactPoint));
 
 		//glm::vec3 oldPos = reverseTransformedSphere.position;
-		reverseTransformedSphere.position += (moveDir * distToCorrect);
+		//reverseTransformedSphere.position += (moveDir * distToCorrect);
+
+
+
+		// Here we must set the old position to the collision point, and calculate the new current position based on the reflection and time left in the update
+
+		// Start by calculating new old position with t
+
+		glm::vec3 oldPos = reverseTransformedSphere.oldPosition;
+		reverseTransformedSphere.oldPosition += sphereStep * earliestTime; // This is the point of collision
+
+		// Now to add remainder of the update time of the reflected vector 
+		float remainingLength = glm::length(sphereStep * (1.0f - earliestTime));
+		reverseTransformedSphere.position = reverseTransformedSphere.oldPosition + reflectionVec * remainingLength;
+
 
 		// TODO reverse the rotation of this vector
-		glm::vec3 deltaPos = (moveDir * distToCorrect);
-		deltaPos = (matModelR * glm::vec4(deltaPos, 1.0f));
+		//glm::vec3 deltaPos = (moveDir * distToCorrect);
+		//deltaPos = (matModelR * glm::vec4(deltaPos, 1.0f));
+
+		///// Reverse delta pos changes rotation to apply to OG sphere data //////  (Cheaper than full rotation + translation of old and new pos?)
+		glm::vec3 deltaOld = reverseTransformedSphere.oldPosition - oldPos;
+		glm::vec3 deltaNew = reverseTransformedSphere.position - reverseTransformedSphere.oldPosition;
+
+		deltaOld = (matModelR * glm::vec4(deltaOld, 1.0f));
+		deltaNew = (matModelR * glm::vec4(deltaNew, 1.0f));
+
 
 		////////// RE-REVERSING UPDATED POSITION /////////
 		//pSphere_General->position = (matModel * glm::vec4(reverseTransformedSphere.position, 1.0f));
-		pSphere_General->position += deltaPos;
+		//pSphere_General->position += deltaPos;
 
+		///// Apply Delta Positions /////
+		pSphere_General->oldPosition += deltaOld;
+		pSphere_General->position += deltaNew;
+
+		/////////// TOOOOODOOOOOOO: Recursive step to restart this collision detection with updated old and new positions
 
 		// We add this "collision event" to the list or queue of collisions
 		sCollisionEvent theCollision;
-		
+
 		theCollision.pObjectA = pSphere_General;
 		// 
 		theCollision.contactPoint = closestContactPoint;
 		theCollision.reflectionNormal = reflectionVec;
-//		theCollision.velocityAtCollision = reflectionVec;
-		
-		// TODO: We'll have a problem later: what deletes this?
+		//		theCollision.velocityAtCollision = reflectionVec;
+
+				// TODO: We'll have a problem later: what deletes this?
 		sPhysicsProperties* pTriangleWeHit = new sPhysicsProperties();
 
 		pTriangleWeHit->setShape(new sPhysicsProperties::sTriangle(closestTriangleVertices[0],
-																   closestTriangleVertices[1],
-																   closestTriangleVertices[2]));
+			closestTriangleVertices[1],
+			closestTriangleVertices[2]));
 		theCollision.pObjectB = pTriangleWeHit;
-		
+
 		this->m_vecCollisionsThisFrame.push_back(theCollision);
 
-// Or we 
-//		pSphere_General->velocity = glm::vec3(0.0f);
+		// Or we 
+		//		pSphere_General->velocity = glm::vec3(0.0f);
 
 		return true;
 	}
