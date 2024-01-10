@@ -380,6 +380,104 @@ bool cPhysics::m_Sphere_TriMeshLocal_IntersectionTest(sPhysicsProperties* pSpher
 }
 
 
+// Tests a moving sphere with a triangle
+// Sets t as the "time" along the update path when it intersects
+// Sets the hitNorm as the unit vector of the hit location on the sphere
+bool cPhysics::m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle_A* pTri, float& t, glm::vec3& hitNorm)
+{
+	sPhysicsProperties::sSphere* pSphereShape = (sPhysicsProperties::sSphere*)(pSphere->pShape); // To access the radius
+	
+
+	// Start by getting the plane created by the triangle
+
+	glm::vec3 ab = pTri->vertices[1] - pTri->vertices[0];
+	glm::vec3 ac = pTri->vertices[2] - pTri->vertices[0];
+
+	glm::vec3 triNorm = glm::normalize(glm::cross(ab, ac));
+
+
+	// Now get the point on the sphere that will first hit that plane
+	// Reverse the norm, and add that multiplied by the radius to the sphere's center
+
+	//glm::vec3 spherePoint = pSphere->oldPosition - triNorm * pSphereShape->radius; // Use old position since at the start of this update, we set the new position (which might collide)
+
+	// Now get the position this point will hit on the plane
+
+	float pd = glm::dot(triNorm, pTri->vertices[0]);
+
+
+	//int cPhysics::m_IntersectMovingSpherePlane(sPhysicsProperties* pSphere, glm::vec3 pn, float pd, float& t, glm::vec3& q)
+
+	glm::vec3 q;
+
+	if (!m_IntersectMovingSpherePlane(pSphere, triNorm, pd, t, q))
+	{
+		// Sphere does not intersect plane
+		return false;
+	}
+
+	// Run a quick check to make sure the sphere makes it to the plane in this update
+	glm::vec3 triV = pSphere->position - pSphere->oldPosition;
+
+	if (t > 1.0f)
+	{
+		// Sphere will hit this plane sometime in the future, don't have to worry about it now
+		return false;
+	}
+
+// 	if (glm::distance(pSphere->oldPosition, pSphere->oldPosition + triV * t) > glm::distance(pSphere->oldPosition, pSphere->position))
+// 	{
+// 		// Too far, does not collide
+// 		return false;
+// 	}
+
+
+	// Sphere intersects plane made by triangle, now find out if intersection point is in the triangle
+	// We do closest point to triangle check: if distance is in epsilon land, the point is in the triangle, else we check that point for even later collision
+
+	glm::vec3 closestTriPoint = m_ClosestPtPointTriangle(q, pTri->vertices[0], pTri->vertices[1], pTri->vertices[2]);
+
+	if (glm::distance(closestTriPoint, q) <= std::numeric_limits<float>::epsilon()) // If the distance is "0"
+	{
+		// We reflect off the triangle face! nice n' easy
+
+		// Set the normal pointing to the impact position
+		//hitNorm = glm::normalize(q - (pSphere->oldPosition + triV * t));
+		hitNorm = triNorm;
+
+		return true;
+	}
+	
+	// We now have to check if the sphere later intersects with this point (past the plane cast by the triangle)
+
+	// Could start by projecting all onto plane orthogonal to the movement vector and see if point q is within radius distance of sphere center
+	// Will still have to figure out where on the sphere it collides with if it close enough
+
+	glm::vec3 rayHitOnSphere; // Relative to sphere's old position
+
+	if (!m_IntersectRaySphere(closestTriPoint, -triV, pSphere, t, rayHitOnSphere))
+	{
+		// Ray misses sphere
+		return false;
+	}
+
+	// Ray hit sphere, check if within update range
+	if (t > 1.0f)
+	{
+		// Ray hits in the future
+		return false;
+	}
+
+	// Ray hits this update
+
+	// Set the hitNorm, t is already set by the function called!
+
+	hitNorm = glm::normalize(pSphere->oldPosition - rayHitOnSphere);
+
+	return true;
+}
+
+
 
 
 

@@ -90,6 +90,7 @@ glm::vec3 cPhysics::m_ClosestPtPointTriangle(glm::vec3 p, glm::vec3 a, glm::vec3
 	return u * a + v * b + w * c;
 }
 
+
 // Returns distance as a float
 // Sets c1 and c2 points as the closest points of each segment
 // S1(s) = P1 + s * (Q1 - P1)
@@ -207,6 +208,9 @@ glm::vec3 cPhysics::m_ClosestPtLineSegTriangle(glm::vec3 p1, glm::vec3 p2, glm::
 	// Start by getting the normal of the triangle
 	glm::vec3 triNorm = glm::cross(ab, ac);
 
+
+
+
 	// If line is parallel to triangle
 	if (glm::dot(line, triNorm) <= 0)
 	{
@@ -242,3 +246,65 @@ glm::vec3 cPhysics::m_ClosestPtLineSegTriangle(glm::vec3 p1, glm::vec3 p2, glm::
 	return glm::vec3(0);
 }
 
+
+int cPhysics::m_IntersectMovingSpherePlane(sPhysicsProperties* pSphere, glm::vec3 pn, float pd, float& t, glm::vec3& q)
+{
+	sPhysicsProperties::sSphere* pSphereShape = (sPhysicsProperties::sSphere*)(pSphere->pShape); // To access the radius
+
+	glm::vec3 v = pSphere->position - pSphere->oldPosition;
+
+	float dist = glm::dot(pn, pSphere->oldPosition) - pd;
+
+	if (abs(dist) <= pSphereShape->radius) //This isn't where it is intersecting, but this case should almost never happen :)
+	{
+		// Sphere is already overlapping plane
+		// Set time of intersection to 0 and q to sphere center
+		t = 0.0f;
+		q = pSphere->oldPosition;
+		return 1;
+	}
+	else
+	{
+		float denom = glm::dot(pn, v);
+		if (denom * dist >= 0.0f)
+		{
+			// No intersection; sphere is moving parallel or away from plane
+			return 0;
+		}
+		else
+		{
+			// Sphere moving towards the plane
+
+			// Use +r in computations if sphere in front of plane, else -r
+			float r = dist > 0.0f ? pSphereShape->radius : -pSphereShape->radius;
+			t = (r - dist) / denom;
+			q = pSphere->oldPosition + t * v - r * pn;
+			return 1;
+		}
+	}
+}
+
+
+int cPhysics::m_IntersectRaySphere(glm::vec3 p, glm::vec3 d, sPhysicsProperties* pSphere, float& t, glm::vec3& q) // This can be cheaper by only detecting if a ray hits it, doesn't care about t or q (pg. 179)
+{
+	sPhysicsProperties::sSphere* pSphereShape = (sPhysicsProperties::sSphere*)(pSphere->pShape); // To access the radius
+
+	glm::vec3 m = p - pSphere->oldPosition;
+	float b = glm::dot(m, d);
+	float c = glm::dot(m, m) - pSphereShape->radius * pSphereShape->radius;
+
+	// Exit if r's origin outside s (c > 0) and r pointing away from s (b > 0)
+	if (c > 0.0f && b > 0.0f) return 0;
+	float discr = b * b - c;
+
+	// Negative discriminant corresponds to ray missing sphere
+	if (discr < 0.0f) return 0;
+
+	// Ray now found to intersect sphere, compute smallest t value of intersection
+	t = -b - sqrt(discr);
+
+	// If t is negative, ray started inside sphere so clamp t to zero
+	if (t < 0.0f) t = 0.0f;
+	q = p + t * d;
+	return 1;
+}
