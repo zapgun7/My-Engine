@@ -83,9 +83,17 @@ public:
 	void MakeTree(std::vector<sTriangle_A>* parentTris, unsigned int maxTri, bool isRoot);
 	std::vector<sTriangle_A> trisInBox(std::vector<sTriangle_A>* triangles, glm::vec3 minCorner, glm::vec3 maxCorner);
 
-	// Traversal Functions
+	//// Traversal Functions ////
+	
+	// Sphere
 	std::vector<sTriangle_A> sphereCollision(sPhysicsProperties* sphere);// Takes a sphere with reverse transform matrix of the AABB object applied to it; returns vector of near triangles
 	std::vector<sTriangle_A> sphereRecursion(float sphRad, glm::vec3 sphPos);
+
+	// Oriented Capsule (Will later have one for player which will be rotationally locked)
+	std::vector<sTriangle_A> sweepingSphereCollision(sPhysicsProperties* sphere);// Takes a sphere with reverse transform matrix of the AABB object applied to it; returns vector of near triangles
+	std::vector<sTriangle_A> sweepingSphereRecursion(float sphRad, glm::vec3 sphPos1, glm::vec3 sphPos2); 
+
+
 	cAABB* getChild(unsigned int ID);
 
 	std::vector<sTriangle_A> triangles; // Triangles in this box; only leafs will have data here
@@ -94,5 +102,6 @@ public:
 
 
 };
+
 
 

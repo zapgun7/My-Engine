@@ -75,16 +75,25 @@ private:
 	std::map<std::string, cAABB*> m_map_ModelAABBs; // Map of AABB oct-treeified models
 	cAABB* findAABBByModelName(std::string modelName);
 
+public:
 	// The basic tests
-	bool m_TestSphereTriangle(float sphereRadius, glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 sphereCentre);
-	glm::vec3 m_ClosestPtPointTriangle(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c);
-	float m_ClosestPtSegmentSegment(glm::vec3 p1, glm::vec3 q1, glm::vec3 p2, glm::vec3 q2, float& s, float& t, glm::vec3& c1, glm::vec3& c2);
-	glm::vec3 m_ClosestPtLineSegTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 a, glm::vec3 b, glm::vec3 c);
-	int m_IntersectMovingSpherePlane(sPhysicsProperties* pSphere, glm::vec3 pn, float pd, float& t, glm::vec3& q);
-	int m_IntersectRaySphere(glm::vec3 p, glm::vec3 d, sPhysicsProperties* pSphere, float& t, glm::vec3& q);
+	static bool m_TestSphereTriangle(float sphereRadius, glm::vec3 vert0, glm::vec3 vert1, glm::vec3 vert2, glm::vec3 sphereCentre);
+	static int m_TestSphereAABB(sPhysicsProperties* pSphere, cAABB* b, glm::vec3& q);
+
+	static glm::vec3 m_ClosestPtPointTriangle(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c);
+	static float m_ClosestPtSegmentSegment(glm::vec3 p1, glm::vec3 q1, glm::vec3 p2, glm::vec3 q2, float& s, float& t, glm::vec3& c1, glm::vec3& c2);
+	static glm::vec3 m_ClosestPtLineSegTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 a, glm::vec3 b, glm::vec3 c);
+	static void m_ClosestPtPointAABB(glm::vec3 p, cAABB* b, glm::vec3& q);
+
+	static int m_IntersectMovingSpherePlane(sPhysicsProperties* pSphere, glm::vec3 pn, float pd, float& t, glm::vec3& q);
+	static int m_IntersectRaySphere(glm::vec3 p, glm::vec3 d, sPhysicsProperties* pSphere, float& t, glm::vec3& q);
+	static int m_IntersectRayAABB(glm::vec3 p, glm::vec3 d, cAABB* a, float& tmin, glm::vec3& q);
+	static int m_IntersectMovingSphereAABB(sPhysicsProperties* pSphere, cAABB* b, float& t); // !!!INCOMPLETE!!!      Needs finer check for vertex regions
 
 	// Less Basic Tests
-	bool m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle_A* pTri, float &t, glm::vec3 &hitNorm);
+	static bool m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle_A* pTri, float &t, glm::vec3 &hitNorm);
+
+private:
 
 	cVAOManager* m_pMeshManager = NULL;
 	//cGraphicsMain* m_pGraphicsMain;

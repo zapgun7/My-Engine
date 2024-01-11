@@ -8,6 +8,18 @@ float Clamp(float n, float min, float max)
 	return n;
 }
 
+// Support function that returns the AABB vertex with index n
+// Used in IntersectMovingSphereAABB
+glm::vec3 Corner(cAABB* b, int n)
+{
+	glm::vec3 p;
+	p.x = ((n & 1) ? b->xMax() : b->xMin());
+	p.y = ((n & 2) ? b->yMax() : b->yMin());
+	p.z = ((n & 4) ? b->zMax() : b->zMin());
+
+	return p;
+}
+
 
 
 //== = Section 5.2.7: ============================================================ =
@@ -17,7 +29,7 @@ bool cPhysics::m_TestSphereTriangle(float sphereRadius, glm::vec3 vert0, glm::ve
 						glm::vec3 sphereCentre)
 {
 	// Find point P on triangle ABC closest to sphere center
-	glm::vec3 closestPoint = this->m_ClosestPtPointTriangle(sphereCentre, vert0, vert1, vert2);
+	glm::vec3 closestPoint = m_ClosestPtPointTriangle(sphereCentre, vert0, vert1, vert2);
 
 	// Sphere and triangle intersect if the (squared) distance from sphere
 	// center to point p is less than the (squared) sphere radius
@@ -31,6 +43,19 @@ bool cPhysics::m_TestSphereTriangle(float sphereRadius, glm::vec3 vert0, glm::ve
 	}
 
 	return isItIntersecting;
+}
+
+
+int cPhysics::m_TestSphereAABB(sPhysicsProperties* pSphere, cAABB* b, glm::vec3& q)
+{
+	float radius = ((sPhysicsProperties::sSphere*)pSphere->pShape)->radius;
+	// Find point q on AABB closest to sphere center
+	m_ClosestPtPointAABB(pSphere->position, b, q);
+
+	// Sphere and AABB intersect if the (squared) distance from sphere
+	// center to point q is less than the (squarde) sphere radius
+	glm::vec3 v = q - pSphere->position;
+	return glm::dot(v, v) <= radius * radius;
 }
 
 
@@ -108,7 +133,7 @@ float cPhysics::m_ClosestPtSegmentSegment(glm::vec3 p1, glm::vec3 q1, glm::vec3 
 
 
 	// Check if either or both points degenerate into points
-	if (a <= std::numeric_limits<double>::epsilon() && e <= std::numeric_limits<double>::epsilon())
+	if (a <= std::numeric_limits<float>::epsilon() && e <= std::numeric_limits<float>::epsilon())
 	{
 		// Both segments degenerate into points
 		s = 0.0f;
@@ -117,7 +142,7 @@ float cPhysics::m_ClosestPtSegmentSegment(glm::vec3 p1, glm::vec3 q1, glm::vec3 
 		c2 = p2;
 		return glm::dot(c1 - c2, c1 - c2);
 	}
-	if (a <= std::numeric_limits<double>::epsilon())
+	if (a <= std::numeric_limits<float>::epsilon())
 	{
 		// First segment degenerates into a point
 		s = 0.0f;
@@ -127,7 +152,7 @@ float cPhysics::m_ClosestPtSegmentSegment(glm::vec3 p1, glm::vec3 q1, glm::vec3 
 	else
 	{
 		float c = glm::dot(d1, r);
-		if (e <= std::numeric_limits<double>::epsilon())
+		if (e <= std::numeric_limits<float>::epsilon())
 		{
 			// Second segment degenerates into a point
 			t = 0.0f;
@@ -247,6 +272,18 @@ glm::vec3 cPhysics::m_ClosestPtLineSegTriangle(glm::vec3 p1, glm::vec3 p2, glm::
 }
 
 
+void cPhysics::m_ClosestPtPointAABB(glm::vec3 p, cAABB* b, glm::vec3& q)
+{
+	for (unsigned int i = 0; i < 3; i++)
+	{
+		float v = p[i];
+		if (v < b->XYZMin()[i]) v = b->XYZMin()[i]; // v = max(v, b.min[i])
+		if (v > b->XYZMax()[i]) v = b->XYZMax()[i]; // v = min(v, b.max[i])
+		q[i] = v;
+	}
+}
+
+
 int cPhysics::m_IntersectMovingSpherePlane(sPhysicsProperties* pSphere, glm::vec3 pn, float pd, float& t, glm::vec3& q)
 {
 	sPhysicsProperties::sSphere* pSphereShape = (sPhysicsProperties::sSphere*)(pSphere->pShape); // To access the radius
@@ -306,5 +343,68 @@ int cPhysics::m_IntersectRaySphere(glm::vec3 p, glm::vec3 d, sPhysicsProperties*
 	// If t is negative, ray started inside sphere so clamp t to zero
 	if (t < 0.0f) t = 0.0f;
 	q = p + t * d;
+	return 1;
+}
+
+int cPhysics::m_IntersectRayAABB(glm::vec3 p, glm::vec3 d, cAABB* a, float& tmin, glm::vec3& q) // pg. 180
+{
+	tmin = 0.0f; // Set to -FLT_MAX to get first hit on line
+	float tmax = FLT_MAX;
+
+	// For all 3 slabs
+	for (unsigned int i = 0; i < 3; i++)
+	{
+		if (abs(d[i]) < std::numeric_limits<float>::epsilon())
+		{
+			// Ray is parallel to slab; no hit if origin not within slab
+			if (p[i] < a->XYZMin()[i] || p[i] > a->XYZMax()[i]) return 0;
+		}
+		else
+		{
+			// Compute intersection t value of ray with near and far plane of slab
+			float ood = 1.0f / d[i];
+			float t1 = (a->XYZMin()[i] - p[i]) * ood;
+			float t2 = (a->XYZMax()[i] - p[i]) * ood;
+
+			// Make t1 be intersection with near plane, t2 with far plane
+			if (t1 > t2) // Swap them
+			{
+				float temp = t1;
+				t1 = t2;
+				t2 = temp;
+			}
+
+			// Compute the intersection of slab intersection intervals
+			tmin = glm::max(tmin, t1);
+			tmax = glm::min(tmax, t2);
+
+			// Exit with no collision as soon as slab intersection becomes empty
+			if (tmin > tmax) return 0;
+		}
+	}
+
+	// Ray intersects all 3 slabs. Return point (q) and intersection t value (tmin)
+	q = p + d * tmin;
+	return 1;
+}
+
+int cPhysics::m_IntersectMovingSphereAABB(sPhysicsProperties* pSphere, cAABB* b, float& t)
+{
+	glm::vec3 d = pSphere->position - pSphere->oldPosition;
+	float r = ((sPhysicsProperties::sSphere*)pSphere->pShape)->radius;
+
+	// Compute the AABB resulting from expanding b by the sphere radius r
+	cAABB e; // Don't want to copy over all data (especiall triangles if leaf node) so only copy over dimensions
+	e.centerPosition = b->centerPosition;
+	e.halfLengths = b->halfLengths + glm::vec3(r);
+
+	glm::vec3 q;
+	if (!m_IntersectRayAABB(pSphere->oldPosition, d, &e, t, q) || t > 1.0f)
+	{
+		return 0;
+	}
+
+	// For now, we won't check the proper rounded corners; i.e. this function is incomplete but still works
+
 	return 1;
 }

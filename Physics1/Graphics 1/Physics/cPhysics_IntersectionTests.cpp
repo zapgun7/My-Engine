@@ -208,7 +208,8 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 
 
 	// Recursive AABB function to return near triangles
-	std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sphereCollision(&reverseTransformedSphere); // TODO make this capsule detection for the sphere sweep
+	//std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sphereCollision(&reverseTransformedSphere); // TODO make this capsule detection for the sphere sweep
+	std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sweepingSphereCollision(&reverseTransformedSphere);
 
 
 // The new and improved code
