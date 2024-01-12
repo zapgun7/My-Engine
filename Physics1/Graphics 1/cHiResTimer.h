@@ -10,6 +10,7 @@ public:
 	double getFrameTime_CRAPPY(void);
 	// Calculate the average frame time
 	double getFrameTime(void);
+	double getFrameTimeUncapped(void); // Meant to be called after the above funciton
 
 	void setMaxDeltaTime(double newMaxDeltaTime);
 private:
@@ -17,6 +18,7 @@ private:
 	cHiResTimer();
 
 	double m_lastTime;
+	double m_uncappedLastTime;
 
 	std::vector<double> m_vecDeltaTimes;
 

@@ -77,6 +77,7 @@ bool cGraphicsMain::Initialize()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
+
 	m_window = glfwCreateWindow(640, 480, "Ausgine Render", NULL, NULL);
 	if (!m_window)
 	{
@@ -88,7 +89,8 @@ bool cGraphicsMain::Initialize()
 
 	glfwMakeContextCurrent(m_window);
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-	glfwSwapInterval(1);
+	glfwSwapInterval(0); // No stinky v-sync
+	//glfwSwapInterval(1); // Stinky
 
 
 	m_pShaderThing = new cShaderManager();

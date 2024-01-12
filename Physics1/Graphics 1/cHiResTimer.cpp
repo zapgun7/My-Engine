@@ -11,6 +11,7 @@
 cHiResTimer::cHiResTimer(unsigned int numberOfSamples)
 {
     this->m_lastTime = glfwGetTime();
+    this->m_uncappedLastTime = this->m_lastTime;
 
     this->m_MaxDeltaTime = cHiResTimer::MAX_DELTA_TIME_DEFAULT;
     
@@ -80,6 +81,17 @@ double cHiResTimer::getFrameTime(void)
 
 
 
+
+double cHiResTimer::getFrameTimeUncapped(void)
+{
+	double currentTime = glfwGetTime();
+	double deltaTime = currentTime - m_uncappedLastTime;
+    this->m_uncappedLastTime = currentTime;
+
+    printf("%f\n", deltaTime);
+
+    return deltaTime;
+}
 
 double cHiResTimer::getFrameTime_CRAPPY(void)
 {

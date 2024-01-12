@@ -345,16 +345,17 @@ int cPhysics::m_IntersectMovingSpherePlane(sPhysicsProperties* pSphere, glm::vec
 
 	float dist = glm::dot(pn, pSphere->oldPosition) - pd;
 
-	if (abs(dist) <= pSphereShape->radius) //This isn't where it is intersecting, but this case should almost never happen :)
-	{
-		// Sphere is already overlapping plane
-		// Set time of intersection to 0 and q to sphere center
-		t = 0.0f;
-		q = pSphere->oldPosition;
-		return 1;
-	}
-	else
-	{
+// 	if (false) && (abs(dist) <= pSphereShape->radius) //This isn't where it is intersecting, but this case should almost never happen :)
+// 	{
+// 		// Sphere is already overlapping plane
+// 		// Set time of intersection to 0 and q to sphere center
+// 		t = 0.0f;
+// 		q = pSphere->oldPosition;
+// 		return 1;
+// 	}
+// 	else
+// 	{
+	// Avoiding scenario where already in sphere, should never happen. Lets objects pass through backs of tris
 		float denom = glm::dot(pn, v);
 		if (denom * dist >= 0.0f)
 		{
@@ -371,7 +372,7 @@ int cPhysics::m_IntersectMovingSpherePlane(sPhysicsProperties* pSphere, glm::vec
 			q = pSphere->oldPosition + t * v - r * pn;
 			return 1;
 		}
-	}
+//	}
 }
 
 

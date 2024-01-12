@@ -31,6 +31,7 @@ void cEngineController_IMPL::Run(void)
 	while (!shouldClose)
 	{
 		double deltaTime = m_pTheTimer->getFrameTime();
+		//double deltaTime = m_pTheTimer->getFrameTimeUncapped();
 
 		// Messy, but will do this here
 		glm::vec3 camPos = m_TheCamera->position;
@@ -42,7 +43,7 @@ void cEngineController_IMPL::Run(void)
 		// End of messy
 
 		m_pLuaBrain->UpdateActiveCommands(deltaTime);
-		m_pTheEditor->Update(deltaTime);
+		m_pTheEditor->Update(deltaTime); //m_pTheEditor->Update(uncappedDT); 
 		m_pThePhysics->Update(deltaTime);
 		shouldClose = m_pTheGraphics->Update(deltaTime);
 		m_pTheSound->Update();

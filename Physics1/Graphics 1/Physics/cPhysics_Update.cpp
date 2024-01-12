@@ -17,7 +17,7 @@ void cPhysics::Update(double deltaTime)
 //
 //	}
 
-	deltaTime *= 5.0f;
+	//deltaTime *= 5.0f;
 
 
 	if (!m_IsRunning) // If physics paused, update positions/orientations only and return; no collision detection
