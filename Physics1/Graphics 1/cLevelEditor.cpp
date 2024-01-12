@@ -51,7 +51,7 @@ void cLevelEditor::Update(double deltaTime)
 
 	if (m_ShowMeshEditor)
 		MeshEditor(MeshVec, PhysVec);
-	if (m_ShowPhysicsEditor)
+	if ((m_ShowPhysicsEditor) && (!m_JustDeleted)) // If we delete physics obj in above mesh editor, wrong vec will be passed to this, so just skip this frame :)
 		PhysEditor(PhysVec);
 	if (m_ShowLightEditor)
 		LightEditor(&TheLights);

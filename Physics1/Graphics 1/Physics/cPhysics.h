@@ -81,6 +81,7 @@ public:
 	static int m_TestSphereAABB(sPhysicsProperties* pSphere, cAABB* b, glm::vec3& q);
 
 	static glm::vec3 m_ClosestPtPointTriangle(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c);
+	static glm::vec3 m_ClosestPtTriPlanePointTriangle(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c);
 	static float m_ClosestPtSegmentSegment(glm::vec3 p1, glm::vec3 q1, glm::vec3 p2, glm::vec3 q2, float& s, float& t, glm::vec3& c1, glm::vec3& c2);
 	static glm::vec3 m_ClosestPtLineSegTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 a, glm::vec3 b, glm::vec3 c);
 	static void m_ClosestPtPointAABB(glm::vec3 p, cAABB* b, glm::vec3& q);

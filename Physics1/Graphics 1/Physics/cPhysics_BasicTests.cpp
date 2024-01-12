@@ -116,6 +116,59 @@ glm::vec3 cPhysics::m_ClosestPtPointTriangle(glm::vec3 p, glm::vec3 a, glm::vec3
 }
 
 
+// Slightly modified version of above, but takes into account the point it is comparing is already on the plane of the triangle
+// Thus returning the point provided if it gets past the vertex and edge tests
+glm::vec3 cPhysics::m_ClosestPtTriPlanePointTriangle(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c)
+{
+	glm::vec3 ab = b - a;
+	glm::vec3 ac = c - a;
+	glm::vec3 bc = c - b;
+
+	// Compute parametric position s for projection P' of P on AB,
+	// P' = A + s*AB, s = snom/(snom+sdenom)
+	float snom = glm::dot(p - a, ab), sdenom = glm::dot(p - b, a - b);
+
+	// Compute parametric position t for projection P' of P on AC,
+	// P' = A + t*AC, s = tnom/(tnom+tdenom)
+	float tnom = glm::dot(p - a, ac), tdenom = glm::dot(p - c, a - c);
+
+	if (snom <= 0.0f && tnom <= 0.0f) return a; // Vertex region early out
+
+	// Compute parametric position u for projection P' of P on BC,
+	// P' = B + u*BC, u = unom/(unom+udenom)
+	float unom = glm::dot(p - b, bc), udenom = glm::dot(p - c, b - c);
+
+	if (sdenom <= 0.0f && unom <= 0.0f) return b; // Vertex region early out
+	if (tdenom <= 0.0f && udenom <= 0.0f) return c; // Vertex region early out
+
+
+	// P is outside (or on) AB if the triple scalar product [N PA PB] <= 0
+	glm::vec3 n = glm::cross(b - a, c - a);
+	float vc = glm::dot(n, glm::cross(a - p, b - p));
+	// If P outside AB and within feature region of AB,
+	// return projection of P onto AB
+	if (vc <= 0.0f && snom >= 0.0f && sdenom >= 0.0f)
+		return a + snom / (snom + sdenom) * ab;
+
+	// P is outside (or on) BC if the triple scalar product [N PB PC] <= 0
+	float va = glm::dot(n, glm::cross(b - p, c - p));
+	// If P outside BC and within feature region of BC,
+	// return projection of P onto BC
+	if (va <= 0.0f && unom >= 0.0f && udenom >= 0.0f)
+		return b + unom / (unom + udenom) * bc;
+
+	// P is outside (or on) CA if the triple scalar product [N PC PA] <= 0
+	float vb = glm::dot(n, glm::cross(c - p, a - p));
+	// If P outside CA and within feature region of CA,
+	// return projection of P onto CA
+	if (vb <= 0.0f && tnom >= 0.0f && tdenom >= 0.0f)
+		return a + tnom / (tnom + tdenom) * ac;
+
+
+	// P must be in face region, so return the provided point!
+	return p;
+}
+
 // Returns distance as a float
 // Sets c1 and c2 points as the closest points of each segment
 // S1(s) = P1 + s * (Q1 - P1)
@@ -325,6 +378,8 @@ int cPhysics::m_IntersectMovingSpherePlane(sPhysicsProperties* pSphere, glm::vec
 int cPhysics::m_IntersectRaySphere(glm::vec3 p, glm::vec3 d, sPhysicsProperties* pSphere, float& t, glm::vec3& q) // This can be cheaper by only detecting if a ray hits it, doesn't care about t or q (pg. 179)
 {
 	sPhysicsProperties::sSphere* pSphereShape = (sPhysicsProperties::sSphere*)(pSphere->pShape); // To access the radius
+
+	//d = glm::normalize(d);
 
 	glm::vec3 m = p - pSphere->oldPosition;
 	float b = glm::dot(m, d);

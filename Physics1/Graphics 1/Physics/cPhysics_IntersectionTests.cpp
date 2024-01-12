@@ -610,7 +610,8 @@ bool cPhysics::m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle
 	// Sphere intersects plane made by triangle, now find out if intersection point is in the triangle
 	// We do closest point to triangle check: if distance is in epsilon land, the point is in the triangle, else we check that point for even later collision
 
-	glm::vec3 closestTriPoint = m_ClosestPtPointTriangle(q, pTri->vertices[0], pTri->vertices[1], pTri->vertices[2]);
+	//glm::vec3 closestTriPoint = m_ClosestPtPointTriangle(q, pTri->vertices[0], pTri->vertices[1], pTri->vertices[2]);
+	glm::vec3 closestTriPoint = m_ClosestPtTriPlanePointTriangle(q, pTri->vertices[0], pTri->vertices[1], pTri->vertices[2]);
 
 	if (glm::distance(closestTriPoint, q) <= std::numeric_limits<float>::epsilon()) // If the distance is "0"
 	{
@@ -630,11 +631,20 @@ bool cPhysics::m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle
 
 	glm::vec3 rayHitOnSphere; // Relative to sphere's old position
 
+	float updateLen = glm::length(triV);
+	triV = glm::normalize(triV);
+
 	if (!m_IntersectRaySphere(closestTriPoint, -triV, pSphere, t, rayHitOnSphere))
 	{
 		// Ray misses sphere
 		return false;
 	}
+
+	// t is in terms of unit vectors, so we gotta translate it back to time over the update
+	float rayLen = glm::length(t * triV); 
+
+	t = rayLen / updateLen; // Shouldn't ever divide by 0, but if it does hello future f u :)
+
 
 	// Ray hit sphere, check if within update range
 	if (t > 1.0f)

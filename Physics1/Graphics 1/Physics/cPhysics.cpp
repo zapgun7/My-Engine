@@ -1,4 +1,5 @@
 #include "cPhysics.h"
+#include <iostream>
 
 
 cPhysics::cPhysics()
@@ -36,6 +37,7 @@ void cPhysics::generateAABBs(std::vector<std::string> models)
 // 
 // 	printf("Distance %.3f", returnVal);
 
+	std::cout << "Generating AABBs..." << std::endl;
 
 	for (std::vector<std::string>::iterator itModel = models.begin();
 		 itModel != models.end();
