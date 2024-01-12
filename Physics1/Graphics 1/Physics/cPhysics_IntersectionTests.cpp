@@ -494,7 +494,10 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 
 		// Now to add remainder of the update time of the reflected vector 
 		float remainingLength = glm::length(sphereStep * (1.0f - earliestTime));
-		reverseTransformedSphere.position = reverseTransformedSphere.oldPosition + reflectionVec * remainingLength;
+		reverseTransformedSphere.position = reverseTransformedSphere.oldPosition 
+											+ reflectionVec					// Direction it bounces (unit vec)
+											* remainingLength				// Length of remaining distance it had to cover past the collision point
+											* pSphere_General->restitution; // Throttles distance by its restitution
 
 
 		// TODO reverse the rotation of this vector
@@ -514,8 +517,11 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 		//pSphere_General->position += deltaPos;
 
 		///// Apply Delta Positions /////
-		pSphere_General->oldPosition += deltaOld;
-		pSphere_General->position += deltaNew;
+		pSphere_General->oldPosition += deltaOld; // This is point of collision
+		pSphere_General->position = pSphere_General->oldPosition + deltaNew; // This is calculated point after collision at end of frame
+		//pSphere_General->position = pSphere_General->oldPosition + deltaNew;
+		//pSphere_General->oldPosition += deltaOld;
+	
 
 		/////////// TOOOOODOOOOOOO: Recursive step to restart this collision detection with updated old and new positions
 

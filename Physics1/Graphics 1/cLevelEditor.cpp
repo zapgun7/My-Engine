@@ -692,6 +692,11 @@ void cLevelEditor::PhysEditor(std::vector<sPhysicsProperties*> PhysVec)
 	ImGui::SeparatorText("----Shape-Specific Options----");
 	if (isExistingObj)
 	{
+		// All objects have restitution, for now...
+		float restitution = currObj->restitution;
+		ImGui::DragFloat("Restitution", &restitution, 0.1f, 0.0f, FLT_MAX, "%.3f");
+		currObj->restitution = restitution;
+
 		if (currObj->shapeType == sPhysicsProperties::SPHERE)
 		{
 			// Radius
