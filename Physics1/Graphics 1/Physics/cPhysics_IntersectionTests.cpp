@@ -196,6 +196,7 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 
 	while (true)
 	{
+		loops++;
 		sPhysicsProperties reverseTransformedSphere = *pSphere_General;
 		// Transform current to fit default triangle mesh
 		reverseTransformedSphere.position = (matRevModelT * glm::vec4(reverseTransformedSphere.position, 1.0f));
@@ -217,10 +218,10 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 
 		// The new and improved code
 
-		float closestDistanceSoFar = FLT_MAX;
-		glm::vec3 closestTriangleVertices[3] = { glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f) };
-		glm::vec3 closestContactPoint = glm::vec3(0.0f);
-		unsigned int indexOfClosestTriangle = INT_MAX;
+// 		float closestDistanceSoFar = FLT_MAX;
+// 		glm::vec3 closestTriangleVertices[3] = { glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f) };
+// 		glm::vec3 closestContactPoint = glm::vec3(0.0f);
+// 		unsigned int indexOfClosestTriangle = INT_MAX;
 
 
 		// We now have the mesh object location and the detailed mesh information 
@@ -435,8 +436,50 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 	// New code, doesn't care about triangle info, just the hit norm
 		if (earliestTime <= 1.0f) // If earliest collision detected is within the update range
 		{
+			if (loops > 4)
+			printf("Breakpoint\n");
+
 			if (earliestTime < 0)
 				printf("Breakpoint\n");
+
+			if (earliestTime == 0) // Here we are in or already touching the triangle, and are moving in the front-facing -> back-facing direction
+			{
+				// Remove all movement and velocity related to the hitNorm
+				// So set new velocity, and set new position (old position can remain)
+				// We can do this because this if condition should only trigger when this sphere is on the triangle at the start of the update (so rolling on it or smthn)
+
+				// Start by projecting the new position
+				glm::vec3 oldDeltaMove = reverseTransformedSphere.position - reverseTransformedSphere.oldPosition;
+// 				if ((oldDeltaMove.x == 0) || (oldDeltaMove.y == 0) || (oldDeltaMove.z == 0))
+// 					printf("Breakpoint\n");
+
+
+				//glm::vec3 projSubVec = oldDeltaMove * hitNorm;
+				glm::vec3 projSubVec = glm::dot(oldDeltaMove, hitNorm) * hitNorm;
+				reverseTransformedSphere.position = reverseTransformedSphere.oldPosition + (oldDeltaMove - projSubVec);
+
+				float denomTest = glm::dot(oldDeltaMove, hitNorm);
+				denomTest = glm::dot(reverseTransformedSphere.position - reverseTransformedSphere.oldPosition, hitNorm);
+
+				// Now to update velocity
+				//projSubVec = reverseTransformedSphere.velocity * hitNorm;
+				projSubVec = glm::dot(reverseTransformedSphere.velocity, hitNorm) * hitNorm;
+				reverseTransformedSphere.velocity -= projSubVec;
+
+
+
+				// Now do what we do at the bottom of the below case
+				glm::vec3 deltaNew = reverseTransformedSphere.position - reverseTransformedSphere.oldPosition;
+
+				//deltaOld = (matModelR * glm::vec4(deltaOld, 1.0f));
+				deltaNew = (matModelR * glm::vec4(deltaNew, 1.0f));
+				pSphere_General->position = pSphere_General->oldPosition + deltaNew;
+
+				glm::vec3 newVelocity = (matModelR * glm::vec4(reverseTransformedSphere.velocity, 1.0f));
+				pSphere_General->velocity = newVelocity;
+
+				continue;
+			}
 
 
 			///// Sphere Direction Vector /////
@@ -532,26 +575,25 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 			//pSphere_General->oldPosition += deltaOld;
 
 
-			/////////// TOOOOODOOOOOOO: Recursive step to restart this collision detection with updated old and new positions
 
 			// We add this "collision event" to the list or queue of collisions
-			sCollisionEvent theCollision;
-
-			theCollision.pObjectA = pSphere_General;
-			// 
-			theCollision.contactPoint = closestContactPoint;
-			theCollision.reflectionNormal = reflectionVec;
-			//		theCollision.velocityAtCollision = reflectionVec;
-
-					// TODO: We'll have a problem later: what deletes this?
-			sPhysicsProperties* pTriangleWeHit = new sPhysicsProperties();
-
-			pTriangleWeHit->setShape(new sPhysicsProperties::sTriangle(closestTriangleVertices[0],
-				closestTriangleVertices[1],
-				closestTriangleVertices[2]));
-			theCollision.pObjectB = pTriangleWeHit;
-
-			this->m_vecCollisionsThisFrame.push_back(theCollision);
+// 			sCollisionEvent theCollision;
+// 
+// 			theCollision.pObjectA = pSphere_General;
+// 			// 
+// 			theCollision.contactPoint = closestContactPoint;
+// 			theCollision.reflectionNormal = reflectionVec;
+// 			//		theCollision.velocityAtCollision = reflectionVec;
+// 
+// 					// TODO: We'll have a problem later: what deletes this?
+// 			sPhysicsProperties* pTriangleWeHit = new sPhysicsProperties();
+// 
+// 			pTriangleWeHit->setShape(new sPhysicsProperties::sTriangle(closestTriangleVertices[0],
+// 				closestTriangleVertices[1],
+// 				closestTriangleVertices[2]));
+// 			theCollision.pObjectB = pTriangleWeHit;
+// 
+// 			this->m_vecCollisionsThisFrame.push_back(theCollision);
 
 			// Or we 
 			//		pSphere_General->velocity = glm::vec3(0.0f);
@@ -670,6 +712,11 @@ bool cPhysics::m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle
 	{
 		// Ray hits in the future
 		return false;
+	}
+	else if (t == 0.0f)
+	{
+		hitNorm = triNorm;
+		return true;
 	}
 
 	// Ray hits this update
