@@ -17,7 +17,7 @@ void cPhysics::Update(double deltaTime)
 //
 //	}
 
-	deltaTime *= 10.0f;
+	//deltaTime *= 10.0f;
 
 
 	if (!m_IsRunning) // If physics paused, update positions/orientations only and return; no collision detection
@@ -107,7 +107,7 @@ void cPhysics::Update(double deltaTime)
 					}
 					break;
 				case sPhysicsProperties::PLANE:
-					// Shpere - Plane
+					// Sphere - Plane
 					break;
 				case sPhysicsProperties::TRIANGLE:
 					// Sphere - Triangle

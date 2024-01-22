@@ -65,6 +65,9 @@
     <Filter Include="Lua\Commands">
       <UniqueIdentifier>{6dcb74dd-9232-4dc4-a676-cbe580f40484}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics Engine\Particles">
+      <UniqueIdentifier>{74455dd2-db23-4352-b966-78aff2e0c96e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Basic Shader Manager\cShaderManager.cpp">
@@ -198,6 +201,15 @@
     </ClCompile>
     <ClCompile Include="Lua\cCommand_SetTransform.cpp">
       <Filter>Lua\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="cParticleSystem.cpp">
+      <Filter>Graphics Engine\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="cParticleManager.cpp">
+      <Filter>Graphics Engine\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="cEmitterBuilder.cpp">
+      <Filter>Graphics Engine\Particles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -335,6 +347,15 @@
     </ClInclude>
     <ClInclude Include="Lua\cCommand_SetTransform.h">
       <Filter>Lua\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="cParticleSystem.h">
+      <Filter>Graphics Engine\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="cParticleManager.h">
+      <Filter>Graphics Engine\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="cEmitterBuilder.h">
+      <Filter>Graphics Engine\Particles</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

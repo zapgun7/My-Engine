@@ -19,6 +19,9 @@
 
 #include "../TextureManager/cBasicTextureManager.h"
 
+//#include "cParticleSystem.h"
+#include "../cParticleManager.h"
+
 
 
 //#include "../cPlayer.h"
@@ -72,6 +75,7 @@ private:
 	void DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GLuint shaderProgramID);
 	bool LoadModels(void);
 	bool LoadTextures(void);
+	bool LoadParticles(void);
 
 	
 	//void updateSelectedMesh(int meshIdx, std::string friendlyName, glm::vec3 newPos, glm::vec3 newOri, glm::vec3 customColor, float newScale, bool doNotLight, bool useCustomColor);  // Updates and existing object by reference to its friendly name (also from the gui)
@@ -115,7 +119,12 @@ private:
 
 	cLightManager* m_pTheLights;
 
-	
+
+	/////// PARTICLE STUFF ////////
+	cMesh* m_pBasicParticle = nullptr;
+	cParticleManager* m_pParticleManager = nullptr;
+
+
 
 	ImGuiIO m_io; // ImGui io
 	cInputHandler* m_InputHandler;

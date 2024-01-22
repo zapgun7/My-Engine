@@ -74,7 +74,9 @@ bool cGraphicsMain::Initialize()
 	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	// GL 3.0 + GLSL 130
 	const char* glsl_version = "#version 130";
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+
+	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // This causes cubemap creation to crash on my laptop
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
 
@@ -138,6 +140,10 @@ bool cGraphicsMain::Initialize()
 
 	LoadModels();
 	LoadTextures();
+
+
+	////// PARTICLES //////////
+	LoadParticles();
 
 
 	// Initialize lights here if ya want em
@@ -301,6 +307,28 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 		}//if (pCurrentMesh->bIsVisible)
 
 	}//for ( unsigned int index
+
+
+
+	//////////// PARTICLE RENDERING ///////////
+	m_pParticleManager->Update(deltaTime);
+
+	std::vector<cParticleSystem::sParticleRender> vecParticles_to_draw;
+	m_pParticleManager->getParticleList(vecParticles_to_draw);
+
+	for (cParticleSystem::sParticleRender& curParticle : vecParticles_to_draw)
+	{
+		glm::mat4 matModel = glm::mat4(1.0f);
+
+		m_pBasicParticle->drawPosition = curParticle.position;
+
+		DrawObject(m_pBasicParticle, matModel, m_shaderProgramID);
+	}
+
+
+
+
+
 
 	// Time per frame (more or less)
 // 	double currentTime = glfwGetTime();
@@ -758,6 +786,7 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 
 	/////////////////////////////////////////////////////////////
 
+
 	sModelDrawInfo modelInfo;
 	if (m_pMeshManager->FindDrawInfoByModelName(pCurrentMesh->meshName, modelInfo))
 	{
@@ -847,6 +876,28 @@ bool cGraphicsMain::LoadTextures(void)
 
 	return true;
 	
+}
+
+bool cGraphicsMain::LoadParticles(void)
+{
+	m_pBasicParticle = new cMesh();
+	m_pBasicParticle->setUniformDrawScale(1.0f);
+	m_pBasicParticle->meshName = "Sphere_1_unit_Radius.ply";
+	m_pBasicParticle->bDoNotLight = true;
+	m_pBasicParticle->bUseDebugColours = true;
+	m_pBasicParticle->wholeObjectDebugColourRGBA = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
+
+	m_pParticleManager = cParticleManager::GetInstance();
+
+	if (m_pParticleManager == nullptr)
+		printf("Failed to load Particle Manager\n");
+
+
+	// Load in default particle setup for testing!
+	m_pParticleManager->startEmitter(DEFAULT, glm::vec3(0.0f));
+
+
+	return true;
 }
 
 // Adds new object to the meshestodraw
