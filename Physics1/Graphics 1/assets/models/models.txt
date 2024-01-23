@@ -3,3 +3,4 @@ Flat_1x1_plane.ply
 Sphere_1_unit_Radius.ply
 rusty_ship.ply
 Terrain.ply
+Icosahedron.ply

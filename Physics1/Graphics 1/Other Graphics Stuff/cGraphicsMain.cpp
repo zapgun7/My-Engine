@@ -881,16 +881,20 @@ bool cGraphicsMain::LoadTextures(void)
 bool cGraphicsMain::LoadParticles(void)
 {
 	m_pBasicParticle = new cMesh();
-	m_pBasicParticle->setUniformDrawScale(1.0f);
-	m_pBasicParticle->meshName = "Sphere_1_unit_Radius.ply";
-	m_pBasicParticle->bDoNotLight = true;
+	m_pBasicParticle->setUniformDrawScale(0.2f);
+	//m_pBasicParticle->meshName = "Sphere_1_unit_Radius.ply";
+	m_pBasicParticle->meshName = "Icosahedron.ply";
+	m_pBasicParticle->bDoNotLight = false;
 	m_pBasicParticle->bUseDebugColours = true;
 	m_pBasicParticle->wholeObjectDebugColourRGBA = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
 
 	m_pParticleManager = cParticleManager::GetInstance();
 
 	if (m_pParticleManager == nullptr)
+	{
 		printf("Failed to load Particle Manager\n");
+		return false;
+	}
 
 
 	// Load in default particle setup for testing!

@@ -21,7 +21,7 @@ int cParticleManager::Initialize(void)
 	//newSystem.InitializeSpace(10'000);
 
 	m_vecParticleSystems.push_back(newSystem);
-	m_vecParticleSystems[0].InitializeSpace(10000);
+	m_vecParticleSystems[0].InitializeSpace(1000);
 
 	return 0;
 }
