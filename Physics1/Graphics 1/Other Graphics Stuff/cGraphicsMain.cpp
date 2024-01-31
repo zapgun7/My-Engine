@@ -311,19 +311,19 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 
 
 	//////////// PARTICLE RENDERING ///////////
-	m_pParticleManager->Update(deltaTime);
-
-	std::vector<cParticleSystem::sParticleRender> vecParticles_to_draw;
-	m_pParticleManager->getParticleList(vecParticles_to_draw);
-
-	for (cParticleSystem::sParticleRender& curParticle : vecParticles_to_draw)
-	{
-		glm::mat4 matModel = glm::mat4(1.0f);
-
-		m_pBasicParticle->drawPosition = curParticle.position;
-
-		DrawObject(m_pBasicParticle, matModel, m_shaderProgramID);
-	}
+// 	m_pParticleManager->Update(deltaTime);
+// 
+// 	std::vector<cParticleSystem::sParticleRender> vecParticles_to_draw;
+// 	m_pParticleManager->getParticleList(vecParticles_to_draw);
+// 
+// 	for (cParticleSystem::sParticleRender& curParticle : vecParticles_to_draw)
+// 	{
+// 		glm::mat4 matModel = glm::mat4(1.0f);
+// 
+// 		m_pBasicParticle->drawPosition = curParticle.position;
+// 
+// 		DrawObject(m_pBasicParticle, matModel, m_shaderProgramID);
+// 	}
 
 
 
@@ -894,7 +894,7 @@ bool cGraphicsMain::LoadParticles(void)
 
 
 	// Load in default particle setup for testing!
-	m_pParticleManager->startEmitter(DEFAULT, glm::vec3(0.0f));
+	//m_pParticleManager->startEmitter(DEFAULT, glm::vec3(0.0f));
 
 
 	return true;
