@@ -25,8 +25,8 @@ void cEmitterBuilder::makeEmitter(EmitterPreset preset, sEmitterInfo* info)
 		info->minLifetime = 5.0f;
 		info->maxLifetime = 8.0f;
 
-		info->minNumParticlesPerUpdate = 1; // TODO change these to particles per second
-		info->maxNumParticlesPerUpdate = 3;
+		info->minNumParticlesPerUpdate = 0; // TODO change these to particles per second
+		info->maxNumParticlesPerUpdate = 2;
 
 		break;
 	}
