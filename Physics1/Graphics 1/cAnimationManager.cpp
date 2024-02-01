@@ -80,4 +80,9 @@ void GetDeltaLinear(const std::vector<sAnimInfo::sAnimNode*>& keyFrames, const d
 {
 	double timeBetweenKF = keyFrames[1]->time - keyFrames[0]->time;
 
+	double deltaRatio = dt / timeBetweenKF;
+
+	theDelta = (float)deltaRatio * keyFrames[1]->deltaValue;
+
+	return;
 }
