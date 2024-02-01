@@ -43,6 +43,9 @@ void cEngineController_IMPL::Run(void)
 		// End of messy
 
 		m_pLuaBrain->UpdateActiveCommands(deltaTime);
+
+		m_pAnimationsManager->Update(deltaTime);
+
 		m_pTheEditor->Update(deltaTime); //m_pTheEditor->Update(uncappedDT); 
 		m_pThePhysics->Update(deltaTime);
 		shouldClose = m_pTheGraphics->Update(deltaTime);
@@ -72,6 +75,9 @@ bool cEngineController_IMPL::Initialize(void)
 
 	this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
+
+	this->m_pAnimationsManager = cAnimationManager::GetInstance();
+
 
 	// Make the camera object
 	m_TheCamera = new sPhysicsProperties();
@@ -167,6 +173,10 @@ void cEngineController_IMPL::addNewObject(std::string meshName, char* friendlyNa
 	// Set unique id's matching
 	newMesh->uniqueID = newObject->getUniqueID();
 	
+
+	///////// ANIMTAION TESTING /////////
+	m_pAnimationsManager->AddAnimationObj(newObject);
+
 
 	return;
 }

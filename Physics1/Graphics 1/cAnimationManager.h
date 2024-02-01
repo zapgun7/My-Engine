@@ -52,6 +52,8 @@ public:
 	void Update(double dt);
 	bool Initialize(void);
 	bool Destroy(void);
+
+	void AddAnimationObj(sPhysicsProperties* theObj);
 	
 
 

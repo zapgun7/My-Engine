@@ -7,7 +7,8 @@
 cAnimationManager* cAnimationManager::m_TheOneManager = NULL;
 
 
-void GetDeltaLinear(const std::vector<sAnimInfo::sAnimNode*>& keyFrames, const double& dt, glm::vec3& theDelta);
+void GetSurroundingKF(const std::vector<sAnimInfo::sAnimNode>& keyframeVec, int& outIDX, double currTime);
+void GetDeltaLinear(const sAnimInfo::sAnimNode* keyFrames, const double& dt, glm::vec3& theDelta);
 
 
 
@@ -50,38 +51,23 @@ void cAnimationManager::Update(double dt)
 
 		while (moveDT != 0)
 		{
-			// Start by getting the surrounding key frames to the position before the update
-			std::vector< sAnimInfo::sAnimNode* > theTwoKF;
-			theTwoKF.reserve(2);
-
-			for (std::vector<sAnimInfo::sAnimNode>::iterator ITvec = currAnim->moveKeyFrames.begin();
-				ITvec != currAnim->moveKeyFrames.end(); ITvec++)
-			{
-				if (ITvec->time > currAnim->timeInAnimation + (dt - moveDT))
-				{
-					// Found the next keyframe
-					ITvec--;
-					theTwoKF.push_back(&*ITvec);
-					ITvec++;
-					theTwoKF.push_back(&*ITvec);
-					break;
-				}
-			}
+			int prevKF;
+			GetSurroundingKF(currAnim->moveKeyFrames, prevKF, currAnim->timeInAnimation + (dt - moveDT));
 
 			
-			if (!theTwoKF.empty())
+			if (prevKF >= 0)
 			{
 				glm::vec3 deltaMove;
 				double timeAfterUpdate = currAnim->timeInAnimation + dt;
 
-				if (timeAfterUpdate > theTwoKF[1]->time) // If this dt update will go past the next keyframe
+				if (timeAfterUpdate > currAnim->moveKeyFrames[prevKF + 1].time) // If this dt update will go past the next keyframe
 				{
-					GetDeltaLinear(theTwoKF, theTwoKF[1]->time - currAnim->timeInAnimation, deltaMove);
-					moveDT -= theTwoKF[1]->time - currAnim->timeInAnimation;
+					GetDeltaLinear(&currAnim->moveKeyFrames[prevKF], currAnim->moveKeyFrames[prevKF + 1].time - currAnim->timeInAnimation, deltaMove);
+					moveDT -= currAnim->moveKeyFrames[prevKF + 1].time - currAnim->timeInAnimation;
 				}
 				else
 				{
-					GetDeltaLinear(theTwoKF, moveDT, deltaMove);
+					GetDeltaLinear(&currAnim->moveKeyFrames[prevKF], moveDT, deltaMove);
 					moveDT = 0;
 				}
 
@@ -91,22 +77,21 @@ void cAnimationManager::Update(double dt)
 			{
 				// 2 keyframes not found
 				moveDT = 0;
+				break;
 				//currAnim->timeInAnimation = 0;
+
+				// TEMP FOR TESTING LOOPING  /// This should be at the end, after confirming completion of all 3 KF vecs
+				if (currAnim->timeInAnimation > currAnim->moveKeyFrames[currAnim->moveKeyFrames.size() - 1].time)
+				{
+					currAnim->timeInAnimation -= currAnim->moveKeyFrames[currAnim->moveKeyFrames.size() - 1].time;
+					currAnim->loopCount--;
+				}
 			}
 
 		}
 
 		
 
-		// Now handle translating, orienting, and scaling
-
-		// Start by checking if we're past or equal to the last keyframe
-// 		if (currAnim->timeInAnimation >= currAnim->moveKeyFrames.end()->time)
-// 		{
-// 			currAnim->loopCount--;
-// 			//currAnim->theObj->position
-// 			GetDeltaLinear()
-// 		}
 
 		// !!!!! Should only increment loop when all 3 keyframe vectors have been exhausted!!!!!
 
@@ -128,26 +113,80 @@ bool cAnimationManager::Destroy(void)
 {
 	if (!m_TheOneManager) // No instance exists, cannot destroy
 		return false;
+
+
+
+	return true;
 }
 
 
 
 
 
+void cAnimationManager::AddAnimationObj(sPhysicsProperties* theObj)
+{
+	sAnimInfo* newAnime = new sAnimInfo();
+
+	newAnime->theObj = theObj;
+	newAnime->loopCount = 3;
+	
+	sAnimInfo::sAnimNode newNode;
+	newNode.deltaValue = glm::vec3(0, 0, 0);
+	newNode.interp_func = sAnimInfo::sAnimNode::LINEAR;
+	newNode.time = 0;
+	newAnime->moveKeyFrames.push_back(newNode);
+
+	newNode.deltaValue = glm::vec3(10, 0, 0);
+	newNode.time = 1;
+	newAnime->moveKeyFrames.push_back(newNode);
+
+	newNode.deltaValue = glm::vec3(0, 10, 0);
+	newNode.time = 2;
+	newAnime->moveKeyFrames.push_back(newNode);
+
+	newNode.deltaValue = glm::vec3(-10, 0, 0);
+	newNode.time = 3;
+	newAnime->moveKeyFrames.push_back(newNode);
+
+	newNode.deltaValue = glm::vec3(0, -10, 0);
+	newNode.time = 4;
+	newAnime->moveKeyFrames.push_back(newNode);
+
+	this->m_Animations.push_back(newAnime);
+}
+
 //////////////////////// HELPER FUNCTIONS ///////////////////////////
 /////////////////////////////////////////////////////////////////////
 
 // Find delta value between last and current update
 
+
+void GetSurroundingKF(const std::vector<sAnimInfo::sAnimNode>& keyframeVec, int& outIDX/*std::vector<sAnimInfo::sAnimNode*>& outVec*/, double currTime)
+{
+	for (unsigned int i = 0; i < keyframeVec.size(); i++)
+	{
+		if (keyframeVec[i].time > currTime)
+		{
+// 			outVec->push_back(&(keyframeVec[i - 1]));
+// 			outVec.push_back();
+			outIDX = i - 1;
+
+			return;
+		}
+	}
+	outIDX = -1; // Did not find
+	return;
+}
+
 // Pass in a vec of size 2: previous and next keyframes
 // Also pass in the two points in time we'll traverse between
-void GetDeltaLinear(const std::vector<sAnimInfo::sAnimNode*>& keyFrames, const double& dt, glm::vec3& theDelta)
+void GetDeltaLinear(const sAnimInfo::sAnimNode* keyFrames/*const std::vector<sAnimInfo::sAnimNode*>& keyFrames*/, const double& dt, glm::vec3& theDelta)
 {
-	double timeBetweenKF = keyFrames[1]->time - keyFrames[0]->time;
+	double timeBetweenKF = keyFrames[1].time - keyFrames[0].time;
 
 	double deltaRatio = dt / timeBetweenKF;
 
-	theDelta = (float)deltaRatio * keyFrames[1]->deltaValue;
+	theDelta = (float)deltaRatio * keyFrames[1].deltaValue;
 
 	return;
 }
