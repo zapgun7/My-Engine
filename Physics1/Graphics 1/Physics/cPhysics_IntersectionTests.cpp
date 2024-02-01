@@ -657,7 +657,7 @@ bool cPhysics::m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle
 
 	if (t > 1.0f)
 	{
-		// Sphere will hit this plane sometime in the future, don't have to worry about it now
+		// Sphere will hit this plane sometime in the future (not this update), don't have to worry about it now
 		return false;
 	}
 
@@ -694,6 +694,33 @@ bool cPhysics::m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle
 
 	float updateLen = glm::length(triV);
 	triV = glm::normalize(triV);
+
+
+	/////// IDEA TO SKIP BELOW RAY FUNCTION: tri-point and sphere onto plane orthogonal to sphere move dir, compare dist.
+	/////// This will require more work if it does hit, but might make up for it by avoiding the sqrt enough times??
+
+	// Decreases performance, still keeping it here though
+// 	glm::vec3 triVNorm = glm::normalize(triV);
+// 	float triVLen = glm::length(triV);
+// 
+// 	glm::vec3 projTriPoint = (glm::dot(closestTriPoint, triV)/triVLen) * triVNorm;
+// 	projTriPoint = closestTriPoint - projTriPoint;
+// 
+// 	glm::vec3 projSpherePoint = (glm::dot(pSphere->oldPosition, triV) / triVLen) * triVNorm;
+// 	projTriPoint = pSphere->oldPosition - projSpherePoint;
+// 
+// 
+// 	if (glm::distance(projTriPoint, projSpherePoint) > pSphereShape->radius)
+// 	{
+// 		// Does not intersect, don't bother casting ray
+// 		return 0;
+// 	}
+
+
+
+
+
+
 
 	if (!m_IntersectRaySphere(closestTriPoint, -triV, pSphere, t, rayHitOnSphere))
 	{

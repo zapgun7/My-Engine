@@ -66,3 +66,18 @@ bool cAnimationManager::Destroy(void)
 }
 
 
+
+
+
+//////////////////////// HELPER FUNCTIONS ///////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+// Find delta value between last and current update
+
+// Pass in a vec of size 2: previous and next keyframes
+// Also pass in the two points in time we'll traverse between
+void GetDeltaLinear(const std::vector<sAnimInfo::sAnimNode*>& keyFrames, const double& oldT, const double& dt, glm::vec3& theDelta)
+{
+	double timeBetweenKF = keyFrames[1]->time - keyFrames[0]->time;
+
+}

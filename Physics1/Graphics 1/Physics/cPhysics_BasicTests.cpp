@@ -461,7 +461,7 @@ int cPhysics::m_IntersectMovingSphereAABB(sPhysicsProperties* pSphere, cAABB* b,
 	float r = ((sPhysicsProperties::sSphere*)pSphere->pShape)->radius;
 
 	// Compute the AABB resulting from expanding b by the sphere radius r
-	cAABB e; // Don't want to copy over all data (especiall triangles if leaf node) so only copy over dimensions
+	cAABB e; // Don't want to copy over all data (especially triangles if leaf node) so only copy over dimensions
 	e.centerPosition = b->centerPosition;
 	e.halfLengths = b->halfLengths + glm::vec3(r);
 

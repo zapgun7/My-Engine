@@ -22,6 +22,13 @@
 
 struct sEmitterInfo
 {
+	enum shape {
+		Imposter,
+		Icosahedron,
+		Sphere
+	};
+
+
 	unsigned int maxNumParticles = 0;
 
 	glm::vec3 emitterPosition = glm::vec3(0.0f);
