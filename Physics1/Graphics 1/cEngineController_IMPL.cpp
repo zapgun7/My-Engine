@@ -71,7 +71,7 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
 	std::vector<std::string> tempModelVec;
 	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
-	this->m_pThePhysics->generateAABBs(tempModelVec);
+	//this->m_pThePhysics->generateAABBs(tempModelVec);
 
 	this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
@@ -176,6 +176,9 @@ void cEngineController_IMPL::addNewObject(std::string meshName, char* friendlyNa
 
 	///////// ANIMTAION TESTING /////////
 	m_pAnimationsManager->AddAnimationObj(newObject);
+	newMesh->bDoNotLight = false;
+	newMesh->bUseDebugColours = true;
+	newMesh->wholeObjectDebugColourRGBA = glm::vec4(.5, .5, .5, 1);
 
 
 	return;

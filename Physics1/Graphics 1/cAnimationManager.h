@@ -37,10 +37,12 @@ struct sAnimInfo // Individual instances of animation setups
 	double timeInAnimation = 0;
 	int loopCount = 0; // -1 = inf
 	unsigned lastKeyFrame = 0; // Most recently passed keyframe
+	int finishedVecs = 0; // Bitmask: move scale orient
 
 	std::vector<sAnimNode> moveKeyFrames;
-	std::vector<sAnimNode> orientKeyFrames;
 	std::vector<sAnimNode> scaleKeyFrames;
+	std::vector<sAnimNode> orientKeyFrames;
+	
 };
 
 class cAnimationManager

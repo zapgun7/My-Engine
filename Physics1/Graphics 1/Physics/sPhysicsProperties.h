@@ -177,6 +177,7 @@ struct sPhysicsProperties
 	glm::vec3 oldPosition = glm::vec3(0.0f);
 
 	float restitution = 0.5f; // Some bounce default
+	glm::vec3 scale = glm::vec3(1.0f);
 
 //	glm::vec3 orientation = glm::vec3(0.0f);
 	void setRotationFromEuler(glm::vec3 newEulerAngleXYZ)

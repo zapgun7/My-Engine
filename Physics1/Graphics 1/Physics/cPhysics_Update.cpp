@@ -29,6 +29,7 @@ void cPhysics::Update(double deltaTime)
 				pObject->pTheAssociatedMesh->setDrawPosition(pObject->position);
 				//			pObject->pTheAssociatedMesh->setDrawOrientation(pObject->orientation);
 				pObject->pTheAssociatedMesh->setDrawOrientation(pObject->get_qOrientation());
+				pObject->pTheAssociatedMesh->setDrawScale(pObject->scale);
 			}
 		}
 

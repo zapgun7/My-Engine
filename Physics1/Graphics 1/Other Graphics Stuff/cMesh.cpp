@@ -115,6 +115,11 @@ glm::vec3 cMesh::getDrawOrientation(void)
 	return glm::eulerAngles(this->get_qOrientation());
 }
 
+glm::vec3 cMesh::getDrawScale(void)
+{
+	return scale;
+}
+
 std::string cMesh::getMeshName(void)
 {
 	return meshName;
@@ -139,6 +144,11 @@ void cMesh::setDrawOrientation(const glm::quat& newOrientation)
 	return;
 }// ENDOF: iPhysicsMeshTransformAccess interface
 
+void cMesh::setDrawScale(const glm::vec3& newScale)
+{
+	scale = newScale;
+	return;
+}
 
 // void cMesh::Update(double deltaTime)
 // {

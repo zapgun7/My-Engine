@@ -22,10 +22,12 @@ public:
 
 	virtual glm::vec3 getDrawPosition(void) = 0;
 	virtual glm::vec3 getDrawOrientation(void) = 0;
+	virtual glm::vec3 getDrawScale(void) = 0;
 	virtual std::string getMeshName(void) = 0;
 
 	// Used by Phsyics (and anything else) that needs to update the DRAW position
 	virtual void setDrawPosition(const glm::vec3& newPosition) = 0;
 	virtual void setDrawOrientation(const glm::vec3& newOrientation) = 0;
 	virtual void setDrawOrientation(const glm::quat& newOrientation) = 0;
+	virtual void setDrawScale(const glm::vec3& newScale) = 0;
 };
