@@ -7,6 +7,7 @@
 #include <glm/mat4x4.hpp> // glm::mat4
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/constants.hpp>
 #include <vector>
 
 
@@ -25,19 +26,35 @@ struct sAnimInfo // Individual instances of animation setups
 			EASEOUT,
 			EASEINOUT
 		};
+		enum Interpolation2
+		{
+			SINE,
+			QUAD,
+			CUBIC,
+			QUART,
+			QUINT,
+			EXPO,
+			CIRC,
+			BACK,
+			ELASTIC,
+			BOUNCE
+		};
 
 
 
 		glm::vec3 deltaValue; // Change in position, orientation, scale, etc.
 		double time; // Time since start at this keyframe
-		Interpolation interp_func;
+		Interpolation interp_func = LINEAR;
+		Interpolation2 interp_spec = SINE;
 	};
 
 	sPhysicsProperties* theObj = nullptr;
 	double timeInAnimation = 0;
 	int loopCount = 0; // -1 = inf
 	unsigned lastKeyFrame = 0; // Most recently passed keyframe
+
 	int finishedVecs = 0; // Bitmask: move scale orient
+	const static int BITMASKMAX = 7; // Sum of used bits
 
 	std::vector<sAnimNode> moveKeyFrames;
 	std::vector<sAnimNode> scaleKeyFrames;
