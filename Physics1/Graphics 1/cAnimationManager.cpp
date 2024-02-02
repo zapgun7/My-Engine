@@ -12,6 +12,8 @@ cAnimationManager* cAnimationManager::m_TheOneManager = NULL;
 void GetSurroundingKF(const std::vector<sAnimInfo::sAnimNode>& keyframeVec, int& outIDX, double currTime);
 void GetDeltaLinear(const sAnimInfo::sAnimNode* keyFrames, const double& dt, glm::vec3& theDelta);
 void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime, const double& dt, glm::vec3& theDelta);
+void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime, const double& dt, glm::vec3& theDelta);
+void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime, const double& dt, glm::vec3& theDelta);
 
 
 
@@ -98,6 +100,22 @@ void cAnimationManager::Update(double dt)
 						deltaValue);
 					break;
 				}
+				case sAnimInfo::sAnimNode::EASEOUT:
+				{
+					GetDeltaEaseOut(&currAnim->moveKeyFrames[prevKF],
+						currAnim->timeInAnimation,
+						funcDT,
+						deltaValue);
+					break;
+				}
+				case sAnimInfo::sAnimNode::EASEINOUT:
+				{
+					GetDeltaEaseInOut(&currAnim->moveKeyFrames[prevKF],
+						currAnim->timeInAnimation,
+						funcDT,
+						deltaValue);
+					break;
+				}
 				}
 
 				currAnim->theObj->position += deltaValue;
@@ -153,6 +171,22 @@ void cAnimationManager::Update(double dt)
 						deltaValue);
 					break;
 				}
+				case sAnimInfo::sAnimNode::EASEOUT:
+				{
+					GetDeltaEaseOut(&currAnim->scaleKeyFrames[prevKF],
+						currAnim->timeInAnimation,
+						funcDT,
+						deltaValue);
+					break;
+				}
+				case sAnimInfo::sAnimNode::EASEINOUT:
+				{
+					GetDeltaEaseInOut(&currAnim->scaleKeyFrames[prevKF],
+						currAnim->timeInAnimation,
+						funcDT,
+						deltaValue);
+					break;
+				}
 				}
 
 				currAnim->theObj->scale += deltaValue;
@@ -201,6 +235,22 @@ void cAnimationManager::Update(double dt)
 				case sAnimInfo::sAnimNode::EASEIN:
 				{
 					GetDeltaEaseIn(&currAnim->orientKeyFrames[prevKF],
+						currAnim->timeInAnimation,
+						funcDT,
+						deltaValue);
+					break;
+				}
+				case sAnimInfo::sAnimNode::EASEOUT:
+				{
+					GetDeltaEaseOut(&currAnim->orientKeyFrames[prevKF],
+						currAnim->timeInAnimation,
+						funcDT,
+						deltaValue);
+					break;
+				}
+				case sAnimInfo::sAnimNode::EASEINOUT:
+				{
+					GetDeltaEaseInOut(&currAnim->orientKeyFrames[prevKF],
 						currAnim->timeInAnimation,
 						funcDT,
 						deltaValue);
@@ -267,8 +317,8 @@ void cAnimationManager::AddAnimationObj(sPhysicsProperties* theObj)
 	newAnime->loopCount = 3;
 	
 	sAnimInfo::sAnimNode newNode;
-// 	newNode.deltaValue = glm::vec3(0, 0, 0);
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
+	newNode.deltaValue = glm::vec3(0, 0, 0);
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
 	newNode.time = 0;
 	newAnime->moveKeyFrames.push_back(newNode);
 
@@ -289,27 +339,29 @@ void cAnimationManager::AddAnimationObj(sPhysicsProperties* theObj)
 	newAnime->moveKeyFrames.push_back(newNode);
 
 
+
+
 	// SCALE NODES
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
 
 	newNode.deltaValue = glm::vec3(0, 0, 0);
 	newNode.time = 0;
 	newAnime->scaleKeyFrames.push_back(newNode);
 
 	newNode.deltaValue = glm::vec3(4, 4, 4);
-	newNode.time = 3;
+	newNode.time = 2;
 	newAnime->scaleKeyFrames.push_back(newNode);
 
 	newNode.deltaValue = glm::vec3(-4, -4, -4);
-	newNode.time = 6;
+	newNode.time = 4;
 	newAnime->scaleKeyFrames.push_back(newNode);
 
 	newNode.deltaValue = glm::vec3(4, 4, 4);
-	newNode.time = 9;
+	newNode.time = 6;
 	newAnime->scaleKeyFrames.push_back(newNode);
 
 	newNode.deltaValue = glm::vec3(-4, -4, -4);
-	newNode.time = 12;
+	newNode.time = 8;
 	newAnime->scaleKeyFrames.push_back(newNode);
 
 
@@ -357,7 +409,7 @@ void cAnimationManager::AddAnimationObj(sPhysicsProperties* theObj)
 
 
 	// ORIENTATION 
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
 
 
 	newNode.deltaValue = glm::vec3(0, 0, 0);
@@ -431,6 +483,64 @@ void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime
 	{
 		oldRatio = 1 - cos((oldRatio * glm::pi<float>()) / 2);
 		newRatio = 1 - cos((newRatio * glm::pi<float>()) / 2);
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+		break; // Prob don't need this break
+	}
+	}
+}
+
+void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime, const double& dt, glm::vec3& theDelta)
+{
+	// Time between the 2 key frames
+	double deltaFrameTime = keyFrames[1].time - keyFrames[0].time;
+
+	// Time from the previous frame
+	double frameTime = oldTime - keyFrames[0].time;
+
+
+	float oldRatio = frameTime / deltaFrameTime;
+	float newRatio = (frameTime + dt) / deltaFrameTime;
+
+	// Now we calculate the value at old and new, and set the difference to theDelta
+	switch (keyFrames[1].interp_spec)
+	{
+	case sAnimInfo::sAnimNode::SINE:
+	{
+		//oldRatio = 1 - cos((oldRatio * glm::pi<float>()) / 2);
+		//newRatio = 1 - cos((newRatio * glm::pi<float>()) / 2);
+		oldRatio = sin((oldRatio * glm::pi<float>()) / 2);
+		newRatio = sin((newRatio * glm::pi<float>()) / 2);
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+		break; // Prob don't need this break
+	}
+	}
+}
+
+void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime, const double& dt, glm::vec3& theDelta)
+{
+	// Time between the 2 key frames
+	double deltaFrameTime = keyFrames[1].time - keyFrames[0].time;
+
+	// Time from the previous frame
+	double frameTime = oldTime - keyFrames[0].time;
+
+
+	float oldRatio = frameTime / deltaFrameTime;
+	float newRatio = (frameTime + dt) / deltaFrameTime;
+
+	// Now we calculate the value at old and new, and set the difference to theDelta
+	switch (keyFrames[1].interp_spec)
+	{
+	case sAnimInfo::sAnimNode::SINE:
+	{
+		oldRatio = -(cos(glm::pi<float>() * oldRatio) - 1) / 2;
+		newRatio = -(cos(glm::pi<float>() * newRatio) - 1) / 2;
+
 		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
 
 		return;
