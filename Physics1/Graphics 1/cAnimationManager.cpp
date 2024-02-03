@@ -319,6 +319,7 @@ void cAnimationManager::AddAnimationObj(sPhysicsProperties* theObj)
 	sAnimInfo::sAnimNode newNode;
 	newNode.deltaValue = glm::vec3(0, 0, 0);
 	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
+	newNode.interp_spec = sAnimInfo::sAnimNode::BOUNCE;
 	newNode.time = 0;
 	newAnime->moveKeyFrames.push_back(newNode);
 
@@ -342,27 +343,27 @@ void cAnimationManager::AddAnimationObj(sPhysicsProperties* theObj)
 
 
 	// SCALE NODES
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
-
-	newNode.deltaValue = glm::vec3(0, 0, 0);
-	newNode.time = 0;
-	newAnime->scaleKeyFrames.push_back(newNode);
-
-	newNode.deltaValue = glm::vec3(4, 4, 4);
-	newNode.time = 2;
-	newAnime->scaleKeyFrames.push_back(newNode);
-
-	newNode.deltaValue = glm::vec3(-4, -4, -4);
-	newNode.time = 4;
-	newAnime->scaleKeyFrames.push_back(newNode);
-
-	newNode.deltaValue = glm::vec3(4, 4, 4);
-	newNode.time = 6;
-	newAnime->scaleKeyFrames.push_back(newNode);
-
-	newNode.deltaValue = glm::vec3(-4, -4, -4);
-	newNode.time = 8;
-	newAnime->scaleKeyFrames.push_back(newNode);
+// 	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
+// 
+// 	newNode.deltaValue = glm::vec3(0, 0, 0);
+// 	newNode.time = 0;
+// 	newAnime->scaleKeyFrames.push_back(newNode);
+// 
+// 	newNode.deltaValue = glm::vec3(4, 4, 4);
+// 	newNode.time = 2;
+// 	newAnime->scaleKeyFrames.push_back(newNode);
+// 
+// 	newNode.deltaValue = glm::vec3(-4, -4, -4);
+// 	newNode.time = 4;
+// 	newAnime->scaleKeyFrames.push_back(newNode);
+// 
+// 	newNode.deltaValue = glm::vec3(4, 4, 4);
+// 	newNode.time = 6;
+// 	newAnime->scaleKeyFrames.push_back(newNode);
+// 
+// 	newNode.deltaValue = glm::vec3(-4, -4, -4);
+// 	newNode.time = 8;
+// 	newAnime->scaleKeyFrames.push_back(newNode);
 
 
 
@@ -409,20 +410,20 @@ void cAnimationManager::AddAnimationObj(sPhysicsProperties* theObj)
 
 
 	// ORIENTATION 
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
-
-
-	newNode.deltaValue = glm::vec3(0, 0, 0);
-	newNode.time = 0;
-	newAnime->orientKeyFrames.push_back(newNode);
-
-	newNode.deltaValue = glm::vec3(0, 360, 0);
-	newNode.time = 2.5;
-	newAnime->orientKeyFrames.push_back(newNode);
-
-	newNode.deltaValue = glm::vec3(0, -360, 0);
-	newNode.time = 5.0;
-	newAnime->orientKeyFrames.push_back(newNode);
+// 	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
+// 
+// 
+// 	newNode.deltaValue = glm::vec3(0, 0, 0);
+// 	newNode.time = 0;
+// 	newAnime->orientKeyFrames.push_back(newNode);
+// 
+// 	newNode.deltaValue = glm::vec3(0, 360, 0);
+// 	newNode.time = 2.5;
+// 	newAnime->orientKeyFrames.push_back(newNode);
+// 
+// 	newNode.deltaValue = glm::vec3(0, -360, 0);
+// 	newNode.time = 5.0;
+// 	newAnime->orientKeyFrames.push_back(newNode);
 
 
 	this->m_Animations.push_back(newAnime);
@@ -486,7 +487,125 @@ void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime
 		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
 
 		return;
-		break; // Prob don't need this break
+	}
+	case sAnimInfo::sAnimNode::QUAD:
+	{
+		oldRatio = glm::pow(oldRatio, 2);
+		newRatio = glm::pow(newRatio, 2);
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::CUBIC:
+	{
+		oldRatio = glm::pow(oldRatio, 3);
+		newRatio = glm::pow(newRatio, 3);
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::QUART:
+	{
+		oldRatio = glm::pow(oldRatio, 4); 
+		newRatio = glm::pow(newRatio, 4);
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::QUINT:
+	{
+		oldRatio = glm::pow(oldRatio, 5);
+		newRatio = glm::pow(newRatio, 5);
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::EXPO:
+	{
+		oldRatio = oldRatio ==  0 ? 0 : glm::pow(2, 10 * oldRatio - 10);
+		newRatio = newRatio == 0 ? 0 : glm::pow(2, 10 * newRatio - 10);
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::CIRC:
+	{
+		oldRatio = 1 - sqrt(1 - glm::pow(oldRatio, 2));
+		newRatio = 1 - sqrt(1 - glm::pow(newRatio, 2));
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::BACK:
+	{
+		const float c1 = 1.70158f;
+		const float c3 = c1 + 1;
+
+		oldRatio = c3 * oldRatio * oldRatio * oldRatio - c1 * oldRatio * oldRatio;
+		newRatio = c3 * newRatio * newRatio * newRatio - c1 * newRatio * newRatio;
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::ELASTIC:
+	{
+		const float c4 = (2 * glm::pi<float>() / 3);
+
+		oldRatio = oldRatio == 0 
+			? 0 
+			: oldRatio == 1
+			? 1
+			: -glm::pow(2, 10 * oldRatio - 10) * sin((oldRatio * 10 - 10.75) * c4);
+		newRatio = newRatio == 0
+			? 0
+			: newRatio == 1
+			? 1
+			: -glm::pow(2, 10 * newRatio - 10) * sin((newRatio * 10 - 10.75) * c4);
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::BOUNCE:
+	{
+		const float n1 = 7.5625f;
+		const float d1 = 2.75f;
+
+		oldRatio = 1 - oldRatio;
+		newRatio = 1 - newRatio;
+
+		if (oldRatio < 1 / d1) {
+			oldRatio =  n1 * oldRatio * oldRatio;
+		}
+		else if (oldRatio < 2 / d1) {
+			oldRatio = n1 * (oldRatio -= 1.5 / d1) * oldRatio + 0.75;
+		}
+		else if (oldRatio < 2.5 / d1) {
+			oldRatio = n1 * (oldRatio -= 2.25 / d1) * oldRatio + 0.9375;
+		}
+		else {
+			oldRatio = n1 * (oldRatio -= 2.625 / d1) * oldRatio + 0.984375;
+		}
+
+		if (newRatio < 1 / d1) {
+			newRatio = n1 * newRatio * newRatio;
+		}
+		else if (newRatio < 2 / d1) {
+			newRatio = n1 * (newRatio -= 1.5 / d1) * newRatio + 0.75;
+		}
+		else if (newRatio < 2.5 / d1) {
+			newRatio = n1 * (newRatio -= 2.25 / d1) * newRatio + 0.9375;
+		}
+		else {
+			newRatio = n1 * (newRatio -= 2.625 / d1) * newRatio + 0.984375;
+		}
+
+		oldRatio = 1 - oldRatio;
+		newRatio = 1 - newRatio;
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
 	}
 	}
 }
@@ -508,15 +627,133 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 	{
 	case sAnimInfo::sAnimNode::SINE:
 	{
-		//oldRatio = 1 - cos((oldRatio * glm::pi<float>()) / 2);
-		//newRatio = 1 - cos((newRatio * glm::pi<float>()) / 2);
 		oldRatio = sin((oldRatio * glm::pi<float>()) / 2);
 		newRatio = sin((newRatio * glm::pi<float>()) / 2);
 
 		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
 
 		return;
-		break; // Prob don't need this break
+	}
+	case sAnimInfo::sAnimNode::QUAD:
+	{
+		oldRatio = 1 - (1 - oldRatio) * (1 - oldRatio);
+		newRatio = 1 - (1 - newRatio) * (1 - newRatio);
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::CUBIC:
+	{
+		oldRatio = 1 - glm::pow(1 - oldRatio, 3);
+		newRatio = 1 - glm::pow(1 - newRatio, 3);
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::QUART:
+	{
+		oldRatio = 1 - glm::pow(1 - oldRatio, 4);
+		newRatio = 1 - glm::pow(1 - newRatio, 4);
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::QUINT:
+	{
+		oldRatio = 1 - glm::pow(1 - oldRatio, 5);
+		newRatio = 1 - glm::pow(1 - newRatio, 5);
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::EXPO:
+	{
+		oldRatio = oldRatio ==  1 ? 1 : 1 - glm::pow(2, -10 * oldRatio);
+		newRatio = newRatio == 1 ? 1 : 1 - glm::pow(2, -10 * newRatio);
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::CIRC:
+	{
+		oldRatio = sqrt(1 - glm::pow(oldRatio - 1, 2));
+		newRatio = sqrt(1 - glm::pow(newRatio - 1, 2));
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::BACK:
+	{
+		const float c1 = 1.70158f;
+		const float c3 = c1 + 1;
+
+		oldRatio = 1 + c3 * glm::pow(oldRatio - 1, 3) + c1 * glm::pow(oldRatio - 1, 2);
+		newRatio = 1 + c3 * glm::pow(newRatio - 1, 3) + c1 * glm::pow(newRatio - 1, 2);
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::ELASTIC:
+	{
+		const float c4 = (2 * glm::pi<float>()) / 3;
+
+		oldRatio = oldRatio ==  0
+			? 0
+			: oldRatio == 1
+			? 1
+			: glm::pow(2, -10 * oldRatio) * sin((oldRatio * 10 - 0.75) * c4) + 1;
+
+		newRatio = newRatio == 0
+			? 0
+			: newRatio == 1
+			? 1
+			: glm::pow(2, -10 * newRatio) * sin((newRatio * 10 - 0.75) * c4) + 1;
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::BOUNCE:
+	{
+		const float n1 = 7.5625f;
+		const float d1 = 2.75f;
+
+		if (oldRatio < 1 / d1) {
+			oldRatio = n1 * oldRatio * oldRatio;
+		}
+		else if (oldRatio < 2 / d1) {
+			oldRatio = n1 * (oldRatio -= 1.5 / d1) * oldRatio + 0.75;
+		}
+		else if (oldRatio < 2.5 / d1) {
+			oldRatio = n1 * (oldRatio -= 2.25 / d1) * oldRatio + 0.9375;
+		}
+		else {
+			oldRatio = n1 * (oldRatio -= 2.625 / d1) * oldRatio + 0.984375;
+		}
+
+		if (newRatio < 1 / d1) {
+			newRatio = n1 * newRatio * newRatio;
+		}
+		else if (newRatio < 2 / d1) {
+			newRatio = n1 * (newRatio -= 1.5 / d1) * newRatio + 0.75;
+		}
+		else if (newRatio < 2.5 / d1) {
+			newRatio = n1 * (newRatio -= 2.25 / d1) * newRatio + 0.9375;
+		}
+		else {
+			newRatio = n1 * (newRatio -= 2.625 / d1) * newRatio + 0.984375;
+		}
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
 	}
 	}
 }
@@ -544,7 +781,205 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
 
 		return;
-		break; // Prob don't need this break
+	}
+	case sAnimInfo::sAnimNode::QUAD:
+	{
+		oldRatio = oldRatio < 0.5 ? 2 * oldRatio * oldRatio : 1 - glm::pow(-2 * oldRatio + 2, 2) / 2;
+		newRatio = newRatio < 0.5 ? 2 * newRatio * newRatio : 1 - glm::pow(-2 * newRatio + 2, 2) / 2;
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::CUBIC:
+	{
+		oldRatio = oldRatio < 0.5 ? 4 * oldRatio * oldRatio * oldRatio : 1 - glm::pow(-2 * oldRatio + 2, 3) / 2;
+		newRatio = newRatio < 0.5 ? 4 * newRatio * newRatio * newRatio : 1 - glm::pow(-2 * newRatio + 2, 3) / 2;
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::QUART:
+	{
+		oldRatio = oldRatio < 0.5 ? 8 * oldRatio * oldRatio * oldRatio * oldRatio : 1 - glm::pow(-2 * oldRatio + 2, 4) / 2;
+		newRatio = newRatio < 0.5 ? 8 * newRatio * newRatio * newRatio * newRatio : 1 - glm::pow(-2 * newRatio + 2, 4) / 2;
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::QUINT:
+	{
+		oldRatio = oldRatio < 0.5 ? 16 * oldRatio * oldRatio * oldRatio * oldRatio * oldRatio : 1 - glm::pow(-2 * oldRatio + 2, 5) / 2;
+		newRatio = newRatio < 0.5 ? 16 * newRatio * newRatio * newRatio * newRatio * newRatio : 1 - glm::pow(-2 * newRatio + 2, 5) / 2;
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::EXPO:
+	{
+		oldRatio = oldRatio == 0
+			? 0
+			: oldRatio == 1
+			? 1
+			: oldRatio < 0.5 ? glm::pow(2, 20 * oldRatio - 10) / 2
+			: (2 - glm::pow(2, -20 * oldRatio + 10)) / 2;
+
+		newRatio = newRatio == 0
+			? 0
+			: newRatio == 1
+			? 1
+			: newRatio < 0.5 ? glm::pow(2, 20 * newRatio - 10) / 2
+			: (2 - glm::pow(2, -20 * newRatio + 10)) / 2;
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::CIRC:
+	{
+		oldRatio = oldRatio < 0.5
+			? (1 - sqrt(1 - pow(2 * oldRatio, 2))) / 2
+			: (sqrt(1 - pow(-2 * oldRatio + 2, 2)) + 1) / 2;
+
+		newRatio = newRatio < 0.5
+			? (1 - sqrt(1 - pow(2 * newRatio, 2))) / 2
+			: (sqrt(1 - pow(-2 * newRatio + 2, 2)) + 1) / 2;
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::BACK:
+	{
+		const float c1 = 1.70158f;
+		const float c2 = c1 * 1.525f;
+
+		oldRatio = oldRatio < 0.5
+			? (glm::pow(2 * oldRatio, 2) * ((c2 + 1) * 2 * oldRatio - c2)) / 2
+			: (glm::pow(2 * oldRatio - 2, 2) * ((c2 + 1) * (oldRatio * 2 - 2) + c2) + 2) / 2;
+
+		newRatio = newRatio < 0.5
+			? (glm::pow(2 * newRatio, 2) * ((c2 + 1) * 2 * newRatio - c2)) / 2
+			: (glm::pow(2 * newRatio - 2, 2) * ((c2 + 1) * (newRatio * 2 - 2) + c2) + 2) / 2;
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::ELASTIC:
+	{
+		const float c5 = (2 * glm::pi<float>()) / 4.5;
+
+		oldRatio = oldRatio == 0
+			? 0
+			: oldRatio == 1
+			? 1
+			: oldRatio < 0.5
+			? -(glm::pow(2, 20 * oldRatio - 10) * sin((20 * oldRatio - 11.125) * c5)) / 2
+			: (glm::pow(2, -20 * oldRatio + 10) * sin((20 * oldRatio - 11.125) * c5)) / 2 + 1;
+
+		newRatio = newRatio == 0
+			? 0
+			: newRatio == 1
+			? 1
+			: newRatio < 0.5
+			? -(glm::pow(2, 20 * newRatio - 10) * sin((20 * newRatio - 11.125) * c5)) / 2
+			: (glm::pow(2, -20 * newRatio + 10) * sin((20 * newRatio - 11.125) * c5)) / 2 + 1;
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
+	}
+	case sAnimInfo::sAnimNode::BOUNCE:
+	{
+		const float n1 = 7.5625f;
+		const float d1 = 2.75f;
+
+
+		if (oldRatio < 0.5f)
+		{
+			oldRatio = 1 - 2 * oldRatio;
+
+			if (oldRatio < 1 / d1) {
+				oldRatio = n1 * oldRatio * oldRatio;
+			}
+			else if (oldRatio < 2 / d1) {
+				oldRatio = n1 * (oldRatio -= 1.5 / d1) * oldRatio + 0.75;
+			}
+			else if (oldRatio < 2.5 / d1) {
+				oldRatio = n1 * (oldRatio -= 2.25 / d1) * oldRatio + 0.9375;
+			}
+			else {
+				oldRatio = n1 * (oldRatio -= 2.625 / d1) * oldRatio + 0.984375;
+			}
+
+			oldRatio = (1 - oldRatio) / 2;
+		}
+		else
+		{
+			oldRatio = 2 * oldRatio - 1;
+
+			if (oldRatio < 1 / d1) {
+				oldRatio = n1 * oldRatio * oldRatio;
+			}
+			else if (oldRatio < 2 / d1) {
+				oldRatio = n1 * (oldRatio -= 1.5 / d1) * oldRatio + 0.75;
+			}
+			else if (oldRatio < 2.5 / d1) {
+				oldRatio = n1 * (oldRatio -= 2.25 / d1) * oldRatio + 0.9375;
+			}
+			else {
+				oldRatio = n1 * (oldRatio -= 2.625 / d1) * oldRatio + 0.984375;
+			}
+
+			oldRatio = (1 + oldRatio) / 2;
+		}
+
+		if (newRatio < 0.5f)
+		{
+			newRatio = 1 - 2 * newRatio;
+
+			if (newRatio < 1 / d1) {
+				newRatio = n1 * newRatio * newRatio;
+			}
+			else if (newRatio < 2 / d1) {
+				newRatio = n1 * (newRatio -= 1.5 / d1) * newRatio + 0.75;
+			}
+			else if (newRatio < 2.5 / d1) {
+				newRatio = n1 * (newRatio -= 2.25 / d1) * newRatio + 0.9375;
+			}
+			else {
+				newRatio = n1 * (newRatio -= 2.625 / d1) * newRatio + 0.984375;
+			}
+
+			newRatio = (1 - newRatio) / 2;
+		}
+		else
+		{
+			newRatio = 2 * newRatio - 1;
+
+			if (newRatio < 1 / d1) {
+				newRatio = n1 * newRatio * newRatio;
+			}
+			else if (newRatio < 2 / d1) {
+				newRatio = n1 * (newRatio -= 1.5 / d1) * newRatio + 0.75;
+			}
+			else if (newRatio < 2.5 / d1) {
+				newRatio = n1 * (newRatio -= 2.25 / d1) * newRatio + 0.9375;
+			}
+			else {
+				newRatio = n1 * (newRatio -= 2.625 / d1) * newRatio + 0.984375;
+			}
+
+			newRatio = (1 + newRatio) / 2;
+		}
+
+		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+
+		return;
 	}
 	}
 }
