@@ -123,6 +123,10 @@ bool cGraphicsMain::Initialize()
 	m_pTheLights = new cLightManager();
 	m_pTheLights->SetUniformLocations(m_shaderProgramID);
 
+	// Default directional light
+	m_pTheLights->theLights[0].param1.x = 2;
+	m_pTheLights->theLights[0].param2.x = 1;
+
 	////////////////// TEXTURE LOADING ///////////////
 	m_pTextureManager = new cBasicTextureManager();
 	m_pTextureManager->SetBasePath("assets/textures");

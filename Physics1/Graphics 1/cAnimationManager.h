@@ -56,9 +56,12 @@ struct sAnimInfo // Individual instances of animation setups
 	int finishedVecs = 0; // Bitmask: move scale orient
 	const static int BITMASKMAX = 7; // Sum of used bits
 
-	std::vector<sAnimNode> moveKeyFrames;
-	std::vector<sAnimNode> scaleKeyFrames;
-	std::vector<sAnimNode> orientKeyFrames;
+	//std::vector<sAnimNode> moveKeyFrames;
+	std::vector < std::vector<sAnimNode> > moveKeyFrames;
+	//std::vector<sAnimNode> scaleKeyFrames;
+	std::vector < std::vector<sAnimNode> > scaleKeyFrames;
+	//std::vector<sAnimNode> orientKeyFrames;
+	std::vector < std::vector<sAnimNode> > orientKeyFrames;
 	
 };
 

@@ -47,7 +47,7 @@ cAnimationManager::~cAnimationManager()
 // Updates all active animations
 void cAnimationManager::Update(double dt)
 {
-	for (sAnimInfo* currAnim: m_Animations) // Go through all animations
+	for (sAnimInfo* currAnim : m_Animations) // Go through all animations
 	{
 		if (currAnim->loopCount == 0) // Inactive or finished animation
 			continue;
@@ -59,216 +59,271 @@ void cAnimationManager::Update(double dt)
 		double timeAfterUpdate = currAnim->timeInAnimation + dt; // Variable used in all 3 sections
 
 
-		while (operationDT != 0)
+		//while (operationDT != 0)
+		//{
+			//if (currAnim->finishedVecs & 1) break;
+		if (~currAnim->finishedVecs & 1)
 		{
-			if (currAnim->finishedVecs & 1) break;
+			unsigned int finishedMoveParts = 0;
 
 			// Get the previous (or current if on it) key frame
 			int prevKF;
-			GetSurroundingKF(currAnim->moveKeyFrames, prevKF, currAnim->timeInAnimation + (dt - operationDT));
-
-			
-			if (prevKF >= 0)
+			for (std::vector<sAnimInfo::sAnimNode> currAnimSegment : currAnim->moveKeyFrames) // Loop through each movement animation
 			{
-
-				if (timeAfterUpdate > currAnim->moveKeyFrames[prevKF + 1].time) // If this dt update will go past the next keyframe
+				operationDT = dt;
+				while (operationDT != 0)
 				{
-					funcDT = currAnim->moveKeyFrames[prevKF + 1].time - currAnim->timeInAnimation;
-					operationDT -= funcDT;
-				}
-				else
-				{
-					funcDT = operationDT;
-					operationDT = 0;
-				}
+					//GetSurroundingKF(currAnim->moveKeyFrames, prevKF, currAnim->timeInAnimation + (dt - operationDT));
+					GetSurroundingKF(currAnimSegment, prevKF, currAnim->timeInAnimation + (dt - operationDT));
 
 
-				switch (currAnim->moveKeyFrames[prevKF + 1].interp_func)
-				{
-				case sAnimInfo::sAnimNode::LINEAR:
-				{
-					GetDeltaLinear(&currAnim->moveKeyFrames[prevKF],
-						funcDT,
-						deltaValue);
-					break;
-				}
-				case sAnimInfo::sAnimNode::EASEIN:
-				{
-					GetDeltaEaseIn(&currAnim->moveKeyFrames[prevKF],
-						currAnim->timeInAnimation,
-						funcDT,
-						deltaValue);
-					break;
-				}
-				case sAnimInfo::sAnimNode::EASEOUT:
-				{
-					GetDeltaEaseOut(&currAnim->moveKeyFrames[prevKF],
-						currAnim->timeInAnimation,
-						funcDT,
-						deltaValue);
-					break;
-				}
-				case sAnimInfo::sAnimNode::EASEINOUT:
-				{
-					GetDeltaEaseInOut(&currAnim->moveKeyFrames[prevKF],
-						currAnim->timeInAnimation,
-						funcDT,
-						deltaValue);
-					break;
-				}
-				}
+					if (prevKF >= 0)
+					{
 
-				currAnim->theObj->position += deltaValue;
+						if (timeAfterUpdate > /*currAnim->moveKeyFrames*/currAnimSegment[prevKF + 1].time) // If this dt update will go past the next keyframe
+						{
+							funcDT = /*currAnim->moveKeyFrames*/currAnimSegment[prevKF + 1].time - currAnim->timeInAnimation;
+							operationDT -= funcDT;
+						}
+						else
+						{
+							funcDT = operationDT;
+							operationDT = 0;
+						}
+
+
+						switch (/*currAnim->moveKeyFrames*/currAnimSegment[prevKF + 1].interp_func)
+						{
+						case sAnimInfo::sAnimNode::LINEAR:
+						{
+							GetDeltaLinear(&/*currAnim->moveKeyFrames*/currAnimSegment[prevKF],
+								funcDT,
+								deltaValue);
+							break;
+						}
+						case sAnimInfo::sAnimNode::EASEIN:
+						{
+							GetDeltaEaseIn(&/*currAnim->moveKeyFrames*/currAnimSegment[prevKF],
+								currAnim->timeInAnimation,
+								funcDT,
+								deltaValue);
+							break;
+						}
+						case sAnimInfo::sAnimNode::EASEOUT:
+						{
+							GetDeltaEaseOut(&/*currAnim->moveKeyFrames*/currAnimSegment[prevKF],
+								currAnim->timeInAnimation,
+								funcDT,
+								deltaValue);
+							break;
+						}
+						case sAnimInfo::sAnimNode::EASEINOUT:
+						{
+							GetDeltaEaseInOut(&/*currAnim->moveKeyFrames*/currAnimSegment[prevKF],
+								currAnim->timeInAnimation,
+								funcDT,
+								deltaValue);
+							break;
+						}
+						}
+
+						currAnim->theObj->position += deltaValue;
+					}
+					else // This should trigger the loop
+					{
+						// 2 keyframes not found
+						//currAnim->finishedVecs += 1;
+						operationDT = 0;
+						finishedMoveParts++;
+						break;
+					}
+				}
 			}
-			else // This should trigger the loop
+
+			if (finishedMoveParts == currAnim->moveKeyFrames.size()) // If all move parts have finished, we can skip this whole section in future updates
 			{
-				// 2 keyframes not found
 				currAnim->finishedVecs += 1;
-				operationDT = 0;
-				break;
 			}
+		} // if (currAnim->finishedVecs & 1) break;
+		//}
 
-		}
+		//operationDT = dt; // Set variable for scaling
 
-		operationDT = dt; // Set variable for scaling
-
-		while (operationDT != 0)
+		// 		while (operationDT != 0)
+		// 		{
+		if (~currAnim->finishedVecs & 2)
 		{
-			if (currAnim->finishedVecs & 2) break;
+
+			unsigned int finishedScaleParts = 0;
 
 			int prevKF;
-			GetSurroundingKF(currAnim->scaleKeyFrames, prevKF, currAnim->timeInAnimation + (dt - operationDT));
-
-
-			if (prevKF >= 0)
+			for (std::vector<sAnimInfo::sAnimNode> currAnimSegment : currAnim->scaleKeyFrames)
 			{
+				operationDT = dt;
+				while (operationDT != 0)
+				{
+					//GetSurroundingKF(currAnim->scaleKeyFrames, prevKF, currAnim->timeInAnimation + (dt - operationDT));
+					GetSurroundingKF(currAnimSegment, prevKF, currAnim->timeInAnimation + (dt - operationDT));
 
-				if (timeAfterUpdate > currAnim->scaleKeyFrames[prevKF + 1].time) // If this dt update will go past the next keyframe
-				{
-					funcDT = currAnim->scaleKeyFrames[prevKF + 1].time - currAnim->timeInAnimation;
-					operationDT -= funcDT;
-				}
-				else
-				{
-					funcDT = operationDT;
-					operationDT = 0;
-				}
 
-				switch (currAnim->scaleKeyFrames[prevKF + 1].interp_func)
-				{
-				case sAnimInfo::sAnimNode::LINEAR:
-				{
-					GetDeltaLinear(&currAnim->scaleKeyFrames[prevKF],
-						funcDT,
-						deltaValue);
-					break;
-				}
-				case sAnimInfo::sAnimNode::EASEIN:
-				{
-					GetDeltaEaseIn(&currAnim->scaleKeyFrames[prevKF],
-						currAnim->timeInAnimation,
-						funcDT,
-						deltaValue);
-					break;
-				}
-				case sAnimInfo::sAnimNode::EASEOUT:
-				{
-					GetDeltaEaseOut(&currAnim->scaleKeyFrames[prevKF],
-						currAnim->timeInAnimation,
-						funcDT,
-						deltaValue);
-					break;
-				}
-				case sAnimInfo::sAnimNode::EASEINOUT:
-				{
-					GetDeltaEaseInOut(&currAnim->scaleKeyFrames[prevKF],
-						currAnim->timeInAnimation,
-						funcDT,
-						deltaValue);
-					break;
-				}
-				}
+					if (prevKF >= 0)
+					{
 
-				currAnim->theObj->scale += deltaValue;
+						if (timeAfterUpdate > /*currAnim->scaleKeyFrames*/currAnimSegment[prevKF + 1].time) // If this dt update will go past the next keyframe
+						{
+							funcDT = /*currAnim->scaleKeyFrames*/currAnimSegment[prevKF + 1].time - currAnim->timeInAnimation;
+							operationDT -= funcDT;
+						}
+						else
+						{
+							funcDT = operationDT;
+							operationDT = 0;
+						}
+
+						switch (/*currAnim->scaleKeyFrames*/currAnimSegment[prevKF + 1].interp_func)
+						{
+						case sAnimInfo::sAnimNode::LINEAR:
+						{
+							GetDeltaLinear(&/*currAnim->scaleKeyFrames*/currAnimSegment[prevKF],
+								funcDT,
+								deltaValue);
+							break;
+						}
+						case sAnimInfo::sAnimNode::EASEIN:
+						{
+							GetDeltaEaseIn(&/*currAnim->scaleKeyFrames*/currAnimSegment[prevKF],
+								currAnim->timeInAnimation,
+								funcDT,
+								deltaValue);
+							break;
+						}
+						case sAnimInfo::sAnimNode::EASEOUT:
+						{
+							GetDeltaEaseOut(&/*currAnim->scaleKeyFrames*/currAnimSegment[prevKF],
+								currAnim->timeInAnimation,
+								funcDT,
+								deltaValue);
+							break;
+						}
+						case sAnimInfo::sAnimNode::EASEINOUT:
+						{
+							GetDeltaEaseInOut(&/*currAnim->scaleKeyFrames*/currAnimSegment[prevKF],
+								currAnim->timeInAnimation,
+								funcDT,
+								deltaValue);
+							break;
+						}
+						}
+
+						currAnim->theObj->scale += deltaValue;
+					}
+					else // This should trigger the loop
+					{
+						//currAnim->finishedVecs += 2;
+						operationDT = 0;
+						finishedScaleParts++;
+						break;
+					}
+				}
 			}
-			else // This should trigger the loop
+
+			if (finishedScaleParts == currAnim->scaleKeyFrames.size())
 			{
 				currAnim->finishedVecs += 2;
-				operationDT = 0;
-				break;
 			}
 		}
+		//}
 
-		operationDT = dt; // Set variable for scaling
+		//operationDT = dt; // Set variable for orientation
 
-		while (operationDT != 0)
+		//while (operationDT != 0)
+		//{
+			//if (currAnim->finishedVecs & 4) break;
+		if (~currAnim->finishedVecs & 4)
 		{
-			if (currAnim->finishedVecs & 4) break;
+			unsigned int finishedOrientParts = 0;
+
 
 			int prevKF;
-			GetSurroundingKF(currAnim->orientKeyFrames, prevKF, currAnim->timeInAnimation + (dt - operationDT));
-
-
-			if (prevKF >= 0)
+			for (std::vector<sAnimInfo::sAnimNode> currAnimSegment : currAnim->orientKeyFrames)
 			{
+				operationDT = dt;
+				while (operationDT != 0)
+				{
 
-				if (timeAfterUpdate > currAnim->orientKeyFrames[prevKF + 1].time) // If this dt update will go past the next keyframe
-				{
-					funcDT = currAnim->orientKeyFrames[prevKF + 1].time - currAnim->timeInAnimation;
-					operationDT -= funcDT;
-				}
-				else
-				{
-					funcDT = operationDT;
-					operationDT = 0;
-				}
+					//GetSurroundingKF(currAnim->orientKeyFrames, prevKF, currAnim->timeInAnimation + (dt - operationDT));
+					GetSurroundingKF(currAnimSegment, prevKF, currAnim->timeInAnimation + (dt - operationDT));
 
-				switch (currAnim->orientKeyFrames[prevKF + 1].interp_func)
-				{
-				case sAnimInfo::sAnimNode::LINEAR:
-				{
-					GetDeltaLinear(&currAnim->orientKeyFrames[prevKF],
-						funcDT,
-						deltaValue);
-					break;
-				}
-				case sAnimInfo::sAnimNode::EASEIN:
-				{
-					GetDeltaEaseIn(&currAnim->orientKeyFrames[prevKF],
-						currAnim->timeInAnimation,
-						funcDT,
-						deltaValue);
-					break;
-				}
-				case sAnimInfo::sAnimNode::EASEOUT:
-				{
-					GetDeltaEaseOut(&currAnim->orientKeyFrames[prevKF],
-						currAnim->timeInAnimation,
-						funcDT,
-						deltaValue);
-					break;
-				}
-				case sAnimInfo::sAnimNode::EASEINOUT:
-				{
-					GetDeltaEaseInOut(&currAnim->orientKeyFrames[prevKF],
-						currAnim->timeInAnimation,
-						funcDT,
-						deltaValue);
-					break;
-				}
-				}
 
-				//currAnim->theObj->scale += deltaScale;
-				glm::quat rotAdjust = glm::quat(glm::radians(deltaValue));
-				currAnim->theObj->setRotationFromQuat(currAnim->theObj->get_qOrientation()* rotAdjust);
+					if (prevKF >= 0)
+					{
+
+						if (timeAfterUpdate > /*currAnim->orientKeyFrames*/currAnimSegment[prevKF + 1].time) // If this dt update will go past the next keyframe
+						{
+							funcDT = /*currAnim->orientKeyFrames*/currAnimSegment[prevKF + 1].time - currAnim->timeInAnimation;
+							operationDT -= funcDT;
+						}
+						else
+						{
+							funcDT = operationDT;
+							operationDT = 0;
+						}
+
+						switch (/*currAnim->orientKeyFrames*/currAnimSegment[prevKF + 1].interp_func)
+						{
+						case sAnimInfo::sAnimNode::LINEAR:
+						{
+							GetDeltaLinear(&/*currAnim->orientKeyFrames*/currAnimSegment[prevKF],
+								funcDT,
+								deltaValue);
+							break;
+						}
+						case sAnimInfo::sAnimNode::EASEIN:
+						{
+							GetDeltaEaseIn(&/*currAnim->orientKeyFrames*/currAnimSegment[prevKF],
+								currAnim->timeInAnimation,
+								funcDT,
+								deltaValue);
+							break;
+						}
+						case sAnimInfo::sAnimNode::EASEOUT:
+						{
+							GetDeltaEaseOut(&/*currAnim->orientKeyFrames*/currAnimSegment[prevKF],
+								currAnim->timeInAnimation,
+								funcDT,
+								deltaValue);
+							break;
+						}
+						case sAnimInfo::sAnimNode::EASEINOUT:
+						{
+							GetDeltaEaseInOut(&/*currAnim->orientKeyFrames*/currAnimSegment[prevKF],
+								currAnim->timeInAnimation,
+								funcDT,
+								deltaValue);
+							break;
+						}
+						}
+
+						//currAnim->theObj->scale += deltaScale;
+						glm::quat rotAdjust = glm::quat(glm::radians(deltaValue));
+						currAnim->theObj->setRotationFromQuat(currAnim->theObj->get_qOrientation() * rotAdjust);
+					}
+					else // This should trigger the loop
+					{
+						//currAnim->finishedVecs += 4;
+						operationDT = 0;
+						finishedOrientParts++;
+						break;
+					}
+				}
 			}
-			else // This should trigger the loop
+
+			if (finishedOrientParts == currAnim->orientKeyFrames.size())
 			{
 				currAnim->finishedVecs += 4;
-				operationDT = 0;
-				break;
 			}
 		}
+		//}
 
 		
 
@@ -314,35 +369,105 @@ void cAnimationManager::AddAnimationObj(sPhysicsProperties* theObj)
 	sAnimInfo* newAnime = new sAnimInfo();
 
 	newAnime->theObj = theObj;
-	newAnime->loopCount = 3;
+	newAnime->loopCount = 1;
 	
+	std::vector<sAnimInfo::sAnimNode> vecToAdd;
 	sAnimInfo::sAnimNode newNode;
+
 	newNode.deltaValue = glm::vec3(0, 0, 0);
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
+	newNode.interp_func = sAnimInfo::sAnimNode::LINEAR;
 	newNode.interp_spec = sAnimInfo::sAnimNode::BOUNCE;
 	newNode.time = 0;
-	newAnime->moveKeyFrames.push_back(newNode);
 
-	newNode.deltaValue = glm::vec3(20, 0, 0);
-	newNode.time = 2;
-	newAnime->moveKeyFrames.push_back(newNode);
+// 	vecToAdd.push_back(newNode);
+// 
+// 	newNode.deltaValue = glm::vec3(10, 0, 0);
+// 	newNode.time = 1;
+// 	vecToAdd.push_back(newNode);
 
-	newNode.deltaValue = glm::vec3(0, 20, 0);
-	newNode.time = 4;
-	newAnime->moveKeyFrames.push_back(newNode);
+// 	newNode.deltaValue = glm::vec3(0, 20, 0);
+// 	newNode.time = 4;
+// 	vecToAdd.push_back(newNode);
+// 
+// 	newNode.deltaValue = glm::vec3(-20, 0, 0);
+// 	newNode.time = 6;
+// 	vecToAdd.push_back(newNode);
+// 
+// 	newNode.deltaValue = glm::vec3(0, -20, 0);
+// 	newNode.time = 8;
+// 	vecToAdd.push_back(newNode);
 
-	newNode.deltaValue = glm::vec3(-20, 0, 0);
-	newNode.time = 6;
-	newAnime->moveKeyFrames.push_back(newNode);
-
-	newNode.deltaValue = glm::vec3(0, -20, 0);
-	newNode.time = 8;
-	newAnime->moveKeyFrames.push_back(newNode);
+// 	newAnime->moveKeyFrames.push_back(vecToAdd);
+// 
+// 
+// 	vecToAdd.clear();
+// 
+// 	newNode.deltaValue = glm::vec3(0, 0, 0);
+// 	newNode.time = 0;
+// 
+// 	vecToAdd.push_back(newNode);
+// 
+// 
+// 	newNode.interp_func = sAnimInfo::sAnimNode::EASEOUT;
+// 	newNode.interp_spec = sAnimInfo::sAnimNode::QUAD;
+// 
+// 	newNode.deltaValue = glm::vec3(0, 30, 0);
+// 	newNode.time = 0.5;
+// 	vecToAdd.push_back(newNode);
+// 
+// 	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
+// 	newNode.interp_spec = sAnimInfo::sAnimNode::QUAD;
+// 
+// 	newNode.deltaValue = glm::vec3(0, -30, 0);
+// 	newNode.time = 1;
+// 	vecToAdd.push_back(newNode);
+// 
+// 	newAnime->moveKeyFrames.push_back(vecToAdd);
 
 
 
 
 	// SCALE NODES
+	vecToAdd.push_back(newNode);
+
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEOUT;
+	newNode.interp_spec = sAnimInfo::sAnimNode::BOUNCE;
+
+	newNode.deltaValue = glm::vec3(0, 360, 0);
+	newNode.time = 2;
+	vecToAdd.push_back(newNode);
+
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
+	newNode.deltaValue = glm::vec3(0, -360, 0);
+	newNode.time = 4;
+	vecToAdd.push_back(newNode);
+
+	newAnime->orientKeyFrames.push_back(vecToAdd);
+
+
+	vecToAdd.clear();
+
+
+	newNode.deltaValue = glm::vec3(0);
+	newNode.time = 0;
+	vecToAdd.push_back(newNode);
+
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
+	newNode.interp_spec = sAnimInfo::sAnimNode::ELASTIC;
+
+	newNode.deltaValue = glm::vec3(360, 0, 0);
+	newNode.time = 2;
+
+	vecToAdd.push_back(newNode);
+
+
+	newNode.deltaValue = glm::vec3(-360, 0, 0);
+	newNode.time = 4;
+
+	vecToAdd.push_back(newNode);
+
+	newAnime->orientKeyFrames.push_back(vecToAdd);
+
 // 	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
 // 
 // 	newNode.deltaValue = glm::vec3(0, 0, 0);
