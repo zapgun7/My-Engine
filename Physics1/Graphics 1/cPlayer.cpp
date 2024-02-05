@@ -14,6 +14,17 @@ cPlayer::~cPlayer()
 
 void cPlayer::Update(double deltaTime, glm::vec3* cameraPosition, glm::quat* cameraRotation)
 {
+	// INPUT FOR THE ANIMATION PROJECT
+
+
+
+
+
+
+
+
+
+
 	static bool isRightClicking = false;
 	static double mouseXPos = 0;
 	static double mouseYPos = 0;

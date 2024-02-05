@@ -175,10 +175,10 @@ void cEngineController_IMPL::addNewObject(std::string meshName, char* friendlyNa
 	
 
 	///////// ANIMTAION TESTING /////////
-	m_pAnimationsManager->AddAnimationObj(newObject);
-	newMesh->bDoNotLight = false;
-	newMesh->bUseDebugColours = true;
-	newMesh->wholeObjectDebugColourRGBA = glm::vec4(.5, .5, .5, 1);
+// 	m_pAnimationsManager->AddAnimationObj(newObject);
+// 	newMesh->bDoNotLight = false;
+// 	newMesh->bUseDebugColours = true;
+// 	newMesh->wholeObjectDebugColourRGBA = glm::vec4(.5, .5, .5, 1);
 
 
 	return;
@@ -209,7 +209,15 @@ void cEngineController_IMPL::loadScene(std::string fileName)
 {
 	m_pTheSceneManager->loadScene(fileName);
 
- 	//std::vector<sPhysicsProperties*> physVec = m_pThePhysics->getPhysicsVec();
+	// Lazy way to toss on animation when scene is loaded
+ 	std::vector<sPhysicsProperties*> physVec = m_pThePhysics->getPhysicsVec();
+	for (sPhysicsProperties* currObj : physVec)
+	{
+		m_pAnimationsManager->AddAnimationObj(currObj);
+		if (currObj->getUniqueID() == 2)
+			currObj->scale = glm::vec3(2); // Lazy way to make bigger
+	}
+
 	//physVec.push_back(m_TheCamera); // Add camera
  	//m_pLuaBrain->setPhysVec(physVec);
 

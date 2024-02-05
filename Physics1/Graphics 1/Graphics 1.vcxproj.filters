@@ -217,6 +217,9 @@
     <ClCompile Include="cAnimationManager.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
+    <ClCompile Include="cAnimationBuilder.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basic Shader Manager\cShaderManager.h">
@@ -364,6 +367,9 @@
       <Filter>Graphics Engine\Particles</Filter>
     </ClInclude>
     <ClInclude Include="cAnimationManager.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="cAnimationBuilder.h">
       <Filter>Animation</Filter>
     </ClInclude>
   </ItemGroup>

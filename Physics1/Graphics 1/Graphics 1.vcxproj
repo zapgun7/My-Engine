@@ -147,6 +147,7 @@
     <ClCompile Include="..\include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Basic Shader Manager\cShader.cpp" />
     <ClCompile Include="Basic Shader Manager\cShaderManager.cpp" />
+    <ClCompile Include="cAnimationBuilder.cpp" />
     <ClCompile Include="cAnimationManager.cpp" />
     <ClCompile Include="cEmitterBuilder.cpp" />
     <ClCompile Include="cEngineController.cpp" />
@@ -198,6 +199,7 @@
     <ClInclude Include="..\include\imgui\imstb_textedit.h" />
     <ClInclude Include="..\include\imgui\imstb_truetype.h" />
     <ClInclude Include="Basic Shader Manager\cShaderManager.h" />
+    <ClInclude Include="cAnimationBuilder.h" />
     <ClInclude Include="cAnimationManager.h" />
     <ClInclude Include="cEmitterBuilder.h" />
     <ClInclude Include="cEngineController.h" />

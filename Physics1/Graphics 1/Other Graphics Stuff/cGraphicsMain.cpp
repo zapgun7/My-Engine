@@ -123,9 +123,16 @@ bool cGraphicsMain::Initialize()
 	m_pTheLights = new cLightManager();
 	m_pTheLights->SetUniformLocations(m_shaderProgramID);
 
-	// Default directional light
+	// Default directional lights
 	m_pTheLights->theLights[0].param1.x = 2;
 	m_pTheLights->theLights[0].param2.x = 1;
+	m_pTheLights->theLights[0].direction = glm::vec4(.2, -.6, .2, 0);
+
+	m_pTheLights->theLights[1].param1.x = 2;
+	m_pTheLights->theLights[1].param2.x = 1;
+	m_pTheLights->theLights[1].direction = glm::vec4(-.05, .3, -.05, 0);
+
+
 
 	////////////////// TEXTURE LOADING ///////////////
 	m_pTextureManager = new cBasicTextureManager();

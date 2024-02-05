@@ -10,6 +10,8 @@
 #include <glm/gtc/constants.hpp>
 #include <vector>
 
+#include "cAnimationBuilder.h"
+
 
 
 class sPhysicsProperties; // This will be the medium of updating position, orientation, etc.
@@ -42,8 +44,8 @@ struct sAnimInfo // Individual instances of animation setups
 
 
 
-		glm::vec3 deltaValue; // Change in position, orientation, scale, etc.
-		double time; // Time since start at this keyframe
+		glm::vec3 deltaValue = glm::vec3(0); // Change in position, orientation, scale, etc.
+		double time = 0; // Time since start at this keyframe
 		Interpolation interp_func = LINEAR;
 		Interpolation2 interp_spec = SINE;
 	};
@@ -77,10 +79,18 @@ public:
 
 	void AddAnimationObj(sPhysicsProperties* theObj);
 	
+	// FOR THE PROJECT
+	void setTimescale(float newTS);
+	void toggleRunning(void);
 
 
 private:
 	std::vector<sAnimInfo*> m_Animations; // The animations to update
+	cAnimationBuilder* m_pAnimBuilder;
+
+
+	bool m_bIsRunning = true;
+	float m_TimeScale = 1.0f;
 
 
 	cAnimationManager();

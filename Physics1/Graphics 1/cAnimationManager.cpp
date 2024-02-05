@@ -47,6 +47,9 @@ cAnimationManager::~cAnimationManager()
 // Updates all active animations
 void cAnimationManager::Update(double dt)
 {
+	if (!m_bIsRunning) return;
+	dt *= m_TimeScale;
+
 	for (sAnimInfo* currAnim : m_Animations) // Go through all animations
 	{
 		if (currAnim->loopCount == 0) // Inactive or finished animation
@@ -327,7 +330,7 @@ void cAnimationManager::Update(double dt)
 
 		
 
-
+		//printf("X: %f, Y: %f, Z: %f\n", currAnim->theObj->scale.x, currAnim->theObj->scale.y, currAnim->theObj->scale.z);
 		// !!!!! Should only increment loop when all 3 keyframe vectors have been exhausted!!!!!
 
 		// This has to be at the end
@@ -344,7 +347,7 @@ void cAnimationManager::Update(double dt)
 
 bool cAnimationManager::Initialize(void)
 {
-	
+	m_pAnimBuilder = new cAnimationBuilder();
 
 
 	return true;
@@ -366,6 +369,31 @@ bool cAnimationManager::Destroy(void)
 
 void cAnimationManager::AddAnimationObj(sPhysicsProperties* theObj)
 {
+	// Lazy setup for animation project
+
+	if (theObj->getUniqueID() == 2) // ball
+	{
+		sAnimInfo* newAnim = m_pAnimBuilder->MakeAnimation(BOUNCEBALL);
+		newAnim->theObj = theObj;
+		m_Animations.push_back(newAnim);
+		return;
+	}
+	else if (theObj->getUniqueID() == 3) // ship
+	{
+		sAnimInfo* newAnim = m_pAnimBuilder->MakeAnimation(FLYSHIP);
+		newAnim->theObj = theObj;
+		m_Animations.push_back(newAnim);
+		return;
+	}
+
+	return;
+
+
+
+
+
+	// Everything below is old testing, might use later :)
+
 	sAnimInfo* newAnime = new sAnimInfo();
 
 	newAnime->theObj = theObj;
@@ -375,20 +403,20 @@ void cAnimationManager::AddAnimationObj(sPhysicsProperties* theObj)
 	sAnimInfo::sAnimNode newNode;
 
 	newNode.deltaValue = glm::vec3(0, 0, 0);
-	newNode.interp_func = sAnimInfo::sAnimNode::LINEAR;
-	newNode.interp_spec = sAnimInfo::sAnimNode::BOUNCE;
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
+	newNode.interp_spec = sAnimInfo::sAnimNode::SINE;
 	newNode.time = 0;
 
-// 	vecToAdd.push_back(newNode);
-// 
-// 	newNode.deltaValue = glm::vec3(10, 0, 0);
-// 	newNode.time = 1;
-// 	vecToAdd.push_back(newNode);
+	vecToAdd.push_back(newNode);
 
-// 	newNode.deltaValue = glm::vec3(0, 20, 0);
-// 	newNode.time = 4;
-// 	vecToAdd.push_back(newNode);
-// 
+	newNode.deltaValue = glm::vec3(0, 5, 0);
+	newNode.time = 3;
+	vecToAdd.push_back(newNode);
+
+	newNode.deltaValue = glm::vec3(0, -5, 0);
+	newNode.time = 6;
+	vecToAdd.push_back(newNode);
+
 // 	newNode.deltaValue = glm::vec3(-20, 0, 0);
 // 	newNode.time = 6;
 // 	vecToAdd.push_back(newNode);
@@ -397,10 +425,10 @@ void cAnimationManager::AddAnimationObj(sPhysicsProperties* theObj)
 // 	newNode.time = 8;
 // 	vecToAdd.push_back(newNode);
 
-// 	newAnime->moveKeyFrames.push_back(vecToAdd);
-// 
-// 
-// 	vecToAdd.clear();
+	newAnime->moveKeyFrames.push_back(vecToAdd);
+
+
+	vecToAdd.clear();
 // 
 // 	newNode.deltaValue = glm::vec3(0, 0, 0);
 // 	newNode.time = 0;
@@ -428,45 +456,96 @@ void cAnimationManager::AddAnimationObj(sPhysicsProperties* theObj)
 
 
 	// SCALE NODES
+
+	newNode.deltaValue = glm::vec3(0, 0, 0);
+	newNode.time = 0;
 	vecToAdd.push_back(newNode);
 
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEOUT;
-	newNode.interp_spec = sAnimInfo::sAnimNode::BOUNCE;
 
-	newNode.deltaValue = glm::vec3(0, 360, 0);
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
+	newNode.interp_spec = sAnimInfo::sAnimNode::BACK;
+
+	newNode.deltaValue = glm::vec3(0, 1.5, 0);
 	newNode.time = 2;
 	vecToAdd.push_back(newNode);
 
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
-	newNode.deltaValue = glm::vec3(0, -360, 0);
-	newNode.time = 4;
+	newNode.interp_spec = sAnimInfo::sAnimNode::QUINT;
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEOUT;
+	newNode.deltaValue = glm::vec3(0, .5, 0);
+	newNode.time = 3;
 	vecToAdd.push_back(newNode);
 
-	newAnime->orientKeyFrames.push_back(vecToAdd);
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEOUT;
+	newNode.interp_spec = sAnimInfo::sAnimNode::ELASTIC;
+	newNode.deltaValue = glm::vec3(0, -2.5, 0);
+	newNode.time = 4.5;
+	vecToAdd.push_back(newNode);
+
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
+	newNode.interp_spec = sAnimInfo::sAnimNode::BACK;
+	newNode.deltaValue = glm::vec3(0, .5, 0);
+	newNode.time = 6;
+	vecToAdd.push_back(newNode);
+
+	newAnime->scaleKeyFrames.push_back(vecToAdd);
 
 
 	vecToAdd.clear();
 
 
-	newNode.deltaValue = glm::vec3(0);
+	newNode.deltaValue = glm::vec3(0, 0, 0);
 	newNode.time = 0;
 	vecToAdd.push_back(newNode);
 
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
-	newNode.interp_spec = sAnimInfo::sAnimNode::ELASTIC;
 
-	newNode.deltaValue = glm::vec3(360, 0, 0);
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
+	newNode.interp_spec = sAnimInfo::sAnimNode::BACK;
+
+	newNode.deltaValue = glm::vec3(-.25, 0, -.25);
 	newNode.time = 2;
-
 	vecToAdd.push_back(newNode);
 
 
-	newNode.deltaValue = glm::vec3(-360, 0, 0);
-	newNode.time = 4;
-
+	newNode.interp_spec = sAnimInfo::sAnimNode::QUINT;
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
+	newNode.deltaValue = glm::vec3(-.05, 0, -.05);
+	newNode.time = 2.3;
 	vecToAdd.push_back(newNode);
 
-	newAnime->orientKeyFrames.push_back(vecToAdd);
+
+	newNode.deltaValue = glm::vec3(-.05, 0, -.05);
+	newNode.time = 2.6;
+	vecToAdd.push_back(newNode);
+
+
+	newNode.deltaValue = glm::vec3(-.05, 0, -.05);
+	newNode.time = 2.9;
+	vecToAdd.push_back(newNode);
+
+
+
+
+
+
+	newNode.interp_spec = sAnimInfo::sAnimNode::QUINT;
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEOUT;
+	newNode.deltaValue = glm::vec3(-.15, 0, -.15);
+	newNode.time = 3;
+	vecToAdd.push_back(newNode);
+
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEOUT;
+	newNode.interp_spec = sAnimInfo::sAnimNode::ELASTIC;
+	newNode.deltaValue = glm::vec3(1.45, 0, 1.45);
+	newNode.time = 4.5;
+	vecToAdd.push_back(newNode);
+
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
+	newNode.interp_spec = sAnimInfo::sAnimNode::BACK;
+	newNode.deltaValue = glm::vec3(-1, 0, -1);
+	newNode.time = 6;
+	vecToAdd.push_back(newNode);
+
+	newAnime->scaleKeyFrames.push_back(vecToAdd);
 
 // 	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
 // 
@@ -533,25 +612,47 @@ void cAnimationManager::AddAnimationObj(sPhysicsProperties* theObj)
 // 	newAnime->scaleKeyFrames.push_back(newNode);
 
 
+	vecToAdd.clear();
+
 
 	// ORIENTATION 
-// 	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
-// 
-// 
-// 	newNode.deltaValue = glm::vec3(0, 0, 0);
-// 	newNode.time = 0;
-// 	newAnime->orientKeyFrames.push_back(newNode);
-// 
+	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
+
+
+	newNode.deltaValue = glm::vec3(0, 0, 0);
+	newNode.time = 0;
+	vecToAdd.push_back(newNode);
+
+	newNode.interp_func = sAnimInfo::sAnimNode::LINEAR;
+	newNode.deltaValue = glm::vec3(0, 360, 0);
+	newNode.time = 6;
+	vecToAdd.push_back(newNode);
+	//newAnime->orientKeyFrames.push_back(vecToAdd);
+
 // 	newNode.deltaValue = glm::vec3(0, 360, 0);
 // 	newNode.time = 2.5;
-// 	newAnime->orientKeyFrames.push_back(newNode);
-// 
+	//newAnime->orientKeyFrames.push_back(newNode);
+
 // 	newNode.deltaValue = glm::vec3(0, -360, 0);
 // 	newNode.time = 5.0;
-// 	newAnime->orientKeyFrames.push_back(newNode);
+	//newAnime->orientKeyFrames.push_back(newNode);
 
 
 	this->m_Animations.push_back(newAnime);
+}
+
+void cAnimationManager::setTimescale(float newTS)
+{
+	m_TimeScale = newTS;
+	return;
+}
+
+void cAnimationManager::toggleRunning(void)
+{
+	if (m_bIsRunning) m_bIsRunning = false;
+	else m_bIsRunning = true;
+
+	return;
 }
 
 //////////////////////// HELPER FUNCTIONS ///////////////////////////
