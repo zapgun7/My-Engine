@@ -35,6 +35,10 @@ public:
 	void setLightData(int lightIdx, std::string friendlyName, glm::vec4 newPos, glm::vec4 newDiff, glm::vec4 newSpec, glm::vec4 newAtten, glm::vec4 newDir, glm::vec4 newParam1, glm::vec4 newParam2);
 	void setPhysicsRunning(bool isRunning);
 	void updateDebugMode(bool useDebug, int selcetedMesh, int selectedLight);
+	// Animation Manager Settings Setting
+	void setTimescale(float newTS);
+	void toggleRunningState(void);
+
 
 	// Data Creation ///
 	void addNewObject(std::string meshName, char* friendlyName);

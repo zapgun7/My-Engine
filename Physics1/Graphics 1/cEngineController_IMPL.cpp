@@ -150,6 +150,18 @@ void cEngineController_IMPL::updateDebugMode(bool useDebug, int selcetedMesh, in
 	return;
 }
 
+void cEngineController_IMPL::setTimescale(float newTS)
+{
+	m_pAnimationsManager->setTimescale(newTS);
+	return;
+}
+
+void cEngineController_IMPL::toggleRunningState(void)
+{
+	m_pAnimationsManager->toggleRunning();
+	return;
+}
+
 void cEngineController_IMPL::addNewObject(std::string meshName, char* friendlyName)
 {
 	// Create cmesh and add to cGraphicsMain

@@ -5,6 +5,7 @@
 cPlayer::cPlayer(GLFWwindow* window)
 {
 	m_window = window;
+	m_pEngineController = cEngineController::GetEngineController();
 }
 
 cPlayer::~cPlayer()
@@ -15,7 +16,28 @@ cPlayer::~cPlayer()
 void cPlayer::Update(double deltaTime, glm::vec3* cameraPosition, glm::quat* cameraRotation)
 {
 	// INPUT FOR THE ANIMATION PROJECT
+	int tempState = glfwGetKey(m_window, GLFW_KEY_1); if (tempState == GLFW_PRESS) m_pEngineController->setTimescale(1.0f);
+	tempState = glfwGetKey(m_window, GLFW_KEY_2); if (tempState == GLFW_PRESS) m_pEngineController->setTimescale(2.0f);
+	tempState = glfwGetKey(m_window, GLFW_KEY_3); if (tempState == GLFW_PRESS) m_pEngineController->setTimescale(3.0f);
+	tempState = glfwGetKey(m_window, GLFW_KEY_4); if (tempState == GLFW_PRESS) m_pEngineController->setTimescale(4.0f);
+	tempState = glfwGetKey(m_window, GLFW_KEY_5); if (tempState == GLFW_PRESS) m_pEngineController->setTimescale(5.0f);
 
+	static bool isSpacePressed = false;
+
+	tempState = glfwGetKey(m_window, GLFW_KEY_SPACE);
+	if (isSpacePressed)
+	{
+		if (tempState != GLFW_PRESS) isSpacePressed = false;
+	}
+	else
+	{
+		if (tempState == GLFW_PRESS) 
+		{
+			isSpacePressed = true;
+			m_pEngineController->toggleRunningState();
+		}
+	}
+	
 
 
 

@@ -9,6 +9,8 @@
 #include "Physics/sPhysicsProperties.h"
 #include "Other Graphics Stuff/OpenGLCommon.h"
 
+#include "cEngineController.h"
+
 //class cPhysics;
 
 class cPlayer
@@ -22,7 +24,7 @@ public:
 	
 
 private:
-
+	cEngineController* m_pEngineController;
 	GLFWwindow* m_window; // Reference to the thing we get inputs from, DUHH
 	float m_CameraSpeed = 100.0f; // While it's not an actual player
 	float m_InverseSensitivity = 10.0f; // Higher = slower turning

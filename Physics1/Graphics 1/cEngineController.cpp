@@ -104,6 +104,18 @@ void cEngineController::updateDebugMode(bool useDebug, int selcetedMesh, int sel
 	return;
 }
 
+void cEngineController::setTimescale(float newTS)
+{
+	m_pTheEngineController->setTimescale(newTS);
+	return;
+}
+
+void cEngineController::toggleRunningState(void)
+{
+	m_pTheEngineController->toggleRunningState();
+	return;
+}
+
 void cEngineController::addNewObject(std::string meshName, char* friendlyName)
 {
 	m_pTheEngineController->addNewObject(meshName, friendlyName);
