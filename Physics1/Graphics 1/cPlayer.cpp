@@ -138,33 +138,43 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 			glm::vec3 objForward = m_pPlayerObject->get_qOrientation() * glm::vec3(0, 0, 1.0f);
 			objForward = glm::normalize(glm::vec3(objForward.x, 0, objForward.z));
 
-			const float SPEED = 30.0f;
+			const float SPEED = 40.0f;
 			const float CAMERADISTANCE = 50.0f;
-			const float SPEEDCAP = 50.0f;
-			const float SPEEDREDUCTION = 0.5f;
+			const float SPEEDCAP = 30.0f;
+			const float SPEEDREDUCTION = 1.0f;
 			const float ROTATIONSPEED = 70.0f;
+
+			bool isMoving = false;
 
 			state = glfwGetKey(m_window, GLFW_KEY_W);
 			if (state == GLFW_PRESS) // Move forward
 			{
-				m_pPlayerObject->position += objForward * SPEED * static_cast<float>(deltaTime);
+				//m_pPlayerObject->position += objForward * SPEED * static_cast<float>(deltaTime);
+				m_pPlayerObject->velocity += objForward * SPEED * static_cast<float>(deltaTime);
+				isMoving = true;
 			}
 			state = glfwGetKey(m_window, GLFW_KEY_S);
 			if (state == GLFW_PRESS) // Move backwards
 			{
-				m_pPlayerObject->position -= objForward * SPEED * static_cast<float>(deltaTime);
+				//m_pPlayerObject->position -= objForward * SPEED * static_cast<float>(deltaTime);
+				m_pPlayerObject->velocity -= objForward * SPEED * static_cast<float>(deltaTime);
+				isMoving = true;
 			}
 			state = glfwGetKey(m_window, GLFW_KEY_A);
 			if (state == GLFW_PRESS) // Move left
 			{
-				m_pPlayerObject->position += glm::normalize(glm::cross(glm::vec3(0, 1, 0), objForward)) * SPEED * static_cast<float>(deltaTime);
+				//m_pPlayerObject->position += glm::normalize(glm::cross(glm::vec3(0, 1, 0), objForward)) * SPEED * static_cast<float>(deltaTime);
+				m_pPlayerObject->velocity += glm::normalize(glm::cross(glm::vec3(0, 1, 0), objForward)) * SPEED * static_cast<float>(deltaTime);
+				isMoving = true;
 // 				glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, 3, 0)));
 // 				m_pPlayerObject->setRotationFromQuat(m_pPlayerObject->get_qOrientation() * rotAdjust);
 			}
 			state = glfwGetKey(m_window, GLFW_KEY_D);
 			if (state == GLFW_PRESS) // Move right
 			{
-				m_pPlayerObject->position -= glm::normalize(glm::cross(glm::vec3(0, 1, 0), objForward)) * SPEED * static_cast<float>(deltaTime);
+				//m_pPlayerObject->position -= glm::normalize(glm::cross(glm::vec3(0, 1, 0), objForward)) * SPEED * static_cast<float>(deltaTime);
+				m_pPlayerObject->velocity -= glm::normalize(glm::cross(glm::vec3(0, 1, 0), objForward)) * SPEED * static_cast<float>(deltaTime);
+				isMoving = true;
 // 				glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -3, 0)));
 // 				m_pPlayerObject->setRotationFromQuat(m_pPlayerObject->get_qOrientation()* rotAdjust);
 			}
@@ -186,10 +196,17 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 			{
 				m_pPlayerObject->velocity = glm::normalize(m_pPlayerObject->velocity) * SPEEDCAP;
 			}
-			else
+			else if (!isMoving)
 			{
+// 				float addSpdReduction = 10.0f;
+// 				addSpdReduction -= glm::length(m_pPlayerObject->velocity);
+
 				// Reduce speed over time
 				m_pPlayerObject->velocity -= m_pPlayerObject->velocity * SPEEDREDUCTION * static_cast<float>(deltaTime);
+// 				if (glm::length(m_pPlayerObject->velocity) < 2.0f)
+// 					m_pPlayerObject->velocity -= m_pPlayerObject->velocity * SPEEDREDUCTION * static_cast<float>(deltaTime);
+				if (glm::length(m_pPlayerObject->velocity) < 0.1f)
+					m_pPlayerObject->velocity = glm::vec3(0);
 			}
 
 			// Now to set the camera to where it should be

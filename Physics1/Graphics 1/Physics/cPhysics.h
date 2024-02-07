@@ -99,7 +99,7 @@ private:
 	cVAOManager* m_pMeshManager = NULL;
 	//cGraphicsMain* m_pGraphicsMain;
 
-	bool m_IsRunning = false; // If physics updates should be calculated. Pausing good for moving stuff around in editor then resuming physics
+	bool m_IsRunning = true; // If physics updates should be calculated. Pausing good for moving stuff around in editor then resuming physics
 
 	
 
