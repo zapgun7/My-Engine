@@ -36,7 +36,7 @@ void cEngineController_IMPL::Run(void)
 		// Messy, but will do this here
 		glm::vec3 camPos = m_TheCamera->position;
 		glm::quat camQuat = m_TheCamera->get_qOrientation();
-		m_ThePlayer->Update(deltaTime, &camPos, &camQuat);
+		m_ThePlayer->Update(deltaTime, camPos, camQuat);
 		m_TheCamera->position = camPos;
 		m_TheCamera->setRotationFromQuat(camQuat);
 		m_pTheGraphics->UpdateCamera(camPos, camQuat);
@@ -83,6 +83,46 @@ bool cEngineController_IMPL::Initialize(void)
 	m_TheCamera = new sPhysicsProperties();
 	m_TheCamera->friendlyName = "cam";
 	m_ThePlayer = new cPlayer(m_pTheGraphics->getWindow());
+
+
+	// Make player object for third person !!!!! JUST FOR AI PROJECT 1
+	sPhysicsProperties* playerObj = new sPhysicsProperties();
+	playerObj->friendlyName = "player";
+
+
+	cMesh* playerMesh = new cMesh();
+	playerMesh->meshName = "rusty_ship.ply";
+	playerMesh->friendlyName = "player";
+	playerMesh->bDoNotLight = false;
+	playerMesh->textureName[0] = "water.bmp";
+	playerMesh->uniqueID = playerObj->getUniqueID();
+	playerObj->pTheAssociatedMesh = playerMesh;
+
+
+	m_ThePlayer->setPlayerObject(playerObj);
+
+	addCustomObject(playerMesh, playerObj);
+
+
+
+	// Create some ground
+
+	sPhysicsProperties* flatGround = new sPhysicsProperties();
+	flatGround->friendlyName = "Big_Flat_Mesh.ply";
+	flatGround->position.y = -5.0f;
+
+
+	cMesh* flatGroundMesh = new cMesh();
+	flatGroundMesh->meshName = "Big_Flat_Mesh.ply";
+	flatGroundMesh->friendlyName = "ground";
+	flatGroundMesh->bDoNotLight = false;
+	flatGroundMesh->textureName[0] = "metal_s01.bmp";
+	flatGroundMesh->uniqueID = playerObj->getUniqueID();
+	flatGround->pTheAssociatedMesh = flatGroundMesh;
+
+	addCustomObject(flatGroundMesh, flatGround);
+
+	// END OF AI PROJECT 1 INITIALIZATION
 
 	return true;
 }
@@ -222,13 +262,13 @@ void cEngineController_IMPL::loadScene(std::string fileName)
 	m_pTheSceneManager->loadScene(fileName);
 
 	// Lazy way to toss on animation when scene is loaded
- 	std::vector<sPhysicsProperties*> physVec = m_pThePhysics->getPhysicsVec();
-	for (sPhysicsProperties* currObj : physVec)
-	{
-		m_pAnimationsManager->AddAnimationObj(currObj);
-		if (currObj->getUniqueID() == 2)
-			currObj->scale = glm::vec3(2); // Lazy way to make bigger
-	}
+//  	std::vector<sPhysicsProperties*> physVec = m_pThePhysics->getPhysicsVec();
+// 	for (sPhysicsProperties* currObj : physVec)
+// 	{
+// 		m_pAnimationsManager->AddAnimationObj(currObj);
+// 		if (currObj->getUniqueID() == 2)
+// 			currObj->scale = glm::vec3(2); // Lazy way to make bigger
+// 	}
 
 	//physVec.push_back(m_TheCamera); // Add camera
  	//m_pLuaBrain->setPhysVec(physVec);

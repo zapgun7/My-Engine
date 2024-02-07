@@ -32,7 +32,7 @@ sAnimInfo* cAnimationBuilder::MakeAnimation(AnimType type)
 		const float BOUNCEHEIGHT = 30;
 		const float HORIZONTALAMP = 50;
 		const float SQUISHAMP = 0.8f;
-		const double TIMEAMP = 1.0; // Time
+		const double TIMEAMP = 4.0; // Time
 
 
 		// Start by setting up first placeholder key frame
@@ -280,7 +280,7 @@ sAnimInfo* cAnimationBuilder::MakeAnimation(AnimType type)
 	}
 	case FLYSHIP:
 	{
-		const float TIMEAMP = 0.5f;
+		const float TIMEAMP = 2.0f;
 		const float MOVEAMP = 50.0f;
 
 

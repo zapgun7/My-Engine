@@ -50,6 +50,7 @@ void cAnimationManager::Update(double dt)
 	if (!m_bIsRunning) return;
 	dt *= m_TimeScale;
 
+
 	for (sAnimInfo* currAnim : m_Animations) // Go through all animations
 	{
 		if (currAnim->loopCount == 0) // Inactive or finished animation

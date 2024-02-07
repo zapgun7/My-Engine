@@ -150,6 +150,7 @@ void cMesh::setDrawScale(const glm::vec3& newScale)
 	return;
 }
 
+
 // void cMesh::Update(double deltaTime)
 // {
 // #ifdef _DEBUG
