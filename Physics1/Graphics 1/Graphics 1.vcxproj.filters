@@ -35,9 +35,6 @@
     <Filter Include="Physics">
       <UniqueIdentifier>{a3eb3f03-de0d-4d45-864d-edc647ca39f0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Player">
-      <UniqueIdentifier>{64aa2570-a3db-4003-a09b-4b47c87a8dc8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Audio">
       <UniqueIdentifier>{585c80b5-5172-435c-8e39-eece406d4fcb}</UniqueIdentifier>
     </Filter>
@@ -70,6 +67,9 @@
     </Filter>
     <Filter Include="Animation\Lua\Commands">
       <UniqueIdentifier>{6dcb74dd-9232-4dc4-a676-cbe580f40484}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entity">
+      <UniqueIdentifier>{64aa2570-a3db-4003-a09b-4b47c87a8dc8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -140,7 +140,7 @@
       <Filter>Physics</Filter>
     </ClCompile>
     <ClCompile Include="cPlayer.cpp">
-      <Filter>Player</Filter>
+      <Filter>Entity</Filter>
     </ClCompile>
     <ClCompile Include="cSoundManager.cpp">
       <Filter>Audio</Filter>
@@ -220,6 +220,15 @@
     <ClCompile Include="cAnimationBuilder.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
+    <ClCompile Include="cEnemyEntity.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="cEntityManager.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="cEntityBuilder.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basic Shader Manager\cShaderManager.h">
@@ -286,7 +295,7 @@
       <Filter>Physics</Filter>
     </ClInclude>
     <ClInclude Include="cPlayer.h">
-      <Filter>Player</Filter>
+      <Filter>Entity</Filter>
     </ClInclude>
     <ClInclude Include="cSoundManager.h">
       <Filter>Audio</Filter>
@@ -371,6 +380,18 @@
     </ClInclude>
     <ClInclude Include="cAnimationBuilder.h">
       <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="cEnemyEntity.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="cEntityManager.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="iEntity.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="cEntityBuilder.h">
+      <Filter>Entity</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

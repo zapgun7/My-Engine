@@ -150,8 +150,11 @@
     <ClCompile Include="cAnimationBuilder.cpp" />
     <ClCompile Include="cAnimationManager.cpp" />
     <ClCompile Include="cEmitterBuilder.cpp" />
+    <ClCompile Include="cEnemyEntity.cpp" />
     <ClCompile Include="cEngineController.cpp" />
     <ClCompile Include="cEngineController_IMPL.cpp" />
+    <ClCompile Include="cEntityBuilder.cpp" />
+    <ClCompile Include="cEntityManager.cpp" />
     <ClCompile Include="cHiResTimer.cpp" />
     <ClCompile Include="cInputHandler.cpp" />
     <ClCompile Include="cLevelEditor.cpp" />
@@ -202,8 +205,11 @@
     <ClInclude Include="cAnimationBuilder.h" />
     <ClInclude Include="cAnimationManager.h" />
     <ClInclude Include="cEmitterBuilder.h" />
+    <ClInclude Include="cEnemyEntity.h" />
     <ClInclude Include="cEngineController.h" />
     <ClInclude Include="cEngineController_IMPL.h" />
+    <ClInclude Include="cEntityBuilder.h" />
+    <ClInclude Include="cEntityManager.h" />
     <ClInclude Include="cHiResTimer.h" />
     <ClInclude Include="cInputHandler.h" />
     <ClInclude Include="cLevelEditor.h" />
@@ -214,6 +220,7 @@
     <ClInclude Include="cSoundUtils.h" />
     <ClInclude Include="cVAOManager\cVAOManager.h" />
     <ClInclude Include="cVAOManager\sModelDrawInfo.h" />
+    <ClInclude Include="iEntity.h" />
     <ClInclude Include="Lua\cCommandFactory.h" />
     <ClInclude Include="Lua\cCommandGroup.h" />
     <ClInclude Include="Lua\cCommandManager.h" />

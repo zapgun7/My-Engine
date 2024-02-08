@@ -11,6 +11,7 @@
 #include "Lua/cLuaBrain.h"
 #include "cPlayer.h"
 #include "cAnimationManager.h"
+#include "cEntityManager.h"
 
 class cEngineController_IMPL
 {
@@ -61,6 +62,7 @@ private:
 	cSceneManagement* m_pTheSceneManager;
 	cLuaBrain* m_pLuaBrain;
 	cAnimationManager* m_pAnimationsManager;
+	cEntityManager* m_pEntityManager;
 	// Scene manager should be controlled by imgui or some game controller that loads levels
 
 	sPhysicsProperties* m_TheCamera; // Just gonna put this here for now

@@ -42,9 +42,11 @@ void cEngineController_IMPL::Run(void)
 		m_pTheGraphics->UpdateCamera(camPos, camQuat);
 		// End of messy
 
-		m_pLuaBrain->UpdateActiveCommands(deltaTime);
+		//m_pLuaBrain->UpdateActiveCommands(deltaTime);
 
 		m_pAnimationsManager->Update(deltaTime);
+
+		m_pEntityManager->Update(deltaTime);
 
 		m_pTheEditor->Update(deltaTime); //m_pTheEditor->Update(uncappedDT); 
 		m_pThePhysics->Update(deltaTime);
@@ -78,6 +80,8 @@ bool cEngineController_IMPL::Initialize(void)
 
 	this->m_pAnimationsManager = cAnimationManager::GetInstance();
 
+	
+
 
 	// Make the camera object
 	m_TheCamera = new sPhysicsProperties();
@@ -103,7 +107,10 @@ bool cEngineController_IMPL::Initialize(void)
 
 	addCustomObject(playerMesh, playerObj);
 
-
+	this->m_pEntityManager = new cEntityManager();
+	this->m_pEntityManager->SetPlayer(playerObj);
+	this->m_pEntityManager->Initialize();
+	
 
 	// Create some ground
 

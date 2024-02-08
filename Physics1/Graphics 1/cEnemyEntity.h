@@ -1,6 +1,12 @@
 #pragma once
 
+#include "Other Graphics Stuff/OpenGLCommon.h"
+#include <glm/vec3.hpp>
+
+#include "iEntity.h"
+
 struct sPhysicsProperties;
+
 
 
 
@@ -15,13 +21,17 @@ enum eAIType
 };
 
 
-class cEnemyEntity
+class cEnemyEntity : public iEntity
 {
 public:
-	cEnemyEntity();
+	cEnemyEntity(sPhysicsProperties* entityObj);
 	~cEnemyEntity();
 
-	void Update(double deltaTime);
+	virtual void Update(double dt);
+
+
+	virtual glm::vec3 getPosition(void);
+	virtual glm::quat getOrientation(void);
 
 
 	void setTargetObject(sPhysicsProperties* goalObj);
@@ -29,6 +39,9 @@ public:
 private:
 	sPhysicsProperties* m_pEntityObject = nullptr;
 	sPhysicsProperties* m_pPlayerEntity = nullptr; // Do it this way, or pass target object every update
+
+
+	glm::vec3 getLookVector(void); // Look vector in XZ
 
 
 	const float MAXMOVESPEED = 20.0f;
