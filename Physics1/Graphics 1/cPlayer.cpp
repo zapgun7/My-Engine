@@ -111,7 +111,7 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 	const float CAMERADISTANCE = 50.0f;
 	const float SPEEDCAP = 30.0f;
 	const float SPEEDREDUCTION = 1.0f;
-	const float ROTATIONSPEED = 70.0f;
+	const float ROTATIONSPEED = 90.0f;
 
 
 
