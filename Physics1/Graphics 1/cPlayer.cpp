@@ -106,6 +106,15 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 		isRightClicking = false;
 	}
 
+	bool isMoving = false;
+	const float SPEED = 40.0f;
+	const float CAMERADISTANCE = 50.0f;
+	const float SPEEDCAP = 30.0f;
+	const float SPEEDREDUCTION = 1.0f;
+	const float ROTATIONSPEED = 70.0f;
+
+
+
 	if (isRightClicking) // Have movement tied to right-clicking too
 	{
 		switch (m_CameraType)
@@ -138,13 +147,6 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 			glm::vec3 objForward = m_pPlayerObject->get_qOrientation() * glm::vec3(0, 0, 1.0f);
 			objForward = glm::normalize(glm::vec3(objForward.x, 0, objForward.z));
 
-			const float SPEED = 40.0f;
-			const float CAMERADISTANCE = 50.0f;
-			const float SPEEDCAP = 30.0f;
-			const float SPEEDREDUCTION = 1.0f;
-			const float ROTATIONSPEED = 70.0f;
-
-			bool isMoving = false;
 
 			state = glfwGetKey(m_window, GLFW_KEY_W);
 			if (state == GLFW_PRESS) // Move forward
@@ -220,6 +222,16 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 
 			break;
 		}
+	}
+
+	if ((m_CameraType == THIRDPERSON) && (!isMoving))
+	{
+		m_pPlayerObject->velocity -= m_pPlayerObject->velocity * SPEEDREDUCTION * static_cast<float>(deltaTime);
+		// 				if (glm::length(m_pPlayerObject->velocity) < 2.0f)
+		// 					m_pPlayerObject->velocity -= m_pPlayerObject->velocity * SPEEDREDUCTION * static_cast<float>(deltaTime);
+		if (glm::length(m_pPlayerObject->velocity) < 0.1f)
+			m_pPlayerObject->velocity = glm::vec3(0);
+		cameraPosition = m_pPlayerObject->position - forwardVector * CAMERADISTANCE;
 	}
 
 	return;

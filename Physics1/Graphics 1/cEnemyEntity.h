@@ -17,7 +17,6 @@ enum eAIType
 	PURSUE,
 	EVADE,
 	APPROACH
-	
 };
 
 
@@ -45,7 +44,10 @@ private:
 
 
 	const float MAXMOVESPEED = 20.0f;
-	const float MAXTURNSPEED = 5.0f;
+	const float ROTATIONSPEED = 30.0f;
+
+
+	const float PREDICTIONOFFSET = 15.0f; // Distance in direction the player's moving the AI will work around
 
 	eAIType m_eType = SEEK;
 
