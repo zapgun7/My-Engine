@@ -18,10 +18,20 @@ void cEntityManager::Initialize(void)
 	m_pEntityBuilder = new cEntityBuilder();
 	
 	// Make AI entity for the AI project
-	glm::vec3 aiPos = glm::vec3(20, 0, 20);
-	m_vecEntities.push_back(m_pEntityBuilder->MakeEntity(AIPROJ, aiPos));
+	//glm::vec3 aiPos = glm::vec3(20, 0, 20);
+	std::vector<glm::vec3> aiPoss;
+	aiPoss.push_back(glm::vec3(50, 0, 0));
+	aiPoss.push_back(glm::vec3(0, 0, 50));
+	aiPoss.push_back(glm::vec3(-50, 0, 0));
+	aiPoss.push_back(glm::vec3(0, 0, -50));
+	aiPoss.push_back(glm::vec3(50, 0, 50));
 
-	(static_cast<cEnemyEntity*>(m_vecEntities[0]))->setTargetObject(m_pPlayerObj);
+	for (unsigned int i = 0; i < 5; i++)
+	{
+		m_vecEntities.push_back(m_pEntityBuilder->MakeEntity(AIPROJ, aiPoss[i]));
+
+		(static_cast<cEnemyEntity*>(m_vecEntities[i]))->setTargetObject(m_pPlayerObj);
+	}
 }
 
 void cEntityManager::Update(double dt)

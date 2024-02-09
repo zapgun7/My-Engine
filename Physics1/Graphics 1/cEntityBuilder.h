@@ -25,4 +25,7 @@ public:
 
 private:
 	cEngineController* m_pEngineController = nullptr;
+
+
+	int tempCounter4Project = 0;
 };

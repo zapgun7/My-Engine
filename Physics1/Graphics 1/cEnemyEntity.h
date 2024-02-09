@@ -23,7 +23,7 @@ enum eAIType
 class cEnemyEntity : public iEntity
 {
 public:
-	cEnemyEntity(sPhysicsProperties* entityObj);
+	cEnemyEntity(sPhysicsProperties* entityObj, eAIType type);
 	~cEnemyEntity();
 
 	virtual void Update(double dt);
@@ -50,6 +50,9 @@ private:
 
 	const float APPROACHDIST = 30.0f;
 	const float APPROACHAMP = 2.0f;
+
+	const float BOUNDSX = 150.0f;
+	const float BOUNDSZ = 150.0f;
 
 
 	const float PREDICTIONOFFSET = 1.5f; // Distance in direction the player's moving the AI will work around

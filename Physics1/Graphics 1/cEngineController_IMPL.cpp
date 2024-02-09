@@ -46,7 +46,7 @@ void cEngineController_IMPL::Run(void)
 
 		m_pAnimationsManager->Update(deltaTime);
 
-		m_pEntityManager->Update(deltaTime);
+		//m_pEntityManager->Update(deltaTime);
 
 		m_pTheEditor->Update(deltaTime); //m_pTheEditor->Update(uncappedDT); 
 		m_pThePhysics->Update(deltaTime);
@@ -88,48 +88,6 @@ bool cEngineController_IMPL::Initialize(void)
 	m_TheCamera->friendlyName = "cam";
 	m_ThePlayer = new cPlayer(m_pTheGraphics->getWindow());
 
-
-	// Make player object for third person !!!!! JUST FOR AI PROJECT 1
-	sPhysicsProperties* playerObj = new sPhysicsProperties();
-	playerObj->friendlyName = "player";
-
-
-	cMesh* playerMesh = new cMesh();
-	playerMesh->meshName = "rusty_ship.ply";
-	playerMesh->friendlyName = "player";
-	playerMesh->bDoNotLight = false;
-	playerMesh->textureName[0] = "water.bmp";
-	playerMesh->uniqueID = playerObj->getUniqueID();
-	playerObj->pTheAssociatedMesh = playerMesh;
-
-
-	m_ThePlayer->setPlayerObject(playerObj);
-
-	addCustomObject(playerMesh, playerObj);
-
-	this->m_pEntityManager = new cEntityManager();
-	this->m_pEntityManager->SetPlayer(playerObj);
-	this->m_pEntityManager->Initialize();
-	
-
-	// Create some ground
-
-	sPhysicsProperties* flatGround = new sPhysicsProperties();
-	flatGround->friendlyName = "Big_Flat_Mesh.ply";
-	flatGround->position.y = -5.0f;
-
-
-	cMesh* flatGroundMesh = new cMesh();
-	flatGroundMesh->meshName = "Big_Flat_Mesh.ply";
-	flatGroundMesh->friendlyName = "ground";
-	flatGroundMesh->bDoNotLight = false;
-	flatGroundMesh->textureName[0] = "metal_s01.bmp";
-	flatGroundMesh->uniqueID = playerObj->getUniqueID();
-	flatGround->pTheAssociatedMesh = flatGroundMesh;
-
-	addCustomObject(flatGroundMesh, flatGround);
-
-	// END OF AI PROJECT 1 INITIALIZATION
 
 	return true;
 }

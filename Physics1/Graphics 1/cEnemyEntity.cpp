@@ -3,11 +3,11 @@
 #include "Physics/sPhysicsProperties.h"
 
 
-cEnemyEntity::cEnemyEntity(sPhysicsProperties* entityObj)
+cEnemyEntity::cEnemyEntity(sPhysicsProperties* entityObj, eAIType type)
 {
 	m_pEntityObject = entityObj;
 
-	m_eType = APPROACH;
+	m_eType = type;
 }
 
 cEnemyEntity::~cEnemyEntity()
@@ -141,6 +141,18 @@ void cEnemyEntity::Update(double dt)
 		// Regular speed reduction
 		m_pEntityObject->velocity -= m_pEntityObject->velocity * SPEEDREDUCTION * static_cast<float>(dt);
 	}
+
+
+	// Keep in bounds so fleeing entites don't truly escape
+	if (abs(m_pEntityObject->position.x) > BOUNDSX)
+	{
+		m_pEntityObject->position.x = BOUNDSX * (abs(m_pEntityObject->position.x) / m_pEntityObject->position.x);
+	}
+	if (abs(m_pEntityObject->position.z) > BOUNDSZ)
+	{
+		m_pEntityObject->position.z = BOUNDSX * (abs(m_pEntityObject->position.z) / m_pEntityObject->position.z);
+	}
+
 
 	return;
 }

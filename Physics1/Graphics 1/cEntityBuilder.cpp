@@ -39,8 +39,37 @@ iEntity* cEntityBuilder::MakeEntity(eEntityType type, glm::vec3& pos)
 		
 		m_pEngineController->addCustomObject(newEntMesh, newEntPhys);
 
-
-		newEntity = new cEnemyEntity(newEntPhys);
+		// Setup just for spawning all required for the project
+		if (tempCounter4Project == 0)
+		{
+			newEntMesh->wholeObjectDebugColourRGBA = glm::vec4(1.0f, 0, 0, 1.0f);
+			newEntity = new cEnemyEntity(newEntPhys, SEEK);
+			tempCounter4Project++;
+		}
+		else if (tempCounter4Project == 1)
+		{
+			newEntMesh->wholeObjectDebugColourRGBA = glm::vec4(0, 0, 1.0f, 1.0f);
+			newEntity = new cEnemyEntity(newEntPhys, FLEE);
+			tempCounter4Project++;
+		}
+		else if (tempCounter4Project == 2)
+		{
+			newEntMesh->wholeObjectDebugColourRGBA = glm::vec4(1.0f, 0, 1.0f, 1.0f);
+			newEntity = new cEnemyEntity(newEntPhys, PURSUE);
+			tempCounter4Project++;
+		}
+		else if (tempCounter4Project == 3)
+		{
+			newEntMesh->wholeObjectDebugColourRGBA = glm::vec4(0.0f, 0.3f, 0.7f, 1.0f);
+			newEntity = new cEnemyEntity(newEntPhys, EVADE);
+			tempCounter4Project++;
+		}
+		else if (tempCounter4Project == 4)
+		{
+			newEntMesh->wholeObjectDebugColourRGBA = glm::vec4(0.7f, 0.7f, 0, 1.0f);
+			newEntity = new cEnemyEntity(newEntPhys, APPROACH);
+			tempCounter4Project++;
+		}
 		break;
 	}
 
