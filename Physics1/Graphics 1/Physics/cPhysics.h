@@ -8,9 +8,19 @@
 #include "../Other Graphics Stuff/cGraphicsMain.h"
 #include "cAABB.h"
 
+//struct sPossibleCollision;
+
 
 class cPhysics
 {
+private:
+	struct sPossibleCollision
+	{
+		sPhysicsProperties* collisionObject; // For future detecting what properties apply to collision (surface restitution
+		glm::vec3 hitNorm;
+		float q = FLT_MAX; // Ratio of hit over update window (0 = start of window; 1 = end of window)
+	};
+
 public:
 	cPhysics();
 	~cPhysics();
@@ -68,8 +78,12 @@ private:
 	bool m_Sphere_Triangle_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriangle);
 	bool m_Sphere_AABB_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pAABB);
 	bool m_Sphere_Capsule_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pCapsule);
-	bool m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriMesh);
+	bool m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriMesh, sPossibleCollision& returnCollision);
 	bool m_Sphere_TriMeshLocal_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriMesh);
+
+
+	// Collision Handling
+	void m_Sphere_Collision(sPhysicsProperties* pSphere, sPossibleCollision& collision);
 
 	// Oct-Tree AABBs
 	std::map<std::string, cAABB*> m_map_ModelAABBs; // Map of AABB oct-treeified models
@@ -99,7 +113,7 @@ private:
 	cVAOManager* m_pMeshManager = NULL;
 	//cGraphicsMain* m_pGraphicsMain;
 
-	bool m_IsRunning = true; // If physics updates should be calculated. Pausing good for moving stuff around in editor then resuming physics
+	bool m_IsRunning = false; // If physics updates should be calculated. Pausing good for moving stuff around in editor then resuming physics
 
 	
 
@@ -115,6 +129,9 @@ private:
 
 	};
 	std::vector< sCollisionEvent > m_vecCollisionsThisFrame;
+
+
+	
 
 	bool m_CheckExistingCollision(sPhysicsProperties* objA, sPhysicsProperties* objB); // Returns sCollisionEvent object if the objects have collided before
 };

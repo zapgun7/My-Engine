@@ -184,6 +184,7 @@
     <ClCompile Include="Physics\cPhysics_AABB_Subdivide.cpp" />
     <ClCompile Include="Physics\cPhysics_AABB_Traversal.cpp" />
     <ClCompile Include="Physics\cPhysics_BasicTests.cpp" />
+    <ClCompile Include="Physics\cPhysics_CollisionResponse.cpp" />
     <ClCompile Include="Physics\cPhysics_IntersectionTests.cpp" />
     <ClCompile Include="Physics\cPhysics_Update.cpp" />
     <ClCompile Include="Physics\sPhysicsProperties.cpp" />

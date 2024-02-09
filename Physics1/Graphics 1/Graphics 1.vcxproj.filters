@@ -229,6 +229,9 @@
     <ClCompile Include="cEntityBuilder.cpp">
       <Filter>Entity</Filter>
     </ClCompile>
+    <ClCompile Include="Physics\cPhysics_CollisionResponse.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basic Shader Manager\cShaderManager.h">
