@@ -43,11 +43,16 @@ private:
 	glm::vec3 getLookVector(void); // Look vector in XZ
 
 
-	const float MAXMOVESPEED = 20.0f;
+	const float MOVESPEED = 20.0f;
 	const float ROTATIONSPEED = 30.0f;
+	const float VELOCITYLIMIT = 15.0f;
+	const float SPEEDREDUCTION = 0.99f;
+
+	const float APPROACHDIST = 30.0f;
+	const float APPROACHAMP = 2.0f;
 
 
-	const float PREDICTIONOFFSET = 15.0f; // Distance in direction the player's moving the AI will work around
+	const float PREDICTIONOFFSET = 1.5f; // Distance in direction the player's moving the AI will work around
 
 	eAIType m_eType = SEEK;
 

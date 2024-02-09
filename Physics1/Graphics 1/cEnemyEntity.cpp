@@ -6,6 +6,8 @@
 cEnemyEntity::cEnemyEntity(sPhysicsProperties* entityObj)
 {
 	m_pEntityObject = entityObj;
+
+	m_eType = APPROACH;
 }
 
 cEnemyEntity::~cEnemyEntity()
@@ -20,13 +22,22 @@ cEnemyEntity::~cEnemyEntity()
 // APPROACH
 void cEnemyEntity::Update(double dt)
 {
+	bool isMoving = false;
+
 	glm::vec3 vecToGoal;// = m_pPlayerEntity->position - m_pEntityObject->position;
+	glm::vec3 goalPos;
 	//glm::vec3 vecToGoalNorm;// = glm::normalize(vecToGoal);
 
 	if ((m_eType == SEEK) || (m_eType == FLEE) || (m_eType == APPROACH)) // Make this 2x (!condition)'s? 
+	{
 		vecToGoal = m_pPlayerEntity->position - m_pEntityObject->position;
+		goalPos = m_pPlayerEntity->position;
+	}
 	else
-		vecToGoal = m_pPlayerEntity->position + glm::normalize(m_pPlayerEntity->velocity) * PREDICTIONOFFSET;
+	{
+		goalPos = m_pPlayerEntity->position + m_pPlayerEntity->velocity * PREDICTIONOFFSET;
+		vecToGoal = goalPos - m_pEntityObject->position;
+	}
 
 	glm::vec3 vecToGoalNorm = glm::normalize(vecToGoal);
 
@@ -41,22 +52,95 @@ void cEnemyEntity::Update(double dt)
 
 
 	// Depending on behavior do something related to the goal
-	switch (this->m_eType)
+	if ((m_eType == SEEK) || (m_eType == PURSUE))
 	{
-	case SEEK:
 		if (crossResult.y > 0) // Turn left
 		{
 			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
-			//m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
 		}
 		else // Turn right
 		{
 			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
-			//m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
 		}
-		break;
+		if ((radDiff < 0.3f)
+			&& (glm::distance(m_pEntityObject->position, m_pPlayerEntity->position) > (glm::distance(m_pEntityObject->position + getLookVector(), m_pPlayerEntity->position))))
+		{
+			m_pEntityObject->velocity += getLookVector() * MOVESPEED * static_cast<float>(dt);
+			isMoving = true;
+		}
+	}
+	else if ((m_eType == FLEE) || (m_eType == EVADE))
+	{
+		if (crossResult.y > 0) 
+		{
+			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
+			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+		}
+		else 
+		{
+			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
+			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+		}
+		if ((radDiff < 0.8f) // Wider range to start fleeing/evading
+			&& (glm::distance(m_pEntityObject->position, m_pPlayerEntity->position) < (glm::distance(m_pEntityObject->position + getLookVector(), m_pPlayerEntity->position))))
+		{
+			m_pEntityObject->velocity += getLookVector() * MOVESPEED * static_cast<float>(dt);
+			isMoving = true;
+		}
+	}
+	else // Approach
+	{
+		if (crossResult.y > 0) // Turn left
+		{
+			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
+			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+		}
+		else // Turn right
+		{
+			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
+			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+		}
+
+		float entPlyrDist = glm::distance(m_pEntityObject->position, m_pPlayerEntity->position);
+		if ((radDiff < 0.2f)
+			&& (entPlyrDist > (glm::distance(m_pEntityObject->position + getLookVector(), m_pPlayerEntity->position))))
+		{
+			if (entPlyrDist > APPROACHDIST + APPROACHAMP) // If too far away
+			{
+				// moveSpdAdjust reduces how much then enemy rubber bands back and forth trying to keep the certain distance
+				// It just reduces its acceleration the closer to the sweet spot it is
+				float moveSpdAdjust = (entPlyrDist - (APPROACHDIST + APPROACHAMP)) * 0.05f; 
+				moveSpdAdjust = (moveSpdAdjust > 1) ? 1 : moveSpdAdjust;
+				
+				m_pEntityObject->velocity += getLookVector() * MOVESPEED * moveSpdAdjust * static_cast<float>(dt);
+				isMoving = true;
+			}
+			else if (entPlyrDist < APPROACHDIST - APPROACHAMP) // If too close
+			{
+				float moveSpdAdjust = ((APPROACHDIST + APPROACHAMP) - entPlyrDist) * 0.05f;
+				moveSpdAdjust = (moveSpdAdjust > 1) ? 1 : moveSpdAdjust;
+
+				m_pEntityObject->velocity += getLookVector() * (-MOVESPEED) * moveSpdAdjust * static_cast<float>(dt);
+				isMoving = true;
+			}
+		}
 	}
 
+
+
+	// Limit overall speed
+	if (glm::length(m_pEntityObject->velocity) > VELOCITYLIMIT)
+	{
+		m_pEntityObject->velocity = glm::normalize(m_pEntityObject->velocity) * VELOCITYLIMIT;
+	}
+
+	if (true)//(!isMoving)
+	{
+		// Regular speed reduction
+		m_pEntityObject->velocity -= m_pEntityObject->velocity * SPEEDREDUCTION * static_cast<float>(dt);
+	}
 
 	return;
 }
