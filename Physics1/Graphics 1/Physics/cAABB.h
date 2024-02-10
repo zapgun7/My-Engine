@@ -93,6 +93,8 @@ public:
 	std::vector<sTriangle_A> sweepingSphereCollision(sPhysicsProperties* sphere);// Takes a sphere with reverse transform matrix of the AABB object applied to it; returns vector of near triangles
 	std::vector<sTriangle_A> sweepingSphereRecursion(float sphRad, glm::vec3 sphPos1, glm::vec3 sphPos2); 
 
+	std::vector<sTriangle_A> sweepingCapsuleCollision(sPhysicsProperties* capsule);
+
 
 	cAABB* getChild(unsigned int ID);
 
@@ -102,6 +104,5 @@ public:
 
 
 };
-
 
 

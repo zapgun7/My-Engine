@@ -81,6 +81,8 @@ private:
 	bool m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriMesh, sPossibleCollision& returnCollision);
 	bool m_Sphere_TriMeshLocal_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriMesh);
 
+	bool m_Capsule_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pCapsule, sPhysicsProperties* pTriMesh, sPossibleCollision& returnCollision);
+
 
 	// Collision Handling
 	void m_Sphere_Collision(sPhysicsProperties* pSphere, sPossibleCollision& collision);

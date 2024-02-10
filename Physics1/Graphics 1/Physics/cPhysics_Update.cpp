@@ -265,7 +265,7 @@ void cPhysics::Update(double deltaTime)
 // 	}//for (sPhsyicsProperties* pObjectA...
 
 
-	// Upadate the draw locations (and orientations) for all assocuated meshes
+	// Update the draw locations (and orientations) for all associated meshes
 	for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)
 	{
 		if (pObject->pTheAssociatedMesh)

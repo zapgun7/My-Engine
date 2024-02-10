@@ -205,7 +205,7 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 	reverseTransformedSphere.oldPosition = (matRevModelR * glm::vec4(reverseTransformedSphere.oldPosition, 1.0f));
 
 	// Rotate velocity to match default tri mesh
-	reverseTransformedSphere.velocity = (matRevModelR * glm::vec4(reverseTransformedSphere.velocity, 1.0f));
+	//reverseTransformedSphere.velocity = (matRevModelR * glm::vec4(reverseTransformedSphere.velocity, 1.0f)); // Don't need this anymore
 	
 
 	
@@ -360,8 +360,6 @@ bool cPhysics::m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle
 		return false;
 	}
 
-	// Run a quick check to make sure the sphere makes it to the plane in this update
-	glm::vec3 triV = pSphere->position - pSphere->oldPosition;
 
 	if (t > 1.0f)
 	{
@@ -399,6 +397,7 @@ bool cPhysics::m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle
 	// Will still have to figure out where on the sphere it collides with if it close enough
 
 	glm::vec3 rayHitOnSphere; // Relative to sphere's old position
+	glm::vec3 triV = pSphere->position - pSphere->oldPosition;
 
 	float updateLen = glm::length(triV);
 	triV = glm::normalize(triV);
@@ -423,10 +422,6 @@ bool cPhysics::m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle
 // 		// Does not intersect, don't bother casting ray
 // 		return 0;
 // 	}
-
-
-
-
 
 
 
@@ -464,6 +459,89 @@ bool cPhysics::m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle
 }
 
 
+bool cPhysics::m_Capsule_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pCapsule_General, sPhysicsProperties* pTriMesh_General, sPossibleCollision& returnCollision)
+{
+	// Do we have a mesh manager? 
+	if (!this->m_pMeshManager)
+	{
+		return false;
+	}
 
+	// Does the physics object have a mesh object associated? 
+	if (!pTriMesh_General->pTheAssociatedMesh)
+	{
+		return false;
+	}
+
+	// Get the info about this shape, specifically
+	sPhysicsProperties::sMeshOfTriangles_Indirect* pTriangleMesh =
+		(sPhysicsProperties::sMeshOfTriangles_Indirect*)(pTriMesh_General->pShape);
+
+	sPhysicsProperties::sCapsule* pCapsule = (sPhysicsProperties::sCapsule*)(pCapsule_General->pShape);
+
+
+	cAABB* TriMeshAABB = findAABBByModelName(pTriangleMesh->meshName);
+
+	if (TriMeshAABB == nullptr)
+	{
+		std::cout << "Couldn't find AABB" << std::endl;
+		return false;
+	}
+
+
+	glm::mat4 matRevModelT = glm::mat4(1.0f);
+	glm::mat4 matRevModelR = glm::mat4(1.0f);
+	glm::mat4 matRevTranslate = glm::translate(glm::mat4(1.0f),
+											  glm::vec3(-pTriMesh_General->position.x,
+											 -pTriMesh_General->position.y,
+											 -pTriMesh_General->position.z));
+
+	glm::mat4 matModelRT = glm::mat4(1.0f);
+	glm::mat4 matModelR = glm::mat4(1.0f);
+	glm::mat4 matTranslate = glm::translate(glm::mat4(1.0f),
+											glm::vec3(pTriMesh_General->position.x,
+											pTriMesh_General->position.y,
+											pTriMesh_General->position.z));
+
+
+	glm::mat4 matRevRotation = glm::mat4(glm::inverse(pTriMesh_General->get_qOrientation()));
+	glm::mat4 matRotation = glm::mat4(pTriMesh_General->get_qOrientation());
+
+
+	// For transforming relative to the base-triangles
+	matRevModelT *= matRevTranslate;
+	//matRevModelT *= matRevRotation;
+	matRevModelR *= matRevRotation;
+
+	// For converting back
+	matModelRT *= matTranslate;
+	matModelRT *= matRotation;
+	matModelR *= matRotation;
+
+
+
+	sPhysicsProperties reverseTransformedCapsule = *pCapsule_General;
+
+	//sPhysicsProperties::sCapsule* reverseCapsule = (sPhysicsProperties::sCapsule*)(pCapsule_General->pShape);
+	// Transform current to fit default triangle mesh
+	reverseTransformedCapsule.position = (matRevModelT * glm::vec4(reverseTransformedCapsule.position, 1.0f));
+	reverseTransformedCapsule.position = (matRevModelR * glm::vec4(reverseTransformedCapsule.position, 1.0f));
+
+	// Do it to old position too for continuous collision detection
+	reverseTransformedCapsule.oldPosition = (matRevModelT * glm::vec4(reverseTransformedCapsule.oldPosition, 1.0f));
+	reverseTransformedCapsule.oldPosition = (matRevModelR * glm::vec4(reverseTransformedCapsule.oldPosition, 1.0f));
+
+
+	reverseTransformedCapsule.upVec = (matRevModelR * glm::vec4(reverseTransformedCapsule.upVec, 1.0f));
+
+	// Rotate velocity to match default tri mesh
+	//reverseTransformedCapsule.velocity = (matRevModelR * glm::vec4(reverseTransformedCapsule.velocity, 1.0f)); // Don't need
+
+
+	// TODO
+	std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sweepingCapsuleCollision(&reverseTransformedCapsule);
+
+	// And then check each tri in the vec, same as the sphere stuff. gl future me <3
+}
 
 

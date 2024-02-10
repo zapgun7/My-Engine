@@ -373,6 +373,15 @@ std::vector<sTriangle_A> cAABB::sweepingSphereRecursion(float sphRad, glm::vec3 
 	return vec0;
 }
 
+std::vector<sTriangle_A> cAABB::sweepingCapsuleCollision(sPhysicsProperties* capsule)
+{
+	std::vector<sTriangle_A> returnTris;
+
+	// TODO
+
+	return returnTris;
+}
+
 
 // Helper function to combine 2 vectors, removing duplicates via their ID
 std::vector<sTriangle_A> triangleVectorUnion(std::vector<sTriangle_A> vecA, std::vector<sTriangle_A> vecB)

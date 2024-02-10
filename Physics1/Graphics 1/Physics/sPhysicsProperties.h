@@ -123,6 +123,7 @@ struct sPhysicsProperties
 			this->radius = radius;
 		}
 
+		glm::vec3 upVec = glm::vec3(0.0f, 1.0f, 0.0f); // Indicates direction of half lengths when rotated (during collision detection or otherwise)
 		float halfLength;
 		float radius;
 	};
@@ -175,6 +176,7 @@ struct sPhysicsProperties
 	glm::vec3 position = glm::vec3(0.0f);
 	// Save the old position
 	glm::vec3 oldPosition = glm::vec3(0.0f);
+	glm::vec3 upVec = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	float restitution = 0.5f; // Some bounce default
 	glm::vec3 scale = glm::vec3(1.0f);
