@@ -9,6 +9,10 @@ std::vector<sTriangle_A> triangleVectorUnion(std::vector<sTriangle_A> vecA, std:
 
 
 
+
+
+
+
 cAABB* cAABB::getChild(unsigned int ID)
 {
 	std::map< unsigned int,
@@ -373,14 +377,164 @@ std::vector<sTriangle_A> cAABB::sweepingSphereRecursion(float sphRad, glm::vec3 
 	return vec0;
 }
 
-std::vector<sTriangle_A> cAABB::sweepingCapsuleCollision(sPhysicsProperties* capsule)
+std::vector<sTriangle_A> cAABB::sweepingCapsuleCollision(sPhysicsProperties* pCapsule)
 {
 	std::vector<sTriangle_A> returnTris;
 
-	// TODO
+	// Start by checking if the moving capsule intersects the root AABB
+	if (!cPhysics::m_IntersectMovingCapsuleAABB(pCapsule, this))
+	{
+		// Not in root AABB, return empty vector
+		return returnTris;
+	}
+
+
+	// Assuming it is in the root box
+	// Now we kick off the recursion
+
+
+	// Calculate box made by capsule swept area for quick discard of child AABBs
+	sCapsuleInfo newInfo;
+	glm::vec3 currUpVec = pCapsule->upVec * ((sPhysicsProperties::sCapsule*)pCapsule->pShape)->halfLength;
+
+	glm::vec3 oldUp = pCapsule->oldPosition + currUpVec;
+	glm::vec3 newUp = pCapsule->oldPosition + currUpVec;
+	glm::vec3 oldDown = pCapsule->oldPosition - currUpVec;
+	glm::vec3 newDown = pCapsule->oldPosition - currUpVec;
+
+
+
+	// TODO make it so a max victor is not re-checked for being a min
+	newInfo.max.x = glm::max(glm::max(oldUp.x, newUp.x), glm::max(oldDown.x, newDown.x));
+	newInfo.max.y = glm::max(glm::max(oldUp.y, newUp.y), glm::max(oldDown.y, newDown.y));
+	newInfo.max.z = glm::max(glm::max(oldUp.z, newUp.z), glm::max(oldDown.z, newDown.z));
+	newInfo.min.x = glm::min(glm::min(oldUp.x, newUp.x), glm::min(oldDown.x, newDown.x));
+	newInfo.min.y = glm::min(glm::min(oldUp.y, newUp.y), glm::min(oldDown.y, newDown.y));
+	newInfo.min.z = glm::min(glm::min(oldUp.z, newUp.z), glm::min(oldDown.z, newDown.z));
+
+
+
+
+
+	//returnTris = this->sweepingCapsuleRecursion(radius, capsule->upVec, capsule->oldPosition, capsule->position);
+	returnTris = this->sweepingCapsuleRecursion(newInfo, pCapsule);
 
 	return returnTris;
 }
+
+
+//std::vector<sTriangle_A> cAABB::sweepingCapsuleRecursion(float capRad, glm::vec3 upVec, glm::vec3 capPos1, glm::vec3 capPos2)
+std::vector<sTriangle_A> cAABB::sweepingCapsuleRecursion(sCapsuleInfo& capInfo, sPhysicsProperties* pCapsule)
+{
+	// Check if in leaf node
+	if (this->getChild(0) == nullptr)
+	{
+		return triangles;
+	}
+
+	// Not a leaf
+
+	
+	bool validChildren[8] = { true, true, true, true, true, true, true, true };
+
+	if (capInfo.min.y > this->Ycenter())
+	{
+		validChildren[0] = false;
+		validChildren[2] = false;
+		validChildren[4] = false;
+		validChildren[6] = false;
+	}
+	else if (capInfo.max.y < this->Ycenter()) // If top of capsule is below center
+	{
+		validChildren[1] = false;
+		validChildren[3] = false;
+		validChildren[5] = false;
+		validChildren[7] = false;
+	}
+
+	if (capInfo.min.x > this->Xcenter()) // If -x of capsule is +x of center
+	{
+		validChildren[0] = false;
+		validChildren[1] = false;
+		validChildren[2] = false;
+		validChildren[3] = false;
+	}
+	else if (capInfo.max.x < this->Xcenter()) // If +x of capsule is -x of center
+	{
+		validChildren[4] = false;
+		validChildren[5] = false;
+		validChildren[6] = false;
+		validChildren[7] = false;
+	}
+
+	if (capInfo.min.z > this->Zcenter()) // If -z of capsule is +z of center
+	{
+		validChildren[0] = false;
+		validChildren[1] = false;
+		validChildren[6] = false;
+		validChildren[7] = false;
+	}
+	else if (capInfo.max.z < this->Zcenter()) // if +z of capsule is -z of center
+	{
+		validChildren[2] = false;
+		validChildren[3] = false;
+		validChildren[4] = false;
+		validChildren[5] = false;
+	}
+
+	// Double check the remaining children with more scrutiny
+	for (unsigned int i = 0; i < 8; i++)
+	{
+		if (validChildren[i])
+		{
+			if (!cPhysics::m_IntersectMovingCapsuleAABB(pCapsule, this)) validChildren[i] = false;
+		}
+	}
+
+
+	// Now we know what children we need to traverse
+	std::vector<sTriangle_A> vec0;
+	std::vector<sTriangle_A> vec1;
+	std::vector<sTriangle_A> vec2;
+	std::vector<sTriangle_A> vec3;
+	std::vector<sTriangle_A> vec4;
+	std::vector<sTriangle_A> vec5;
+	std::vector<sTriangle_A> vec6;
+	std::vector<sTriangle_A> vec7;
+
+
+	if (validChildren[0])
+		vec0 = this->getChild(0)->sweepingCapsuleRecursion(capInfo, pCapsule);
+	if (validChildren[1])
+		vec1 = this->getChild(1)->sweepingCapsuleRecursion(capInfo, pCapsule);
+	if (validChildren[2])
+		vec2 = this->getChild(2)->sweepingCapsuleRecursion(capInfo, pCapsule);
+	if (validChildren[3])
+		vec3 = this->getChild(3)->sweepingCapsuleRecursion(capInfo, pCapsule);
+	if (validChildren[4])
+		vec4 = this->getChild(4)->sweepingCapsuleRecursion(capInfo, pCapsule);
+	if (validChildren[5])
+		vec5 = this->getChild(5)->sweepingCapsuleRecursion(capInfo, pCapsule);
+	if (validChildren[6])
+		vec6 = this->getChild(6)->sweepingCapsuleRecursion(capInfo, pCapsule);
+	if (validChildren[7])
+		vec7 = this->getChild(7)->sweepingCapsuleRecursion(capInfo, pCapsule);
+
+	vec0 = triangleVectorUnion(vec0, vec1);
+	vec2 = triangleVectorUnion(vec2, vec3);
+	vec4 = triangleVectorUnion(vec4, vec5);
+	vec6 = triangleVectorUnion(vec6, vec7);
+
+	vec0 = triangleVectorUnion(vec0, vec2);
+	vec4 = triangleVectorUnion(vec4, vec6);
+
+	vec0 = triangleVectorUnion(vec0, vec4);
+
+
+
+	return vec0;
+}
+
 
 
 // Helper function to combine 2 vectors, removing duplicates via their ID

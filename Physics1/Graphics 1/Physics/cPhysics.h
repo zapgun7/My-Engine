@@ -101,11 +101,14 @@ public:
 	static float m_ClosestPtSegmentSegment(glm::vec3 p1, glm::vec3 q1, glm::vec3 p2, glm::vec3 q2, float& s, float& t, glm::vec3& c1, glm::vec3& c2);
 	static glm::vec3 m_ClosestPtLineSegTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 a, glm::vec3 b, glm::vec3 c);
 	static void m_ClosestPtPointAABB(glm::vec3 p, cAABB* b, glm::vec3& q);
+	static void m_ClosestPtSegmentAABB(glm::vec3& p1, glm::vec3& p2, cAABB& b, glm::vec3& q); // Closest point on segment
 
 	static int m_IntersectMovingSpherePlane(sPhysicsProperties* pSphere, glm::vec3 pn, float pd, float& t, glm::vec3& q);
 	static int m_IntersectRaySphere(glm::vec3 p, glm::vec3 d, sPhysicsProperties* pSphere, float& t, glm::vec3& q);
 	static int m_IntersectRayAABB(glm::vec3 p, glm::vec3 d, cAABB* a, float& tmin, glm::vec3& q);
-	static int m_IntersectMovingSphereAABB(sPhysicsProperties* pSphere, cAABB* b, float& t); // !!!INCOMPLETE!!!      Needs finer check for vertex regions
+	static int m_IntersectMovingSphereAABB(sPhysicsProperties* pSphere, cAABB* b, float& t); // TODO !!!INCOMPLETE!!!      Needs finer check for vertex regions
+	static int m_IntersectMovingCapsuleAABB(sPhysicsProperties* pCapsule, cAABB* b); // TODO !!!INCOMPLETE!!! misses corners of boxes swiping the capsule mid-section
+	static int m_IntersectSegmentAABB(glm::vec3& p0, glm::vec3& p1, cAABB& b);
 
 	// Less Basic Tests
 	static bool m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle_A* pTri, float &t, glm::vec3 &hitNorm);

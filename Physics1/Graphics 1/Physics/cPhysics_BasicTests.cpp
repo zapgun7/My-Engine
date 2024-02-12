@@ -337,6 +337,15 @@ void cPhysics::m_ClosestPtPointAABB(glm::vec3 p, cAABB* b, glm::vec3& q)
 }
 
 
+void cPhysics::m_ClosestPtSegmentAABB(glm::vec3& p1, glm::vec3& p2, cAABB& b, glm::vec3& q)
+{
+	// Closest point is one of 3:
+	// - Segment to edge (segment-segment)
+	// - Endpoint to face (point-plane)
+	// - Endpoint to edge (point-segment)
+}
+
+
 int cPhysics::m_IntersectMovingSpherePlane(sPhysicsProperties* pSphere, glm::vec3 pn, float pd, float& t, glm::vec3& q)
 {
 	sPhysicsProperties::sSphere* pSphereShape = (sPhysicsProperties::sSphere*)(pSphere->pShape); // To access the radius
@@ -455,7 +464,7 @@ int cPhysics::m_IntersectRayAABB(glm::vec3 p, glm::vec3 d, cAABB* a, float& tmin
 	return 1;
 }
 
-int cPhysics::m_IntersectMovingSphereAABB(sPhysicsProperties* pSphere, cAABB* b, float& t)
+int cPhysics::m_IntersectMovingSphereAABB(sPhysicsProperties* pSphere, cAABB* b, float& t) // TODO don't need t, so can prob reduce the load on this function?
 {
 	glm::vec3 d = pSphere->position - pSphere->oldPosition;
 	float r = ((sPhysicsProperties::sSphere*)pSphere->pShape)->radius;
@@ -473,5 +482,72 @@ int cPhysics::m_IntersectMovingSphereAABB(sPhysicsProperties* pSphere, cAABB* b,
 
 	// For now, we won't check the proper rounded corners; i.e. this function is incomplete but still works
 
+	return 1;
+}
+
+
+int cPhysics::m_IntersectMovingCapsuleAABB(sPhysicsProperties* pCapsule, cAABB* b)
+{
+	// Make a lozenge with the 2 capsule positions, see if it intersects the aabb. Simple, no? :)
+
+	// OTHER: Make line with old and new pos, get closest point on that to aabb.
+	// Then from that point make a line perpendicular that represents the height, closest point and compare if dist < radius
+
+	glm::vec3 d = pCapsule->position - pCapsule->oldPosition;
+	sPhysicsProperties::sCapsule* capsule= ((sPhysicsProperties::sCapsule*)pCapsule->pShape);
+	float r = capsule->radius;
+
+	cAABB e;
+	e.centerPosition = b->centerPosition;
+	e.halfLengths = b->halfLengths + glm::vec3(r);
+
+	glm::vec3 currUpVec = pCapsule->upVec * capsule->halfLength;
+
+	glm::vec3 oldUp = pCapsule->oldPosition + currUpVec;
+	glm::vec3 newUp = pCapsule->oldPosition + currUpVec;
+
+
+	if (m_IntersectSegmentAABB(oldUp, newUp, e)) return 1; // Check segment made by top of capsule line
+
+	glm::vec3 oldDown = pCapsule->oldPosition - currUpVec;
+	glm::vec3 newDown = pCapsule->oldPosition - currUpVec;
+	if (m_IntersectSegmentAABB(oldDown, newDown, e)) return 1; // Check segment made by bottom of capsule line
+	if (m_IntersectSegmentAABB(newUp, newDown, e)) return 1; // Check segment made by capsule line of new position
+
+	return 0;
+}
+
+
+
+int cPhysics::m_IntersectSegmentAABB(glm::vec3& p0, glm::vec3& p1, cAABB& b)
+{
+	glm::vec3 c = b.centerPosition;
+	glm::vec3 e = b.halfLengths;
+	glm::vec3 m = (p0 + p1) * 0.5f;
+	glm::vec3 d = p1 - m;
+	m = m - c;
+
+	// Try world coordinate axes as separating axes
+	float adx = abs(d.x);
+	if (abs(m.x) > e.x + adx) return 0;
+
+	float ady = abs(d.y);
+	if (abs(m.y) > e.y + ady) return 0;
+
+	float adz = abs(d.z);
+	if (abs(m.z) > e.z + adz) return 0;
+
+
+	// Add epsilon term to counteract arithmetic errors when segment is 
+	// (near) parallel to a coordinate axis
+
+	adx += std::numeric_limits<float>::epsilon(); ady += std::numeric_limits<float>::epsilon(); adz += std::numeric_limits<float>::epsilon();
+
+	// Try cross products of segments of segment direction vector with coordinate axes
+	if (abs(m.y * d.z - m.z * d.y) > e.y * adz + e.z * ady) return 0;
+	if (abs(m.z * d.x - m.x * d.z) > e.x * adz + e.z * adx) return 0;
+	if (abs(m.x * d.y - m.y * d.x) > e.x * ady + e.y * adx) return 0;
+
+	// No separating axis found, segment must be overlapping  AABB
 	return 1;
 }

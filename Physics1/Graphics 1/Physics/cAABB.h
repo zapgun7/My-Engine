@@ -15,6 +15,14 @@ class cVAOManager;
 class sPhysicsProperties;
 
 
+struct sCapsuleInfo // For recursive traversal
+{
+	glm::vec3 max = glm::vec3(0);
+	glm::vec3 min = glm::vec3(0);
+};
+
+
+
 class cAABB
 {
 public:
@@ -92,8 +100,10 @@ public:
 	// Oriented Capsule (Will later have one for player which will be rotationally locked)
 	std::vector<sTriangle_A> sweepingSphereCollision(sPhysicsProperties* sphere);// Takes a sphere with reverse transform matrix of the AABB object applied to it; returns vector of near triangles
 	std::vector<sTriangle_A> sweepingSphereRecursion(float sphRad, glm::vec3 sphPos1, glm::vec3 sphPos2); 
-
+	// TODO make both of these ^v  pass references rather than COPYING (v bad)
 	std::vector<sTriangle_A> sweepingCapsuleCollision(sPhysicsProperties* capsule);
+	//std::vector<sTriangle_A> sweepingCapsuleRecursion(float capRad, glm::vec3 upVec, glm::vec3 capPos1, glm::vec3 capPos2);
+	std::vector<sTriangle_A> sweepingCapsuleRecursion(sCapsuleInfo& capInfo, sPhysicsProperties* pCapsule);
 
 
 	cAABB* getChild(unsigned int ID);
@@ -104,5 +114,6 @@ public:
 
 
 };
+
 
 
