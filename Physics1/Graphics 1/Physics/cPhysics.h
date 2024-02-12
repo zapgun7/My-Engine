@@ -86,6 +86,7 @@ private:
 
 	// Collision Handling
 	void m_Sphere_Collision(sPhysicsProperties* pSphere, sPossibleCollision& collision);
+	void m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollision& collision);
 
 	// Oct-Tree AABBs
 	std::map<std::string, cAABB*> m_map_ModelAABBs; // Map of AABB oct-treeified models

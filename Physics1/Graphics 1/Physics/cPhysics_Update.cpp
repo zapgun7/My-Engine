@@ -122,6 +122,10 @@ void cPhysics::Update(double deltaTime)
 				{
 				case sPhysicsProperties::SPHERE:
 					m_Sphere_Collision(pObjectA, theCollision);
+					break;
+				case sPhysicsProperties::CAPSULE:
+					m_Capsule_Collision(pObjectA, theCollision);
+					break;
 				}
 			}
 		}

@@ -491,6 +491,239 @@ bool cPhysics::m_TestMovingCapsuleTriangle(sPhysicsProperties* pCapsule, sTriang
 	//			* 
 
 
+	// Start by comparing the tri-norm to the move direction
+	glm::vec3 ab = pTri->vertices[1] - pTri->vertices[0];
+	glm::vec3 ac = pTri->vertices[2] - pTri->vertices[0];
+
+	glm::vec3 triNorm = glm::normalize(glm::cross(ab, ac));
+
+	//glm::vec3 moveDir = pCapsule->position - pCapsule->oldPosition;
+	//glm::vec3 moveDirNorm = glm::normalize(moveDir);
+
+	// Commenting this out since the spherePlane test does it already
+// 	float degDiff = acos(glm::dot(triNorm, moveDir));
+// 
+// 	if (abs(degDiff) <= 90.0f) return 0; // Will not hit the front of the triangle
+
+	// TODO try projecting capsule spine and triangle on moveDir plane; distance between segment and triangle (or 3x segment-segment), make sure it's <= radius
+
+
+	// Get the degree between our upVec and the triNorm
+
+	float degDiff = acos(glm::dot(triNorm, pCapsule->upVec)); // 0 - 90: favors lower cap    90-180: favors upper cap
+	bool favorDown;
+	if (degDiff > 90) favorDown = false;
+	else favorDown = true;
+
+	sPhysicsProperties::sCapsule* capsule = (sPhysicsProperties::sCapsule*)pCapsule->pShape;
+
+	// Now we start testing on the "lower" cap
+
+	sPhysicsProperties::sSphere capSphere(capsule->radius); // TODO put these caps in some struct with the other stuff so we don't create these for each triangle
+	sPhysicsProperties lowerCap;
+	lowerCap.pShape = &capSphere;
+	lowerCap.position = pCapsule->position - pCapsule->upVec * capsule->halfLength;
+	lowerCap.oldPosition = pCapsule->oldPosition - pCapsule->upVec * capsule->halfLength;
+
+	float pd = glm::dot(triNorm, pTri->vertices[0]);
+	glm::vec3 q1 = glm::vec3(0); glm::vec3 q2 = glm::vec3(0);
+	float t1 = 0, float t2 = 0;
+
+	if (!m_IntersectMovingSpherePlane(&lowerCap, triNorm, t1, pd, q1))
+	{
+		return 0;
+	}
+
+
+	bool raycastLower = false;
+	bool raycastUpper = false;
+	
+	glm::vec3 closestTriPointLower;
+	if (t1 > 1.0f)
+	{
+		// Not returning, we have other things to check
+	}
+	else
+	{
+		closestTriPointLower = m_ClosestPtTriPlanePointTriangle(q1, pTri->vertices[0], pTri->vertices[1], pTri->vertices[2]);
+		// Do the rest of the checks for this 
+		if (favorDown)
+		{
+			// Favorable conditions for bouncing off the bottom of the sphere
+			if (glm::distance(closestTriPointLower, q1) <= std::numeric_limits<float>::epsilon())
+			{
+				// Bottom cap hits triangle face; best case for collision
+				hitNorm = triNorm;
+				return true;
+			}
+			else
+			{
+				raycastLower = true;
+			}
+		}
+		else
+		{
+			// Unfavorable; at best hits the edge. The bottom cap sphere hitting a face will hit the midsection or top cap first
+			// Put off doing the raycast until we confirm the top cap doesn't cleanly hit a face
+			raycastLower = true;
+		}
+	}
+
+	// Now do the same for the top cap
+	sPhysicsProperties upperCap;
+	upperCap.pShape = &capSphere;
+	upperCap.position = pCapsule->position + pCapsule->upVec * capsule->halfLength;
+	upperCap.oldPosition = pCapsule->oldPosition + pCapsule->upVec * capsule->halfLength;
+
+	//float pd = glm::dot(triNorm, pTri->vertices[0]);
+	//glm::vec3 q = glm::vec3(0);
+	m_IntersectMovingSpherePlane(&lowerCap, triNorm, t2, pd, q2);
+
+
+	glm::vec3 closestTriPointUpper;
+	if (t2 > 1.0f)
+	{
+		if (t1 > 1.0f) // Neither sphere cap makes it to the plane this update
+			return 0;
+	}
+	else
+	{
+		closestTriPointUpper = m_ClosestPtTriPlanePointTriangle(q2, pTri->vertices[0], pTri->vertices[1], pTri->vertices[2]);
+		// Do the rest of the checks for this 
+		if (!favorDown)
+		{
+			// Favorable conditions for bouncing off the bottom of the sphere
+			if (glm::distance(closestTriPointUpper, q2) <= std::numeric_limits<float>::epsilon())
+			{
+				// Bottom cap hits triangle face; best case for collision
+				hitNorm = triNorm;
+				return true;
+			}
+			else
+			{
+				raycastUpper = true;
+			}
+		}
+		else
+		{
+			// Unfavorable; at best hits the edge. This will hit the midsection if at all
+			// Put off doing the raycast until we fully confirm bottom cap missing
+			raycastUpper = true;
+		}
+	}
+
+
+	// Now we're left to raycasting whatever spheres were flagged
+
+	glm::vec3 rayHitOnSphere1;
+	glm::vec3 triV = pCapsule->position - pCapsule->oldPosition;
+
+	float updateLen = glm::length(triV);
+	triV = glm::normalize(triV);
+
+
+	// If we flagged the lowercap for a raycast
+	if (raycastLower)
+	{
+		if (!m_IntersectRaySphere(closestTriPointLower, -triV, &lowerCap, t1, rayHitOnSphere1))
+		{
+			// Ray misses sphere, cool
+		}
+		else // Ray hits sphere
+		{
+			t1 = t1 / updateLen;
+			if (t1 > 1.0f)
+			{
+				// Intersects some time after the update
+			}
+			else if (t1 == 0.0f)
+			{
+				hitNorm = triNorm; // Works for the sphere algorithm, might not for this capsule
+				t = t1;
+				return 1;
+			}
+			// Ray hits the sphere; now we check whether it hits on the top or bottom half of the sphere
+			degDiff = acos(glm::dot(capsule->upVec, rayHitOnSphere1 - lowerCap.oldPosition));
+			if (degDiff < 90)
+			{
+				// Hits top of sphere, will hit midsection first
+				if (favorDown) raycastUpper = false; // We know this will not hit the top one; it will hit the midsection however
+			}
+			else
+			{
+				// Hits bottom of sphere
+				if (favorDown)
+				{
+					// Guaranteed hit here, we can return true
+					hitNorm = glm::normalize(lowerCap.oldPosition - rayHitOnSphere1);
+					t = t1;
+					return 1;
+				}
+				else
+				{
+					// Not guaranteed to hit this sphere
+					//t1 = t;
+				}
+			}
+		}
+	}
+
+	glm::vec3 rayHitOnSphere2;
+	//glm::vec3 triV = pCapsule->position - pCapsule->oldPosition;
+
+	//float updateLen = glm::length(triV);
+	//triV = glm::normalize(triV);
+
+
+	// If we flagged the lowercap for a raycast
+	if (raycastUpper)
+	{
+		if (!m_IntersectRaySphere(closestTriPointUpper, -triV, &upperCap, t2, rayHitOnSphere2))
+		{
+			// Ray misses sphere, cool
+		}
+		else // Ray hits sphere
+		{
+			t2 = t2 / updateLen;
+			if (t > 1.0f)
+			{
+				// Intersects some time after the update
+			}
+			else if (t2 == 0.0f)
+			{
+				hitNorm = triNorm; // Works for the sphere algorithm, might not for this capsule
+				t = t2;
+				return 1;
+			}
+			// Ray hits the sphere; now we check whether it hits on the top or bottom half of the sphere
+			degDiff = acos(glm::dot(capsule->upVec, rayHitOnSphere2 - upperCap.oldPosition));
+			if (degDiff > 90)
+			{
+				// Hits bottom of sphere, will hit midsection first
+				//if (favorDown) raycastUpper = false; 
+			}
+			else
+			{
+				// Hits top of sphere
+				if (!favorDown)
+				{
+					// Guaranteed hit here, we can return true
+					hitNorm = glm::normalize(upperCap.oldPosition - rayHitOnSphere2);
+					t = t2;
+					return 1;
+				}
+				else
+				{
+					// Not guaranteed to hit this sphere
+					//t2 = t;
+				}
+			}
+		}
+	}
+
+
+	// At this point I'm PRETTY SURE we just have to calculate the midsection collision (not guaranteed collision)
+
 }
 
 
@@ -590,11 +823,30 @@ bool cPhysics::m_Capsule_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pC
 		float t;
 		glm::vec3 hn;
 
+		if (!m_TestMovingCapsuleTriangle(&reverseTransformedCapsule, &*itTri, t, hn))
+		{
+			// No collision
+			continue;
+		}
+
+		if (t < earliestTime)
+		{
+			earliestTime = t;
+			hitNorm = hn;
+		}
+
 	}
 
+	if (earliestTime <= 1.0f)
+	{
+		returnCollision.q = earliestTime;
+		returnCollision.collisionObject = pTriMesh_General;
+		hitNorm = (matModelR * glm::vec4(hitNorm, 1.0f));
+		returnCollision.hitNorm = hitNorm;
+		return true;
+	}
 
-
-
+	return false;
 }
 
 
