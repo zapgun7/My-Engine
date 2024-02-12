@@ -504,13 +504,13 @@ int cPhysics::m_IntersectMovingCapsuleAABB(sPhysicsProperties* pCapsule, cAABB* 
 	glm::vec3 currUpVec = pCapsule->upVec * capsule->halfLength;
 
 	glm::vec3 oldUp = pCapsule->oldPosition + currUpVec;
-	glm::vec3 newUp = pCapsule->oldPosition + currUpVec;
+	glm::vec3 newUp = pCapsule->position + currUpVec;
 
 
 	if (m_IntersectSegmentAABB(oldUp, newUp, e)) return 1; // Check segment made by top of capsule line
 
 	glm::vec3 oldDown = pCapsule->oldPosition - currUpVec;
-	glm::vec3 newDown = pCapsule->oldPosition - currUpVec;
+	glm::vec3 newDown = pCapsule->position - currUpVec;
 	if (m_IntersectSegmentAABB(oldDown, newDown, e)) return 1; // Check segment made by bottom of capsule line
 	if (m_IntersectSegmentAABB(newUp, newDown, e)) return 1; // Check segment made by capsule line of new position
 

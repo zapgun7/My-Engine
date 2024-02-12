@@ -708,6 +708,12 @@ void cLevelEditor::PhysEditor(std::vector<sPhysicsProperties*> PhysVec)
 		{
 			// Idk meshname?
 		}
+		else if (currObj->shapeType == sPhysicsProperties::CAPSULE)
+		{
+			// Radius
+			// Halflength
+			// Upvec?
+		}
 	}
 
 	ImGui::SeparatorText("----General Options----");
@@ -738,6 +744,8 @@ void cLevelEditor::PhysEditor(std::vector<sPhysicsProperties*> PhysVec)
 			case(sPhysicsProperties::SPHERE):
 				currObj->setShape(new sPhysicsProperties::sSphere(1.0f));
 				break;
+			case(sPhysicsProperties::CAPSULE):
+				currObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 1.0f));
 			}
 			
 		}

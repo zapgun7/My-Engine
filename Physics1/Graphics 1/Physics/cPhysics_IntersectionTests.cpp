@@ -527,9 +527,10 @@ bool cPhysics::m_TestMovingCapsuleTriangle(sPhysicsProperties* pCapsule, sTriang
 
 	float pd = glm::dot(triNorm, pTri->vertices[0]);
 	glm::vec3 q1 = glm::vec3(0); glm::vec3 q2 = glm::vec3(0);
-	float t1 = 0, float t2 = 0;
+	float t1 = 0.0f;
+	float t2 = 0.0f;
 
-	if (!m_IntersectMovingSpherePlane(&lowerCap, triNorm, t1, pd, q1))
+	if (!m_IntersectMovingSpherePlane(&lowerCap, triNorm, pd, t1, q1))
 	{
 		return 0;
 	}
@@ -554,6 +555,7 @@ bool cPhysics::m_TestMovingCapsuleTriangle(sPhysicsProperties* pCapsule, sTriang
 			{
 				// Bottom cap hits triangle face; best case for collision
 				hitNorm = triNorm;
+				t = t1;
 				return true;
 			}
 			else
@@ -577,7 +579,7 @@ bool cPhysics::m_TestMovingCapsuleTriangle(sPhysicsProperties* pCapsule, sTriang
 
 	//float pd = glm::dot(triNorm, pTri->vertices[0]);
 	//glm::vec3 q = glm::vec3(0);
-	m_IntersectMovingSpherePlane(&lowerCap, triNorm, t2, pd, q2);
+	m_IntersectMovingSpherePlane(&upperCap, triNorm, pd, t2, q2);
 
 
 	glm::vec3 closestTriPointUpper;
@@ -597,6 +599,7 @@ bool cPhysics::m_TestMovingCapsuleTriangle(sPhysicsProperties* pCapsule, sTriang
 			{
 				// Bottom cap hits triangle face; best case for collision
 				hitNorm = triNorm;
+				t = t2;
 				return true;
 			}
 			else
@@ -723,7 +726,7 @@ bool cPhysics::m_TestMovingCapsuleTriangle(sPhysicsProperties* pCapsule, sTriang
 
 
 	// At this point I'm PRETTY SURE we just have to calculate the midsection collision (not guaranteed collision)
-
+	return 0;
 }
 
 

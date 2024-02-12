@@ -113,6 +113,21 @@ void cPhysics::Update(double deltaTime)
 
 
 					break;
+				case sPhysicsProperties::CAPSULE:
+					switch (pObjectB->shapeType)
+					{
+					case sPhysicsProperties::SPHERE:
+						break;
+
+					case sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT:
+						if (this->m_Capsule_TriMeshIndirect_IntersectionTest(pObjectA, pObjectB, newCollision))
+						{
+							if (newCollision.q < theCollision.q)
+								theCollision = newCollision;
+							didCollide = true;
+						}
+						break;
+					}
 				}
 			}
 			if (!didCollide) isStillColliding = false; // Soonest collision doesn't happen this frame
