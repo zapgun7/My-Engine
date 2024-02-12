@@ -112,6 +112,7 @@ public:
 
 	// Less Basic Tests
 	static bool m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle_A* pTri, float &t, glm::vec3 &hitNorm);
+	static bool m_TestMovingCapsuleTriangle(sPhysicsProperties* pCapsule, sTriangle_A* pTri, float& t, glm::vec3& hitNorm);
 
 private:
 

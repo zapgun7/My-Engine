@@ -459,6 +459,41 @@ bool cPhysics::m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle
 }
 
 
+bool cPhysics::m_TestMovingCapsuleTriangle(sPhysicsProperties* pCapsule, sTriangle_A* pTri, float& t, glm::vec3& hitNorm)
+{
+	// Can decide what parts of the capsule can hit the triangle based on the triangle norm
+	// Imagine an up-right capsule: if the norm has any y < 0 component, the top of the cap will hit a face or and edge, 
+	// the lower cap could only hit an edge, and the midsection can only hit an edge
+
+
+	// Another certainty:
+	// The caps can hit an edge or a face
+	// The midsection can only hit edges
+	// If the tri is big enough, the caps will instead hit the faces
+
+	// !!! Keep in mind the capsule is locked to its orientation
+
+
+	// Hypothetical Algorithm:
+	// More often than not, the lower cap will be the one to collide (the feet of the character)
+	// 0. Could start by projecting capsule spine and triangle onto move-dir plane; test if line-tri distance is <= radius
+	//		- Can even before that compare tri-norm to move direction to see if it will even bounce off the tri if it does "collide"
+	// 1. Make sphere at the lower cap; plane test; closest point
+	//		- If on face, make sure normal is facing the right way to do so; can't hit the top of the bottom cap sphere (that's in the midsection)
+	//			* We can return this value if the normal is within the proper parameters
+	//		- If on edge, try to put off the raycast (depends on tri-norm)
+	//			* If normal is ideal for the top cap, do a quick plane and closest point check to see if it hits the face
+	//            If it doesn't hit face, run raycast for lower and upper cap (for can't think of a case where one will not necessitate the other)
+	//            If either of these raycasts return an unideal norm, we know that it hits the midsection
+	//			  This unideal spot can be projected on the upvec to get the orthogonal direction to the capsule spine, to get the rough spot on the capsule for the hitnorm
+	//            Can prob do some voodoo to get the q along the update path (brain not working 100% in class rn)
+	//      - If the triangle edge will hit the midsection first and either hit a cap later or not at all: how to check?
+	//			* 
+
+
+}
+
+
 bool cPhysics::m_Capsule_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pCapsule_General, sPhysicsProperties* pTriMesh_General, sPossibleCollision& returnCollision)
 {
 	// Do we have a mesh manager? 
@@ -542,6 +577,24 @@ bool cPhysics::m_Capsule_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pC
 	std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sweepingCapsuleCollision(&reverseTransformedCapsule);
 
 	// And then check each tri in the vec, same as the sphere stuff. gl future me <3
+
+	float earliestTime = FLT_MAX; // Time (0-1) over current update the sphere collides
+	glm::vec3 hitNorm; // Normal used to calculate reflection
+
+	// The newest code for dealing with continuous collision detection
+	for (std::vector<sTriangle_A>::iterator itTri = trisToCheck.begin();
+		itTri != trisToCheck.end();
+		itTri++)
+	{
+
+		float t;
+		glm::vec3 hn;
+
+	}
+
+
+
+
 }
 
 
