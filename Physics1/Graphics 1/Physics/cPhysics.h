@@ -120,8 +120,8 @@ private:
 	cVAOManager* m_pMeshManager = NULL;
 	//cGraphicsMain* m_pGraphicsMain;
 
-	bool m_IsRunning = false; // If physics updates should be calculated. Pausing good for moving stuff around in editor then resuming physics
-
+	bool m_IsRunning = true; // If physics updates should be calculated. Pausing good for moving stuff around in editor then resuming physics
+	glm::vec3 m_WorldGravity = glm::vec3(0, -20.0f, 0);
 	
 
 	// this is a list of all the objects that collided this past frame

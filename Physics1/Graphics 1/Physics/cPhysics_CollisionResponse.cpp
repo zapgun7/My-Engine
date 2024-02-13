@@ -68,6 +68,8 @@ void cPhysics::m_Sphere_Collision(sPhysicsProperties* pSphere, sPossibleCollisio
 // The same as sphere collision handling, for now
 void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollision& collision)
 {
+	float degDiff = acos(glm::dot(collision.hitNorm, glm::vec3(0, 1, 0)));
+
 	if (collision.q == 0) // In or already touching triangle at start of update
 	{
 		glm::vec3 oldDeltaMove = pCapsule->position - pCapsule->oldPosition;
@@ -80,6 +82,9 @@ void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollis
 		projSubVec = glm::dot(pCapsule->velocity, collision.hitNorm) * collision.hitNorm;
 		pCapsule->velocity -= projSubVec;
 
+
+		if (degDiff < 50) // TODO need dt on this one, not the lower one though
+			pCapsule->velocity *= pCapsule->friction;
 		// I think this is it???
 	}
 	else // Regular triangle hit beyond the start and before the end of the update window
@@ -103,6 +108,10 @@ void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollis
 		glm::vec3 restitutionVelLoss = -collision.hitNorm * pCapsule->velocity; // Calculate vector we want to reduce velocity on (negative normal of surface it's bouncing on)
 		pCapsule->velocity += (restitutionVelLoss * (1.0f - pCapsule->restitution)) * restAppDegree; // Subtract said vector from newVelocity, scaled with its restitution (0 restitution = no bounce, 1 = full bounce)
 
+
+		// Friction??
+		if (degDiff < 50)
+			pCapsule->velocity *= pCapsule->friction;
 
 		// Update oldPosition to point of collision
 		pCapsule->oldPosition += sphereStep * collision.q;

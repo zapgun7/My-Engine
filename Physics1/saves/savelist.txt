@@ -6,3 +6,4 @@ BulletsThroughComplexPlane
 AnimScene
 MultiMeshContinuous
 IntenseMultiTest
+TestFPScene

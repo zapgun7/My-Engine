@@ -1,8 +1,8 @@
 {
     "meshes": [
         {
-            "meshName": "Terrain.ply",
-            "friendlyName": "Ground",
+            "meshName": "Flat_1x1_plane.ply",
+            "friendlyName": "plane",
             "texNames": [
                 "##",
                 "##",
@@ -24,9 +24,9 @@
                 0.0
             ],
             "customColor": [
-                0.30000001192092896,
-                0.30000001192092896,
-                0.30000001192092896
+                0.6000000238418579,
+                0.6000000238418579,
+                0.6000000238418579
             ],
             "uv_OS": [
                 0.0,
@@ -42,69 +42,84 @@
             "isWireframe": false,
             "doNotLight": false,
             "useCustomColor": true,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 5
+        },
+        {
+            "meshName": "rusty_ship.ply",
+            "friendlyName": "ship",
+            "texNames": [
+                "metal_s01.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
             "tAlph": 1.0,
             "dMask": false,
             "reflect": false,
             "refract": false,
             "ID": 6
-        },
-        {
-            "meshName": "Flat_1x1_plane.ply",
-            "friendlyName": "SmallPlane",
-            "texNames": [
-                "##",
-                "##",
-                "##",
-                "##",
-                "##",
-                "##",
-                "##",
-                "##"
-            ],
-            "texRatios": [
-                1.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0
-            ],
-            "customColor": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "uv_OS": [
-                0.0,
-                0.0,
-                1.0
-            ],
-            "uv_Spd": [
-                0.0,
-                0.0
-            ],
-            "scale": 1.0,
-            "isVisible": true,
-            "isWireframe": false,
-            "doNotLight": false,
-            "useCustomColor": true,
-            "tAlph": 1.0,
-            "dMask": false,
-            "reflect": false,
-            "refract": false,
-            "ID": 8
         }
     ],
     "phys": [
         {
-            "friendlyName": "Ground",
+            "friendlyName": "plane",
             "shape_t": 6,
             "pos": [
                 0.0,
                 0.0,
                 0.0
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 5
+        },
+        {
+            "friendlyName": "ship",
+            "shape_t": 6,
+            "pos": [
+                0.0,
+                3.200000047683716,
+                -22.399999618530273
             ],
             "ori": [
                 0.0,
@@ -112,26 +127,11 @@
                 0.0
             ],
             "ID": 6
-        },
-        {
-            "friendlyName": "SmallPlane",
-            "shape_t": 6,
-            "pos": [
-                0.0,
-                106.5,
-                0.0
-            ],
-            "ori": [
-                0.0,
-                -0.0,
-                0.0
-            ],
-            "ID": 8
         }
     ],
     "lights": [
         {
-            "friendlyname": "GenLight",
+            "friendlyname": "---",
             "position": [
                 0.0,
                 0.0,
@@ -157,10 +157,10 @@
                 1.0
             ],
             "direction": [
-                0.10000000149011612,
-                -0.800000011920929,
-                0.10000000149011612,
-                1.0
+                0.20000000298023224,
+                -0.6000000238418579,
+                0.20000000298023224,
+                0.0
             ],
             "param1": [
                 2.0,
@@ -202,19 +202,19 @@
                 1.0
             ],
             "direction": [
-                0.0,
-                -1.0,
-                0.0,
-                1.0
+                -0.05000000074505806,
+                0.30000001192092896,
+                -0.05000000074505806,
+                0.0
             ],
             "param1": [
-                0.0,
+                2.0,
                 0.0,
                 0.0,
                 1.0
             ],
             "param2": [
-                0.0,
+                1.0,
                 0.0,
                 0.0,
                 1.0

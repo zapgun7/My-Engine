@@ -41,4 +41,8 @@ private:
 	GLFWwindow* m_window; // Reference to the thing we get inputs from, DUHH
 	float m_CameraSpeed = 100.0f; // While it's not an actual player
 	float m_InverseSensitivity = 10.0f; // Higher = slower turning
+
+
+	float m_PLAYERSPEED = 20.0f;
+	float m_PLAYERJUMPFORCE = 10.0f;
 };

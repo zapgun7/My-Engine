@@ -37,6 +37,12 @@ void cPhysics::Update(double deltaTime)
 
 		return;
 	}
+	for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)
+	{
+		if (pObject->shapeType == sPhysicsProperties::CAPSULE)
+			pObject->jumpNormThisFrame = 0;
+	}
+
 
 	// Perform the iteration loop
 	for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)
@@ -53,7 +59,12 @@ void cPhysics::Update(double deltaTime)
 
 			// Velocity change is based on the acceleration over this time frame 
 			// This part: (Accel * DeltaTime)
-			glm::vec3 deltaVelocityThisFrame = pObject->acceleration * (float)deltaTime;
+			glm::vec3 deltaVelocityThisFrame;
+
+			if (pObject->jumpNormThisFrame) // If touching the ground
+				deltaVelocityThisFrame = (pObject->acceleration) * static_cast<float>(deltaTime);
+			else
+				deltaVelocityThisFrame = (pObject->acceleration + m_WorldGravity) * static_cast<float>(deltaTime);
 
 			// Update the velocity based on this delta velocity
 			// Then this part: NewVelocity = LastVel + ...
@@ -62,7 +73,7 @@ void cPhysics::Update(double deltaTime)
 
 			// Position change is based on the velocity over this time frame
 			// This part: (Vel * DeltaTime)	
-			glm::vec3 deltaPosition = pObject->velocity * (float)deltaTime;
+			glm::vec3 deltaPosition = pObject->velocity * static_cast<float>(deltaTime);
 
 			// ...then this part: NewPosition = LastPos + ...
 			// Upatate the position based on this delta position
@@ -140,6 +151,16 @@ void cPhysics::Update(double deltaTime)
 					break;
 				case sPhysicsProperties::CAPSULE:
 					m_Capsule_Collision(pObjectA, theCollision);
+					
+					// Set if the player can jump
+					if (theCollision.hitNorm.y > 0)
+					{
+						if (acos(glm::dot(glm::normalize(theCollision.hitNorm), glm::vec3(0, 1, 0))) < 45)
+							pObjectA->jumpNormThisFrame++;
+					}
+
+
+
 					break;
 				}
 			}

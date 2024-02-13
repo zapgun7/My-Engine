@@ -74,7 +74,7 @@ bool cEngineController_IMPL::Initialize(void)
 	std::vector<std::string> tempModelVec;
 	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
 	this->m_pThePhysics->generateAABBs(tempModelVec);
-
+	
 	this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
 
@@ -88,6 +88,19 @@ bool cEngineController_IMPL::Initialize(void)
 	m_TheCamera->friendlyName = "cam";
 	m_ThePlayer = new cPlayer(m_pTheGraphics->getWindow());
 
+	sPhysicsProperties* playerObj = new sPhysicsProperties();
+	playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 1.0f));
+	playerObj->shapeType = sPhysicsProperties::CAPSULE;
+	//playerObj->acceleration.y = -20.0f;
+	playerObj->position = glm::vec3(0, 100, 0);
+	playerObj->restitution = 0.0f;
+	m_ThePlayer->setPlayerObject(playerObj);
+
+	// Load test scene
+	m_pTheSceneManager->loadScene("BulletThroughPlane");
+	m_pThePhysics->AddShape(playerObj);
+
+	printf("Done Initializing!\n");
 
 	return true;
 }

@@ -403,6 +403,7 @@ void cSceneManagement::loadScene(std::string fileName)
 	for (unsigned int i = 0; i < phys.Size(); i++)
 	{
 		sPhysicsProperties* newPhys = new sPhysicsProperties();
+		newPhys->inverse_mass = -1.0f; // !!! JUST A TEMP BANDAID
 
 		// Friendly Name
 		itr = phys[i].FindMember("friendlyName");
