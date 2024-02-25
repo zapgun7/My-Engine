@@ -23,6 +23,26 @@ void cPlayer::setPlayerObject(sPhysicsProperties* theObj)
 
 void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cameraRotation)
 {
+	int stat = glfwGetKey(m_window, GLFW_KEY_ESCAPE);
+	static bool isPressed = false;
+
+	if ((stat) && (!isPressed))
+	{
+		if (m_CameraType == FIRSTPERSON)
+			m_CameraType = FLYCAM;
+		else
+			m_CameraType = FIRSTPERSON;
+		isPressed = true;
+	}
+	else if (!stat)
+	{
+		isPressed = false;
+	}
+
+
+
+
+
 	static double mouseXPos = 0;
 	static double mouseYPos = 0;
 	if (m_CameraType == FLYCAM)

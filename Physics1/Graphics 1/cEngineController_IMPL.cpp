@@ -73,7 +73,7 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
 	std::vector<std::string> tempModelVec;
 	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
-	this->m_pThePhysics->generateAABBs(tempModelVec);
+	//this->m_pThePhysics->generateAABBs(tempModelVec);
 	
 	this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
@@ -97,8 +97,8 @@ bool cEngineController_IMPL::Initialize(void)
 	m_ThePlayer->setPlayerObject(playerObj);
 
 	// Load test scene
-	m_pTheSceneManager->loadScene("BulletThroughPlane");
-	m_pThePhysics->AddShape(playerObj);
+	//m_pTheSceneManager->loadScene("BulletThroughPlane");
+	//m_pThePhysics->AddShape(playerObj);
 
 	printf("Done Initializing!\n");
 

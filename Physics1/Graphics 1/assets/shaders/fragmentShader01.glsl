@@ -54,6 +54,12 @@ uniform samplerCube skyBoxTexture;
 uniform bool bUseDiscardMaskTexture;
 uniform sampler2D maskSamplerTexture01;
 
+// FBO
+uniform bool bIsOffScreenTextureQuad;
+uniform sampler2D textureOffScreen;
+uniform vec2 screenWidthAndHeight;
+
+
 //... and so on
 //uniform float textureMixRatio[8];
 uniform vec4 textureMixRatio_0_3;		// 1, 0, 0, 0 
@@ -93,6 +99,9 @@ uniform sLight theLights[NUMBEROFLIGHTS];  	// 70 uniforms
 vec4 calculateLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 
                             vec3 vertexWorldPos, vec4 vertexSpecular );
 
+// 2nd pass effects
+vec3 getFBOColour();
+
 
 void main()
 {
@@ -117,6 +126,42 @@ void main()
 //			discard;
 //		}
 //	}
+	
+	if ( bIsOffScreenTextureQuad )
+	{
+//		outputColour.rgb = vec3(1.0f, 0.0f, 0.0f);
+//		vec3 theColour = texture( textureOffScreen, fTextureCoords.st ).rgb;		
+//		outputColour.rgb = theColour;						   
+//		outputColour.a = 1.0f;
+//		return;
+//
+		// Convert the integer pixel location (10, 15) or (1902, 546)
+		// 	into a texture coordinate from 0.0 to 1.0
+//		vec2 textCoordsScreen = vec2( gl_FragCoord.x / screenWidthAndHeight.x, 
+//		                              gl_FragCoord.y / screenWidthAndHeight.y );
+//		vec3 theColour = texture( textureOffScreen, textCoordsScreen.st ).rgb;	
+//		vec3 HUDTextureColour = texture( textureHUF, textCoordsScreen.st).rgb;
+//
+//		outputColour.rgb = theColour * 0.5f + HUDTextureColour.rgb * 0.5f;
+//
+		// All of these assume we are sampling from the textureOffscreen sampler
+
+		outputColour.rgb = getFBOColour();
+//		outputColour.rgb = ChromicAberration(0.5f);
+//		outputColour.rgb = BasicBlurScreen();
+
+		// 3 gives this: *** * *** = 7x7= 49
+		// 5 gives this: ***** * ***** = 11x11 = 121 samples
+//		outputColour.rgb = BlurScreen(25);
+
+		//outputColour.rgb = BlurScreenFaster(25);
+		
+		outputColour.a = 1.0f;
+		return;
+	}
+
+
+
 
 	if ( bUseDiscardMaskTexture )
 	{
@@ -241,6 +286,14 @@ void main()
 	outputColour.a = transparencyAlpha;
 }
 
+vec3 getFBOColour()
+{
+	vec2 textCoordsScreen = vec2( gl_FragCoord.x / screenWidthAndHeight.x, 
+	                              gl_FragCoord.y / screenWidthAndHeight.y );
+	vec3 theColour = texture( textureOffScreen, textCoordsScreen.st ).rgb;	
+	
+	return theColour;
+}
 
 vec4 calculateLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 
                             vec3 vertexWorldPos, vec4 vertexSpecular )

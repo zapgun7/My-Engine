@@ -179,6 +179,7 @@
     <ClCompile Include="Other Graphics Stuff\cGraphicsMain.cpp" />
     <ClCompile Include="Other Graphics Stuff\cLightManager.cpp" />
     <ClCompile Include="Other Graphics Stuff\cMesh.cpp" />
+    <ClCompile Include="Other Graphics Stuff\FBO\cFBO.cpp" />
     <ClCompile Include="Other Graphics Stuff\glad.c" />
     <ClCompile Include="Physics\cPhysics.cpp" />
     <ClCompile Include="Physics\cPhysics_AABB_Subdivide.cpp" />
@@ -236,6 +237,7 @@
     <ClInclude Include="Other Graphics Stuff\cGraphicsMain.h" />
     <ClInclude Include="Other Graphics Stuff\cLightManager.h" />
     <ClInclude Include="Other Graphics Stuff\cMesh.h" />
+    <ClInclude Include="Other Graphics Stuff\FBO\cFBO.h" />
     <ClInclude Include="Other Graphics Stuff\GLWF_CallBacks.h" />
     <ClInclude Include="Other Graphics Stuff\OpenGLCommon.h" />
     <ClInclude Include="cSceneManagement.h" />

@@ -19,6 +19,9 @@
 
 #include "../TextureManager/cBasicTextureManager.h"
 
+
+#include "FBO/cFBO.h"
+
 //#include "cParticleSystem.h"
 #include "../cParticleManager.h"
 
@@ -33,6 +36,7 @@ public:
 
 
 	bool Update(double deltaTime); // return false when window is triggered to close
+	bool Update2(double deltaTime);
 	void Destroy();
 	//void addToDrawMesh(cMesh* newMesh);
 	void removeFromDrawMesh(int ID);
@@ -77,7 +81,11 @@ private:
 	bool LoadTextures(void);
 	bool LoadParticles(void);
 
-	
+	// Draw Passes
+	void DrawPass_1(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec3 cameraEye, glm::vec3 cameraTarget);
+	void DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int screenHeight);
+
+
 	//void updateSelectedMesh(int meshIdx, std::string friendlyName, glm::vec3 newPos, glm::vec3 newOri, glm::vec3 customColor, float newScale, bool doNotLight, bool useCustomColor);  // Updates and existing object by reference to its friendly name (also from the gui)
 	
 	void addNewLight(char* friendlyName);
@@ -106,8 +114,8 @@ private:
 	cShaderManager* m_pShaderThing;
 	GLuint m_shaderProgramID;
 
-	//bool m_isShieldOn = false;
-	//int m_explosionIDs = -1; // IDs for explosions and grey spheres, use negatives to separate from all other mesh ID's (which are in the positives)
+	
+
 	double m_lastTime;
 	GLFWwindow* m_window;
 	cVAOManager* m_pMeshManager = NULL;
@@ -123,6 +131,12 @@ private:
 	/////// PARTICLE STUFF ////////
 	cMesh* m_pBasicParticle = nullptr;
 	cParticleManager* m_pParticleManager = nullptr;
+
+
+
+	///////// FBO STUFF ///////////
+	cFBO* m_pFBO_1 = nullptr;
+	cFBO* m_pFBO_2 = nullptr;
 
 
 

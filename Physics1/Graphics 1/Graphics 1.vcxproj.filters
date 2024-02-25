@@ -71,6 +71,9 @@
     <Filter Include="Entity">
       <UniqueIdentifier>{64aa2570-a3db-4003-a09b-4b47c87a8dc8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics Engine\FBO">
+      <UniqueIdentifier>{596e421e-6fc4-420c-84dd-d2b55ddad80e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Basic Shader Manager\cShaderManager.cpp">
@@ -231,6 +234,9 @@
     </ClCompile>
     <ClCompile Include="Physics\cPhysics_CollisionResponse.cpp">
       <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Other Graphics Stuff\FBO\cFBO.cpp">
+      <Filter>Graphics Engine\FBO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -395,6 +401,9 @@
     </ClInclude>
     <ClInclude Include="cEntityBuilder.h">
       <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Other Graphics Stuff\FBO\cFBO.h">
+      <Filter>Graphics Engine\FBO</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

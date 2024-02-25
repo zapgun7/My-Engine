@@ -47,7 +47,7 @@ cGraphicsMain* cGraphicsMain::getGraphicsMain(void) // Making graphics main a si
 
 cGraphicsMain::cGraphicsMain()
 {
-	m_cameraEye = glm::vec3(-120.0f, 40.0f, 0.0f);
+	m_cameraEye = glm::vec3(0.0f, 0.0f, 0.0f);
 	m_cameraTarget = glm::vec3(1.0f, -0.2f, 0.0f);
 	m_cameraRotation = glm::vec3(0.0, 0.0f, 0.0f);
 	m_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -194,6 +194,31 @@ bool cGraphicsMain::Initialize()
 
 
 
+	// Generate additional frame buffers
+	std::string FBOError;
+
+	m_pFBO_1 = new cFBO();
+	if (!m_pFBO_1->init(1920, 1080, FBOError))
+	{
+		std::cout << "Error creating FBO_1: " << FBOError << std::endl;
+	}
+	else
+	{
+		std::cout << "FBO_1 created OK" << std::endl;
+	}
+
+	m_pFBO_2 = new cFBO();
+	if (!m_pFBO_2->init(1920, 1080, FBOError))
+	{
+		std::cout << "Error creating FBO_2: " << FBOError << std::endl;
+	}
+	else
+	{
+		std::cout << "FBO_2 created OK" << std::endl;
+	}
+
+
+
 	return 1;
 }
 
@@ -206,6 +231,10 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 {
 	// Check input for camera movement
 	m_InputHandler->queryKeys(m_window);
+
+
+	return Update2(deltaTime);
+
 
 
 	float ratio;
@@ -475,6 +504,70 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 }
 
 
+// Update for framebuffer stuff
+bool cGraphicsMain::Update2(double deltaTime)
+{
+
+
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_1->ID);
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		float ratio;
+		int width, height;
+
+		ratio = m_pFBO_1->width / (float)m_pFBO_1->height;
+		glViewport(0, 0, m_pFBO_1->width, m_pFBO_1->height);
+
+		m_pFBO_1->clearBuffers(true, true);
+
+		glm::vec3 scene_1_CameraEye = m_cameraEye;
+		glm::vec3 scene_1_CameraTarget = m_cameraTarget;
+
+		DrawPass_1(m_shaderProgramID, m_pFBO_1->width, m_pFBO_1->height, scene_1_CameraEye, scene_1_CameraTarget);
+	}
+
+
+	// Full screen quad
+	if (true)
+	{
+		// Output directed to screen
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		float ratio;
+		int screenWidth, screenHeight;
+		glfwGetFramebufferSize(m_window, &screenWidth, &screenHeight);
+		ratio = screenWidth / (float)screenHeight;
+		//            ratio = ::g_pFBO_1->width / (float)::g_pFBO_1->height;
+		//            glViewport(0, 0, ::g_pFBO_1->width, (float)::g_pFBO_1->height);
+
+		glViewport(0, 0, screenWidth, screenHeight);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//        ::g_pFBO_1->clearBuffers(true, true);
+
+
+		DrawPass_FSQ(m_shaderProgramID, screenWidth, screenHeight);
+	}
+
+
+	/*glEnable(GL_DEPTH_TEST);*/
+
+	glfwPollEvents();
+
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	glfwSwapBuffers(m_window);
+
+// 	glfwSwapBuffers(m_window);
+// 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+// 	glfwPollEvents();
+
+
+	if (glfwWindowShouldClose(m_window))
+		return -1;
+	else
+		return 0;
+
+}
 
 void cGraphicsMain::Destroy()
 {
@@ -913,6 +1006,349 @@ bool cGraphicsMain::LoadParticles(void)
 
 
 	return true;
+}
+
+void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec3 sceneEye, glm::vec3 sceneTarget)
+{
+
+	float ratio; //= screenWidth / (float)screenHeight;
+	//int width, height;
+
+	glUseProgram(m_shaderProgramID);
+
+
+	//glfwGetFramebufferSize(m_window, &width, &height);
+	ratio = screenWidth / (float)screenHeight;
+
+	//glViewport(0, 0, width, height);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// While drawing a pixel, see if the pixel that's already there is closer or not?
+	glEnable(GL_DEPTH_TEST);
+	// (Usually) the default - does NOT draw "back facing" triangles
+	//glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
+
+	// *****************************************************************
+	// if ya want lights
+	m_pTheLights->UpdateUniformValues(m_shaderProgramID);
+
+
+	// *****************************************************************
+			
+	//uniform vec4 eyeLocation;
+	GLint eyeLocation_UL = glGetUniformLocation(m_shaderProgramID, "eyeLocation");
+
+	glUniform4f(eyeLocation_UL,
+		sceneEye.x, sceneEye.y, sceneEye.z, 1.0f);
+
+
+
+	//       //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+	glm::mat4 matProjection = glm::perspective(0.7f,
+		ratio,
+		0.1f,
+		1100.0f); // n/f plane
+
+
+	glm::mat4 matView = glm::lookAt(sceneEye,
+		sceneEye + sceneTarget,
+		m_upVector);
+
+
+
+	GLint matProjection_UL = glGetUniformLocation(m_shaderProgramID, "matProjection");
+	glUniformMatrix4fv(matProjection_UL, 1, GL_FALSE, glm::value_ptr(matProjection));
+
+	GLint matView_UL = glGetUniformLocation(m_shaderProgramID, "matView");
+	glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(matView));
+
+	/////////// UV OFFSET UPDATE /////////////
+// 	for (unsigned int i = 0; i < m_vec_pAllMeshes.size(); i++)
+// 	{
+// 		m_vec_pAllMeshes[i]->uv_Offset_Scale.x += m_vec_pAllMeshes[i]->uvOffsetSpeed.x * deltaTime;
+// 		m_vec_pAllMeshes[i]->uv_Offset_Scale.y += m_vec_pAllMeshes[i]->uvOffsetSpeed.y * deltaTime;
+// 
+// 		// Keeps values within proper range (good for longevity)
+// // 		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.x > 1.0f)
+// // 			m_vec_pAllMeshes[i]->uv_Offset_Scale.x -= floor(m_vec_pAllMeshes[i]->uv_Offset_Scale.x);
+// // 		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.x < 0.0f)
+// // 			m_vec_pAllMeshes[i]->uv_Offset_Scale.x += ceil(m_vec_pAllMeshes[i]->uv_Offset_Scale.x);
+// // 
+// // 		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.y > 1.0f)
+// // 			m_vec_pAllMeshes[i]->uv_Offset_Scale.y -= floor(m_vec_pAllMeshes[i]->uv_Offset_Scale.y);
+// // 		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.y < 0.0f)
+// // 			m_vec_pAllMeshes[i]->uv_Offset_Scale.y += ceil(m_vec_pAllMeshes[i]->uv_Offset_Scale.y);
+// 	}
+
+
+
+	// *********************************************************************
+	// Draw all the objects
+	for (unsigned int index = 0; index != m_vec_pMeshesToDraw.size(); index++) // Prob black or smthn
+	{
+		cMesh* pCurrentMesh = m_vec_pMeshesToDraw[index];
+		if (pCurrentMesh->transparencyAlpha < 0.99f)
+		{
+			m_vec_pTransMeshesToDraw.push_back(pCurrentMesh);
+			m_vec_pMeshesToDraw.erase(m_vec_pMeshesToDraw.begin() + index);
+			index--;
+			continue;
+		}
+
+		if (pCurrentMesh->bIsVisible)
+		{
+
+			glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
+
+			DrawObject(pCurrentMesh, matModel, m_shaderProgramID);
+		}//if (pCurrentMesh->bIsVisible)
+
+	}//for ( unsigned int index
+
+
+
+	//////////// PARTICLE RENDERING ///////////
+// 	m_pParticleManager->Update(deltaTime);
+// 
+// 	std::vector<cParticleSystem::sParticleRender> vecParticles_to_draw;
+// 	m_pParticleManager->getParticleList(vecParticles_to_draw);
+// 
+// 	for (cParticleSystem::sParticleRender& curParticle : vecParticles_to_draw)
+// 	{
+// 		glm::mat4 matModel = glm::mat4(1.0f);
+// 
+// 		m_pBasicParticle->drawPosition = curParticle.position;
+// 
+// 		DrawObject(m_pBasicParticle, matModel, m_shaderProgramID);
+// 	}
+
+
+
+
+	// Time per frame (more or less)
+// 	double currentTime = glfwGetTime();
+// 	double deltaTime = currentTime - m_lastTime;
+// 	//        std::cout << deltaTime << std::endl;
+// 	m_lastTime = currentTime;
+
+
+	// Quickly Draw hardcoded skybox
+	{
+		// HACK: I'm making this here, but hey...
+		cMesh theSkyBox;
+		theSkyBox.meshName = "Sphere_1_unit_Radius.ply";
+		//theSkyBox.setUniformDrawScale(10.0f);
+
+		theSkyBox.setUniformDrawScale(1000.0f);
+		theSkyBox.setDrawPosition(sceneEye);
+		//            theSkyBox.bIsWireframe = true;
+
+					// Depth test
+		//            glDisable(GL_DEPTH_TEST);       // Writes no matter what
+					// Write to depth buffer (depth mask)
+		//            glDepthMask(GL_FALSE);          // Won't write to the depth buffer
+
+					// uniform bool bIsSkyBox;
+		GLint bIsSkyBox_UL = glGetUniformLocation(m_shaderProgramID, "bIsSkyBox");
+		glUniform1f(bIsSkyBox_UL, (GLfloat)GL_TRUE);
+
+		// The normals for this sphere are facing "out" but we are inside the sphere
+		glCullFace(GL_FRONT);
+
+		DrawObject(&theSkyBox, glm::mat4(1.0f), m_shaderProgramID);
+
+		glUniform1f(bIsSkyBox_UL, (GLfloat)GL_FALSE);
+
+		// Put the culling back to "normal" (back facing are not drawn)
+		glCullFace(GL_BACK);
+	}
+
+	/// End of skybox
+
+	// Now we draw all transparent meshes
+
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	for (unsigned int index = 0; index != m_vec_pTransMeshesToDraw.size(); index++)
+	{
+		cMesh* pCurrentMesh = m_vec_pTransMeshesToDraw[index];
+		if (pCurrentMesh->transparencyAlpha > 0.99f)
+		{
+			m_vec_pMeshesToDraw.push_back(pCurrentMesh);
+			m_vec_pTransMeshesToDraw.erase(m_vec_pTransMeshesToDraw.begin() + index);
+			index--;
+			continue;
+		}
+
+		if (pCurrentMesh->bIsVisible)
+		{
+			if (index < m_vec_pTransMeshesToDraw.size() - 1) // If not the last in vec, try to sort by distance
+			{
+				if (glm::distance(m_vec_pTransMeshesToDraw[index]->drawPosition, m_cameraEye) < glm::distance(m_vec_pTransMeshesToDraw[index + 1]->drawPosition, m_cameraEye))
+				{
+					cMesh* tempMesh = m_vec_pTransMeshesToDraw[index];
+					m_vec_pTransMeshesToDraw[index] = m_vec_pTransMeshesToDraw[index + 1];
+					m_vec_pTransMeshesToDraw[index + 1] = tempMesh;
+					pCurrentMesh = m_vec_pTransMeshesToDraw[index];
+				}
+			}
+
+			glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
+
+			DrawObject(pCurrentMesh, matModel, m_shaderProgramID);
+		}//if (pCurrentMesh->bIsVisible)
+
+	}
+	glDisable(GL_BLEND);
+
+
+
+	// Now draw debug stuff
+	glDisable(GL_DEPTH_TEST);
+
+	if (renderDebug)
+	{
+		glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
+		cMesh basicSphere;
+		basicSphere.meshName = "Sphere_1_unit_Radius.ply";
+		basicSphere.bDoNotLight = true;
+		basicSphere.bUseDebugColours = true;
+		basicSphere.wholeObjectDebugColourRGBA = glm::vec4(0, 1, 0, 1); // Green
+		basicSphere.bIsWireframe = true;
+
+		// Start by drawing a basic sphere at all the active light locations
+		for (unsigned int i = 0; i < m_pTheLights->NUMBER_OF_LIGHTS_IM_USING; i++)
+		{
+			if (m_pTheLights->theLights[i].param2.x == 1) // If light is on
+			{
+				if (selectedLight == i) // Have different color for selected light
+					basicSphere.wholeObjectDebugColourRGBA = glm::vec4(1, 0, 0, 1);
+
+				basicSphere.drawPosition = m_pTheLights->theLights[i].position;
+				DrawObject(&basicSphere, matModel, m_shaderProgramID);
+				basicSphere.wholeObjectDebugColourRGBA = glm::vec4(0, 1, 0, 1);
+			}
+		}
+
+		// Draw a Cyan sphere at the selected mesh position
+		if (selectedMesh > -1)
+		{
+			basicSphere.drawPosition = m_vec_pAllMeshes[selectedMesh]->drawPosition;
+			basicSphere.wholeObjectDebugColourRGBA = glm::vec4(0, .5, .5, 1);
+			DrawObject(&basicSphere, matModel, m_shaderProgramID);
+		}
+
+
+	}
+
+	glEnable(GL_DEPTH_TEST);
+
+
+	return;
+
+// 	glfwPollEvents();
+// 
+// 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+// 
+// 	glfwSwapBuffers(m_window);
+
+// 	if (glfwWindowShouldClose(m_window))
+// 		return -1;
+// 	else
+// 		return 0;
+}
+
+void cGraphicsMain::DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int screenHeight)
+{
+	float ratio;
+
+	glUseProgram(m_shaderProgramID);
+
+	//glfwGetFramebufferSize(pWindow, &width, &height);
+	ratio = screenWidth / (float)screenHeight;
+
+
+	// While drawing a pixel, see if the pixel that's already there is closer or not?
+	glEnable(GL_DEPTH_TEST);
+	// (Usually) the default - does NOT draw "back facing" triangles
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
+
+	// Camera is pointing directly at the full screen quad
+	glm::vec3 FSQ_CameraEye = glm::vec3(0.0, 0.0, 10.0f);
+	glm::vec3 FSQ_CameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+
+
+	//uniform vec4 eyeLocation;
+	GLint eyeLocation_UL = glGetUniformLocation(shaderProgramID, "eyeLocation");
+	glUniform4f(eyeLocation_UL,
+		FSQ_CameraEye.x, FSQ_CameraEye.y, FSQ_CameraEye.z, 1.0f);
+
+
+
+	//       //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+	glm::mat4 matProjection = glm::perspective(0.6f,
+		ratio,
+		0.1f,        // Near (as big)
+		200.0f);    // Far (as small)
+
+	glm::mat4 matView = glm::lookAt(FSQ_CameraEye,
+		FSQ_CameraTarget,
+		m_upVector);
+
+	GLint matProjection_UL = glGetUniformLocation(shaderProgramID, "matProjection");
+	glUniformMatrix4fv(matProjection_UL, 1, GL_FALSE, glm::value_ptr(matProjection));
+
+	GLint matView_UL = glGetUniformLocation(shaderProgramID, "matView");
+	glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(matView));
+
+	// Set up the textures for this offscreen quad
+	//uniform bool bIsOffScreenTextureQuad;
+	GLint bIsOffScreenTextureQuad_UL = glGetUniformLocation(shaderProgramID, "bIsOffScreenTextureQuad");
+	glUniform1f(bIsOffScreenTextureQuad_UL, (GLfloat)GL_TRUE);
+
+	// uniform vec2 screenWidthAndHeight;	// x is width
+	GLint screenWidthAndHeight_UL = glGetUniformLocation(shaderProgramID, "screenWidthAndHeight");
+	glUniform2f(screenWidthAndHeight_UL,
+		(GLfloat)screenWidth,
+		(GLfloat)screenHeight);
+
+
+	// Point the FBO from the 1st pass to this texture...
+
+	GLint textureUnitNumber = 70;
+	glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
+	glBindTexture(GL_TEXTURE_2D, m_pFBO_1->colourTexture_0_ID);
+
+	//uniform sampler2D textureOffScreen;
+	GLint textureOffScreen_UL = glGetUniformLocation(shaderProgramID, "textureOffScreen");
+	glUniform1i(textureOffScreen_UL, textureUnitNumber);
+
+
+	cMesh fullScreenQuad;
+	//fullScreenQuad.meshName = "Quad_1_sided_aligned_on_XY_plane.ply";
+	fullScreenQuad.meshName = "Sphere_1_unit_Radius.ply";
+	//fullScreenQuad.meshName = "legospiderman_head_xyz_n_rgba_uv_at_Origin.ply";
+
+	    fullScreenQuad.textureName[0] = "cyan.bmp";
+	    fullScreenQuad.textureRatios[0] = 1.0f;
+	fullScreenQuad.setUniformDrawScale(2.0f);
+	fullScreenQuad.drawPosition = glm::vec3(0.0f);
+	//fullScreenQuad.adjustRoationAngleFromEuler(glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f));
+	fullScreenQuad.adjustRotationAngleFromEuler(glm::vec3(0.0f, 0.0f, 0.0f));
+
+	DrawObject(&fullScreenQuad, glm::mat4(1.0f), shaderProgramID);
+
+
+	glUniform1f(bIsOffScreenTextureQuad_UL, (GLfloat)GL_FALSE);
+
+
+	return;
 }
 
 // Adds new object to the meshestodraw
