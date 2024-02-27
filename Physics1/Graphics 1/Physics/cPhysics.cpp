@@ -14,6 +14,34 @@ cPhysics::~cPhysics()
 void cPhysics::setVAOManager(cVAOManager* pTheMeshManager)
 {
 	this->m_pMeshManager = pTheMeshManager;
+
+
+	// For now gonna shove verlet initialization here
+
+	cSoftBodyVerlet* newSoftBody = new cSoftBodyVerlet();
+	newSoftBody->acceleration = glm::vec3(0.0f, -20.0f, 0.0f);
+
+	sModelDrawInfo softBodyObjectDrawingInfo;
+
+	if (m_pMeshManager->FindDrawInfoByModelName("Icosahedron.ply", softBodyObjectDrawingInfo))
+	{
+		glm::mat4 matTransform = glm::mat4(1.0f);
+
+		matTransform = glm::translate(matTransform, glm::vec3(0.0f, 50.0f, 0.0f));
+
+		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		matTransform = glm::scale(matTransform, glm::vec3(2.0f));
+
+		newSoftBody->CreateSoftBody(softBodyObjectDrawingInfo, matTransform);
+
+		newSoftBody->CreateRandomBracing(10, 1.0f);
+
+		m_VerletObjs.push_back(newSoftBody);
+	}
+
+
 	return;
 }
 
@@ -47,6 +75,7 @@ void cPhysics::generateAABBs(std::vector<std::string> models)
 		newAABB->StartMakeTree(*itModel, m_pMeshManager, 25);
 		m_map_ModelAABBs[*itModel] = newAABB;
 	}
+
 }
 
 cAABB* cPhysics::findAABBByModelName(std::string modelName)

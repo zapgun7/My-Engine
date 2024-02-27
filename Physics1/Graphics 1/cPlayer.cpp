@@ -6,7 +6,7 @@ cPlayer::cPlayer(GLFWwindow* window)
 {
 	m_window = window;
 	m_pEngineController = cEngineController::GetEngineController();
-	m_CameraType = FIRSTPERSON;
+	m_CameraType = FLYCAM;
 
 }
 

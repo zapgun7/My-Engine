@@ -39,6 +39,8 @@ public:
 	// Animation Manager Settings Setting
 	void setTimescale(float newTS);
 	void toggleRunningState(void);
+	// Verlet Objects
+	//void UpdateVAO(std::string meshName, sModelDrawInfo modelInfo);
 
 
 	// Data Creation ///

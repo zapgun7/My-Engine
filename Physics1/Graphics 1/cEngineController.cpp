@@ -116,6 +116,11 @@ void cEngineController::toggleRunningState(void)
 	return;
 }
 
+// void cEngineController::UpdateVAO(std::string meshName, sModelDrawInfo modelInfo)
+// {
+// 	m_pTheEngineController->UpdateVAO(meshName, modelInfo);
+// }
+
 void cEngineController::addNewObject(std::string meshName, char* friendlyName)
 {
 	m_pTheEngineController->addNewObject(meshName, friendlyName);

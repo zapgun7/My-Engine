@@ -83,7 +83,7 @@ private:
 
 	// Draw Passes
 	void DrawPass_1(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec3 cameraEye, glm::vec3 cameraTarget);
-	void DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int screenHeight);
+	void DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int screeneight);
 
 
 	//void updateSelectedMesh(int meshIdx, std::string friendlyName, glm::vec3 newPos, glm::vec3 newOri, glm::vec3 customColor, float newScale, bool doNotLight, bool useCustomColor);  // Updates and existing object by reference to its friendly name (also from the gui)
@@ -137,6 +137,14 @@ private:
 	///////// FBO STUFF ///////////
 	cFBO* m_pFBO_1 = nullptr;
 	cFBO* m_pFBO_2 = nullptr;
+
+
+
+	////////// VERLET DRAWING ///////
+	cMesh* VerletObject = nullptr;
+// public:
+// 	void UpdateVAO(std::string meshName, sModelDrawInfo modelInfo);
+// private:
 
 
 

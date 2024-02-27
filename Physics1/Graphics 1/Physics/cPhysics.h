@@ -8,6 +8,8 @@
 #include "../Other Graphics Stuff/cGraphicsMain.h"
 #include "cAABB.h"
 
+#include "Verlet/cSoftBodyVerlet.h"
+
 //struct sPossibleCollision;
 
 
@@ -137,6 +139,9 @@ private:
 	};
 	std::vector< sCollisionEvent > m_vecCollisionsThisFrame;
 
+
+	
+	std::vector<cSoftBodyVerlet*> m_VerletObjs;
 
 	
 

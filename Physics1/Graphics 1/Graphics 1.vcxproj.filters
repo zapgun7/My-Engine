@@ -74,6 +74,9 @@
     <Filter Include="Graphics Engine\FBO">
       <UniqueIdentifier>{596e421e-6fc4-420c-84dd-d2b55ddad80e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Physics\Verlet">
+      <UniqueIdentifier>{d2984273-e0fb-4780-9391-8e0c75d3d178}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Basic Shader Manager\cShaderManager.cpp">
@@ -237,6 +240,9 @@
     </ClCompile>
     <ClCompile Include="Other Graphics Stuff\FBO\cFBO.cpp">
       <Filter>Graphics Engine\FBO</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\Verlet\cSoftBodyVerlet.cpp">
+      <Filter>Physics\Verlet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -404,6 +410,9 @@
     </ClInclude>
     <ClInclude Include="Other Graphics Stuff\FBO\cFBO.h">
       <Filter>Graphics Engine\FBO</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\Verlet\cSoftBodyVerlet.h">
+      <Filter>Physics\Verlet</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

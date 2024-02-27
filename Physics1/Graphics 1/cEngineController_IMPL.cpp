@@ -180,6 +180,11 @@ void cEngineController_IMPL::toggleRunningState(void)
 	return;
 }
 
+// void cEngineController_IMPL::UpdateVAO(std::string meshName, sModelDrawInfo modelInfo)
+// {
+// 	m_pTheGraphics->UpdateVAO(meshName, modelInfo);
+// }
+
 void cEngineController_IMPL::addNewObject(std::string meshName, char* friendlyName)
 {
 	// Create cmesh and add to cGraphicsMain

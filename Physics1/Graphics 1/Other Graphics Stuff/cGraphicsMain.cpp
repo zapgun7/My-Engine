@@ -22,6 +22,11 @@
 
 
 
+// void cGraphicsMain::UpdateVAO(std::string meshName, sModelDrawInfo modelInfo)
+// {
+// 	m_pMeshManager->UpdateVAOBuffers(meshName, modelInfo, m_shaderProgramID);
+// }
+
 cGraphicsMain* cGraphicsMain::m_pTheOnlyGraphicsMain = NULL;
 //extern cPhysics* g_pPhysics;
 
@@ -216,6 +221,15 @@ bool cGraphicsMain::Initialize()
 	{
 		std::cout << "FBO_2 created OK" << std::endl;
 	}
+
+
+	// Create verlet object to draw, for now rusty ship
+	VerletObject = new cMesh();
+	VerletObject->meshName = "Icosahedron.ply";
+	//VerletObject->textureName[0] = "metal_s01.bmp";
+	VerletObject->bUseDebugColours = true;
+	VerletObject->wholeObjectDebugColourRGBA = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+
 
 
 
@@ -1107,7 +1121,10 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 
 	}//for ( unsigned int index
 
+	// Draw verlet object
+	glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
 
+	DrawObject(VerletObject, matModel, m_shaderProgramID);
 
 	//////////// PARTICLE RENDERING ///////////
 // 	m_pParticleManager->Update(deltaTime);
@@ -1280,7 +1297,7 @@ void cGraphicsMain::DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int sc
 
 
 	// Camera is pointing directly at the full screen quad
-	glm::vec3 FSQ_CameraEye = glm::vec3(0.0, 0.0, 10.0f);
+	glm::vec3 FSQ_CameraEye = glm::vec3(0.0, 0.0, 5.0f);
 	glm::vec3 FSQ_CameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 
 
@@ -1295,7 +1312,7 @@ void cGraphicsMain::DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int sc
 	glm::mat4 matProjection = glm::perspective(0.6f,
 		ratio,
 		0.1f,        // Near (as big)
-		200.0f);    // Far (as small)
+		100.0f);    // Far (as small)
 
 	glm::mat4 matView = glm::lookAt(FSQ_CameraEye,
 		FSQ_CameraTarget,
@@ -1331,13 +1348,13 @@ void cGraphicsMain::DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int sc
 
 
 	cMesh fullScreenQuad;
-	//fullScreenQuad.meshName = "Quad_1_sided_aligned_on_XY_plane.ply";
-	fullScreenQuad.meshName = "Sphere_1_unit_Radius.ply";
+	fullScreenQuad.meshName = "Quad_1_sided_aligned_on_XY_plane.ply";
+	//fullScreenQuad.meshName = "Sphere_1_unit_Radius.ply";
 	//fullScreenQuad.meshName = "legospiderman_head_xyz_n_rgba_uv_at_Origin.ply";
 
 	    fullScreenQuad.textureName[0] = "cyan.bmp";
 	    fullScreenQuad.textureRatios[0] = 1.0f;
-	fullScreenQuad.setUniformDrawScale(2.0f);
+	fullScreenQuad.setUniformDrawScale(5.0f);
 	fullScreenQuad.drawPosition = glm::vec3(0.0f);
 	//fullScreenQuad.adjustRoationAngleFromEuler(glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f));
 	fullScreenQuad.adjustRotationAngleFromEuler(glm::vec3(0.0f, 0.0f, 0.0f));

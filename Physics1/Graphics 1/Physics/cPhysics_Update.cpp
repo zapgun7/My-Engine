@@ -20,6 +20,27 @@ void cPhysics::Update(double deltaTime)
 	//deltaTime *= 10.0f;
 
 
+	// Start by updating verlet objects!
+
+	for (cSoftBodyVerlet* currSoftBod : m_VerletObjs)
+	{
+		currSoftBod->VerletUpdate(deltaTime);
+		currSoftBod->ApplyCollision(deltaTime);
+		currSoftBod->SatisfyConstraints();
+		currSoftBod->UpdateVertexPositions();
+		//currSoftBod->UpdateNormals();
+
+		m_pMeshManager->UpdateVAOBuffers(currSoftBod->m_ModelVertexInfo.meshName, currSoftBod->m_ModelVertexInfo, (GLuint)3); // Lazy, but this is the only shader program we're using now
+		
+	}
+
+
+
+
+
+
+
+
 	if (!m_IsRunning) // If physics paused, update positions/orientations only and return; no collision detection
 	{
 		for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)
