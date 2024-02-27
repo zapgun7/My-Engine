@@ -76,6 +76,9 @@ public:
 	// Force, like gravity or whatever
 	glm::vec3 acceleration = glm::vec3(0.0f);
 
+	float tightnessFactor = 1.0f;
+	unsigned int iterations = 1;
+
 
 	std::vector< sParticle* > vec_pParticles;
 	std::vector< sConstraint* > vec_pConstraints;

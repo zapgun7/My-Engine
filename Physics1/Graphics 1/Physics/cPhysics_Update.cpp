@@ -28,7 +28,7 @@ void cPhysics::Update(double deltaTime)
 		currSoftBod->ApplyCollision(deltaTime);
 		currSoftBod->SatisfyConstraints();
 		currSoftBod->UpdateVertexPositions();
-		//currSoftBod->UpdateNormals();
+		currSoftBod->UpdateNormals();
 
 		m_pMeshManager->UpdateVAOBuffers(currSoftBod->m_ModelVertexInfo.meshName, currSoftBod->m_ModelVertexInfo, (GLuint)3); // Lazy, but this is the only shader program we're using now
 		

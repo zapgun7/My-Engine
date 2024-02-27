@@ -20,6 +20,8 @@ void cPhysics::setVAOManager(cVAOManager* pTheMeshManager)
 
 	cSoftBodyVerlet* newSoftBody = new cSoftBodyVerlet();
 	newSoftBody->acceleration = glm::vec3(0.0f, -20.0f, 0.0f);
+	newSoftBody->tightnessFactor = 0.0008f;
+	newSoftBody->iterations = 1;
 
 	sModelDrawInfo softBodyObjectDrawingInfo;
 
@@ -36,7 +38,7 @@ void cPhysics::setVAOManager(cVAOManager* pTheMeshManager)
 
 		newSoftBody->CreateSoftBody(softBodyObjectDrawingInfo, matTransform);
 
-		newSoftBody->CreateRandomBracing(10, 1.0f);
+		newSoftBody->CreateRandomBracing(100, 1.0f);
 
 		m_VerletObjs.push_back(newSoftBody);
 	}

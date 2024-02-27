@@ -169,12 +169,12 @@ void cSoftBodyVerlet::UpdateNormals(void)
 	}
 
 
-	for ( unsigned int triIndex = 0; triIndex != this->m_ModelVertexInfo.numberOfTriangles; triIndex++ )
+	for ( unsigned int triIndex = 0; triIndex != this->m_ModelVertexInfo.numberOfTriangles; triIndex++ ) // Dog walking time
 	{
 		// Indices are sets of 3, one per 
-		unsigned int vertAIndex = this->m_ModelVertexInfo.pIndices[triIndex + 0];
-		unsigned int vertBIndex = this->m_ModelVertexInfo.pIndices[triIndex + 1];
-		unsigned int vertCIndex = this->m_ModelVertexInfo.pIndices[triIndex + 2];
+		unsigned int vertAIndex = this->m_ModelVertexInfo.pIndices[triIndex * 3 + 0];
+		unsigned int vertBIndex = this->m_ModelVertexInfo.pIndices[triIndex * 3 + 1];
+		unsigned int vertCIndex = this->m_ModelVertexInfo.pIndices[triIndex * 3 + 2];
 
 		// note the references so that when we update this, it will update the mesh
 		// (otherwise we'll be updating a copy of it)
@@ -317,9 +317,9 @@ void cSoftBodyVerlet::ApplyCollision(double deltaTime)
 
 void cSoftBodyVerlet::SatisfyConstraints(void)
 {
-	const unsigned int NUM_ITERATIONS = 1;
+	//const unsigned int NUM_ITERATIONS = 1;
 	
-	for ( unsigned int iteration = 0; iteration != NUM_ITERATIONS; iteration++ )
+	for ( unsigned int iteration = 0; iteration != this->iterations; iteration++ )
 	{
 		// This is ONE pass of the constraint resolution
 		for (sConstraint* pCurConstraint : this->vec_pConstraints )
@@ -352,7 +352,7 @@ void cSoftBodyVerlet::SatisfyConstraints(void)
 
 				// Making this non-one, will change how quickly the objects move together
 				// For example, making this < 1.0 will make it "bouncier"
-				float tightnessFactor = 0.01f;
+				//float tightnessFactor = 0.01f;
 
 				pX1->position += delta * 0.5f * diff * tightnessFactor;
 				pX2->position -= delta * 0.5f * diff * tightnessFactor;
