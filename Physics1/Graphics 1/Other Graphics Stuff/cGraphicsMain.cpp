@@ -1122,9 +1122,9 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 	}//for ( unsigned int index
 
 	// Draw verlet object
-	glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
+	//glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
 
-	DrawObject(VerletObject, matModel, m_shaderProgramID);
+	//DrawObject(VerletObject, matModel, m_shaderProgramID);
 
 	//////////// PARTICLE RENDERING ///////////
 // 	m_pParticleManager->Update(deltaTime);

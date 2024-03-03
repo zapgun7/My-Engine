@@ -3,6 +3,12 @@
 #include <glm/glm.hpp>
 #include <glm/vec3.hpp>
 #include <string>
+#include <map>
+#include <vector>
+
+class aiScene;
+class aiNode;
+
 
 // The vertex structure 
 //	that's ON THE GPU (eventually) 
@@ -10,11 +16,59 @@
 struct sVertex
 {
 	float x, y, z, w;		// vPos
-	float r, g, b, a;		// vCol
+	//float r, g, b, a;		// vCol
 	float nx, ny, nz, nw;	// vNormal
-	float u, v;				// vTextureCoords
+	float u, v, s, t;		// vTextureCoords    // making them vec4 to match up with bone land
 };
 
+struct sFloat4
+{
+	float x, y, z, w;
+};
+
+struct sVertex_p4t4n4b4w4
+{
+	sFloat4 Pos;
+	sFloat4 Normal;
+	sFloat4 TexUVx2;
+	sFloat4 BoneWeights;
+	sFloat4 BoneIds;
+};
+
+struct sBoneInfo
+{
+	glm::mat4 BoneOffset;				// Offset from the parent bone/node
+	glm::mat4 FinalTransformation;		// Calculated transformation used for rendering
+	glm::mat4 GlobalTransformation;		// used for the bone hierarchy transformation calculations when animating
+};
+
+// Connection Node for hierarchy
+struct sNode
+{
+	sNode(const std::string& name) : Name(name) { }
+	std::string Name;
+	glm::mat4 Transformation;
+	std::vector<sNode*> Children;
+};
+
+// Animation Node
+// struct sNodeAnim
+// {
+// 	sNodeAnim(const std::string& name) : Name(name) { }
+// 	std::string Name;
+// 	std::vector<PositionKeyFrame> m_PositionKeyFrames;
+// 	std::vector<ScaleKeyFrame> m_ScaleKeyFrames;
+// 	std::vector<RotationKeyFrame> m_RotationKeyFrames;
+// };
+
+// struct sCharacterAnimation
+// {
+// 	std::string Name;
+// 	double TicksPerSecond;
+// 	double Duration;
+// 	sNode* RootNode;
+// 	std::vector<NodeAnim*> Channels;
+// };
 
 struct sModelDrawInfo
 {
@@ -44,6 +98,23 @@ struct sModelDrawInfo
 	float maxExtent;
 
 	void calcExtents(void);
+
+	sNode* GenerateBoneHierarchy(aiNode* node, const int depth = 0);
+
+
+	// Animation Stuff
+	aiScene* scene;
+	std::vector<glm::mat4> NodeHierarchyTransformations;
+	std::map<std::string, int> NodeNameToIdMap;
+
+	std::vector<sBoneInfo> BoneInfoVec;
+	std::map<std::string, int> BoneNameToIdMap;
+	sNode* RootNode;
+
+	//std::vector<sCharacterAnimation*> CharacterAnimations;
+
+	glm::mat4 GlobalInverseTransformation;
+
 
 	// 
 	unsigned int getUniqueID(void);

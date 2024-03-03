@@ -44,6 +44,49 @@ sModelDrawInfo::sModelDrawInfo()
 	return;
 }
 
+void AssimpToGLM(const aiMatrix4x4& a, glm::mat4& g)
+{
+	g[0][0] = a.a1; g[0][1] = a.b1; g[0][2] = a.c1; g[0][3] = a.d1;
+	g[1][0] = a.a2; g[1][1] = a.b2; g[1][2] = a.c2; g[1][3] = a.d2;
+	g[2][0] = a.a3; g[2][1] = a.b3; g[2][2] = a.c3; g[2][3] = a.d3;
+	g[3][0] = a.a4; g[3][1] = a.b4; g[3][2] = a.c4; g[3][3] = a.d4;
+}
+
+sNode* CreateAnimNode(aiNode* node)
+{
+	sNode* newNode = new sNode(node->mName.C_Str());
+	AssimpToGLM(node->mTransformation, newNode->Transformation);
+	return newNode;
+}
+
+
+sNode* sModelDrawInfo::GenerateBoneHierarchy(aiNode* assimpNode, const int depth)
+{
+	sNode* node = CreateAnimNode(assimpNode);
+
+	aiMatrix4x4& transformation = assimpNode->mTransformation;
+	aiVector3D position;
+	aiQuaternion rotation;
+	aiVector3D scaling;
+	transformation.Decompose(scaling, rotation, position);
+
+
+	glm::mat4 glmMatrix;
+	AssimpToGLM(transformation, glmMatrix);
+
+
+
+	NodeNameToIdMap.insert(std::pair<std::string, int>((std::string)(assimpNode->mName.C_Str()), NodeHierarchyTransformations.size()));
+	NodeHierarchyTransformations.emplace_back(glmMatrix);
+
+	for (int i = 0; i < assimpNode->mNumChildren; i++)
+	{
+		node->Children.emplace_back(GenerateBoneHierarchy(assimpNode->mChildren[i], depth + 1));
+	}
+	return node;
+}
+
+
 
 void cVAOManager::setBasePath(std::string basePathWithoutSlash)
 {
@@ -67,6 +110,15 @@ bool cVAOManager::LoadModelIntoVAO(
 	drawInfo.meshName = fileName;
 
     std::string fileAndPath = this->m_basePathWithoutSlash + "/" + fileName;
+
+	if (fileName == "Adventurer Aland@Idle.FBX")
+	{
+		if (!this->m_LoadTheFileAnimModel(fileAndPath, drawInfo, shaderProgramID))
+		{
+			return false;
+		};
+		return true;
+	}
 
     if ( ! this->m_LoadTheFile(fileAndPath, drawInfo) )
     {
@@ -133,7 +185,7 @@ bool cVAOManager::LoadModelIntoVAO(
 	// Set the vertex attributes.
 
 	GLint vpos_location = glGetAttribLocation(shaderProgramID, "vPos");	// program
-	GLint vcol_location = glGetAttribLocation(shaderProgramID, "vCol");	// program;
+	//GLint vcol_location = glGetAttribLocation(shaderProgramID, "vCol");	// program;
 	GLint vNormal_location = glGetAttribLocation(shaderProgramID, "vNormal");	// program;
 
 	GLint vTextureCoords_location = glGetAttribLocation(shaderProgramID, "vTextureCoords");
@@ -145,11 +197,11 @@ bool cVAOManager::LoadModelIntoVAO(
 						   sizeof(sVertex), 
 						   ( void* ) offsetof(sVertex, x));
 
-	glEnableVertexAttribArray(vcol_location);	    // vCol
-	glVertexAttribPointer( vcol_location, 4,		// vCol
-						   GL_FLOAT, GL_FALSE,
-                          sizeof(sVertex),
-						   ( void* ) offsetof(sVertex, r));
+// 	glEnableVertexAttribArray(vcol_location);	    // vCol
+// 	glVertexAttribPointer( vcol_location, 4,		// vCol
+// 						   GL_FLOAT, GL_FALSE,
+//                           sizeof(sVertex),
+// 						   ( void* ) offsetof(sVertex, r));
 
 	glEnableVertexAttribArray(vNormal_location);	// vNormal
 	glVertexAttribPointer(vNormal_location, 4,		// vNormal
@@ -171,7 +223,7 @@ bool cVAOManager::LoadModelIntoVAO(
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	glDisableVertexAttribArray(vpos_location);
-	glDisableVertexAttribArray(vcol_location);
+	//glDisableVertexAttribArray(vcol_location);
 	glDisableVertexAttribArray(vNormal_location);
 	glDisableVertexAttribArray(vTextureCoords_location);
 
@@ -271,6 +323,8 @@ bool cVAOManager::m_LoadTheFile(std::string theFileName, sModelDrawInfo& drawInf
 // 		{
 		drawInfo.pVertices[vertIndex].u = scene->mMeshes[0]->mTextureCoords[0][vertIndex].x;
 		drawInfo.pVertices[vertIndex].v = scene->mMeshes[0]->mTextureCoords[0][vertIndex].y;
+		drawInfo.pVertices[vertIndex].s = 0.0f;
+		drawInfo.pVertices[vertIndex].t = 0.0f;
 // 		}
 // 		else
 // 		{
@@ -279,20 +333,20 @@ bool cVAOManager::m_LoadTheFile(std::string theFileName, sModelDrawInfo& drawInf
 // 		}
 
 
-        if (scene->mMeshes[0]->HasVertexColors(vertIndex))
-        {
-            drawInfo.pVertices[vertIndex].r = scene->mMeshes[0]->mColors[0][vertIndex].r;
-            drawInfo.pVertices[vertIndex].g = scene->mMeshes[0]->mColors[0][vertIndex].g;
-            drawInfo.pVertices[vertIndex].b = scene->mMeshes[0]->mColors[0][vertIndex].b;
-            drawInfo.pVertices[vertIndex].a = scene->mMeshes[0]->mColors[0][vertIndex].a;
-        }
-        else
-        {
-            drawInfo.pVertices[vertIndex].r = 0.5;
-            drawInfo.pVertices[vertIndex].g = 0.5;
-            drawInfo.pVertices[vertIndex].b = 0.5;
-            drawInfo.pVertices[vertIndex].a = 255;
-        }
+//         if (scene->mMeshes[0]->HasVertexColors(vertIndex))
+//         {
+//             drawInfo.pVertices[vertIndex].r = scene->mMeshes[0]->mColors[0][vertIndex].r;
+//             drawInfo.pVertices[vertIndex].g = scene->mMeshes[0]->mColors[0][vertIndex].g;
+//             drawInfo.pVertices[vertIndex].b = scene->mMeshes[0]->mColors[0][vertIndex].b;
+//             drawInfo.pVertices[vertIndex].a = scene->mMeshes[0]->mColors[0][vertIndex].a;
+//         }
+//         else
+//         {
+//             drawInfo.pVertices[vertIndex].r = 0.5;
+//             drawInfo.pVertices[vertIndex].g = 0.5;
+//             drawInfo.pVertices[vertIndex].b = 0.5;
+//             drawInfo.pVertices[vertIndex].a = 255;
+//         }
 	}
 
 	// Set the calculated min/max
@@ -318,11 +372,240 @@ bool cVAOManager::m_LoadTheFile(std::string theFileName, sModelDrawInfo& drawInf
 
 
 	return true;
-
-
 }
 
+struct sBoneWeightInfo {
+	sBoneWeightInfo() {
+		m_BoneId[0] = 0;
+		m_BoneId[1] = 0;
+		m_BoneId[2] = 0;
+		m_BoneId[3] = 0;
+		m_Weight[0] = 0.f;
+		m_Weight[1] = 0.f;
+		m_Weight[2] = 0.f;
+		m_Weight[3] = 0.f;
+	}
+	float m_BoneId[4];
+	float m_Weight[4];
+};
 
+
+bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo& drawInfo, unsigned int shaderID)
+{
+	Assimp::Importer m_AssimpImporter;
+	drawInfo.scene = (aiScene*)m_AssimpImporter.ReadFile(theFileName, aiProcess_GenNormals);
+
+	aiMesh* mesh = drawInfo.scene->mMeshes[0];
+
+	// Load animations (when I get my animation system to intermingle with bones n' stuff)
+
+
+
+
+
+
+
+	// Generate bones
+	drawInfo.RootNode = drawInfo.GenerateBoneHierarchy(drawInfo.scene->mRootNode);
+	drawInfo.GlobalInverseTransformation = glm::inverse(drawInfo.RootNode->Transformation);
+
+	std::vector<sBoneWeightInfo> boneWeights;
+
+	if (mesh->HasBones())
+	{
+		boneWeights.resize(mesh->mNumVertices);
+		unsigned int numBones = mesh->mNumBones;
+		for (unsigned int boneIdx = 0; boneIdx < numBones; boneIdx++)
+		{
+			aiBone* bone = mesh->mBones[boneIdx];
+
+			std::string name(bone->mName.C_Str(), bone->mName.length);
+			drawInfo.BoneNameToIdMap.insert(std::pair<std::string, int>(name, drawInfo.BoneInfoVec.size()));
+
+			// Store offset matrices
+			sBoneInfo info;
+			AssimpToGLM(bone->mOffsetMatrix, info.BoneOffset);
+			drawInfo.BoneInfoVec.emplace_back(info);
+			printf("\n-----------\n");
+			printf("Bone: %s\n", name.c_str());
+			printf("Number of weights: %d\n", bone->mNumWeights);
+
+			for (int weightIdx = 0; weightIdx < bone->mNumWeights; weightIdx++)
+			{
+				aiVertexWeight& vertexWeight = bone->mWeights[weightIdx];
+				// BoneId		:	boneIdx
+				// Vertexid		:	vertexWeight.mVertexId
+				// Weight		:	vertexWeight.mWeight
+
+				sBoneWeightInfo& boneInfo = boneWeights[vertexWeight.mVertexId];
+				for (int infoIdx = 0; infoIdx < 4; infoIdx++)
+				{
+					if (boneInfo.m_Weight[infoIdx] == 0.0f)
+					{
+						boneInfo.m_BoneId[infoIdx] = boneIdx;
+						boneInfo.m_Weight[infoIdx] = vertexWeight.mWeight;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+
+	// Now the regular model loading stuff
+	drawInfo.numberOfVertices = mesh->mNumVertices;
+	drawInfo.numberOfTriangles = mesh->mNumFaces;
+	drawInfo.numberOfIndices = drawInfo.numberOfTriangles * 3;
+
+	drawInfo.pIndices = new unsigned int[drawInfo.numberOfIndices];
+
+	sVertex_p4t4n4b4w4* pTempVertArray = new sVertex_p4t4n4b4w4[drawInfo.numberOfIndices * 2];
+	GLint* pIndexArrayLocal = new GLint[drawInfo.numberOfIndices * 2];
+	int count = 0;
+	int index = 0;
+
+	int indexIdx = 0;
+
+	unsigned int vertArrayIndex = 0;
+	for (unsigned int faceIdx = 0; faceIdx != mesh->mNumFaces; faceIdx++)
+	{
+		aiFace face = mesh->mFaces[faceIdx];
+
+		for (int idx = 0; idx != 3; idx++)
+		{
+			unsigned int index = face.mIndices[idx];
+
+			drawInfo.pIndices[indexIdx++] = index;
+
+			aiVector3D position = mesh->mVertices[index];
+			pTempVertArray[vertArrayIndex].Pos.x = position.x;
+			pTempVertArray[vertArrayIndex].Pos.y = position.y;
+			pTempVertArray[vertArrayIndex].Pos.z = position.z;
+			pTempVertArray[vertArrayIndex].Pos.w = 1.0f;
+
+			if (mesh->HasTextureCoords(0))
+			{
+				aiVector3D textureCoord = mesh->mTextureCoords[0][index];
+				pTempVertArray[vertArrayIndex].TexUVx2.x = textureCoord.x;
+				pTempVertArray[vertArrayIndex].TexUVx2.y = textureCoord.y;
+				pTempVertArray[vertArrayIndex].TexUVx2.z = textureCoord.z;
+				pTempVertArray[vertArrayIndex].TexUVx2.w = 1.0f;
+			}
+			else
+			{
+				pTempVertArray[vertArrayIndex].TexUVx2.x = 0.0f;
+				pTempVertArray[vertArrayIndex].TexUVx2.y = 0.0f;
+				pTempVertArray[vertArrayIndex].TexUVx2.z = 0.0f;
+				pTempVertArray[vertArrayIndex].TexUVx2.w = 0.0f;
+			}
+
+			aiVector3D normal = mesh->mNormals[index];
+			pTempVertArray[vertArrayIndex].Normal.x = normal.x;
+			pTempVertArray[vertArrayIndex].Normal.y = normal.y;
+			pTempVertArray[vertArrayIndex].Normal.z = normal.z;
+			pTempVertArray[vertArrayIndex].Normal.w = 1.0f;
+
+			if (mesh->HasBones())
+			{
+				sBoneWeightInfo& boneInfo = boneWeights[index];
+
+				pTempVertArray[vertArrayIndex].BoneIds.x = boneInfo.m_BoneId[0];
+				pTempVertArray[vertArrayIndex].BoneIds.y = boneInfo.m_BoneId[1];
+				pTempVertArray[vertArrayIndex].BoneIds.z = boneInfo.m_BoneId[2];
+				pTempVertArray[vertArrayIndex].BoneIds.w = boneInfo.m_BoneId[3];
+
+				pTempVertArray[vertArrayIndex].BoneWeights.x = boneInfo.m_Weight[0];
+				pTempVertArray[vertArrayIndex].BoneWeights.y = boneInfo.m_Weight[1];
+				pTempVertArray[vertArrayIndex].BoneWeights.z = boneInfo.m_Weight[2];
+				pTempVertArray[vertArrayIndex].BoneWeights.w = boneInfo.m_Weight[3];
+
+				float weight = boneInfo.m_Weight[0] + boneInfo.m_Weight[1] + boneInfo.m_Weight[2] + boneInfo.m_Weight[3];
+				if (weight != 1.0f)
+				{
+					int breakhere = 0;
+				}
+			}
+
+			pIndexArrayLocal[vertArrayIndex] = vertArrayIndex;
+
+			vertArrayIndex++;
+		}
+	}
+
+
+
+	// Now to load into VAO
+
+	glGenVertexArrays(1, &(drawInfo.VAO_ID));
+	glBindVertexArray(drawInfo.VAO_ID);
+
+	// Vertex Info
+	glGenBuffers(1, &(drawInfo.VertexBufferID));
+	glBindBuffer(GL_ARRAY_BUFFER, drawInfo.VertexBufferID);
+
+	unsigned int totalVertBufferSizeBYTES = drawInfo.numberOfVertices * sizeof(sVertex_p4t4n4b4w4);
+	glBufferData(GL_ARRAY_BUFFER, totalVertBufferSizeBYTES, pTempVertArray, GL_STATIC_DRAW);
+
+
+	// Index Info
+	glGenBuffers(1, &(drawInfo.IndexBufferID));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawInfo.IndexBufferID);
+
+	unsigned int sizeOfIndexArrayInBytes = drawInfo.numberOfIndices * sizeof(GLuint);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfIndexArrayInBytes, pIndexArrayLocal, GL_STATIC_DRAW);
+
+
+	// Set offset of vertex data
+	GLint vPos_UL = glGetAttribLocation(shaderID, "vPos");
+	GLint vNorm_UL = glGetAttribLocation(shaderID, "vNormal");
+	GLint vTexCoords_UL = glGetAttribLocation(shaderID, "vTextureCoords");
+	GLint vBoneIds_UL = glGetAttribLocation(shaderID, "vBoneIds");
+	GLint vBoneWeights_UL = glGetAttribLocation(shaderID, "vBoneWeights");
+
+	unsigned int bytesInOneVertex = sizeof(sVertex_p4t4n4b4w4);
+
+// 	sFloat4 BoneWeights;
+// 	sFloat4 BoneIds;
+
+
+	// Position
+	glEnableVertexAttribArray(vPos_UL);
+	glVertexAttribPointer(vPos_UL, 4, GL_FLOAT, GL_FALSE, bytesInOneVertex, (void*)offsetof(sVertex_p4t4n4b4w4, Pos));
+
+	// Normal
+	glEnableVertexAttribArray(vNorm_UL);
+	glVertexAttribPointer(vNorm_UL, 4, GL_FLOAT, GL_FALSE, bytesInOneVertex, (void*)offsetof(sVertex_p4t4n4b4w4, Normal));
+
+	// Texture
+	glEnableVertexAttribArray(vTexCoords_UL);
+	glVertexAttribPointer(vTexCoords_UL, 4, GL_FLOAT, GL_FALSE, bytesInOneVertex, (void*)offsetof(sVertex_p4t4n4b4w4, TexUVx2));
+
+	// Bone Weights
+	glEnableVertexAttribArray(vBoneWeights_UL);
+	glVertexAttribPointer(vBoneWeights_UL, 4, GL_FLOAT, GL_FALSE, bytesInOneVertex, (void*)offsetof(sVertex_p4t4n4b4w4, BoneWeights));
+
+	// Bone Ids
+	glEnableVertexAttribArray(vBoneIds_UL);
+	glVertexAttribPointer(vBoneIds_UL, 4, GL_FLOAT, GL_FALSE, bytesInOneVertex, (void*)offsetof(sVertex_p4t4n4b4w4, BoneIds));
+
+
+
+	// Now set VAO to zero
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glDisableVertexAttribArray(vPos_UL);
+	glDisableVertexAttribArray(vNorm_UL);
+	glDisableVertexAttribArray(vTexCoords_UL);
+	glDisableVertexAttribArray(vBoneWeights_UL);
+	glDisableVertexAttribArray(vBoneIds_UL);
+
+	this->m_map_ModelName_to_VAOID[drawInfo.meshName] = drawInfo;
+
+	
+	return true;
+}
 
 bool cVAOManager::UpdateVAOBuffers(std::string fileName,
                       sModelDrawInfo& updatedDrawInfo,

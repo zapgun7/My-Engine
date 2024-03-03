@@ -1,7 +1,7 @@
 #include "cAnimationManager.h"
 
 #include "Physics/sPhysicsProperties.h"
-
+#include "cVAOManager/sModelDrawInfo.h"
 
 
 

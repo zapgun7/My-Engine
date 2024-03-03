@@ -1,7 +1,7 @@
 // Fragment shader
 #version 420
 
-in vec4 colour;
+//in vec4 colour;
 in vec4 vertexWorldPos;			// vertex in "world space"
 in vec4 vertexWorldNormal;	
 in vec2 textureCoords;
@@ -240,7 +240,7 @@ void main()
 	if (bUseVertexColours)
 	{
 		// Use model vertex colour and NOT the texture colour
-		vertexRGBA = colour;
+		//vertexRGBA = colour;
 	}
 	
 	if ( bUseDebugColour )

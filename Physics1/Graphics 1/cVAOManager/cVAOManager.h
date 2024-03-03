@@ -7,7 +7,13 @@
 #include <string>
 #include <map>
 
+#include <assimp/scene.h>
 #include "sModelDrawInfo.h"
+
+class aiNode;
+
+
+
 
 class cVAOManager
 {
@@ -43,12 +49,15 @@ public:
 private:
 
 	bool m_LoadTheFile(std::string theFileName, sModelDrawInfo& drawInfo);
+	bool m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo& drawInfo, unsigned int shaderID);
 
 	std::map< std::string /*model name*/,
 		      sModelDrawInfo /* info needed to draw*/ >
 		m_map_ModelName_to_VAOID;
 
 	std::string m_basePathWithoutSlash;
+
+	//Assimp::Importer m_AssimpImporter;
 	//AH::cFileLoader* m_pAssLoader; // Assimp file loader object
 
 };

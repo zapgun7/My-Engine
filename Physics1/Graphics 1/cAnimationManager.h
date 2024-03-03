@@ -13,7 +13,7 @@
 #include "cAnimationBuilder.h"
 
 
-
+struct sNode;
 class sPhysicsProperties; // This will be the medium of updating position, orientation, etc.
 
 
@@ -50,7 +50,8 @@ struct sAnimInfo // Individual instances of animation setups
 		Interpolation2 interp_spec = SINE;
 	};
 
-	sPhysicsProperties* theObj = nullptr;
+	//sPhysicsProperties* theObj = nullptr;
+	sNode* RootNode = nullptr;
 	double timeInAnimation = 0;
 	int loopCount = 0; // -1 = inf
 	unsigned lastKeyFrame = 0; // Most recently passed keyframe

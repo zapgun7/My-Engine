@@ -18,30 +18,30 @@ void cPhysics::setVAOManager(cVAOManager* pTheMeshManager)
 
 	// For now gonna shove verlet initialization here
 
-	cSoftBodyVerlet* newSoftBody = new cSoftBodyVerlet();
-	newSoftBody->acceleration = glm::vec3(0.0f, -20.0f, 0.0f);
-	newSoftBody->tightnessFactor = 0.0008f;
-	newSoftBody->iterations = 1;
-
-	sModelDrawInfo softBodyObjectDrawingInfo;
-
-	if (m_pMeshManager->FindDrawInfoByModelName("Icosahedron.ply", softBodyObjectDrawingInfo))
-	{
-		glm::mat4 matTransform = glm::mat4(1.0f);
-
-		matTransform = glm::translate(matTransform, glm::vec3(0.0f, 50.0f, 0.0f));
-
-		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-
-		matTransform = glm::scale(matTransform, glm::vec3(2.0f));
-
-		newSoftBody->CreateSoftBody(softBodyObjectDrawingInfo, matTransform);
-
-		newSoftBody->CreateRandomBracing(100, 1.0f);
-
-		m_VerletObjs.push_back(newSoftBody);
-	}
+// 	cSoftBodyVerlet* newSoftBody = new cSoftBodyVerlet();
+// 	newSoftBody->acceleration = glm::vec3(0.0f, -20.0f, 0.0f);
+// 	newSoftBody->tightnessFactor = 0.0008f;
+// 	newSoftBody->iterations = 1;
+// 
+// 	sModelDrawInfo softBodyObjectDrawingInfo;
+// 
+// 	if (m_pMeshManager->FindDrawInfoByModelName("Icosahedron.ply", softBodyObjectDrawingInfo))
+// 	{
+// 		glm::mat4 matTransform = glm::mat4(1.0f);
+// 
+// 		matTransform = glm::translate(matTransform, glm::vec3(0.0f, 50.0f, 0.0f));
+// 
+// 		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+// 		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+// 
+// 		matTransform = glm::scale(matTransform, glm::vec3(2.0f));
+// 
+// 		newSoftBody->CreateSoftBody(softBodyObjectDrawingInfo, matTransform);
+// 
+// 		newSoftBody->CreateRandomBracing(100, 1.0f);
+// 
+// 		m_VerletObjs.push_back(newSoftBody);
+// 	}
 
 
 	return;

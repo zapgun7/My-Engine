@@ -47,10 +47,10 @@ bool cSoftBodyVerlet::CreateSoftBody(sModelDrawInfo ModelInfo, glm::mat4 matInit
 //		pVerticesLocalCopy[index].z = ModelInfo.pVertices[index].z;
 //		pVerticesLocalCopy[index].w = ModelInfo.pVertices[index].w;
 
-		pVerticesLocalCopy[index].r = ModelInfo.pVertices[index].r;
-		pVerticesLocalCopy[index].g = ModelInfo.pVertices[index].g;
-		pVerticesLocalCopy[index].b = ModelInfo.pVertices[index].b;
-		pVerticesLocalCopy[index].a = ModelInfo.pVertices[index].a;
+// 		pVerticesLocalCopy[index].r = ModelInfo.pVertices[index].r;
+// 		pVerticesLocalCopy[index].g = ModelInfo.pVertices[index].g;
+// 		pVerticesLocalCopy[index].b = ModelInfo.pVertices[index].b;
+// 		pVerticesLocalCopy[index].a = ModelInfo.pVertices[index].a;
 
 		pVerticesLocalCopy[index].nx = ModelInfo.pVertices[index].nx;
 		pVerticesLocalCopy[index].ny = ModelInfo.pVertices[index].ny;
