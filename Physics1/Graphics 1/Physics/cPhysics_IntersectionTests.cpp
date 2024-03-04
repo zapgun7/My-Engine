@@ -159,7 +159,6 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 		return false;
 	}
 
-	// TODO create another sPhysicsProperties for the sphere and reverse the TriMesh's transform on it before passing 
 
 	
 

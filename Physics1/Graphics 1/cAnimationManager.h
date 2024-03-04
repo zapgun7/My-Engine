@@ -10,6 +10,8 @@
 #include <glm/gtc/constants.hpp>
 #include <vector>
 
+#include "cVAOManager/sModelDrawInfo.h"
+
 #include "cAnimationBuilder.h"
 
 
@@ -83,6 +85,8 @@ public:
 	// FOR THE PROJECT
 	void setTimescale(float newTS);
 	void toggleRunning(void);
+
+	void CalculateMatrices(sModelDrawInfo* model, sAnimInfo* animation, sNode* node, const glm::mat4& parentTransformationMatrix, double keyFrameTime);
 
 
 private:

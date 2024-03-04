@@ -131,7 +131,7 @@ void cAnimationManager::Update(double dt)
 						}
 						}
 
-						currAnim->theObj->position += deltaValue;
+						//currAnim->theObj->position += deltaValue;
 					}
 					else // This should trigger the loop
 					{
@@ -219,7 +219,7 @@ void cAnimationManager::Update(double dt)
 						}
 						}
 
-						currAnim->theObj->scale += deltaValue;
+						//currAnim->theObj->scale += deltaValue;
 					}
 					else // This should trigger the loop
 					{
@@ -310,7 +310,7 @@ void cAnimationManager::Update(double dt)
 
 						//currAnim->theObj->scale += deltaScale;
 						glm::quat rotAdjust = glm::quat(glm::radians(deltaValue));
-						currAnim->theObj->setRotationFromQuat(currAnim->theObj->get_qOrientation() * rotAdjust);
+						//currAnim->theObj->setRotationFromQuat(currAnim->theObj->get_qOrientation() * rotAdjust);
 					}
 					else // This should trigger the loop
 					{
@@ -367,280 +367,280 @@ bool cAnimationManager::Destroy(void)
 
 
 
-
-void cAnimationManager::AddAnimationObj(sPhysicsProperties* theObj)
-{
-	// Lazy setup for animation project
-
-	if (theObj->getUniqueID() == 2) // ball
-	{
-		sAnimInfo* newAnim = m_pAnimBuilder->MakeAnimation(BOUNCEBALL);
-		newAnim->theObj = theObj;
-		m_Animations.push_back(newAnim);
-		return;
-	}
-	else if (theObj->getUniqueID() == 3) // ship
-	{
-		sAnimInfo* newAnim = m_pAnimBuilder->MakeAnimation(FLYSHIP);
-		newAnim->theObj = theObj;
-		m_Animations.push_back(newAnim);
-		return;
-	}
-
-	return;
-
-
-
-
-
-	// Everything below is old testing, might use later :)
-
-	sAnimInfo* newAnime = new sAnimInfo();
-
-	newAnime->theObj = theObj;
-	newAnime->loopCount = 1;
-	
-	std::vector<sAnimInfo::sAnimNode> vecToAdd;
-	sAnimInfo::sAnimNode newNode;
-
-	newNode.deltaValue = glm::vec3(0, 0, 0);
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
-	newNode.interp_spec = sAnimInfo::sAnimNode::SINE;
-	newNode.time = 0;
-
-	vecToAdd.push_back(newNode);
-
-	newNode.deltaValue = glm::vec3(0, 5, 0);
-	newNode.time = 3;
-	vecToAdd.push_back(newNode);
-
-	newNode.deltaValue = glm::vec3(0, -5, 0);
-	newNode.time = 6;
-	vecToAdd.push_back(newNode);
-
-// 	newNode.deltaValue = glm::vec3(-20, 0, 0);
-// 	newNode.time = 6;
-// 	vecToAdd.push_back(newNode);
 // 
-// 	newNode.deltaValue = glm::vec3(0, -20, 0);
-// 	newNode.time = 8;
-// 	vecToAdd.push_back(newNode);
-
-	newAnime->moveKeyFrames.push_back(vecToAdd);
-
-
-	vecToAdd.clear();
+// void cAnimationManager::AddAnimationObj(sPhysicsProperties* theObj)
+// {
+// 	// Lazy setup for animation project
+// 
+// 	if (theObj->getUniqueID() == 2) // ball
+// 	{
+// 		sAnimInfo* newAnim = m_pAnimBuilder->MakeAnimation(BOUNCEBALL);
+// 		newAnim->theObj = theObj;
+// 		m_Animations.push_back(newAnim);
+// 		return;
+// 	}
+// 	else if (theObj->getUniqueID() == 3) // ship
+// 	{
+// 		sAnimInfo* newAnim = m_pAnimBuilder->MakeAnimation(FLYSHIP);
+// 		newAnim->theObj = theObj;
+// 		m_Animations.push_back(newAnim);
+// 		return;
+// 	}
+// 
+// 	return;
+// 
+// 
+// 
+// 
+// 
+// 	// Everything below is old testing, might use later :)
+// 
+// 	sAnimInfo* newAnime = new sAnimInfo();
+// 
+// 	newAnime->theObj = theObj;
+// 	newAnime->loopCount = 1;
+// 	
+// 	std::vector<sAnimInfo::sAnimNode> vecToAdd;
+// 	sAnimInfo::sAnimNode newNode;
 // 
 // 	newNode.deltaValue = glm::vec3(0, 0, 0);
+// 	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
+// 	newNode.interp_spec = sAnimInfo::sAnimNode::SINE;
 // 	newNode.time = 0;
 // 
 // 	vecToAdd.push_back(newNode);
 // 
+// 	newNode.deltaValue = glm::vec3(0, 5, 0);
+// 	newNode.time = 3;
+// 	vecToAdd.push_back(newNode);
+// 
+// 	newNode.deltaValue = glm::vec3(0, -5, 0);
+// 	newNode.time = 6;
+// 	vecToAdd.push_back(newNode);
+// 
+// // 	newNode.deltaValue = glm::vec3(-20, 0, 0);
+// // 	newNode.time = 6;
+// // 	vecToAdd.push_back(newNode);
+// // 
+// // 	newNode.deltaValue = glm::vec3(0, -20, 0);
+// // 	newNode.time = 8;
+// // 	vecToAdd.push_back(newNode);
+// 
+// 	newAnime->moveKeyFrames.push_back(vecToAdd);
+// 
+// 
+// 	vecToAdd.clear();
+// // 
+// // 	newNode.deltaValue = glm::vec3(0, 0, 0);
+// // 	newNode.time = 0;
+// // 
+// // 	vecToAdd.push_back(newNode);
+// // 
+// // 
+// // 	newNode.interp_func = sAnimInfo::sAnimNode::EASEOUT;
+// // 	newNode.interp_spec = sAnimInfo::sAnimNode::QUAD;
+// // 
+// // 	newNode.deltaValue = glm::vec3(0, 30, 0);
+// // 	newNode.time = 0.5;
+// // 	vecToAdd.push_back(newNode);
+// // 
+// // 	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
+// // 	newNode.interp_spec = sAnimInfo::sAnimNode::QUAD;
+// // 
+// // 	newNode.deltaValue = glm::vec3(0, -30, 0);
+// // 	newNode.time = 1;
+// // 	vecToAdd.push_back(newNode);
+// // 
+// // 	newAnime->moveKeyFrames.push_back(vecToAdd);
+// 
+// 
+// 
+// 
+// 	// SCALE NODES
+// 
+// 	newNode.deltaValue = glm::vec3(0, 0, 0);
+// 	newNode.time = 0;
+// 	vecToAdd.push_back(newNode);
+// 
+// 
+// 	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
+// 	newNode.interp_spec = sAnimInfo::sAnimNode::BACK;
+// 
+// 	newNode.deltaValue = glm::vec3(0, 1.5, 0);
+// 	newNode.time = 2;
+// 	vecToAdd.push_back(newNode);
+// 
+// 	newNode.interp_spec = sAnimInfo::sAnimNode::QUINT;
+// 	newNode.interp_func = sAnimInfo::sAnimNode::EASEOUT;
+// 	newNode.deltaValue = glm::vec3(0, .5, 0);
+// 	newNode.time = 3;
+// 	vecToAdd.push_back(newNode);
 // 
 // 	newNode.interp_func = sAnimInfo::sAnimNode::EASEOUT;
-// 	newNode.interp_spec = sAnimInfo::sAnimNode::QUAD;
-// 
-// 	newNode.deltaValue = glm::vec3(0, 30, 0);
-// 	newNode.time = 0.5;
+// 	newNode.interp_spec = sAnimInfo::sAnimNode::ELASTIC;
+// 	newNode.deltaValue = glm::vec3(0, -2.5, 0);
+// 	newNode.time = 4.5;
 // 	vecToAdd.push_back(newNode);
 // 
 // 	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
-// 	newNode.interp_spec = sAnimInfo::sAnimNode::QUAD;
-// 
-// 	newNode.deltaValue = glm::vec3(0, -30, 0);
-// 	newNode.time = 1;
+// 	newNode.interp_spec = sAnimInfo::sAnimNode::BACK;
+// 	newNode.deltaValue = glm::vec3(0, .5, 0);
+// 	newNode.time = 6;
 // 	vecToAdd.push_back(newNode);
 // 
-// 	newAnime->moveKeyFrames.push_back(vecToAdd);
-
-
-
-
-	// SCALE NODES
-
-	newNode.deltaValue = glm::vec3(0, 0, 0);
-	newNode.time = 0;
-	vecToAdd.push_back(newNode);
-
-
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
-	newNode.interp_spec = sAnimInfo::sAnimNode::BACK;
-
-	newNode.deltaValue = glm::vec3(0, 1.5, 0);
-	newNode.time = 2;
-	vecToAdd.push_back(newNode);
-
-	newNode.interp_spec = sAnimInfo::sAnimNode::QUINT;
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEOUT;
-	newNode.deltaValue = glm::vec3(0, .5, 0);
-	newNode.time = 3;
-	vecToAdd.push_back(newNode);
-
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEOUT;
-	newNode.interp_spec = sAnimInfo::sAnimNode::ELASTIC;
-	newNode.deltaValue = glm::vec3(0, -2.5, 0);
-	newNode.time = 4.5;
-	vecToAdd.push_back(newNode);
-
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
-	newNode.interp_spec = sAnimInfo::sAnimNode::BACK;
-	newNode.deltaValue = glm::vec3(0, .5, 0);
-	newNode.time = 6;
-	vecToAdd.push_back(newNode);
-
-	newAnime->scaleKeyFrames.push_back(vecToAdd);
-
-
-	vecToAdd.clear();
-
-
-	newNode.deltaValue = glm::vec3(0, 0, 0);
-	newNode.time = 0;
-	vecToAdd.push_back(newNode);
-
-
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
-	newNode.interp_spec = sAnimInfo::sAnimNode::BACK;
-
-	newNode.deltaValue = glm::vec3(-.25, 0, -.25);
-	newNode.time = 2;
-	vecToAdd.push_back(newNode);
-
-
-	newNode.interp_spec = sAnimInfo::sAnimNode::QUINT;
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
-	newNode.deltaValue = glm::vec3(-.05, 0, -.05);
-	newNode.time = 2.3;
-	vecToAdd.push_back(newNode);
-
-
-	newNode.deltaValue = glm::vec3(-.05, 0, -.05);
-	newNode.time = 2.6;
-	vecToAdd.push_back(newNode);
-
-
-	newNode.deltaValue = glm::vec3(-.05, 0, -.05);
-	newNode.time = 2.9;
-	vecToAdd.push_back(newNode);
-
-
-
-
-
-
-	newNode.interp_spec = sAnimInfo::sAnimNode::QUINT;
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEOUT;
-	newNode.deltaValue = glm::vec3(-.15, 0, -.15);
-	newNode.time = 3;
-	vecToAdd.push_back(newNode);
-
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEOUT;
-	newNode.interp_spec = sAnimInfo::sAnimNode::ELASTIC;
-	newNode.deltaValue = glm::vec3(1.45, 0, 1.45);
-	newNode.time = 4.5;
-	vecToAdd.push_back(newNode);
-
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
-	newNode.interp_spec = sAnimInfo::sAnimNode::BACK;
-	newNode.deltaValue = glm::vec3(-1, 0, -1);
-	newNode.time = 6;
-	vecToAdd.push_back(newNode);
-
-	newAnime->scaleKeyFrames.push_back(vecToAdd);
-
-// 	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
+// 	newAnime->scaleKeyFrames.push_back(vecToAdd);
+// 
+// 
+// 	vecToAdd.clear();
+// 
 // 
 // 	newNode.deltaValue = glm::vec3(0, 0, 0);
 // 	newNode.time = 0;
-// 	newAnime->scaleKeyFrames.push_back(newNode);
+// 	vecToAdd.push_back(newNode);
 // 
-// 	newNode.deltaValue = glm::vec3(4, 4, 4);
+// 
+// 	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
+// 	newNode.interp_spec = sAnimInfo::sAnimNode::BACK;
+// 
+// 	newNode.deltaValue = glm::vec3(-.25, 0, -.25);
 // 	newNode.time = 2;
-// 	newAnime->scaleKeyFrames.push_back(newNode);
+// 	vecToAdd.push_back(newNode);
 // 
-// 	newNode.deltaValue = glm::vec3(-4, -4, -4);
-// 	newNode.time = 4;
-// 	newAnime->scaleKeyFrames.push_back(newNode);
 // 
-// 	newNode.deltaValue = glm::vec3(4, 4, 4);
-// 	newNode.time = 6;
-// 	newAnime->scaleKeyFrames.push_back(newNode);
+// 	newNode.interp_spec = sAnimInfo::sAnimNode::QUINT;
+// 	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
+// 	newNode.deltaValue = glm::vec3(-.05, 0, -.05);
+// 	newNode.time = 2.3;
+// 	vecToAdd.push_back(newNode);
 // 
-// 	newNode.deltaValue = glm::vec3(-4, -4, -4);
-// 	newNode.time = 8;
-// 	newAnime->scaleKeyFrames.push_back(newNode);
-
-
-
-// 	newNode.deltaValue = glm::vec3(0, 1.0f, 0);
-// 	newNode.time = .5;
-// 	newAnime->scaleKeyFrames.push_back(newNode);
 // 
-// 	newNode.deltaValue = glm::vec3(0, -2.0f, 0);
-// 	newNode.time = 1;
-// 	newAnime->scaleKeyFrames.push_back(newNode);
+// 	newNode.deltaValue = glm::vec3(-.05, 0, -.05);
+// 	newNode.time = 2.6;
+// 	vecToAdd.push_back(newNode);
 // 
-// 	newNode.deltaValue = glm::vec3(0, 2.0f, 0);
-// 	newNode.time = 1.5;
-// 	newAnime->scaleKeyFrames.push_back(newNode);
 // 
-// 	newNode.deltaValue = glm::vec3(0, -2.0f, 0);
-// 	newNode.time = 2;
-// 	newAnime->scaleKeyFrames.push_back(newNode);
+// 	newNode.deltaValue = glm::vec3(-.05, 0, -.05);
+// 	newNode.time = 2.9;
+// 	vecToAdd.push_back(newNode);
 // 
-// 	newNode.deltaValue = glm::vec3(0, 2.0f, 0);
-// 	newNode.time = 2.5;
-// 	newAnime->scaleKeyFrames.push_back(newNode);
 // 
-// 	newNode.deltaValue = glm::vec3(0, -2.0f, 0);
+// 
+// 
+// 
+// 
+// 	newNode.interp_spec = sAnimInfo::sAnimNode::QUINT;
+// 	newNode.interp_func = sAnimInfo::sAnimNode::EASEOUT;
+// 	newNode.deltaValue = glm::vec3(-.15, 0, -.15);
 // 	newNode.time = 3;
-// 	newAnime->scaleKeyFrames.push_back(newNode);
+// 	vecToAdd.push_back(newNode);
 // 
-// 	newNode.deltaValue = glm::vec3(0, 2.0f, 0);
-// 	newNode.time = 3.5;
-// 	newAnime->scaleKeyFrames.push_back(newNode);
+// 	newNode.interp_func = sAnimInfo::sAnimNode::EASEOUT;
+// 	newNode.interp_spec = sAnimInfo::sAnimNode::ELASTIC;
+// 	newNode.deltaValue = glm::vec3(1.45, 0, 1.45);
+// 	newNode.time = 4.5;
+// 	vecToAdd.push_back(newNode);
 // 
-// 	newNode.deltaValue = glm::vec3(0, -1.0f, 0);
-// 	newNode.time = 4;
-// 	newAnime->scaleKeyFrames.push_back(newNode);
-// 
-// 	newNode.deltaValue = glm::vec3(2, 0, 2);
-// 	newNode.time = 5;
-// 	newAnime->scaleKeyFrames.push_back(newNode);
-// 
-// 	newNode.deltaValue = glm::vec3(-2, 0, -2);
+// 	newNode.interp_func = sAnimInfo::sAnimNode::EASEIN;
+// 	newNode.interp_spec = sAnimInfo::sAnimNode::BACK;
+// 	newNode.deltaValue = glm::vec3(-1, 0, -1);
 // 	newNode.time = 6;
-// 	newAnime->scaleKeyFrames.push_back(newNode);
-
-
-	vecToAdd.clear();
-
-
-	// ORIENTATION 
-	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
-
-
-	newNode.deltaValue = glm::vec3(0, 0, 0);
-	newNode.time = 0;
-	vecToAdd.push_back(newNode);
-
-	newNode.interp_func = sAnimInfo::sAnimNode::LINEAR;
-	newNode.deltaValue = glm::vec3(0, 360, 0);
-	newNode.time = 6;
-	vecToAdd.push_back(newNode);
-	//newAnime->orientKeyFrames.push_back(vecToAdd);
-
+// 	vecToAdd.push_back(newNode);
+// 
+// 	newAnime->scaleKeyFrames.push_back(vecToAdd);
+// 
+// // 	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
+// // 
+// // 	newNode.deltaValue = glm::vec3(0, 0, 0);
+// // 	newNode.time = 0;
+// // 	newAnime->scaleKeyFrames.push_back(newNode);
+// // 
+// // 	newNode.deltaValue = glm::vec3(4, 4, 4);
+// // 	newNode.time = 2;
+// // 	newAnime->scaleKeyFrames.push_back(newNode);
+// // 
+// // 	newNode.deltaValue = glm::vec3(-4, -4, -4);
+// // 	newNode.time = 4;
+// // 	newAnime->scaleKeyFrames.push_back(newNode);
+// // 
+// // 	newNode.deltaValue = glm::vec3(4, 4, 4);
+// // 	newNode.time = 6;
+// // 	newAnime->scaleKeyFrames.push_back(newNode);
+// // 
+// // 	newNode.deltaValue = glm::vec3(-4, -4, -4);
+// // 	newNode.time = 8;
+// // 	newAnime->scaleKeyFrames.push_back(newNode);
+// 
+// 
+// 
+// // 	newNode.deltaValue = glm::vec3(0, 1.0f, 0);
+// // 	newNode.time = .5;
+// // 	newAnime->scaleKeyFrames.push_back(newNode);
+// // 
+// // 	newNode.deltaValue = glm::vec3(0, -2.0f, 0);
+// // 	newNode.time = 1;
+// // 	newAnime->scaleKeyFrames.push_back(newNode);
+// // 
+// // 	newNode.deltaValue = glm::vec3(0, 2.0f, 0);
+// // 	newNode.time = 1.5;
+// // 	newAnime->scaleKeyFrames.push_back(newNode);
+// // 
+// // 	newNode.deltaValue = glm::vec3(0, -2.0f, 0);
+// // 	newNode.time = 2;
+// // 	newAnime->scaleKeyFrames.push_back(newNode);
+// // 
+// // 	newNode.deltaValue = glm::vec3(0, 2.0f, 0);
+// // 	newNode.time = 2.5;
+// // 	newAnime->scaleKeyFrames.push_back(newNode);
+// // 
+// // 	newNode.deltaValue = glm::vec3(0, -2.0f, 0);
+// // 	newNode.time = 3;
+// // 	newAnime->scaleKeyFrames.push_back(newNode);
+// // 
+// // 	newNode.deltaValue = glm::vec3(0, 2.0f, 0);
+// // 	newNode.time = 3.5;
+// // 	newAnime->scaleKeyFrames.push_back(newNode);
+// // 
+// // 	newNode.deltaValue = glm::vec3(0, -1.0f, 0);
+// // 	newNode.time = 4;
+// // 	newAnime->scaleKeyFrames.push_back(newNode);
+// // 
+// // 	newNode.deltaValue = glm::vec3(2, 0, 2);
+// // 	newNode.time = 5;
+// // 	newAnime->scaleKeyFrames.push_back(newNode);
+// // 
+// // 	newNode.deltaValue = glm::vec3(-2, 0, -2);
+// // 	newNode.time = 6;
+// // 	newAnime->scaleKeyFrames.push_back(newNode);
+// 
+// 
+// 	vecToAdd.clear();
+// 
+// 
+// 	// ORIENTATION 
+// 	newNode.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
+// 
+// 
+// 	newNode.deltaValue = glm::vec3(0, 0, 0);
+// 	newNode.time = 0;
+// 	vecToAdd.push_back(newNode);
+// 
+// 	newNode.interp_func = sAnimInfo::sAnimNode::LINEAR;
 // 	newNode.deltaValue = glm::vec3(0, 360, 0);
-// 	newNode.time = 2.5;
-	//newAnime->orientKeyFrames.push_back(newNode);
-
-// 	newNode.deltaValue = glm::vec3(0, -360, 0);
-// 	newNode.time = 5.0;
-	//newAnime->orientKeyFrames.push_back(newNode);
-
-
-	this->m_Animations.push_back(newAnime);
-}
+// 	newNode.time = 6;
+// 	vecToAdd.push_back(newNode);
+// 	//newAnime->orientKeyFrames.push_back(vecToAdd);
+// 
+// // 	newNode.deltaValue = glm::vec3(0, 360, 0);
+// // 	newNode.time = 2.5;
+// 	//newAnime->orientKeyFrames.push_back(newNode);
+// 
+// // 	newNode.deltaValue = glm::vec3(0, -360, 0);
+// // 	newNode.time = 5.0;
+// 	//newAnime->orientKeyFrames.push_back(newNode);
+// 
+// 
+// 	this->m_Animations.push_back(newAnime);
+// }
 
 void cAnimationManager::setTimescale(float newTS)
 {
@@ -654,6 +654,48 @@ void cAnimationManager::toggleRunning(void)
 	else m_bIsRunning = true;
 
 	return;
+}
+
+void cAnimationManager::CalculateMatrices(sModelDrawInfo* model, sAnimInfo* animation, sNode* node, const glm::mat4& parentTransformationMatrix, double keyFrameTime)
+{
+	std::string nodeName(node->Name);		// use this for lookups, bones, animation nodes
+
+	glm::mat4 transformationMatrix = node->Transformation;
+
+	// Project #2
+	// Animation calculation
+	// AnimationData* data = FindAnimationDat(nodeName);
+	//if (data != nullptr)
+	{
+		// glm::vec3 position = GetAnimationPosition(data, keyFrameTime);	/// POSITION update in previous function
+		// glm::vec3 scale = GetAnimationPosition(data, keyFrameTime);		/// SCALE from your project
+		// glm::vec3 rotation = GetAnimationPosition(data, keyFrameTime);	/// ROTATION update from previous function
+
+		// calculate the matrices
+		// glm::mat4 translationMatrix = glm::translate(glm::mat4(1.f), position);
+		// glm::mat4 rotationMatrix = glm::mat4_cast(rotation);
+		// glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.f), scale);
+
+		// transformationMatrix = translationMatrix * rotationMatrix * scaleMatrix
+	}
+
+	// Calculate the global transformation
+	glm::mat4 globalTransformation = parentTransformationMatrix * transformationMatrix;
+
+	// If there is a bone associated with this name, assign the global transformation
+	std::map<std::string, int>::iterator boneMapIt = model->BoneNameToIdMap.find(nodeName);
+	if (boneMapIt != model->BoneNameToIdMap.end())
+	{
+		sBoneInfo& boneInfo = model->BoneInfoVec[boneMapIt->second];
+		boneInfo.FinalTransformation = model->GlobalInverseTransformation * globalTransformation * boneInfo.BoneOffset;
+		boneInfo.GlobalTransformation = globalTransformation;
+	}
+
+	// Calculate all children
+	for (int i = 0; i < node->Children.size(); ++i)
+	{
+		CalculateMatrices(model, animation, node->Children[i], globalTransformation, keyFrameTime);
+	}
 }
 
 //////////////////////// HELPER FUNCTIONS ///////////////////////////
