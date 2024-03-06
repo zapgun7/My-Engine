@@ -21,6 +21,14 @@ struct sCapsuleInfo // For recursive traversal
 	glm::vec3 min = glm::vec3(0);
 };
 
+struct sLineSegmentInfo
+{
+	glm::vec3 max = glm::vec3(0);
+	glm::vec3 min = glm::vec3(0);
+	glm::vec3 p1 = glm::vec3(0);
+	glm::vec3 p2 = glm::vec3(0);
+};
+
 
 
 class cAABB
@@ -104,6 +112,9 @@ public:
 	std::vector<sTriangle_A> sweepingCapsuleCollision(sPhysicsProperties* capsule);
 	//std::vector<sTriangle_A> sweepingCapsuleRecursion(float capRad, glm::vec3 upVec, glm::vec3 capPos1, glm::vec3 capPos2);
 	std::vector<sTriangle_A> sweepingCapsuleRecursion(sCapsuleInfo& capInfo, sPhysicsProperties* pCapsule);
+
+	std::vector<sTriangle_A> lineSegmentCollision(glm::vec3& pos, glm::vec3& dir, float& len);
+	std::vector<sTriangle_A> lineSegmentRecursion(sLineSegmentInfo& lineInfo);
 
 
 	cAABB* getChild(unsigned int ID);

@@ -8,6 +8,12 @@ in vec2 textureCoords;
 
 out vec4 outputColour;		// To the frame buffer (aka screen)
 
+// Bone Stuff
+uniform bool bUseBonesFrag;
+in vec4 ex_BoneId;
+
+
+
 //uniform vec3 directionalLightColour;
 // rgb are the rgb of the light colour
 //uniform vec4 directionalLight_Direction_power;
@@ -105,7 +111,38 @@ vec3 getFBOColour();
 
 void main()
 {
-	
+	if (bUseBonesFrag)
+	{
+		vec3 color = vec3(1);
+		if (int(ex_BoneId.x) % 6 == 0)
+		{
+			color = vec3(1, 0, 0);
+		}
+		if (int(ex_BoneId.x) % 6 == 1)
+		{
+			color = vec3(1, 1, 0);
+		}
+		if (int(ex_BoneId.x) % 6 == 2)
+		{
+			color = vec3(0, 1, 0);
+		}
+		if (int(ex_BoneId.x) % 6 == 3)
+		{
+			color = vec3(1, 0, 1);
+		}
+		if (int(ex_BoneId.x) % 6 == 4)
+		{
+			color = vec3(0, 0, 1);
+		}
+		if (int(ex_BoneId.x) % 6 == 5)
+		{
+			color = vec3(0, 1, 1);
+		}
+
+		outputColour = vec4(color, 1);
+		
+		return;
+	}
 
 //	gl_FragColor = vec4(color, 1.0);
 

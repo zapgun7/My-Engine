@@ -851,4 +851,124 @@ bool cPhysics::m_Capsule_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pC
 	return false;
 }
 
+bool cPhysics::m_LineSegment_TriMeshIndirect_IntersectionTest(glm::vec3 pos, glm::vec3 dir, float len, sPhysicsProperties* pTriMesh_General, sPossibleCollision& returnCollision)
+{
+	// Do we have a mesh manager? 
+	if (!this->m_pMeshManager)
+	{
+		return false;
+	}
+
+	// Does the physics object have a mesh object associated? 
+	if (!pTriMesh_General->pTheAssociatedMesh)
+	{
+		return false;
+	}
+
+	// Get the info about this shape, specifically
+	sPhysicsProperties::sMeshOfTriangles_Indirect* pTriangleMesh =
+		(sPhysicsProperties::sMeshOfTriangles_Indirect*)(pTriMesh_General->pShape);
+
+	//sPhysicsProperties::sCapsule* pCapsule = (sPhysicsProperties::sCapsule*)(pCapsule_General->pShape);
+
+
+	cAABB* TriMeshAABB = findAABBByModelName(pTriangleMesh->meshName);
+
+	if (TriMeshAABB == nullptr)
+	{
+		std::cout << "Couldn't find AABB" << std::endl;
+		return false;
+	}
+
+
+	glm::mat4 matRevModelT = glm::mat4(1.0f);
+	glm::mat4 matRevModelR = glm::mat4(1.0f);
+	glm::mat4 matRevTranslate = glm::translate(glm::mat4(1.0f),
+		glm::vec3(-pTriMesh_General->position.x,
+			-pTriMesh_General->position.y,
+			-pTriMesh_General->position.z));
+
+	glm::mat4 matModelRT = glm::mat4(1.0f);
+	glm::mat4 matModelR = glm::mat4(1.0f);
+	glm::mat4 matTranslate = glm::translate(glm::mat4(1.0f),
+		glm::vec3(pTriMesh_General->position.x,
+			pTriMesh_General->position.y,
+			pTriMesh_General->position.z));
+
+
+	glm::mat4 matRevRotation = glm::mat4(glm::inverse(pTriMesh_General->get_qOrientation()));
+	glm::mat4 matRotation = glm::mat4(pTriMesh_General->get_qOrientation());
+
+
+	// For transforming relative to the base-triangles
+	matRevModelT *= matRevTranslate;
+	//matRevModelT *= matRevRotation;
+	matRevModelR *= matRevRotation;
+
+	// For converting back
+	matModelRT *= matTranslate;
+	matModelRT *= matRotation;
+	matModelR *= matRotation; // Just rotation
+
+
+
+	//sPhysicsProperties reverseTransformedCapsule = *pCapsule_General;
+
+	//sPhysicsProperties::sCapsule* reverseCapsule = (sPhysicsProperties::sCapsule*)(pCapsule_General->pShape);
+	// Transform current to fit default triangle mesh
+	//reverseTransformedCapsule.position = (matRevModelT * glm::vec4(reverseTransformedCapsule.position, 1.0f));
+	//reverseTransformedCapsule.position = (matRevModelR * glm::vec4(reverseTransformedCapsule.position, 1.0f));
+	pos = (matRevModelT * glm::vec4(pos, 1.0f));
+	pos = (matRevModelR * glm::vec4(pos, 1.0f));
+
+	dir = (matRevModelR * glm::vec4(dir, 1.0f));
+
+	// Do it to old position too for continuous collision detection
+	//reverseTransformedCapsule.oldPosition = (matRevModelT * glm::vec4(reverseTransformedCapsule.oldPosition, 1.0f));
+	//reverseTransformedCapsule.oldPosition = (matRevModelR * glm::vec4(reverseTransformedCapsule.oldPosition, 1.0f));
+
+
+	std::vector<sTriangle_A> trisToCheck = TriMeshAABB->lineSegmentCollision(pos, dir, len);
+
+	float earliestTime = FLT_MAX;
+	glm::vec3 hitNorm;
+
+	glm::vec3 pos2 = pos + dir * len;
+
+	for (std::vector<sTriangle_A>::iterator itTri = trisToCheck.begin();
+		itTri != trisToCheck.end();
+		itTri++)
+	{
+		float t;
+		glm::vec3 hn;
+
+		if (!m_IntersectSegmentTriangle(pos, pos2, &*itTri, hn, t))
+		{
+			// No collision
+			continue;
+		}
+
+		// Collison!
+		if (t < earliestTime)
+		{
+			earliestTime = t;
+			hitNorm = hn;
+		}
+	}
+
+	if (earliestTime <= 1.0f)
+	{
+		returnCollision.q = earliestTime;
+		returnCollision.collisionObject = pTriMesh_General;
+		hitNorm = (matModelR * glm::vec4(hitNorm, 1.0f));
+		returnCollision.hitNorm = hitNorm;
+		return true;
+	}
+
+	return false;
+
+
+
+}
+
 

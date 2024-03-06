@@ -49,35 +49,35 @@ sAnimInfo* cAnimationBuilder::MakeAnimation(AnimType type)
 		// LINEAR HORIZONTAL
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::LINEAR;
 		nodeToAdd.time = TIMEAMP;
-		nodeToAdd.deltaValue = glm::vec3(-HORIZONTALAMP, 0, 0); // Move right
+		nodeToAdd.value = glm::vec3(-HORIZONTALAMP, 0, 0); // Move right
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 2;
-		nodeToAdd.deltaValue = glm::vec3(HORIZONTALAMP, 0, 0); // Move left
+		nodeToAdd.value = glm::vec3(HORIZONTALAMP, 0, 0); // Move left
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 3;
-		nodeToAdd.deltaValue = glm::vec3(HORIZONTALAMP, 0, 0); // Move left
+		nodeToAdd.value = glm::vec3(HORIZONTALAMP, 0, 0); // Move left
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 4;
-		nodeToAdd.deltaValue = glm::vec3(-HORIZONTALAMP, 0, 0); // Move right
+		nodeToAdd.value = glm::vec3(-HORIZONTALAMP, 0, 0); // Move right
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 5;
-		nodeToAdd.deltaValue = glm::vec3(-HORIZONTALAMP, 0, 0); // Move right
+		nodeToAdd.value = glm::vec3(-HORIZONTALAMP, 0, 0); // Move right
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 6;
-		nodeToAdd.deltaValue = glm::vec3(HORIZONTALAMP, 0, 0); // Move left
+		nodeToAdd.value = glm::vec3(HORIZONTALAMP, 0, 0); // Move left
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 7;
-		nodeToAdd.deltaValue = glm::vec3(HORIZONTALAMP, 0, 0); // Move left
+		nodeToAdd.value = glm::vec3(HORIZONTALAMP, 0, 0); // Move left
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 8;
-		nodeToAdd.deltaValue = glm::vec3(-HORIZONTALAMP, 0, 0); // Move right
+		nodeToAdd.value = glm::vec3(-HORIZONTALAMP, 0, 0); // Move right
 		moveVec.push_back(nodeToAdd);
 		
 
@@ -91,19 +91,19 @@ sAnimInfo* cAnimationBuilder::MakeAnimation(AnimType type)
 		// LINEAR VERTICAL
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::LINEAR;
 		nodeToAdd.time = TIMEAMP * 0.5;
-		nodeToAdd.deltaValue = glm::vec3(0, -BOUNCEHEIGHT, 0); // Down
+		nodeToAdd.value = glm::vec3(0, -BOUNCEHEIGHT, 0); // Down
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP;
-		nodeToAdd.deltaValue = glm::vec3(0, BOUNCEHEIGHT, 0); // Up
+		nodeToAdd.value = glm::vec3(0, BOUNCEHEIGHT, 0); // Up
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 1.5;
-		nodeToAdd.deltaValue = glm::vec3(0, -BOUNCEHEIGHT, 0); // Down
+		nodeToAdd.value = glm::vec3(0, -BOUNCEHEIGHT, 0); // Down
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 2;
-		nodeToAdd.deltaValue = glm::vec3(0, BOUNCEHEIGHT, 0); // Up
+		nodeToAdd.value = glm::vec3(0, BOUNCEHEIGHT, 0); // Up
 		moveVec.push_back(nodeToAdd);
 
 		// EASE IN
@@ -111,25 +111,25 @@ sAnimInfo* cAnimationBuilder::MakeAnimation(AnimType type)
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::QUAD;
 
 		nodeToAdd.time = TIMEAMP * 2.5;
-		nodeToAdd.deltaValue = glm::vec3(0, -BOUNCEHEIGHT, 0);
+		nodeToAdd.value = glm::vec3(0, -BOUNCEHEIGHT, 0);
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::SINE;
 
 		nodeToAdd.time = TIMEAMP * 3;
-		nodeToAdd.deltaValue = glm::vec3(0, BOUNCEHEIGHT, 0);
+		nodeToAdd.value = glm::vec3(0, BOUNCEHEIGHT, 0);
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::QUAD;
 
 		nodeToAdd.time = TIMEAMP * 3.5;
-		nodeToAdd.deltaValue = glm::vec3(0, -BOUNCEHEIGHT, 0);
+		nodeToAdd.value = glm::vec3(0, -BOUNCEHEIGHT, 0);
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::SINE;
 
 		nodeToAdd.time = TIMEAMP * 4;
-		nodeToAdd.deltaValue = glm::vec3(0, BOUNCEHEIGHT, 0);
+		nodeToAdd.value = glm::vec3(0, BOUNCEHEIGHT, 0);
 		moveVec.push_back(nodeToAdd);
 
 
@@ -138,25 +138,25 @@ sAnimInfo* cAnimationBuilder::MakeAnimation(AnimType type)
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::SINE;
 
 		nodeToAdd.time = TIMEAMP * 4.5;
-		nodeToAdd.deltaValue = glm::vec3(0, -BOUNCEHEIGHT, 0);
+		nodeToAdd.value = glm::vec3(0, -BOUNCEHEIGHT, 0);
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::QUAD;
 
 		nodeToAdd.time = TIMEAMP * 5;
-		nodeToAdd.deltaValue = glm::vec3(0, BOUNCEHEIGHT, 0);
+		nodeToAdd.value = glm::vec3(0, BOUNCEHEIGHT, 0);
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::SINE;
 
 		nodeToAdd.time = TIMEAMP * 5.5;
-		nodeToAdd.deltaValue = glm::vec3(0, -BOUNCEHEIGHT, 0);
+		nodeToAdd.value = glm::vec3(0, -BOUNCEHEIGHT, 0);
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::QUAD;
 
 		nodeToAdd.time = TIMEAMP * 6;
-		nodeToAdd.deltaValue = glm::vec3(0, BOUNCEHEIGHT, 0);
+		nodeToAdd.value = glm::vec3(0, BOUNCEHEIGHT, 0);
 		moveVec.push_back(nodeToAdd);
 
 		
@@ -165,25 +165,25 @@ sAnimInfo* cAnimationBuilder::MakeAnimation(AnimType type)
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::QUAD;
 
 		nodeToAdd.time = TIMEAMP * 6.5;
-		nodeToAdd.deltaValue = glm::vec3(0, -BOUNCEHEIGHT, 0);
+		nodeToAdd.value = glm::vec3(0, -BOUNCEHEIGHT, 0);
 		moveVec.push_back(nodeToAdd);
 
 		//nodeToAdd.interp_spec = sAnimInfo::sAnimNode::QUAD;
 
 		nodeToAdd.time = TIMEAMP * 7;
-		nodeToAdd.deltaValue = glm::vec3(0, BOUNCEHEIGHT, 0);
+		nodeToAdd.value = glm::vec3(0, BOUNCEHEIGHT, 0);
 		moveVec.push_back(nodeToAdd);
 
 		//nodeToAdd.interp_spec = sAnimInfo::sAnimNode::SINE;
 
 		nodeToAdd.time = TIMEAMP * 7.5;
-		nodeToAdd.deltaValue = glm::vec3(0, -BOUNCEHEIGHT, 0);
+		nodeToAdd.value = glm::vec3(0, -BOUNCEHEIGHT, 0);
 		moveVec.push_back(nodeToAdd);
 
 		//nodeToAdd.interp_spec = sAnimInfo::sAnimNode::QUAD;
 
 		nodeToAdd.time = TIMEAMP * 8;
-		nodeToAdd.deltaValue = glm::vec3(0, BOUNCEHEIGHT, 0);
+		nodeToAdd.value = glm::vec3(0, BOUNCEHEIGHT, 0);
 		moveVec.push_back(nodeToAdd);
 
 
@@ -195,61 +195,61 @@ sAnimInfo* cAnimationBuilder::MakeAnimation(AnimType type)
 		// Now scaling
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::LINEAR;
 		nodeToAdd.time = TIMEAMP / 2;
-		nodeToAdd.deltaValue = glm::vec3(0, -SQUISHAMP, 0);
+		nodeToAdd.value = glm::vec3(0, -SQUISHAMP, 0);
 		scaleVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP;
-		nodeToAdd.deltaValue = glm::vec3(-SQUISHAMP, SQUISHAMP, 0);
+		nodeToAdd.value = glm::vec3(-SQUISHAMP, SQUISHAMP, 0);
 		scaleVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 1.5;
-		nodeToAdd.deltaValue = glm::vec3(SQUISHAMP, -SQUISHAMP, 0);
+		nodeToAdd.value = glm::vec3(SQUISHAMP, -SQUISHAMP, 0);
 		scaleVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 2;
-		nodeToAdd.deltaValue = glm::vec3(0, SQUISHAMP, 0);
+		nodeToAdd.value = glm::vec3(0, SQUISHAMP, 0);
 		scaleVec.push_back(nodeToAdd);
 
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::EASEIN;
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::EXPO;
 
 		nodeToAdd.time = TIMEAMP * 2.5;
-		nodeToAdd.deltaValue = glm::vec3(0, -SQUISHAMP, 0);
+		nodeToAdd.value = glm::vec3(0, -SQUISHAMP, 0);
 		scaleVec.push_back(nodeToAdd);
 
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::QUART;
 
 		nodeToAdd.time = TIMEAMP * 3;
-		nodeToAdd.deltaValue = glm::vec3(-SQUISHAMP, SQUISHAMP, 0);
+		nodeToAdd.value = glm::vec3(-SQUISHAMP, SQUISHAMP, 0);
 		scaleVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 3.5;
-		nodeToAdd.deltaValue = glm::vec3(SQUISHAMP, -SQUISHAMP, 0);
+		nodeToAdd.value = glm::vec3(SQUISHAMP, -SQUISHAMP, 0);
 		scaleVec.push_back(nodeToAdd);
 
 		/*nodeToAdd.interp_spec = sAnimInfo::sAnimNode::BACK;*/
 
 		nodeToAdd.time = TIMEAMP * 4;
-		nodeToAdd.deltaValue = glm::vec3(0, SQUISHAMP, 0);
+		nodeToAdd.value = glm::vec3(0, SQUISHAMP, 0);
 		scaleVec.push_back(nodeToAdd);
 
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::EASEOUT;
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::QUAD;
 
 		nodeToAdd.time = TIMEAMP * 4.5;
-		nodeToAdd.deltaValue = glm::vec3(0, -SQUISHAMP, 0);
+		nodeToAdd.value = glm::vec3(0, -SQUISHAMP, 0);
 		scaleVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 5;
-		nodeToAdd.deltaValue = glm::vec3(-SQUISHAMP, SQUISHAMP, 0);
+		nodeToAdd.value = glm::vec3(-SQUISHAMP, SQUISHAMP, 0);
 		scaleVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 5.5;
-		nodeToAdd.deltaValue = glm::vec3(SQUISHAMP, -SQUISHAMP, 0);
+		nodeToAdd.value = glm::vec3(SQUISHAMP, -SQUISHAMP, 0);
 		scaleVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 6;
-		nodeToAdd.deltaValue = glm::vec3(0, SQUISHAMP, 0);
+		nodeToAdd.value = glm::vec3(0, SQUISHAMP, 0);
 		scaleVec.push_back(nodeToAdd);
 
 
@@ -257,19 +257,19 @@ sAnimInfo* cAnimationBuilder::MakeAnimation(AnimType type)
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::ELASTIC;
 
 		nodeToAdd.time = TIMEAMP * 6.5;
-		nodeToAdd.deltaValue = glm::vec3(0, -SQUISHAMP, 0);
+		nodeToAdd.value = glm::vec3(0, -SQUISHAMP, 0);
 		scaleVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 7;
-		nodeToAdd.deltaValue = glm::vec3(-SQUISHAMP, SQUISHAMP, 0);
+		nodeToAdd.value = glm::vec3(-SQUISHAMP, SQUISHAMP, 0);
 		scaleVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 7.5;
-		nodeToAdd.deltaValue = glm::vec3(SQUISHAMP, -SQUISHAMP, 0);
+		nodeToAdd.value = glm::vec3(SQUISHAMP, -SQUISHAMP, 0);
 		scaleVec.push_back(nodeToAdd);
 
 		nodeToAdd.time = TIMEAMP * 8;
-		nodeToAdd.deltaValue = glm::vec3(0, SQUISHAMP, 0);
+		nodeToAdd.value = glm::vec3(0, SQUISHAMP, 0);
 		scaleVec.push_back(nodeToAdd);
 
 
@@ -298,75 +298,75 @@ sAnimInfo* cAnimationBuilder::MakeAnimation(AnimType type)
 		// Will have two move vecs, one for x and one for z 
 
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::LINEAR;
-		nodeToAdd.deltaValue = glm::vec3(-MOVEAMP, 0, 0);
+		nodeToAdd.value = glm::vec3(-MOVEAMP, 0, 0);
 		nodeToAdd.time = TIMEAMP;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(MOVEAMP, 0, 0);
+		nodeToAdd.value = glm::vec3(MOVEAMP, 0, 0);
 		nodeToAdd.time = TIMEAMP * 2;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(MOVEAMP, 0, 0);
+		nodeToAdd.value = glm::vec3(MOVEAMP, 0, 0);
 		nodeToAdd.time = TIMEAMP * 3;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(-MOVEAMP, 0, 0);
+		nodeToAdd.value = glm::vec3(-MOVEAMP, 0, 0);
 		nodeToAdd.time = TIMEAMP * 4;
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::EASEIN;
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::QUAD;
-		nodeToAdd.deltaValue = glm::vec3(-MOVEAMP, 0, 0);
+		nodeToAdd.value = glm::vec3(-MOVEAMP, 0, 0);
 		nodeToAdd.time = TIMEAMP * 5;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(MOVEAMP, 0, 0);
+		nodeToAdd.value = glm::vec3(MOVEAMP, 0, 0);
 		nodeToAdd.time = TIMEAMP * 6;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(MOVEAMP, 0, 0);
+		nodeToAdd.value = glm::vec3(MOVEAMP, 0, 0);
 		nodeToAdd.time = TIMEAMP * 7;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(-MOVEAMP, 0, 0);
+		nodeToAdd.value = glm::vec3(-MOVEAMP, 0, 0);
 		nodeToAdd.time = TIMEAMP * 8;
 		moveVec.push_back(nodeToAdd);
 
 
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::EASEOUT;
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::QUAD;
-		nodeToAdd.deltaValue = glm::vec3(-MOVEAMP, 0, 0);
+		nodeToAdd.value = glm::vec3(-MOVEAMP, 0, 0);
 		nodeToAdd.time = TIMEAMP * 9;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(MOVEAMP, 0, 0);
+		nodeToAdd.value = glm::vec3(MOVEAMP, 0, 0);
 		nodeToAdd.time = TIMEAMP * 10;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(MOVEAMP, 0, 0);
+		nodeToAdd.value = glm::vec3(MOVEAMP, 0, 0);
 		nodeToAdd.time = TIMEAMP * 11;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(-MOVEAMP, 0, 0);
+		nodeToAdd.value = glm::vec3(-MOVEAMP, 0, 0);
 		nodeToAdd.time = TIMEAMP * 12;
 		moveVec.push_back(nodeToAdd);
 
 
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::QUAD;
-		nodeToAdd.deltaValue = glm::vec3(-MOVEAMP, 0, 0);
+		nodeToAdd.value = glm::vec3(-MOVEAMP, 0, 0);
 		nodeToAdd.time = TIMEAMP * 13;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(MOVEAMP, 0, 0);
+		nodeToAdd.value = glm::vec3(MOVEAMP, 0, 0);
 		nodeToAdd.time = TIMEAMP * 14;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(MOVEAMP, 0, 0);
+		nodeToAdd.value = glm::vec3(MOVEAMP, 0, 0);
 		nodeToAdd.time = TIMEAMP * 15;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(-MOVEAMP, 0, 0);
+		nodeToAdd.value = glm::vec3(-MOVEAMP, 0, 0);
 		nodeToAdd.time = TIMEAMP * 16;
 		moveVec.push_back(nodeToAdd);
 
@@ -383,75 +383,75 @@ sAnimInfo* cAnimationBuilder::MakeAnimation(AnimType type)
 
 
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::LINEAR;
-		nodeToAdd.deltaValue = glm::vec3(0, 0, -MOVEAMP);
+		nodeToAdd.value = glm::vec3(0, 0, -MOVEAMP);
 		nodeToAdd.time = TIMEAMP;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, 0, -MOVEAMP);
+		nodeToAdd.value = glm::vec3(0, 0, -MOVEAMP);
 		nodeToAdd.time = TIMEAMP * 2;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, 0, MOVEAMP);
+		nodeToAdd.value = glm::vec3(0, 0, MOVEAMP);
 		nodeToAdd.time = TIMEAMP * 3;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, 0, MOVEAMP);
+		nodeToAdd.value = glm::vec3(0, 0, MOVEAMP);
 		nodeToAdd.time = TIMEAMP * 4;
 		moveVec.push_back(nodeToAdd);
 
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::EASEIN;
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::QUAD;
-		nodeToAdd.deltaValue = glm::vec3(0, 0, -MOVEAMP);
+		nodeToAdd.value = glm::vec3(0, 0, -MOVEAMP);
 		nodeToAdd.time = TIMEAMP * 5;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, 0, -MOVEAMP);
+		nodeToAdd.value = glm::vec3(0, 0, -MOVEAMP);
 		nodeToAdd.time = TIMEAMP * 6;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, 0, MOVEAMP);
+		nodeToAdd.value = glm::vec3(0, 0, MOVEAMP);
 		nodeToAdd.time = TIMEAMP * 7;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, 0, MOVEAMP);
+		nodeToAdd.value = glm::vec3(0, 0, MOVEAMP);
 		nodeToAdd.time = TIMEAMP * 8;
 		moveVec.push_back(nodeToAdd);
 
 
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::EASEOUT;
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::QUAD;
-		nodeToAdd.deltaValue = glm::vec3(0, 0, -MOVEAMP);
+		nodeToAdd.value = glm::vec3(0, 0, -MOVEAMP);
 		nodeToAdd.time = TIMEAMP * 9;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, 0, -MOVEAMP);
+		nodeToAdd.value = glm::vec3(0, 0, -MOVEAMP);
 		nodeToAdd.time = TIMEAMP * 10;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, 0, MOVEAMP);
+		nodeToAdd.value = glm::vec3(0, 0, MOVEAMP);
 		nodeToAdd.time = TIMEAMP * 11;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, 0, MOVEAMP);
+		nodeToAdd.value = glm::vec3(0, 0, MOVEAMP);
 		nodeToAdd.time = TIMEAMP * 12;
 		moveVec.push_back(nodeToAdd);
 
 
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::QUAD;
-		nodeToAdd.deltaValue = glm::vec3(0, 0, -MOVEAMP);
+		nodeToAdd.value = glm::vec3(0, 0, -MOVEAMP);
 		nodeToAdd.time = TIMEAMP * 13;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, 0, -MOVEAMP);
+		nodeToAdd.value = glm::vec3(0, 0, -MOVEAMP);
 		nodeToAdd.time = TIMEAMP * 14;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, 0, MOVEAMP);
+		nodeToAdd.value = glm::vec3(0, 0, MOVEAMP);
 		nodeToAdd.time = TIMEAMP * 15;
 		moveVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, 0, MOVEAMP);
+		nodeToAdd.value = glm::vec3(0, 0, MOVEAMP);
 		nodeToAdd.time = TIMEAMP * 16;
 		moveVec.push_back(nodeToAdd);
 
@@ -462,76 +462,76 @@ sAnimInfo* cAnimationBuilder::MakeAnimation(AnimType type)
 
 		// ORIENTATION
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::LINEAR;
-		nodeToAdd.deltaValue = glm::vec3(0, -90, 0);
+		nodeToAdd.value = glm::vec3(0, -90, 0);
 		nodeToAdd.time = TIMEAMP;
 		oriVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, -90, 0);
+		nodeToAdd.value = glm::vec3(0, -90, 0);
 		nodeToAdd.time = TIMEAMP * 2;
 		oriVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, -90, 0);
+		nodeToAdd.value = glm::vec3(0, -90, 0);
 		nodeToAdd.time = TIMEAMP * 3;
 		oriVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, -90, 0);
+		nodeToAdd.value = glm::vec3(0, -90, 0);
 		nodeToAdd.time = TIMEAMP * 4;
 		oriVec.push_back(nodeToAdd);
 
 
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::EASEIN;
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::CUBIC;
-		nodeToAdd.deltaValue = glm::vec3(0, -90, 0);
+		nodeToAdd.value = glm::vec3(0, -90, 0);
 		nodeToAdd.time = TIMEAMP * 5;
 		oriVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, -90, 0);
+		nodeToAdd.value = glm::vec3(0, -90, 0);
 		nodeToAdd.time = TIMEAMP * 6;
 		oriVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, -90, 0);
+		nodeToAdd.value = glm::vec3(0, -90, 0);
 		nodeToAdd.time = TIMEAMP * 7;
 		oriVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, -90, 0);
+		nodeToAdd.value = glm::vec3(0, -90, 0);
 		nodeToAdd.time = TIMEAMP * 8;
 		oriVec.push_back(nodeToAdd);
 
 
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::EASEOUT;
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::CUBIC;
-		nodeToAdd.deltaValue = glm::vec3(0, -90, 0);
+		nodeToAdd.value = glm::vec3(0, -90, 0);
 		nodeToAdd.time = TIMEAMP * 9;
 		oriVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, -90, 0);
+		nodeToAdd.value = glm::vec3(0, -90, 0);
 		nodeToAdd.time = TIMEAMP * 10;
 		oriVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, -90, 0);
+		nodeToAdd.value = glm::vec3(0, -90, 0);
 		nodeToAdd.time = TIMEAMP * 11;
 		oriVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, -90, 0);
+		nodeToAdd.value = glm::vec3(0, -90, 0);
 		nodeToAdd.time = TIMEAMP * 12;
 		oriVec.push_back(nodeToAdd);
 
 
 		nodeToAdd.interp_func = sAnimInfo::sAnimNode::EASEINOUT;
 		nodeToAdd.interp_spec = sAnimInfo::sAnimNode::QUAD;
-		nodeToAdd.deltaValue = glm::vec3(0, -90, 0);
+		nodeToAdd.value = glm::vec3(0, -90, 0);
 		nodeToAdd.time = TIMEAMP * 13;
 		oriVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, -90, 0);
+		nodeToAdd.value = glm::vec3(0, -90, 0);
 		nodeToAdd.time = TIMEAMP * 14;
 		oriVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, -90, 0);
+		nodeToAdd.value = glm::vec3(0, -90, 0);
 		nodeToAdd.time = TIMEAMP * 15;
 		oriVec.push_back(nodeToAdd);
 
-		nodeToAdd.deltaValue = glm::vec3(0, -90, 0);
+		nodeToAdd.value = glm::vec3(0, -90, 0);
 		nodeToAdd.time = TIMEAMP * 16;
 		oriVec.push_back(nodeToAdd);
 

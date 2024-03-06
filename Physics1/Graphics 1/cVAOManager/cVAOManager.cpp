@@ -74,10 +74,15 @@ sNode* sModelDrawInfo::GenerateBoneHierarchy(aiNode* assimpNode, const int depth
 	glm::mat4 glmMatrix;
 	AssimpToGLM(transformation, glmMatrix);
 
+	glm::mat4 TranslationMatrix = glm::translate(glm::mat4(1.f), glm::vec3(position.x, position.y, position.z));
+	glm::mat4 RotationMatrix = glm::mat4_cast(glm::quat(rotation.w, rotation.x, rotation.y, rotation.z));
+	glm::mat4 ScaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(scaling.x, scaling.y, scaling.z));
 
+	glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScaleMatrix;
+	//ModelMatrix = glm::mat4(1.0f);
 
 	NodeNameToIdMap.insert(std::pair<std::string, int>((std::string)(assimpNode->mName.C_Str()), NodeHierarchyTransformations.size()));
-	NodeHierarchyTransformations.emplace_back(glmMatrix);
+	NodeHierarchyTransformations.emplace_back(ModelMatrix/*glmMatrix*/);
 
 	for (int i = 0; i < assimpNode->mNumChildren; i++)
 	{
@@ -95,6 +100,16 @@ void cVAOManager::setBasePath(std::string basePathWithoutSlash)
 }
 
 
+
+cVAOManager::cVAOManager()
+{
+	this->m_pAnimationManager = cAnimationManager::GetInstance();
+}
+
+void cVAOManager::Initialize(void)
+{
+
+}
 
 bool cVAOManager::LoadModelIntoVAO(
 		std::string fileName, 
@@ -117,6 +132,7 @@ bool cVAOManager::LoadModelIntoVAO(
 		{
 			return false;
 		};
+		m_pAnimationManager;
 		return true;
 	}
 
@@ -398,8 +414,43 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 	aiMesh* mesh = drawInfo.scene->mMeshes[0];
 
 	// Load animations (when I get my animation system to intermingle with bones n' stuff)
+	sBonedAnimation* characterAnimation = new sBonedAnimation();
+	if (drawInfo.scene->mNumAnimations > 0)
+	{
+		//sBonedAnimation* characterAnimation = new sBonedAnimation();
+		aiAnimation* animation = drawInfo.scene->mAnimations[0];
 
+		characterAnimation->name = animation->mName.C_Str();
+		characterAnimation->Duration = animation->mDuration;
+		characterAnimation->TicksPerSecond = animation->mTicksPerSecond;
 
+		for (int i = 0; i < animation->mNumChannels; i++)
+		{
+			aiNodeAnim* assimpNodeAnim = animation->mChannels[i];
+			sAnimInfo* animInfo = new sAnimInfo();
+			animInfo->name = assimpNodeAnim->mNodeName.C_Str();
+			characterAnimation->map_NameToAnimationData.insert(std::pair<std::string, sAnimInfo*>(animInfo->name, animInfo));
+
+			for (int e = 0; e < assimpNodeAnim->mNumPositionKeys; e++)
+			{
+				aiVectorKey& p = assimpNodeAnim->mPositionKeys[e];
+				animInfo->mveKeyFrames.emplace_back(sAnimInfo::sAnimNode(glm::vec3(p.mValue.x, p.mValue.y, p.mValue.z), p.mTime));
+			}
+			for (int e = 0; e < assimpNodeAnim->mNumScalingKeys; e++)
+			{
+				aiVectorKey& s = assimpNodeAnim->mScalingKeys[e];
+				animInfo->sclKeyFrames.emplace_back(sAnimInfo::sAnimNode(glm::vec3(s.mValue.x, s.mValue.y, s.mValue.z), s.mTime));
+			}
+			for (int e = 0; e < assimpNodeAnim->mNumRotationKeys; e++)
+			{
+				aiQuatKey& q = assimpNodeAnim->mRotationKeys[e];
+				glm::quat tempQuat = glm::quat(q.mValue.w, q.mValue.x, q.mValue.y, q.mValue.z);
+				animInfo->oriKeyFrames.emplace_back(sAnimInfo::sAnimNode(glm::eulerAngles(tempQuat), q.mTime)); // !!!  For now use euler (Until confirmed it works)
+			}
+			characterAnimation->BoneAnimations.emplace_back(animInfo);
+		}
+		
+	}
 
 
 
@@ -407,6 +458,7 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 
 	// Generate bones
 	drawInfo.RootNode = drawInfo.GenerateBoneHierarchy(drawInfo.scene->mRootNode);
+	characterAnimation->rootNode = drawInfo.RootNode;
 	drawInfo.GlobalInverseTransformation = glm::inverse(drawInfo.RootNode->Transformation);
 
 	std::vector<sBoneWeightInfo> boneWeights;
@@ -449,8 +501,13 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 				}
 			}
 		}
+// 		for (unsigned int i = 0; i < drawInfo.BoneInfoVec.size(); i++)
+// 		{
+// 			drawInfo.BoneInfoVec[i].
+// 		}
 	}
-
+	characterAnimation->theModel = drawInfo;
+	m_pAnimationManager->AddBonedAnimation(characterAnimation, characterAnimation->name);
 
 	// Now the regular model loading stuff
 	drawInfo.numberOfVertices = mesh->mNumVertices;
@@ -657,6 +714,35 @@ bool cVAOManager::UpdateVAOBuffers(std::string fileName,
     return true;
 }
 
+
+bool cVAOManager::UpdateBoneShit(std::string fileName, sModelDrawInfo& updatedDrawInfo, unsigned int shaderProgramID)
+{
+	// This exists? 
+// 	sModelDrawInfo updatedDrawInfo_TEMP;
+// 	if (!this->FindDrawInfoByModelName(fileName, updatedDrawInfo_TEMP))
+// 	{
+// 		// Didn't find this buffer
+// 		return false;
+// 	}
+
+	//updatedDrawInfo_TEMP.BoneInfoVec = updatedDrawInfo.BoneInfoVec;
+
+
+	std::map< std::string /*model name*/,
+		sModelDrawInfo /* info needed to draw*/ >::iterator
+		itDrawInfo = this->m_map_ModelName_to_VAOID.find(fileName);
+
+	// Find it? 
+	if (itDrawInfo == this->m_map_ModelName_to_VAOID.end())
+	{
+		// Nope
+		return false;
+	}
+
+	// Else we found the thing to draw
+	// ...so 'return' that information
+	itDrawInfo->second.BoneInfoVec = updatedDrawInfo.BoneInfoVec;
+}
 
 // Prob will never use this, more efficient to scan for min and max when loading in the vertices! (only realized after making this oh well)
 void sModelDrawInfo::calcExtents()

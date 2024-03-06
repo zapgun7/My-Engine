@@ -19,8 +19,9 @@ bool BoxBoxIntersectTest2(glm::vec3 B1ctr, glm::vec3 B1ext, glm::vec3 B2ctr, glm
 bool cAABB::StartMakeTree(std::string modelName, cVAOManager* borrowedManager, unsigned int maxTri)
 {
 	// Start by getting the model draw info
-	sModelDrawInfo meshDrawInfo;
+	sModelDrawInfo meshDrawInfo;// = borrowedManager->FindDrawInfoByModelName(modelName);
 	if (!borrowedManager->FindDrawInfoByModelName(modelName, meshDrawInfo))
+	//if (meshDrawInfo == nullptr)
 	{
 		// Didn't find it!!
 		return false;

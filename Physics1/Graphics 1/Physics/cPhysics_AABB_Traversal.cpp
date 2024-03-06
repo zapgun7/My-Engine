@@ -404,7 +404,7 @@ std::vector<sTriangle_A> cAABB::sweepingCapsuleCollision(sPhysicsProperties* pCa
 
 
 
-	// TODO make it so a max victor is not re-checked for being a min
+	// TODO make it so a max vector is not re-checked for being a min
 	newInfo.max.x = glm::max(glm::max(oldUp.x, newUp.x), glm::max(oldDown.x, newDown.x));
 	newInfo.max.y = glm::max(glm::max(oldUp.y, newUp.y), glm::max(oldDown.y, newDown.y));
 	newInfo.max.z = glm::max(glm::max(oldUp.z, newUp.z), glm::max(oldDown.z, newDown.z));
@@ -535,6 +535,170 @@ std::vector<sTriangle_A> cAABB::sweepingCapsuleRecursion(sCapsuleInfo& capInfo, 
 	return vec0;
 }
 
+// cPhysics::m_IntersectSegmentAABB()
+std::vector<sTriangle_A> cAABB::lineSegmentCollision(glm::vec3& pos, glm::vec3& dir, float& len)
+{
+	std::vector<sTriangle_A> returnTris;
+
+	glm::vec3 pos2 = pos + dir * len;
+
+	if (!cPhysics::m_IntersectSegmentAABB(pos, pos2, *this))
+	{
+		return returnTris;
+	}
+
+	// Assuming in root box, commence recursion
+	sLineSegmentInfo lineInfo;
+	if (pos.x > pos2.x)
+	{
+		lineInfo.max.x = pos.x;
+		lineInfo.min.x = pos2.x;
+	}
+	else
+	{
+		lineInfo.max.x = pos2.x;
+		lineInfo.min.x = pos.x;
+	}
+	if (pos.y > pos2.y)
+	{
+		lineInfo.max.y = pos.y;
+		lineInfo.min.y = pos2.y;
+	}
+	else
+	{
+		lineInfo.max.y = pos2.y;
+		lineInfo.min.y = pos.y;
+	}
+	if (pos.z > pos2.z)
+	{
+		lineInfo.max.z = pos.z;
+		lineInfo.min.z = pos2.z;
+	}
+	else
+	{
+		lineInfo.max.z = pos2.z;
+		lineInfo.min.z = pos.z;
+	}
+	
+	lineInfo.p1 = pos;
+	lineInfo.p2 = pos2;
+
+
+	returnTris = this->lineSegmentRecursion(lineInfo);
+
+	return returnTris;
+}
+
+std::vector<sTriangle_A> cAABB::lineSegmentRecursion(sLineSegmentInfo& lineInfo)
+{
+	// Check if in leaf node
+	if (this->getChild(0) == nullptr)
+	{
+		return triangles;
+	}
+
+	bool validChildren[8] = { true, true, true, true, true, true, true, true };
+
+	if (lineInfo.min.y > this->Ycenter())
+	{
+		validChildren[0] = false;
+		validChildren[2] = false;
+		validChildren[4] = false;
+		validChildren[6] = false;
+	}
+	else if (lineInfo.max.y < this->Ycenter()) // If top of capsule is below center
+	{
+		validChildren[1] = false;
+		validChildren[3] = false;
+		validChildren[5] = false;
+		validChildren[7] = false;
+	}
+
+	if (lineInfo.min.x > this->Xcenter()) // If -x of capsule is +x of center
+	{
+		validChildren[0] = false;
+		validChildren[1] = false;
+		validChildren[2] = false;
+		validChildren[3] = false;
+	}
+	else if (lineInfo.max.x < this->Xcenter()) // If +x of capsule is -x of center
+	{
+		validChildren[4] = false;
+		validChildren[5] = false;
+		validChildren[6] = false;
+		validChildren[7] = false;
+	}
+
+	if (lineInfo.min.z > this->Zcenter()) // If -z of capsule is +z of center
+	{
+		validChildren[0] = false;
+		validChildren[1] = false;
+		validChildren[6] = false;
+		validChildren[7] = false;
+	}
+	else if (lineInfo.max.z < this->Zcenter()) // if +z of capsule is -z of center
+	{
+		validChildren[2] = false;
+		validChildren[3] = false;
+		validChildren[4] = false;
+		validChildren[5] = false;
+	}
+
+
+	for (unsigned int i = 0; i < 8; i++)
+	{
+		if (validChildren[i])
+		{
+			//if (!cPhysics::m_IntersectMovingCapsuleAABB(pCapsule, this)) validChildren[i] = false;
+			if (!cPhysics::m_IntersectSegmentAABB(lineInfo.p1, lineInfo.p2, *this)) validChildren[i] = false;
+		}
+	}
+
+
+	// Now we know what children we need to traverse
+	std::vector<sTriangle_A> vec0;
+	std::vector<sTriangle_A> vec1;
+	std::vector<sTriangle_A> vec2;
+	std::vector<sTriangle_A> vec3;
+	std::vector<sTriangle_A> vec4;
+	std::vector<sTriangle_A> vec5;
+	std::vector<sTriangle_A> vec6;
+	std::vector<sTriangle_A> vec7;
+
+
+	if (validChildren[0])
+		vec0 = this->getChild(0)->lineSegmentRecursion(lineInfo);
+	if (validChildren[1])
+		vec1 = this->getChild(1)->lineSegmentRecursion(lineInfo);
+	if (validChildren[2])
+		vec2 = this->getChild(2)->lineSegmentRecursion(lineInfo);
+	if (validChildren[3])
+		vec3 = this->getChild(3)->lineSegmentRecursion(lineInfo);
+	if (validChildren[4])
+		vec4 = this->getChild(4)->lineSegmentRecursion(lineInfo);
+	if (validChildren[5])
+		vec5 = this->getChild(5)->lineSegmentRecursion(lineInfo);
+	if (validChildren[6])
+		vec6 = this->getChild(6)->lineSegmentRecursion(lineInfo);
+	if (validChildren[7])
+		vec7 = this->getChild(7)->lineSegmentRecursion(lineInfo);
+
+	vec0 = triangleVectorUnion(vec0, vec1);
+	vec2 = triangleVectorUnion(vec2, vec3);
+	vec4 = triangleVectorUnion(vec4, vec5);
+	vec6 = triangleVectorUnion(vec6, vec7);
+
+	vec0 = triangleVectorUnion(vec0, vec2);
+	vec4 = triangleVectorUnion(vec4, vec6);
+
+	vec0 = triangleVectorUnion(vec0, vec4);
+
+
+
+	return vec0;
+
+}
+
 
 
 // Helper function to combine 2 vectors, removing duplicates via their ID
@@ -581,3 +745,4 @@ std::vector<sTriangle_A> triangleVectorUnion(std::vector<sTriangle_A> vecA, std:
 
 	return returnVec;
 }
+

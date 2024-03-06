@@ -12,7 +12,7 @@
 #include "imgui/backends/imgui_impl_opengl3.h"
 
 #include "../cVAOManager/cVAOManager.h"
-#include "../cInputHandler.h"
+// #include "../cInputHandler.h"
 #include "../Basic Shader Manager/cShaderManager.h"
 #include "cLightManager.h"
 #include "../cSceneManagement.h"
@@ -149,7 +149,7 @@ private:
 
 
 	ImGuiIO m_io; // ImGui io
-	cInputHandler* m_InputHandler;
+	//cInputHandler* m_InputHandler;
 
 	cSceneManagement* m_pSceneManager;
 

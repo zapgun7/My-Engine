@@ -2,9 +2,20 @@
 #include <iostream>
 
 
+cPhysics* cPhysics::m_pTheOnePhysics = nullptr;
+
 cPhysics::cPhysics()
 {
 	
+}
+
+cPhysics* cPhysics::GetInstance(void)
+{
+	if (cPhysics::m_pTheOnePhysics == nullptr)
+	{
+		cPhysics::m_pTheOnePhysics = new cPhysics();
+	}
+	return cPhysics::m_pTheOnePhysics;
 }
 
 cPhysics::~cPhysics()
@@ -80,6 +91,7 @@ void cPhysics::generateAABBs(std::vector<std::string> models)
 
 }
 
+
 cAABB* cPhysics::findAABBByModelName(std::string modelName)
 {
 	std::map< std::string,
@@ -128,6 +140,39 @@ void cPhysics::DeleteShape(int shapeID)
 std::vector< sPhysicsProperties* > cPhysics::getPhysicsVec(void)
 {
 	return m_vec_pPhysicalProps;
+}
+
+bool cPhysics::GetKickNorm(glm::vec3 pos, glm::vec3 lookDir, float length, glm::vec3& retNorm)
+{
+
+	// m_ClosestPtLineSegTriangle()
+
+	sPossibleCollision theCollision;
+	bool didCollide = false;
+
+	for (sPhysicsProperties* currObj : m_vec_pPhysicalProps) // Iterate through all mesh_indirects
+	{
+		sPossibleCollision newCollision;
+		if (currObj->shapeType != sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT) continue;
+
+		// This is a tri-mesh indirect!
+		if (this->m_LineSegment_TriMeshIndirect_IntersectionTest(pos, lookDir, length, currObj, newCollision))
+		{
+			if (newCollision.q < theCollision.q)
+				theCollision = newCollision;
+			didCollide = true;
+		}
+	}
+
+
+	if (didCollide)
+	{
+		retNorm = theCollision.hitNorm;
+		return 1;
+	}
+
+	return 0;
+
 }
 
 void cPhysics::getPhysObj(int objID, sPhysicsProperties* theObj)

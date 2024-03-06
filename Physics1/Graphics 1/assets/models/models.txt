@@ -5,4 +5,3 @@ rusty_ship.ply
 Terrain.ply
 Icosahedron.ply
 Quad_1_sided_aligned_on_XY_plane.ply
-Adventurer Aland@Idle.FBX

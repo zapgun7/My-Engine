@@ -22,9 +22,9 @@ private:
 		glm::vec3 hitNorm;
 		float q = FLT_MAX; // Ratio of hit over update window (0 = start of window; 1 = end of window)
 	};
-
-public:
 	cPhysics();
+public:
+	static cPhysics* GetInstance(void);
 	~cPhysics();
 
 	void setVAOManager(cVAOManager* pTheMeshManager);
@@ -39,6 +39,12 @@ public:
 	//void setGraphics(void); // Lazy
 
 	void Update(double deltaTime);
+
+
+
+	// Unique Physics Calls
+	bool GetKickNorm(glm::vec3 pos, glm::vec3 lookDir, float length, glm::vec3& retNorm); // Checks collision on all tri_indirects and returns norm
+
 
 	/////////////// LEVEL EDITOR //////////////////////
 
@@ -85,6 +91,8 @@ private:
 
 	bool m_Capsule_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pCapsule, sPhysicsProperties* pTriMesh, sPossibleCollision& returnCollision);
 
+	bool m_LineSegment_TriMeshIndirect_IntersectionTest(glm::vec3 pos, glm::vec3 dir, float len, sPhysicsProperties* pTriMesh, sPossibleCollision& returnCollision);
+
 
 	// Collision Handling
 	void m_Sphere_Collision(sPhysicsProperties* pSphere, sPossibleCollision& collision);
@@ -112,6 +120,7 @@ public:
 	static int m_IntersectMovingSphereAABB(sPhysicsProperties* pSphere, cAABB* b, float& t); // TODO !!!INCOMPLETE!!!      Needs finer check for vertex regions
 	static int m_IntersectMovingCapsuleAABB(sPhysicsProperties* pCapsule, cAABB* b); // TODO !!!INCOMPLETE!!! misses corners of boxes swiping the capsule mid-section
 	static int m_IntersectSegmentAABB(glm::vec3& p0, glm::vec3& p1, cAABB& b);
+	static int m_IntersectSegmentTriangle(glm::vec3 p, glm::vec3 q, sTriangle_A* pTri/*glm::vec3 a, glm::vec3 b, glm::vec3 c*/, /*float& u, float& v, float& w*/glm::vec3& norm, float& t); // Slightly modified to just give t and trinorm
 
 	// Less Basic Tests
 	static bool m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle_A* pTri, float &t, glm::vec3 &hitNorm);
@@ -119,6 +128,7 @@ public:
 
 private:
 
+	static cPhysics* m_pTheOnePhysics;
 	cVAOManager* m_pMeshManager = NULL;
 	//cGraphicsMain* m_pGraphicsMain;
 

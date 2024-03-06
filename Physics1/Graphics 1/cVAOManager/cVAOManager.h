@@ -9,6 +9,7 @@
 
 #include <assimp/scene.h>
 #include "sModelDrawInfo.h"
+#include "../cAnimationManager.h"
 
 class aiNode;
 
@@ -18,6 +19,8 @@ class aiNode;
 class cVAOManager
 {
 public:
+	cVAOManager();
+	void Initialize(void);
 
 	bool LoadModelIntoVAO(std::string fileName, 
 						  sModelDrawInfo &drawInfo, 
@@ -45,6 +48,10 @@ public:
 						  sModelDrawInfo& updatedDrawInfo,
 						  unsigned int shaderProgramID);
 
+	bool UpdateBoneShit(std::string fileName,
+		sModelDrawInfo& updatedDrawInfo,
+		unsigned int shaderProgramID);
+
 
 private:
 
@@ -59,6 +66,8 @@ private:
 
 	//Assimp::Importer m_AssimpImporter;
 	//AH::cFileLoader* m_pAssLoader; // Assimp file loader object
+
+	cAnimationManager* m_pAnimationManager = nullptr;
 
 };
 

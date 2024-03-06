@@ -551,3 +551,52 @@ int cPhysics::m_IntersectSegmentAABB(glm::vec3& p0, glm::vec3& p1, cAABB& b)
 	// No separating axis found, segment must be overlapping  AABB
 	return 1;
 }
+
+int cPhysics::m_IntersectSegmentTriangle(glm::vec3 p, glm::vec3 q, sTriangle_A* pTri/*glm::vec3 a, glm::vec3 b, glm::vec3 c*/, /*float& u, float& v, float& w*/glm::vec3& norm, float& t)
+{
+	glm::vec3 a = pTri->vertices[0];
+	glm::vec3 b = pTri->vertices[1];
+	glm::vec3 c = pTri->vertices[2];
+
+	glm::vec3 ab = b - a;
+	glm::vec3 ac = c - a;
+	glm::vec3 qp = p - q;
+
+	
+
+	glm::vec3 n = glm::cross(ab, ac);
+
+	float u, v, w;
+
+
+	float d = glm::dot(qp, n);
+	if (d <= 0.0f) return 0;
+
+
+	glm::vec3 ap = p - a;
+	t = glm::dot(ap, n);
+	if (t < 0.0f) return 0;
+	if (t > d) return 0;    // Exclude this for a ray test!
+
+
+	// Compute barycentric coords and test if within bounds
+	glm::vec3 e = glm::cross(qp, ap);
+	v = glm::dot(ac, e);
+	if (v < 0.0f || v > d) return 0;
+
+	w = -glm::dot(ab, e);
+	if (w < 0.0f || v + w > d) return 0;
+
+	// Segment/ray intersects triangle. Perform delayed division and compute last barycentric coord
+	norm = glm::normalize(n);
+	//return 1;
+
+
+	float ood = 1.0f / d;
+	t *= ood;
+	v *= ood;
+	w *= ood;
+	u = 1.0f - v - w;
+
+	return 1;
+}

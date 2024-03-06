@@ -65,7 +65,7 @@ cGraphicsMain::cGraphicsMain()
 
 bool cGraphicsMain::Initialize()
 {
-	m_InputHandler = new cInputHandler(); // Will eventually move these 2 somewhere that makes sense TODO
+	//m_InputHandler = new cInputHandler(); // Will eventually move these 2 somewhere that makes sense TODO
 	m_pSceneManager = new cSceneManagement();
 	m_pSceneManager->Initialize();
 
@@ -244,7 +244,7 @@ bool cGraphicsMain::Initialize()
 bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not really a loop, just gets called every tick
 {
 	// Check input for camera movement
-	m_InputHandler->queryKeys(m_window);
+	//m_InputHandler->queryKeys(m_window);
 
 
 	return Update2(deltaTime);
@@ -791,6 +791,31 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 	//    GLint mvp_location = glGetUniformLocation(shaderProgramID, "MVP");
 	//    //glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
 	//    glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(mvp));
+	
+
+
+	GLint useBones_UL = glGetUniformLocation(shaderProgramID, "UseBones");
+	GLint useBonesFrag_UL = glGetUniformLocation(shaderProgramID, "bUseBonesFrag");
+	if (pCurrentMesh->friendlyName == "a") // Boned model
+	{
+		sModelDrawInfo theModel;
+		m_pMeshManager->FindDrawInfoByModelName(pCurrentMesh->meshName, theModel);
+		for (unsigned int i = 0; i < theModel.BoneInfoVec.size(); i++)
+		{
+			std::string boneUL;
+			boneUL = "BoneMatrices[" + std::to_string(i) + "]";
+			GLint boneMatrix_UL = glGetUniformLocation(shaderProgramID, boneUL.c_str());
+			glUniformMatrix4fv(boneMatrix_UL, 1, GL_FALSE, glm::value_ptr(theModel.BoneInfoVec[i].FinalTransformation));
+		}
+		
+		glUniform1f(useBones_UL, (GLfloat)GL_TRUE);
+		glUniform1f(useBonesFrag_UL, (GLfloat)GL_TRUE);
+	}
+	else
+	{
+		glUniform1f(useBones_UL, (GLfloat)GL_FALSE);
+		glUniform1f(useBonesFrag_UL, (GLfloat)GL_FALSE);
+	}
 
 	GLint matModel_UL = glGetUniformLocation(shaderProgramID, "matModel");
 	glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(matModel));

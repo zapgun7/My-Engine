@@ -1,7 +1,8 @@
 #include "cAnimationManager.h"
 
 #include "Physics/sPhysicsProperties.h"
-#include "cVAOManager/sModelDrawInfo.h"
+//#include "cVAOManager/sModelDrawInfo.h"
+#include "cVAOManager/cVAOManager.h"
 
 
 
@@ -33,6 +34,38 @@ cAnimationManager* cAnimationManager::GetInstance(void)
 	return m_TheOneManager;
 }
 
+glm::vec3 cAnimationManager::GetAnimationPosition(std::vector<sAnimInfo::sAnimNode>& data, double keyFrameTime)
+{
+	//sAnimInfo::sAnimNode firstKeyframe;
+	int firstKeyframeIdx = -1;
+
+	for (unsigned int i = 1; i < data.size(); i++)
+	{
+		if (keyFrameTime > data[i].time)
+		{
+			firstKeyframeIdx = i - 1;
+			break;
+		}
+	}
+	if (firstKeyframeIdx < 0)
+	{
+		firstKeyframeIdx = data.size() - 1;
+		return data[firstKeyframeIdx].value;
+	}
+
+	// Now we have the first keyframe
+	double deltaFrameTime = data[firstKeyframeIdx + 1].time - data[firstKeyframeIdx].time;
+	double timeBetweenFrames = keyFrameTime - data[firstKeyframeIdx].time;
+	float ratio = timeBetweenFrames / deltaFrameTime;
+	
+	glm::vec3 deltaValue = data[firstKeyframeIdx + 1].value - data[firstKeyframeIdx].value;
+
+
+	// Will just do linear for now
+	return data[firstKeyframeIdx].value + ratio * deltaValue;
+
+}
+
 cAnimationManager::cAnimationManager()
 {
 
@@ -44,11 +77,26 @@ cAnimationManager::~cAnimationManager()
 }
 
 
+void cAnimationManager::SetVAOManager(cVAOManager* theMan)
+{
+	m_pVAOManager = theMan;
+}
+
 // Updates all active animations
 void cAnimationManager::Update(double dt)
 {
-	if (!m_bIsRunning) return;
-	dt *= m_TimeScale;
+// 	if (!m_bIsRunning) return;
+// 	dt *= m_TimeScale;
+	
+// 	glm::mat4 tempMat = glm::mat4(1.0f);
+// 	m_BonedAnimations[0]->TimeSoFar += dt;
+// 	CalculateMatrices(m_BonedAnimations[0], m_BonedAnimations[0]->rootNode, tempMat, m_BonedAnimations[0]->TimeSoFar);
+// 
+// 	sModelDrawInfo* model = &(m_BonedAnimations[0]->theModel);
+// 	//m_pVAOManager->UpdateVAOBuffers(model->meshName, *model, 0);
+// 	m_pVAOManager->UpdateBoneShit(model->meshName, *model, 0);
+
+//	return;
 
 
 	for (sAnimInfo* currAnim : m_Animations) // Go through all animations
@@ -367,6 +415,19 @@ bool cAnimationManager::Destroy(void)
 
 
 
+void cAnimationManager::AddBonedAnimation(sBonedAnimation* newAnimation, std::string name)
+{
+	// Generate map for lookup
+ 	for (unsigned int i = 0; i < newAnimation->BoneAnimations.size(); i++)
+ 	{
+ 		newAnimation->map_NodeToAnimationData.insert(std::pair<sNode*, sAnimInfo*>(newAnimation->BoneAnimations[i]->RootNode, newAnimation->BoneAnimations[i]));
+ 	}
+	map_NameToAnimation.insert(std::pair<std::string, sBonedAnimation*>(name, newAnimation));
+	m_BonedAnimations.push_back(newAnimation);
+
+	return;
+}
+
 // 
 // void cAnimationManager::AddAnimationObj(sPhysicsProperties* theObj)
 // {
@@ -656,28 +717,50 @@ void cAnimationManager::toggleRunning(void)
 	return;
 }
 
-void cAnimationManager::CalculateMatrices(sModelDrawInfo* model, sAnimInfo* animation, sNode* node, const glm::mat4& parentTransformationMatrix, double keyFrameTime)
+void cAnimationManager::CalculateMatrices(sBonedAnimation* animation, sNode* node, const glm::mat4& parentTransformationMatrix, double keyFrameTime)
 {
 	std::string nodeName(node->Name);		// use this for lookups, bones, animation nodes
+	sModelDrawInfo* model = &animation->theModel;
 
 	glm::mat4 transformationMatrix = node->Transformation;
+	//transformationMatrix = glm::mat4(1.0f);
+	//std::map<std::string, int>::iterator boneMapIt = model->BoneNameToIdMap.find(nodeName);
 
 	// Project #2
 	// Animation calculation
-	// AnimationData* data = FindAnimationDat(nodeName);
-	//if (data != nullptr)
+	sAnimInfo* data  = animation->FindNodeData(node->Name);
+
+	if (data != nullptr)
 	{
-		// glm::vec3 position = GetAnimationPosition(data, keyFrameTime);	/// POSITION update in previous function
-		// glm::vec3 scale = GetAnimationPosition(data, keyFrameTime);		/// SCALE from your project
-		// glm::vec3 rotation = GetAnimationPosition(data, keyFrameTime);	/// ROTATION update from previous function
+		 glm::vec3 position = GetAnimationPosition(data->mveKeyFrames, keyFrameTime);	/// POSITION update in previous function
+		 glm::vec3 scale = GetAnimationPosition(data->sclKeyFrames, keyFrameTime);		/// SCALE from your project
+		 glm::vec3 rotation = GetAnimationPosition(data->oriKeyFrames, keyFrameTime);	/// ROTATION update from previous function
+
+// 		 position = data->mveKeyFrames[0].value;
+// 		 scale = data->sclKeyFrames[0].value;
+// 		 rotation = data->oriKeyFrames[0].value;
+
 
 		// calculate the matrices
-		// glm::mat4 translationMatrix = glm::translate(glm::mat4(1.f), position);
-		// glm::mat4 rotationMatrix = glm::mat4_cast(rotation);
-		// glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.f), scale);
+		 glm::mat4 translationMatrix = glm::translate(glm::mat4(1.f), position);
+		 glm::mat4 rotationMatrix = glm::mat4(glm::quat(glm::radians(rotation)));
+		 glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.f), scale);
 
-		// transformationMatrix = translationMatrix * rotationMatrix * scaleMatrix
+// 		 translationMatrix = glm::mat4(1.0f);
+// 		 rotationMatrix = glm::mat4(1.0f);
+// 		 scaleMatrix = glm::mat4(1.0f);
+
+		 transformationMatrix = transformationMatrix * translationMatrix * rotationMatrix * scaleMatrix;
+
 	}
+// 	for (int i = 0; i < nodeName.length(); i++)
+// 	{
+// 		if (nodeName[i] == '_')
+// 		{
+// 			nodeName = nodeName.substr(0, i);
+// 			break;
+// 		}
+// 	}
 
 	// Calculate the global transformation
 	glm::mat4 globalTransformation = parentTransformationMatrix * transformationMatrix;
@@ -694,7 +777,7 @@ void cAnimationManager::CalculateMatrices(sModelDrawInfo* model, sAnimInfo* anim
 	// Calculate all children
 	for (int i = 0; i < node->Children.size(); ++i)
 	{
-		CalculateMatrices(model, animation, node->Children[i], globalTransformation, keyFrameTime);
+		CalculateMatrices(animation, node->Children[i], globalTransformation, keyFrameTime);
 	}
 }
 
@@ -729,7 +812,7 @@ void GetDeltaLinear(const sAnimInfo::sAnimNode* keyFrames/*const std::vector<sAn
 
 	double deltaRatio = dt / timeBetweenKF;
 
-	theDelta = (float)deltaRatio * keyFrames[1].deltaValue;
+	theDelta = (float)deltaRatio * keyFrames[1].value;
 
 	return;
 }
@@ -753,7 +836,7 @@ void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime
 	{
 		oldRatio = 1 - cos((oldRatio * glm::pi<float>()) / 2);
 		newRatio = 1 - cos((newRatio * glm::pi<float>()) / 2);
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -761,7 +844,7 @@ void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime
 	{
 		oldRatio = glm::pow(oldRatio, 2);
 		newRatio = glm::pow(newRatio, 2);
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -769,7 +852,7 @@ void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime
 	{
 		oldRatio = glm::pow(oldRatio, 3);
 		newRatio = glm::pow(newRatio, 3);
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -777,7 +860,7 @@ void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime
 	{
 		oldRatio = glm::pow(oldRatio, 4); 
 		newRatio = glm::pow(newRatio, 4);
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -785,7 +868,7 @@ void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime
 	{
 		oldRatio = glm::pow(oldRatio, 5);
 		newRatio = glm::pow(newRatio, 5);
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -793,7 +876,7 @@ void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime
 	{
 		oldRatio = oldRatio ==  0 ? 0 : glm::pow(2, 10 * oldRatio - 10);
 		newRatio = newRatio == 0 ? 0 : glm::pow(2, 10 * newRatio - 10);
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -801,7 +884,7 @@ void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime
 	{
 		oldRatio = 1 - sqrt(1 - glm::pow(oldRatio, 2));
 		newRatio = 1 - sqrt(1 - glm::pow(newRatio, 2));
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -812,7 +895,7 @@ void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime
 
 		oldRatio = c3 * oldRatio * oldRatio * oldRatio - c1 * oldRatio * oldRatio;
 		newRatio = c3 * newRatio * newRatio * newRatio - c1 * newRatio * newRatio;
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -831,7 +914,7 @@ void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime
 			? 1
 			: -glm::pow(2, 10 * newRatio - 10) * sin((newRatio * 10 - 10.75) * c4);
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -872,7 +955,7 @@ void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime
 		oldRatio = 1 - oldRatio;
 		newRatio = 1 - newRatio;
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -899,7 +982,7 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 		oldRatio = sin((oldRatio * glm::pi<float>()) / 2);
 		newRatio = sin((newRatio * glm::pi<float>()) / 2);
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -908,7 +991,7 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 		oldRatio = 1 - (1 - oldRatio) * (1 - oldRatio);
 		newRatio = 1 - (1 - newRatio) * (1 - newRatio);
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -917,7 +1000,7 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 		oldRatio = 1 - glm::pow(1 - oldRatio, 3);
 		newRatio = 1 - glm::pow(1 - newRatio, 3);
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -926,7 +1009,7 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 		oldRatio = 1 - glm::pow(1 - oldRatio, 4);
 		newRatio = 1 - glm::pow(1 - newRatio, 4);
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -935,7 +1018,7 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 		oldRatio = 1 - glm::pow(1 - oldRatio, 5);
 		newRatio = 1 - glm::pow(1 - newRatio, 5);
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -944,7 +1027,7 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 		oldRatio = oldRatio ==  1 ? 1 : 1 - glm::pow(2, -10 * oldRatio);
 		newRatio = newRatio == 1 ? 1 : 1 - glm::pow(2, -10 * newRatio);
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -953,7 +1036,7 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 		oldRatio = sqrt(1 - glm::pow(oldRatio - 1, 2));
 		newRatio = sqrt(1 - glm::pow(newRatio - 1, 2));
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -965,7 +1048,7 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 		oldRatio = 1 + c3 * glm::pow(oldRatio - 1, 3) + c1 * glm::pow(oldRatio - 1, 2);
 		newRatio = 1 + c3 * glm::pow(newRatio - 1, 3) + c1 * glm::pow(newRatio - 1, 2);
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -985,7 +1068,7 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 			? 1
 			: glm::pow(2, -10 * newRatio) * sin((newRatio * 10 - 0.75) * c4) + 1;
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -1020,7 +1103,7 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 			newRatio = n1 * (newRatio -= 2.625 / d1) * newRatio + 0.984375;
 		}
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -1047,7 +1130,7 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 		oldRatio = -(cos(glm::pi<float>() * oldRatio) - 1) / 2;
 		newRatio = -(cos(glm::pi<float>() * newRatio) - 1) / 2;
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -1056,7 +1139,7 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 		oldRatio = oldRatio < 0.5 ? 2 * oldRatio * oldRatio : 1 - glm::pow(-2 * oldRatio + 2, 2) / 2;
 		newRatio = newRatio < 0.5 ? 2 * newRatio * newRatio : 1 - glm::pow(-2 * newRatio + 2, 2) / 2;
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -1065,7 +1148,7 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 		oldRatio = oldRatio < 0.5 ? 4 * oldRatio * oldRatio * oldRatio : 1 - glm::pow(-2 * oldRatio + 2, 3) / 2;
 		newRatio = newRatio < 0.5 ? 4 * newRatio * newRatio * newRatio : 1 - glm::pow(-2 * newRatio + 2, 3) / 2;
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -1074,7 +1157,7 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 		oldRatio = oldRatio < 0.5 ? 8 * oldRatio * oldRatio * oldRatio * oldRatio : 1 - glm::pow(-2 * oldRatio + 2, 4) / 2;
 		newRatio = newRatio < 0.5 ? 8 * newRatio * newRatio * newRatio * newRatio : 1 - glm::pow(-2 * newRatio + 2, 4) / 2;
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -1083,7 +1166,7 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 		oldRatio = oldRatio < 0.5 ? 16 * oldRatio * oldRatio * oldRatio * oldRatio * oldRatio : 1 - glm::pow(-2 * oldRatio + 2, 5) / 2;
 		newRatio = newRatio < 0.5 ? 16 * newRatio * newRatio * newRatio * newRatio * newRatio : 1 - glm::pow(-2 * newRatio + 2, 5) / 2;
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -1103,7 +1186,7 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 			: newRatio < 0.5 ? glm::pow(2, 20 * newRatio - 10) / 2
 			: (2 - glm::pow(2, -20 * newRatio + 10)) / 2;
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -1117,7 +1200,7 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 			? (1 - sqrt(1 - pow(2 * newRatio, 2))) / 2
 			: (sqrt(1 - pow(-2 * newRatio + 2, 2)) + 1) / 2;
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -1134,7 +1217,7 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 			? (glm::pow(2 * newRatio, 2) * ((c2 + 1) * 2 * newRatio - c2)) / 2
 			: (glm::pow(2 * newRatio - 2, 2) * ((c2 + 1) * (newRatio * 2 - 2) + c2) + 2) / 2;
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -1158,7 +1241,7 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 			? -(glm::pow(2, 20 * newRatio - 10) * sin((20 * newRatio - 11.125) * c5)) / 2
 			: (glm::pow(2, -20 * newRatio + 10) * sin((20 * newRatio - 11.125) * c5)) / 2 + 1;
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
@@ -1246,7 +1329,7 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 			newRatio = (1 + newRatio) / 2;
 		}
 
-		theDelta = keyFrames[1].deltaValue * newRatio - keyFrames[1].deltaValue * oldRatio;
+		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}

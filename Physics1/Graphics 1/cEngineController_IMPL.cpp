@@ -31,6 +31,7 @@ void cEngineController_IMPL::Run(void)
 	while (!shouldClose)
 	{
 		double deltaTime = m_pTheTimer->getFrameTime();
+		this->m_pInputHandler->Update();
 		//double deltaTime = m_pTheTimer->getFrameTimeUncapped();
 
 		// Messy, but will do this here
@@ -58,8 +59,10 @@ void cEngineController_IMPL::Run(void)
 bool cEngineController_IMPL::Initialize(void)
 {
 	this->m_pTheGraphics = cGraphicsMain::getGraphicsMain();
+	cInputHandler::Initialize(this->m_pTheGraphics->getWindow());
+	this->m_pInputHandler = cInputHandler::GetInstance();
 
-	this->m_pThePhysics = new cPhysics();
+	this->m_pThePhysics = cPhysics::GetInstance();//new cPhysics();
 	this->m_pTheSound = audio::cSoundManager::GetInstance();
 	this->m_pTheTimer = new cHiResTimer(30);
 
@@ -73,12 +76,13 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
 	std::vector<std::string> tempModelVec;
 	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
-	//this->m_pThePhysics->generateAABBs(tempModelVec);
+	this->m_pThePhysics->generateAABBs(tempModelVec);
 	
 	this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
 
 	this->m_pAnimationsManager = cAnimationManager::GetInstance();
+	this->m_pAnimationsManager->SetVAOManager(m_pTheGraphics->getVAOManager());
 
 	
 
@@ -91,14 +95,25 @@ bool cEngineController_IMPL::Initialize(void)
 	sPhysicsProperties* playerObj = new sPhysicsProperties();
 	playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 1.0f));
 	playerObj->shapeType = sPhysicsProperties::CAPSULE;
+	playerObj->friendlyName = "plyr";
 	//playerObj->acceleration.y = -20.0f;
 	playerObj->position = glm::vec3(0, 100, 0);
 	playerObj->restitution = 0.0f;
 	m_ThePlayer->setPlayerObject(playerObj);
 
 	// Load test scene
-	//m_pTheSceneManager->loadScene("BulletThroughPlane");
-	//m_pThePhysics->AddShape(playerObj);
+	m_pTheSceneManager->loadScene("BulletThroughPlane");
+	m_pThePhysics->AddShape(playerObj);
+
+
+	// Make boned character
+// 	cMesh* bonedBoy = new cMesh();
+// 	bonedBoy->meshName = "Adventurer Aland@Idle.FBX";
+// 	bonedBoy->friendlyName = "a";
+
+	//m_pTheGraphics->addNewMesh(bonedBoy);
+
+
 
 	printf("Done Initializing!\n");
 
