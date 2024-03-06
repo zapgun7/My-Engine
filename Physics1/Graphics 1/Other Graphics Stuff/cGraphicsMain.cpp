@@ -1085,7 +1085,7 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 
 
 	//       //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-	glm::mat4 matProjection = glm::perspective(0.7f,
+	glm::mat4 matProjection = glm::perspective(1.2f,
 		ratio,
 		0.1f,
 		1100.0f); // n/f plane

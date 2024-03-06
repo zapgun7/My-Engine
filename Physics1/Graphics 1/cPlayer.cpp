@@ -12,7 +12,8 @@ cPlayer::cPlayer(GLFWwindow* window)
 	m_pThePhysics = cPhysics::GetInstance();
 	m_CameraType = FLYCAM;
 
-	m_KICKREACH = 50.0f;
+	m_KICKREACH = 15.0f;
+	m_MAXKICKFORCE = 25.0f;
 
 }
 
@@ -89,6 +90,18 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 				glm::quat deltaQuat = glm::quat(glm::radians(glm::vec3(deltaX, deltaY, deltaZ)));
 
 				(cameraRotation) *= deltaQuat;
+
+				glm::vec3 RotVec = glm::vec3(0, 1, 0) * cameraRotation;
+				if (RotVec.y <= 0.01)
+				{
+					// The camera's gonna go wacko fucky. Undo it before it does!
+					//deltaZ = -deltaMouseY / m_InverseSensitivity * xLook;
+					//deltaX = deltaMouseY / m_InverseSensitivity * zLook;
+
+					glm::quat fixQuat = glm::quat(glm::radians(glm::vec3(-deltaX, 0, -deltaZ)));
+					(cameraRotation) *= fixQuat;
+
+				}
 			}
 
 		}
@@ -169,40 +182,91 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 		glm::quat deltaQuat = glm::quat(glm::radians(glm::vec3(deltaX, deltaY, deltaZ)));
 
 		(cameraRotation) *= deltaQuat;
+
+		glm::vec3 RotVec = glm::vec3(0, 1, 0) * cameraRotation;
+		if (RotVec.y <= 0.01f)
+		{
+			// The camera's gonna go wacko fucky. Undo it before it does!
+			
+// 			glm::vec3 updatedForwardVector = glm::vec3(0, 0, 1) * (cameraRotation);
+// 			glm::vec3 updatedXZForwardVec(updatedForwardVector.x, 0, updatedForwardVector.z);
+// 			updatedForwardVector = glm::normalize(updatedForwardVector);
+// 
+// 
+// 			deltaZ = -deltaMouseY / m_InverseSensitivity * updatedForwardVector.x;
+// 			deltaX = deltaMouseY / m_InverseSensitivity * updatedForwardVector.z;
+
+			glm::quat fixQuat = glm::quat(glm::radians(glm::vec3(-deltaX, 0, -deltaZ)));
+			(cameraRotation) *= fixQuat;
+
+		}
+
+		//std::cout << "X:" << cameraRotation.x << "  Y:" << cameraRotation.y << "  Z:" << cameraRotation.z << "  W:" << cameraRotation.w << std::endl;
 		// TODO maybe. Remake XZ forward after the new one has been established
 
 		//glfwSetCursorPos(m_window, width / 2, height / 2);
 
 		bool isInputMove = false;
 
+		float modifiedPlayerSpeed;
+		if (m_pPlayerObject->jumpNormThisFrame) // Is Grounded
+		{
+			modifiedPlayerSpeed = m_PLAYERSPEED;
+		}
+		else // Airborne
+		{
+			modifiedPlayerSpeed = m_PLAYERSPEED * m_AIR_SPD_RED;
+		}
+
+		float preVelLen = glm::length(glm::vec3(m_pPlayerObject->velocity.x, 0, m_pPlayerObject->velocity.z));
+
+		glm::vec3 deltaMove = glm::vec3(0);
 		if (m_pInput->IsPressed(GLFW_KEY_W)) // Move forward
 		{
-			//m_cameraEye += glm::normalize(m_cameraTarget) * m_FlyCamSpeed;
-			m_pPlayerObject->velocity += glm::normalize(XZForwardVec) * m_PLAYERSPEED * static_cast<float>(deltaTime);
+			glm::vec3 moveAmt = glm::normalize(XZForwardVec) * m_PLAYERSPEED * static_cast<float>(deltaTime);
+			deltaMove += moveAmt;
+			m_pPlayerObject->velocity += moveAmt;
 			isInputMove = true;
 		}
 
 		if (m_pInput->IsPressed(GLFW_KEY_S)) // Move backwards
 		{
-			m_pPlayerObject->velocity -= glm::normalize(XZForwardVec) * m_PLAYERSPEED * static_cast<float>(deltaTime);
+			glm::vec3 moveAmt = glm::normalize(XZForwardVec) * m_PLAYERSPEED * static_cast<float>(deltaTime);
+			deltaMove -= moveAmt;
+			m_pPlayerObject->velocity -= moveAmt;
 			isInputMove = true;
 		}
 
 		if (m_pInput->IsPressed(GLFW_KEY_A)) // Move left
 		{
-			m_pPlayerObject->velocity += glm::normalize(glm::cross(glm::vec3(0, 1, 0), XZForwardVec)) * m_PLAYERSPEED * static_cast<float>(deltaTime);
+			glm::vec3 moveAmt = glm::normalize(glm::cross(glm::vec3(0, 1, 0), XZForwardVec)) * m_PLAYERSPEED * static_cast<float>(deltaTime);
+			deltaMove += moveAmt;
+			m_pPlayerObject->velocity += moveAmt;
 			isInputMove = true;
 		}
 
 		if (m_pInput->IsPressed(GLFW_KEY_D)) // Move right
 		{
-			m_pPlayerObject->velocity -= glm::normalize(glm::cross(glm::vec3(0, 1, 0), XZForwardVec)) * m_PLAYERSPEED * static_cast<float>(deltaTime);
+			glm::vec3 moveAmt = glm::normalize(glm::cross(glm::vec3(0, 1, 0), XZForwardVec)) * m_PLAYERSPEED * static_cast<float>(deltaTime);
+			deltaMove -= moveAmt;
+			m_pPlayerObject->velocity -= moveAmt;
 			isInputMove = true;
 		}
+		m_pPlayerObject->isInputting = isInputMove; // Let physics know if we're moving the player
+
+		glm::vec3 XZVel = glm::vec3(m_pPlayerObject->velocity.x, 0, m_pPlayerObject->velocity.z);
+		float hVel = glm::length(XZVel);
+		if (hVel > m_MAX_H_SPD)
+		{
+			//m_pPlayerObject->velocity -= deltaMove; // Remove any velocity that was gained
+			if (hVel > preVelLen) // Only if the player tries to go faster
+				m_pPlayerObject->velocity = glm::normalize(m_pPlayerObject->velocity) * preVelLen; // This keeps what direction the player was trying to change to
+		}
+
 
 		if ((m_pInput->IsPressed(GLFW_KEY_SPACE)) && (m_pPlayerObject->jumpNormThisFrame)) // Jump
 		{
-			m_pPlayerObject->velocity += glm::vec3(0, m_PLAYERJUMPFORCE, 0);
+			m_pPlayerObject->velocity += m_pPlayerObject->groundNorm * m_PLAYERJUMPFORCE;// glm::vec3(0, m_PLAYERJUMPFORCE, 0);
 		}
 
 
@@ -211,14 +275,17 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 
 		if (m_pInput->IsMousePressed(GLFW_MOUSE_BUTTON_LEFT))
 		{
-
+			m_BuildingKickPower += static_cast<float>(deltaTime) / m_KICKCHARGESPEED;
+			m_BuildingKickPower = m_BuildingKickPower > 1 ? 1 : m_BuildingKickPower; // Cap at 1.0f
 		}
 		else if (m_pInput->IsMouseReleasedEvent(GLFW_MOUSE_BUTTON_LEFT))
 		{
 			glm::vec3 norm = glm::vec3(0.0f);
 			if (m_pThePhysics->GetKickNorm(m_pPlayerObject->position, forwardVector, m_KICKREACH, norm))
 			{
-				m_pPlayerObject->velocity += norm * 50.0f;
+				norm = glm::normalize(norm - forwardVector * 0.5f);
+				m_pPlayerObject->velocity += norm * m_MAXKICKFORCE * m_BuildingKickPower;
+				m_BuildingKickPower = 0.0f;
 			}
 		}
 

@@ -42,7 +42,9 @@ void cPhysics::m_Sphere_Collision(sPhysicsProperties* pSphere, sPossibleCollisio
 		float restAppDegree = degToNorm - 90;
 		restAppDegree /= 90;
 
-		glm::vec3 restitutionVelLoss = -collision.hitNorm * pSphere->velocity; // Calculate vector we want to reduce velocity on (negative normal of surface it's bouncing on)
+		// !!!!! IF SOMETHING IS BROKEN IT MIGHT BE THE BELOW LINE (fixed something in capsule so I changed it here!)
+
+		glm::vec3 restitutionVelLoss = -collision.hitNorm * glm::vec3(abs(pSphere->velocity.x), abs(pSphere->velocity.y), abs(pSphere->velocity.z));//pSphere->velocity; // Calculate vector we want to reduce velocity on (negative normal of surface it's bouncing on)
 		pSphere->velocity += (restitutionVelLoss * (1.0f - pSphere->restitution)) * restAppDegree; // Subtract said vector from newVelocity, scaled with its restitution (0 restitution = no bounce, 1 = full bounce)
 
 
@@ -100,18 +102,18 @@ void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollis
 
 		// TODO change this to radians 
 		// Degree between sphere dir and hit norm: 180 is absolute restitution application, 90 is none (parallel to it)
-		float degToNorm = glm::degrees(abs(acos(glm::dot(sphereDirection, collision.hitNorm) / glm::length(sphereDirection) * glm::length(collision.hitNorm))));
+		//float degToNorm = glm::degrees(abs(acos(glm::dot(sphereDirection, collision.hitNorm) / glm::length(sphereDirection) * glm::length(collision.hitNorm))));
 
-		float restAppDegree = degToNorm - 90;
-		restAppDegree /= 90;
+		//float restAppDegree = degToNorm - 90;
+		//restAppDegree /= 90;
 
-		glm::vec3 restitutionVelLoss = -collision.hitNorm * pCapsule->velocity; // Calculate vector we want to reduce velocity on (negative normal of surface it's bouncing on)
-		pCapsule->velocity += (restitutionVelLoss * (1.0f - pCapsule->restitution)) * restAppDegree; // Subtract said vector from newVelocity, scaled with its restitution (0 restitution = no bounce, 1 = full bounce)
-
+		glm::vec3 restitutionVelLoss = -collision.hitNorm * glm::vec3(abs(pCapsule->velocity.x), abs(pCapsule->velocity.y), abs(pCapsule->velocity.z)); // Calculate vector we want to reduce velocity on (negative normal of surface it's bouncing on)
+		//pCapsule->velocity += (restitutionVelLoss * (1.0f - pCapsule->restitution)) * restAppDegree; // Subtract said vector from newVelocity, scaled with its restitution (0 restitution = no bounce, 1 = full bounce)
+		pCapsule->velocity += restitutionVelLoss * (1.0f - pCapsule->restitution);
 
 		// Friction??
-		if (degDiff < 50)
-			pCapsule->velocity *= pCapsule->friction;
+// 		if (degDiff < 50)
+// 			pCapsule->velocity *= pCapsule->friction;
 
 		// Update oldPosition to point of collision
 		pCapsule->oldPosition += sphereStep * collision.q;

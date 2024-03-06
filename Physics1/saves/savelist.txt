@@ -7,3 +7,4 @@ AnimScene
 MultiMeshContinuous
 IntenseMultiTest
 TestFPScene
+FPMovementPlay

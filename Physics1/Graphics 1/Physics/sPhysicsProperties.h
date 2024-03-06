@@ -27,6 +27,7 @@ struct sPhysicsProperties
 		MESH_OF_TRIANGLES_LOCAL_VERTICES	// Vertices stored in local structure
 	};
 
+
 	// For some shapes, like the AABB, capsule, etc.
 	//	there might be an offset. 
 	// 
@@ -178,11 +179,16 @@ struct sPhysicsProperties
 	glm::vec3 oldPosition = glm::vec3(0.0f);
 	glm::vec3 upVec = glm::vec3(0.0f, 1.0f, 0.0f);
 
+	bool isPlayer = false;
+	bool isInputting = false; // Moving 
+
 	float restitution = 0.0f; // Some bounce default
 	glm::vec3 scale = glm::vec3(1.0f);
 
+	glm::vec3 groundNorm = glm::vec3(0);
 	unsigned int jumpNormThisFrame = 0;
 	float friction = 0.8f;
+	float airDrag = 0.8f;
 
 //	glm::vec3 orientation = glm::vec3(0.0f);
 	void setRotationFromEuler(glm::vec3 newEulerAngleXYZ)
@@ -239,7 +245,7 @@ public:
 
 	// Since division is "slow" and we are dividing my mass, 
 	// Could make this immovable by making this 0 (infinite mass)
-	float inverse_mass = 0.0f;	//	float mass;		
+	float inverse_mass = -1.0f;	//	float mass;		
 
 
 //	cMesh* pTheAssociatedMesh;

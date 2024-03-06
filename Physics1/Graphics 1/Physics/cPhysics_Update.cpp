@@ -50,7 +50,7 @@ void cPhysics::Update(double deltaTime)
 				pObject->pTheAssociatedMesh->setDrawPosition(pObject->position);
 				//			pObject->pTheAssociatedMesh->setDrawOrientation(pObject->orientation);
 				pObject->pTheAssociatedMesh->setDrawOrientation(pObject->get_qOrientation());
-				pObject->pTheAssociatedMesh->setDrawScale(pObject->scale);
+				//pObject->pTheAssociatedMesh->setDrawScale(pObject->scale);
 			}
 		}
 
@@ -58,11 +58,7 @@ void cPhysics::Update(double deltaTime)
 
 		return;
 	}
-	for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)
-	{
-		if (pObject->shapeType == sPhysicsProperties::CAPSULE)
-			pObject->jumpNormThisFrame = 0;
-	}
+	
 
 
 	// Perform the iteration loop
@@ -71,6 +67,27 @@ void cPhysics::Update(double deltaTime)
 		// Infinite mass? 
 		if (pObject->inverse_mass >= 0.0f)
 		{
+			// Start with player value dampening
+			if (pObject->isPlayer)
+			{
+				if (!pObject->isInputting) // If not pressing WASD
+				{
+					if (pObject->jumpNormThisFrame) // Touching "valid" ground
+					{
+						pObject->velocity.x *= 0.7f;
+						pObject->velocity.z *= 0.7f;
+					}
+					else // Midair
+					{
+						pObject->velocity.x *= 0.95f;
+						pObject->velocity.z *= 0.95f;
+					}
+				}
+			}
+
+
+
+
 			// Explicit forward Euler "integration step"
 			//		NewVelocity = LastVel + (Accel * DeltaTime)
 			//		NewPosition = LastPos + (Vel * DeltaTime)	
@@ -107,6 +124,12 @@ void cPhysics::Update(double deltaTime)
 
 	}//for (sPhsyicsProperties* pObject
 
+
+	for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)
+	{
+		if (pObject->shapeType == sPhysicsProperties::CAPSULE)
+			pObject->jumpNormThisFrame = 0;
+	}
 
 
 	for (sPhysicsProperties* pObjectA : m_vec_pPhysicalProps)
@@ -177,7 +200,10 @@ void cPhysics::Update(double deltaTime)
 					if (theCollision.hitNorm.y > 0)
 					{
 						if (acos(glm::dot(glm::normalize(theCollision.hitNorm), glm::vec3(0, 1, 0))) < 45)
+						{
 							pObjectA->jumpNormThisFrame++;
+							pObjectA->groundNorm = theCollision.hitNorm; // This will cause inconsistencies when on multiple differen surfaces !!! TODO
+						}
 					}
 
 

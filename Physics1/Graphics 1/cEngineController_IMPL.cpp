@@ -97,13 +97,24 @@ bool cEngineController_IMPL::Initialize(void)
 	playerObj->shapeType = sPhysicsProperties::CAPSULE;
 	playerObj->friendlyName = "plyr";
 	//playerObj->acceleration.y = -20.0f;
-	playerObj->position = glm::vec3(0, 100, 0);
+	playerObj->position = glm::vec3(0, 120, 0);
 	playerObj->restitution = 0.0f;
 	m_ThePlayer->setPlayerObject(playerObj);
 
+
+	cMesh* playerMesh = new cMesh();
+	playerMesh->meshName = "Sphere_1_unit_Radius.ply";
+	playerMesh->friendlyName = "Player";
+	playerMesh->textureName[0] = "metal_s01.bmp";
+	playerMesh->scale = glm::vec3(2.0f);
+	playerMesh->uniqueID = playerObj->getUniqueID();
+
+	playerObj->pTheAssociatedMesh = playerMesh;
+
 	// Load test scene
-	m_pTheSceneManager->loadScene("BulletThroughPlane");
-	m_pThePhysics->AddShape(playerObj);
+	m_pTheSceneManager->loadScene("FPMovementPlay");
+	//m_pThePhysics->AddShape(playerObj);
+	addCustomObject(playerMesh, playerObj);
 
 
 	// Make boned character
