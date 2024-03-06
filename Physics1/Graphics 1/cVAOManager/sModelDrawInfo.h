@@ -6,8 +6,8 @@
 #include <map>
 #include <vector>
 
-class aiScene;
-class aiNode;
+struct aiScene;
+struct aiNode;
 
 
 // The vertex structure 

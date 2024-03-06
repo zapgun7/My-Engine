@@ -35,11 +35,11 @@ sModelDrawInfo::sModelDrawInfo()
 
 	// You could store the max and min values of the 
 	//  vertices here (determined when you load them):
-	glm::vec3 maxValues;
-	glm::vec3 minValues;
+// 	glm::vec3 maxValues;
+// 	glm::vec3 minValues;
 
 //	scale = 5.0/maxExtent;		-> 5x5x5
-	float maxExtent;
+	//float maxExtent;
 
 	return;
 }
@@ -84,7 +84,7 @@ sNode* sModelDrawInfo::GenerateBoneHierarchy(aiNode* assimpNode, const int depth
 	NodeNameToIdMap.insert(std::pair<std::string, int>((std::string)(assimpNode->mName.C_Str()), NodeHierarchyTransformations.size()));
 	NodeHierarchyTransformations.emplace_back(ModelMatrix/*glmMatrix*/);
 
-	for (int i = 0; i < assimpNode->mNumChildren; i++)
+	for (unsigned int i = 0; i < assimpNode->mNumChildren; i++)
 	{
 		node->Children.emplace_back(GenerateBoneHierarchy(assimpNode->mChildren[i], depth + 1));
 	}
@@ -424,24 +424,24 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 		characterAnimation->Duration = animation->mDuration;
 		characterAnimation->TicksPerSecond = animation->mTicksPerSecond;
 
-		for (int i = 0; i < animation->mNumChannels; i++)
+		for (unsigned int i = 0; i < animation->mNumChannels; i++)
 		{
 			aiNodeAnim* assimpNodeAnim = animation->mChannels[i];
 			sAnimInfo* animInfo = new sAnimInfo();
 			animInfo->name = assimpNodeAnim->mNodeName.C_Str();
 			characterAnimation->map_NameToAnimationData.insert(std::pair<std::string, sAnimInfo*>(animInfo->name, animInfo));
 
-			for (int e = 0; e < assimpNodeAnim->mNumPositionKeys; e++)
+			for (unsigned int e = 0; e < assimpNodeAnim->mNumPositionKeys; e++)
 			{
 				aiVectorKey& p = assimpNodeAnim->mPositionKeys[e];
 				animInfo->mveKeyFrames.emplace_back(sAnimInfo::sAnimNode(glm::vec3(p.mValue.x, p.mValue.y, p.mValue.z), p.mTime));
 			}
-			for (int e = 0; e < assimpNodeAnim->mNumScalingKeys; e++)
+			for (unsigned int e = 0; e < assimpNodeAnim->mNumScalingKeys; e++)
 			{
 				aiVectorKey& s = assimpNodeAnim->mScalingKeys[e];
 				animInfo->sclKeyFrames.emplace_back(sAnimInfo::sAnimNode(glm::vec3(s.mValue.x, s.mValue.y, s.mValue.z), s.mTime));
 			}
-			for (int e = 0; e < assimpNodeAnim->mNumRotationKeys; e++)
+			for (unsigned int e = 0; e < assimpNodeAnim->mNumRotationKeys; e++)
 			{
 				aiQuatKey& q = assimpNodeAnim->mRotationKeys[e];
 				glm::quat tempQuat = glm::quat(q.mValue.w, q.mValue.x, q.mValue.y, q.mValue.z);
@@ -482,7 +482,7 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 			printf("Bone: %s\n", name.c_str());
 			printf("Number of weights: %d\n", bone->mNumWeights);
 
-			for (int weightIdx = 0; weightIdx < bone->mNumWeights; weightIdx++)
+			for (unsigned int weightIdx = 0; weightIdx < bone->mNumWeights; weightIdx++)
 			{
 				aiVertexWeight& vertexWeight = bone->mWeights[weightIdx];
 				// BoneId		:	boneIdx
@@ -494,7 +494,7 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 				{
 					if (boneInfo.m_Weight[infoIdx] == 0.0f)
 					{
-						boneInfo.m_BoneId[infoIdx] = boneIdx;
+						boneInfo.m_BoneId[infoIdx] = static_cast<float>(boneIdx);
 						boneInfo.m_Weight[infoIdx] = vertexWeight.mWeight;
 						break;
 					}

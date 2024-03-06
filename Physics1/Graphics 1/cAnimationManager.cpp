@@ -49,14 +49,14 @@ glm::vec3 cAnimationManager::GetAnimationPosition(std::vector<sAnimInfo::sAnimNo
 	}
 	if (firstKeyframeIdx < 0)
 	{
-		firstKeyframeIdx = data.size() - 1;
+		firstKeyframeIdx = static_cast<int>(data.size()) - 1;
 		return data[firstKeyframeIdx].value;
 	}
 
 	// Now we have the first keyframe
 	double deltaFrameTime = data[firstKeyframeIdx + 1].time - data[firstKeyframeIdx].time;
 	double timeBetweenFrames = keyFrameTime - data[firstKeyframeIdx].time;
-	float ratio = timeBetweenFrames / deltaFrameTime;
+	float ratio = static_cast<float>(timeBetweenFrames) / static_cast<float>(deltaFrameTime);
 	
 	glm::vec3 deltaValue = data[firstKeyframeIdx + 1].value - data[firstKeyframeIdx].value;
 
@@ -826,8 +826,8 @@ void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime
 	double frameTime = oldTime - keyFrames[0].time; 
 
 
-	float oldRatio = frameTime / deltaFrameTime;
-	float newRatio = (frameTime + dt) / deltaFrameTime;
+	float oldRatio = static_cast<float>(frameTime) / static_cast<float>(deltaFrameTime);
+	float newRatio = static_cast<float>(frameTime + dt) / static_cast<float>(deltaFrameTime);
 
 	// Now we calculate the value at old and new, and set the difference to theDelta
 	switch (keyFrames[1].interp_spec)
@@ -842,48 +842,48 @@ void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime
 	}
 	case sAnimInfo::sAnimNode::QUAD:
 	{
-		oldRatio = glm::pow(oldRatio, 2);
-		newRatio = glm::pow(newRatio, 2);
+		oldRatio = static_cast<float>(glm::pow(oldRatio, 2));
+		newRatio = static_cast<float>(glm::pow(newRatio, 2));
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
 	case sAnimInfo::sAnimNode::CUBIC:
 	{
-		oldRatio = glm::pow(oldRatio, 3);
-		newRatio = glm::pow(newRatio, 3);
+		oldRatio = static_cast<float>(glm::pow(oldRatio, 3));
+		newRatio = static_cast<float>(glm::pow(newRatio, 3));
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
 	case sAnimInfo::sAnimNode::QUART:
 	{
-		oldRatio = glm::pow(oldRatio, 4); 
-		newRatio = glm::pow(newRatio, 4);
+		oldRatio = static_cast<float>(glm::pow(oldRatio, 4));
+		newRatio = static_cast<float>(glm::pow(newRatio, 4));
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
 	case sAnimInfo::sAnimNode::QUINT:
 	{
-		oldRatio = glm::pow(oldRatio, 5);
-		newRatio = glm::pow(newRatio, 5);
+		oldRatio = static_cast<float>(glm::pow(oldRatio, 5));
+		newRatio = static_cast<float>(glm::pow(newRatio, 5));
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
 	case sAnimInfo::sAnimNode::EXPO:
 	{
-		oldRatio = oldRatio ==  0 ? 0 : glm::pow(2, 10 * oldRatio - 10);
-		newRatio = newRatio == 0 ? 0 : glm::pow(2, 10 * newRatio - 10);
+		oldRatio = oldRatio ==  0 ? 0 : static_cast<float>(glm::pow(2, 10 * oldRatio - 10));
+		newRatio = newRatio == 0 ? 0 : static_cast<float>(glm::pow(2, 10 * newRatio - 10));
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
 	}
 	case sAnimInfo::sAnimNode::CIRC:
 	{
-		oldRatio = 1 - sqrt(1 - glm::pow(oldRatio, 2));
-		newRatio = 1 - sqrt(1 - glm::pow(newRatio, 2));
+		oldRatio = 1 - sqrt(1 - static_cast<float>(glm::pow(oldRatio, 2)));
+		newRatio = 1 - sqrt(1 - static_cast<float>(glm::pow(newRatio, 2)));
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
 		return;
@@ -901,18 +901,18 @@ void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime
 	}
 	case sAnimInfo::sAnimNode::ELASTIC:
 	{
-		const float c4 = (2 * glm::pi<float>() / 3);
+		const float c4 = (2.0f * glm::pi<float>() / 3.0f);
 
 		oldRatio = oldRatio == 0 
-			? 0 
+			? 0.0f
 			: oldRatio == 1
-			? 1
-			: -glm::pow(2, 10 * oldRatio - 10) * sin((oldRatio * 10 - 10.75) * c4);
+			? 1.0f
+			: -static_cast<float>(glm::pow(2, 10.0f * oldRatio - 10.0f)) * sin((oldRatio * 10.0f - 10.75f) * c4);
 		newRatio = newRatio == 0
-			? 0
+			? 0.0f
 			: newRatio == 1
-			? 1
-			: -glm::pow(2, 10 * newRatio - 10) * sin((newRatio * 10 - 10.75) * c4);
+			? 1.0f
+			: -static_cast<float>(glm::pow(2, 10.0f * newRatio - 10.0f)) * sin((newRatio * 10.0f - 10.75f) * c4);
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -923,37 +923,37 @@ void GetDeltaEaseIn(const sAnimInfo::sAnimNode* keyFrames, const double& oldTime
 		const float n1 = 7.5625f;
 		const float d1 = 2.75f;
 
-		oldRatio = 1 - oldRatio;
-		newRatio = 1 - newRatio;
+		oldRatio = 1.0f - oldRatio;
+		newRatio = 1.0f - newRatio;
 
-		if (oldRatio < 1 / d1) {
+		if (oldRatio < 1.0f / d1) {
 			oldRatio =  n1 * oldRatio * oldRatio;
 		}
-		else if (oldRatio < 2 / d1) {
-			oldRatio = n1 * (oldRatio -= 1.5 / d1) * oldRatio + 0.75;
+		else if (oldRatio < 2.0f / d1) {
+			oldRatio = n1 * (oldRatio -= 1.5f / d1) * oldRatio + 0.75f;
 		}
-		else if (oldRatio < 2.5 / d1) {
-			oldRatio = n1 * (oldRatio -= 2.25 / d1) * oldRatio + 0.9375;
+		else if (oldRatio < 2.5f / d1) {
+			oldRatio = n1 * (oldRatio -= 2.25f / d1) * oldRatio + 0.9375f;
 		}
 		else {
-			oldRatio = n1 * (oldRatio -= 2.625 / d1) * oldRatio + 0.984375;
+			oldRatio = n1 * (oldRatio -= 2.625f / d1) * oldRatio + 0.984375f;
 		}
 
-		if (newRatio < 1 / d1) {
+		if (newRatio < 1.0f / d1) {
 			newRatio = n1 * newRatio * newRatio;
 		}
-		else if (newRatio < 2 / d1) {
-			newRatio = n1 * (newRatio -= 1.5 / d1) * newRatio + 0.75;
+		else if (newRatio < 2.0f / d1) {
+			newRatio = n1 * (newRatio -= 1.5f / d1) * newRatio + 0.75f;
 		}
-		else if (newRatio < 2.5 / d1) {
-			newRatio = n1 * (newRatio -= 2.25 / d1) * newRatio + 0.9375;
+		else if (newRatio < 2.5f / d1) {
+			newRatio = n1 * (newRatio -= 2.25f / d1) * newRatio + 0.9375f;
 		}
 		else {
-			newRatio = n1 * (newRatio -= 2.625 / d1) * newRatio + 0.984375;
+			newRatio = n1 * (newRatio -= 2.625f / d1) * newRatio + 0.984375f;
 		}
 
-		oldRatio = 1 - oldRatio;
-		newRatio = 1 - newRatio;
+		oldRatio = 1.0f - oldRatio;
+		newRatio = 1.0f - newRatio;
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -971,8 +971,8 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 	double frameTime = oldTime - keyFrames[0].time;
 
 
-	float oldRatio = frameTime / deltaFrameTime;
-	float newRatio = (frameTime + dt) / deltaFrameTime;
+	float oldRatio = static_cast<float>(frameTime / deltaFrameTime);
+	float newRatio = static_cast<float>((frameTime + dt) / deltaFrameTime);
 
 	// Now we calculate the value at old and new, and set the difference to theDelta
 	switch (keyFrames[1].interp_spec)
@@ -988,8 +988,8 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 	}
 	case sAnimInfo::sAnimNode::QUAD:
 	{
-		oldRatio = 1 - (1 - oldRatio) * (1 - oldRatio);
-		newRatio = 1 - (1 - newRatio) * (1 - newRatio);
+		oldRatio = 1 - (1.0f - oldRatio) * (1.0f - oldRatio);
+		newRatio = 1 - (1.0f - newRatio) * (1.0f - newRatio);
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -997,8 +997,8 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 	}
 	case sAnimInfo::sAnimNode::CUBIC:
 	{
-		oldRatio = 1 - glm::pow(1 - oldRatio, 3);
-		newRatio = 1 - glm::pow(1 - newRatio, 3);
+		oldRatio = 1.0f - static_cast<float>(glm::pow(1.0f - oldRatio, 3));
+		newRatio = 1.0f - static_cast<float>(glm::pow(1.0f - newRatio, 3));
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -1006,8 +1006,8 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 	}
 	case sAnimInfo::sAnimNode::QUART:
 	{
-		oldRatio = 1 - glm::pow(1 - oldRatio, 4);
-		newRatio = 1 - glm::pow(1 - newRatio, 4);
+		oldRatio = 1.0f - static_cast<float>(glm::pow(1.0f - oldRatio, 4));
+		newRatio = 1.0f - static_cast<float>(glm::pow(1.0f - newRatio, 4));
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -1015,8 +1015,8 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 	}
 	case sAnimInfo::sAnimNode::QUINT:
 	{
-		oldRatio = 1 - glm::pow(1 - oldRatio, 5);
-		newRatio = 1 - glm::pow(1 - newRatio, 5);
+		oldRatio = 1.0f - static_cast<float>(glm::pow(1.0f - oldRatio, 5));
+		newRatio = 1.0f - static_cast<float>(glm::pow(1.0f - newRatio, 5));
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -1024,8 +1024,8 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 	}
 	case sAnimInfo::sAnimNode::EXPO:
 	{
-		oldRatio = oldRatio ==  1 ? 1 : 1 - glm::pow(2, -10 * oldRatio);
-		newRatio = newRatio == 1 ? 1 : 1 - glm::pow(2, -10 * newRatio);
+		oldRatio = oldRatio ==  1 ? 1.0f : 1.0f - static_cast<float>(glm::pow(2, -10.0f * oldRatio));
+		newRatio = newRatio == 1 ? 1.0f : 1.0f - static_cast<float>(glm::pow(2, -10.0f * newRatio));
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -1033,8 +1033,8 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 	}
 	case sAnimInfo::sAnimNode::CIRC:
 	{
-		oldRatio = sqrt(1 - glm::pow(oldRatio - 1, 2));
-		newRatio = sqrt(1 - glm::pow(newRatio - 1, 2));
+		oldRatio = sqrt(1.0f - static_cast<float>(glm::pow(oldRatio - 1.0f, 2)));
+		newRatio = sqrt(1.0f - static_cast<float>(glm::pow(newRatio - 1.0f, 2)));
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -1043,10 +1043,10 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 	case sAnimInfo::sAnimNode::BACK:
 	{
 		const float c1 = 1.70158f;
-		const float c3 = c1 + 1;
+		const float c3 = c1 + 1.0f;
 
-		oldRatio = 1 + c3 * glm::pow(oldRatio - 1, 3) + c1 * glm::pow(oldRatio - 1, 2);
-		newRatio = 1 + c3 * glm::pow(newRatio - 1, 3) + c1 * glm::pow(newRatio - 1, 2);
+		oldRatio = 1.0f + c3 * static_cast<float>(glm::pow(oldRatio - 1.0f, 3)) + c1 * static_cast<float>(glm::pow(oldRatio - 1.0f, 2));
+		newRatio = 1.0f + c3 * static_cast<float>(glm::pow(newRatio - 1.0f, 3)) + c1 * static_cast<float>(glm::pow(newRatio - 1.0f, 2));
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -1054,19 +1054,19 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 	}
 	case sAnimInfo::sAnimNode::ELASTIC:
 	{
-		const float c4 = (2 * glm::pi<float>()) / 3;
+		const float c4 = (2.0f * glm::pi<float>()) / 3.0f;
 
 		oldRatio = oldRatio ==  0
-			? 0
+			? 0.0f
 			: oldRatio == 1
-			? 1
-			: glm::pow(2, -10 * oldRatio) * sin((oldRatio * 10 - 0.75) * c4) + 1;
+			? 1.0f
+			: static_cast<float>(glm::pow(2, -10.0f * oldRatio)) * sin((oldRatio * 10.0f - 0.75f) * c4) + 1;
 
 		newRatio = newRatio == 0
-			? 0
+			? 0.0f
 			: newRatio == 1
-			? 1
-			: glm::pow(2, -10 * newRatio) * sin((newRatio * 10 - 0.75) * c4) + 1;
+			? 1.0f
+			: static_cast<float>(glm::pow(2, -10.0f * newRatio)) * sin((newRatio * 10.0f - 0.75f) * c4) + 1;
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -1077,30 +1077,30 @@ void GetDeltaEaseOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldTim
 		const float n1 = 7.5625f;
 		const float d1 = 2.75f;
 
-		if (oldRatio < 1 / d1) {
+		if (oldRatio < 1.0f / d1) {
 			oldRatio = n1 * oldRatio * oldRatio;
 		}
-		else if (oldRatio < 2 / d1) {
-			oldRatio = n1 * (oldRatio -= 1.5 / d1) * oldRatio + 0.75;
+		else if (oldRatio < 2.0f / d1) {
+			oldRatio = n1 * (oldRatio -= 1.5f / d1) * oldRatio + 0.75f;
 		}
-		else if (oldRatio < 2.5 / d1) {
-			oldRatio = n1 * (oldRatio -= 2.25 / d1) * oldRatio + 0.9375;
+		else if (oldRatio < 2.5f / d1) {
+			oldRatio = n1 * (oldRatio -= 2.25f / d1) * oldRatio + 0.9375f;
 		}
 		else {
-			oldRatio = n1 * (oldRatio -= 2.625 / d1) * oldRatio + 0.984375;
+			oldRatio = n1 * (oldRatio -= 2.625f / d1) * oldRatio + 0.984375f;
 		}
 
-		if (newRatio < 1 / d1) {
+		if (newRatio < 1.0f / d1) {
 			newRatio = n1 * newRatio * newRatio;
 		}
-		else if (newRatio < 2 / d1) {
-			newRatio = n1 * (newRatio -= 1.5 / d1) * newRatio + 0.75;
+		else if (newRatio < 2.0f / d1) {
+			newRatio = n1 * (newRatio -= 1.5f / d1) * newRatio + 0.75f;
 		}
-		else if (newRatio < 2.5 / d1) {
-			newRatio = n1 * (newRatio -= 2.25 / d1) * newRatio + 0.9375;
+		else if (newRatio < 2.5f / d1) {
+			newRatio = n1 * (newRatio -= 2.25f / d1) * newRatio + 0.9375f;
 		}
 		else {
-			newRatio = n1 * (newRatio -= 2.625 / d1) * newRatio + 0.984375;
+			newRatio = n1 * (newRatio -= 2.625f / d1) * newRatio + 0.984375f;
 		}
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
@@ -1119,8 +1119,8 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 	double frameTime = oldTime - keyFrames[0].time;
 
 
-	float oldRatio = frameTime / deltaFrameTime;
-	float newRatio = (frameTime + dt) / deltaFrameTime;
+	float oldRatio = static_cast<float>(frameTime / deltaFrameTime);
+	float newRatio = static_cast<float>((frameTime + dt) / deltaFrameTime);
 
 	// Now we calculate the value at old and new, and set the difference to theDelta
 	switch (keyFrames[1].interp_spec)
@@ -1136,8 +1136,8 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 	}
 	case sAnimInfo::sAnimNode::QUAD:
 	{
-		oldRatio = oldRatio < 0.5 ? 2 * oldRatio * oldRatio : 1 - glm::pow(-2 * oldRatio + 2, 2) / 2;
-		newRatio = newRatio < 0.5 ? 2 * newRatio * newRatio : 1 - glm::pow(-2 * newRatio + 2, 2) / 2;
+		oldRatio = oldRatio < 0.5f ? 2.0f * oldRatio * oldRatio : 1.0f - static_cast<float>(glm::pow(-2.0f * oldRatio + 2.0f, 2)) / 2.0f;
+		newRatio = newRatio < 0.5f ? 2.0f * newRatio * newRatio : 1.0f - static_cast<float>(glm::pow(-2.0f * newRatio + 2.0f, 2)) / 2.0f;
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -1145,8 +1145,8 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 	}
 	case sAnimInfo::sAnimNode::CUBIC:
 	{
-		oldRatio = oldRatio < 0.5 ? 4 * oldRatio * oldRatio * oldRatio : 1 - glm::pow(-2 * oldRatio + 2, 3) / 2;
-		newRatio = newRatio < 0.5 ? 4 * newRatio * newRatio * newRatio : 1 - glm::pow(-2 * newRatio + 2, 3) / 2;
+		oldRatio = oldRatio < 0.5f ? 4.0f * oldRatio * oldRatio * oldRatio : 1.0f - static_cast<float>(glm::pow(-2.0f * oldRatio + 2.0f, 3)) / 2.0f;
+		newRatio = newRatio < 0.5f ? 4.0f * newRatio * newRatio * newRatio : 1.0f - static_cast<float>(glm::pow(-2.0f * newRatio + 2.0f, 3)) / 2.0f;
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -1154,8 +1154,8 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 	}
 	case sAnimInfo::sAnimNode::QUART:
 	{
-		oldRatio = oldRatio < 0.5 ? 8 * oldRatio * oldRatio * oldRatio * oldRatio : 1 - glm::pow(-2 * oldRatio + 2, 4) / 2;
-		newRatio = newRatio < 0.5 ? 8 * newRatio * newRatio * newRatio * newRatio : 1 - glm::pow(-2 * newRatio + 2, 4) / 2;
+		oldRatio = oldRatio < 0.5f ? 8.0f * oldRatio * oldRatio * oldRatio * oldRatio : 1.0f - static_cast<float>(glm::pow(-2.0f * oldRatio + 2.0f, 4)) / 2.0f;
+		newRatio = newRatio < 0.5f ? 8.0f * newRatio * newRatio * newRatio * newRatio : 1.0f - static_cast<float>(glm::pow(-2.0f * newRatio + 2.0f, 4)) / 2.0f;
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -1163,8 +1163,8 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 	}
 	case sAnimInfo::sAnimNode::QUINT:
 	{
-		oldRatio = oldRatio < 0.5 ? 16 * oldRatio * oldRatio * oldRatio * oldRatio * oldRatio : 1 - glm::pow(-2 * oldRatio + 2, 5) / 2;
-		newRatio = newRatio < 0.5 ? 16 * newRatio * newRatio * newRatio * newRatio * newRatio : 1 - glm::pow(-2 * newRatio + 2, 5) / 2;
+		oldRatio = oldRatio < 0.5f ? 16.0f * oldRatio * oldRatio * oldRatio * oldRatio * oldRatio : 1.0f - static_cast<float>(glm::pow(-2.0f * oldRatio + 2.0f, 5)) / 2;
+		newRatio = newRatio < 0.5f ? 16.0f * newRatio * newRatio * newRatio * newRatio * newRatio : 1.0f - static_cast<float>(glm::pow(-2.0f * newRatio + 2.0f, 5)) / 2;
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -1173,18 +1173,18 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 	case sAnimInfo::sAnimNode::EXPO:
 	{
 		oldRatio = oldRatio == 0
-			? 0
+			? 0.0f
 			: oldRatio == 1
-			? 1
-			: oldRatio < 0.5 ? glm::pow(2, 20 * oldRatio - 10) / 2
-			: (2 - glm::pow(2, -20 * oldRatio + 10)) / 2;
+			? 1.0f
+			: oldRatio < 0.5f ? static_cast<float>(glm::pow(2, 20.0f * oldRatio - 10.0f)) / 2.0f
+			: (2.0f - static_cast<float>(glm::pow(2, -20.0f * oldRatio + 10.0f))) / 2.0f;
 
 		newRatio = newRatio == 0
-			? 0
+			? 0.0f
 			: newRatio == 1
-			? 1
-			: newRatio < 0.5 ? glm::pow(2, 20 * newRatio - 10) / 2
-			: (2 - glm::pow(2, -20 * newRatio + 10)) / 2;
+			? 1.0f
+			: newRatio < 0.5f ? static_cast<float>(glm::pow(2, 20.0f * newRatio - 10.0f)) / 2.0f
+			: (2.0f - static_cast<float>(glm::pow(2, -20.0f * newRatio + 10.0f))) / 2.0f;
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -1192,13 +1192,13 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 	}
 	case sAnimInfo::sAnimNode::CIRC:
 	{
-		oldRatio = oldRatio < 0.5
-			? (1 - sqrt(1 - pow(2 * oldRatio, 2))) / 2
-			: (sqrt(1 - pow(-2 * oldRatio + 2, 2)) + 1) / 2;
+		oldRatio = oldRatio < 0.5f
+			? (1.0f - static_cast<float>(sqrt(1.0f - pow(2.0f * oldRatio, 2)))) / 2.0f
+			: (static_cast<float>(sqrt(1.0f - pow(-2.0f * oldRatio + 2.0f, 2))) + 1.0f) / 2.0f;
 
-		newRatio = newRatio < 0.5
-			? (1 - sqrt(1 - pow(2 * newRatio, 2))) / 2
-			: (sqrt(1 - pow(-2 * newRatio + 2, 2)) + 1) / 2;
+		newRatio = newRatio < 0.5f
+			? (1.0f - static_cast<float>(sqrt(1.0f - pow(2.0f * newRatio, 2)))) / 2.0f
+			: (static_cast<float>(sqrt(1.0f - pow(-2.0f * newRatio + 2.0f, 2))) + 1.0f) / 2.0f;
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -1210,12 +1210,12 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 		const float c2 = c1 * 1.525f;
 
 		oldRatio = oldRatio < 0.5
-			? (glm::pow(2 * oldRatio, 2) * ((c2 + 1) * 2 * oldRatio - c2)) / 2
-			: (glm::pow(2 * oldRatio - 2, 2) * ((c2 + 1) * (oldRatio * 2 - 2) + c2) + 2) / 2;
+			? (static_cast<float>(glm::pow(2.0f * oldRatio, 2)) * ((c2 + 1.0f) * 2.0f * oldRatio - c2)) / 2.0f
+			: (static_cast<float>(glm::pow(2.0f * oldRatio - 2.0f, 2)) * ((c2 + 1.0f) * (oldRatio * 2.0f - 2.0f) + c2) + 2.0f) / 2.0f;
 
 		newRatio = newRatio < 0.5
-			? (glm::pow(2 * newRatio, 2) * ((c2 + 1) * 2 * newRatio - c2)) / 2
-			: (glm::pow(2 * newRatio - 2, 2) * ((c2 + 1) * (newRatio * 2 - 2) + c2) + 2) / 2;
+			? (static_cast<float>(glm::pow(2.0f * newRatio, 2.0f)) * ((c2 + 1.0f) * 2.0f * newRatio - c2)) / 2.0f
+			: (static_cast<float>(glm::pow(2.0f * newRatio - 2.0f, 2)) * ((c2 + 1.0f) * (newRatio * 2.0f - 2.0f) + c2) + 2.0f) / 2.0f;
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -1223,23 +1223,23 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 	}
 	case sAnimInfo::sAnimNode::ELASTIC:
 	{
-		const float c5 = (2 * glm::pi<float>()) / 4.5;
+		const float c5 = (2.0f * glm::pi<float>()) / 4.5f;
 
 		oldRatio = oldRatio == 0
-			? 0
+			? 0.0f
 			: oldRatio == 1
-			? 1
-			: oldRatio < 0.5
-			? -(glm::pow(2, 20 * oldRatio - 10) * sin((20 * oldRatio - 11.125) * c5)) / 2
-			: (glm::pow(2, -20 * oldRatio + 10) * sin((20 * oldRatio - 11.125) * c5)) / 2 + 1;
+			? 1.0f
+			: oldRatio < 0.5f
+			? -(static_cast<float>(glm::pow(2, 20.0f * oldRatio - 10.0f)) * sin((20.0f * oldRatio - 11.125f) * c5)) / 2.0f
+			: (static_cast<float>(glm::pow(2, -20.0f * oldRatio + 10.0f)) * sin((20.0f * oldRatio - 11.125f) * c5)) / 2.0f + 1.0f;
 
 		newRatio = newRatio == 0
-			? 0
+			? 0.0f
 			: newRatio == 1
-			? 1
-			: newRatio < 0.5
-			? -(glm::pow(2, 20 * newRatio - 10) * sin((20 * newRatio - 11.125) * c5)) / 2
-			: (glm::pow(2, -20 * newRatio + 10) * sin((20 * newRatio - 11.125) * c5)) / 2 + 1;
+			? 1.0f
+			: newRatio < 0.5f
+			? -(static_cast<float>(glm::pow(2, 20.0f * newRatio - 10.0f)) * sin((20.0f * newRatio - 11.125f) * c5)) / 2.0f
+			: (static_cast<float>(glm::pow(2, -20.0f * newRatio + 10.0f)) * sin((20.0f * newRatio - 11.125f) * c5)) / 2.0f + 1.0f;
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;
 
@@ -1253,80 +1253,80 @@ void GetDeltaEaseInOut(const sAnimInfo::sAnimNode* keyFrames, const double& oldT
 
 		if (oldRatio < 0.5f)
 		{
-			oldRatio = 1 - 2 * oldRatio;
+			oldRatio = 1.0f - 2.0f * oldRatio;
 
-			if (oldRatio < 1 / d1) {
+			if (oldRatio < 1.0f / d1) {
 				oldRatio = n1 * oldRatio * oldRatio;
 			}
-			else if (oldRatio < 2 / d1) {
-				oldRatio = n1 * (oldRatio -= 1.5 / d1) * oldRatio + 0.75;
+			else if (oldRatio < 2.0f / d1) {
+				oldRatio = n1 * (oldRatio -= 1.5f / d1) * oldRatio + 0.75f;
 			}
-			else if (oldRatio < 2.5 / d1) {
-				oldRatio = n1 * (oldRatio -= 2.25 / d1) * oldRatio + 0.9375;
+			else if (oldRatio < 2.5f / d1) {
+				oldRatio = n1 * (oldRatio -= 2.25f / d1) * oldRatio + 0.9375f;
 			}
 			else {
-				oldRatio = n1 * (oldRatio -= 2.625 / d1) * oldRatio + 0.984375;
+				oldRatio = n1 * (oldRatio -= 2.625f / d1) * oldRatio + 0.984375f;
 			}
 
-			oldRatio = (1 - oldRatio) / 2;
+			oldRatio = (1.0f - oldRatio) / 2.0f;
 		}
 		else
 		{
-			oldRatio = 2 * oldRatio - 1;
+			oldRatio = 2.0f * oldRatio - 1.0f;
 
-			if (oldRatio < 1 / d1) {
+			if (oldRatio < 1.0f / d1) {
 				oldRatio = n1 * oldRatio * oldRatio;
 			}
-			else if (oldRatio < 2 / d1) {
-				oldRatio = n1 * (oldRatio -= 1.5 / d1) * oldRatio + 0.75;
+			else if (oldRatio < 2.0f / d1) {
+				oldRatio = n1 * (oldRatio -= 1.5f / d1) * oldRatio + 0.75f;
 			}
-			else if (oldRatio < 2.5 / d1) {
-				oldRatio = n1 * (oldRatio -= 2.25 / d1) * oldRatio + 0.9375;
+			else if (oldRatio < 2.5f / d1) {
+				oldRatio = n1 * (oldRatio -= 2.25f / d1) * oldRatio + 0.9375f;
 			}
 			else {
-				oldRatio = n1 * (oldRatio -= 2.625 / d1) * oldRatio + 0.984375;
+				oldRatio = n1 * (oldRatio -= 2.625f / d1) * oldRatio + 0.984375f;
 			}
 
-			oldRatio = (1 + oldRatio) / 2;
+			oldRatio = (1.0f + oldRatio) / 2.0f;
 		}
 
 		if (newRatio < 0.5f)
 		{
-			newRatio = 1 - 2 * newRatio;
+			newRatio = 1.0f - 2.0f * newRatio;
 
-			if (newRatio < 1 / d1) {
+			if (newRatio < 1.0f / d1) {
 				newRatio = n1 * newRatio * newRatio;
 			}
-			else if (newRatio < 2 / d1) {
-				newRatio = n1 * (newRatio -= 1.5 / d1) * newRatio + 0.75;
+			else if (newRatio < 2.0f / d1) {
+				newRatio = n1 * (newRatio -= 1.5f / d1) * newRatio + 0.75f;
 			}
-			else if (newRatio < 2.5 / d1) {
-				newRatio = n1 * (newRatio -= 2.25 / d1) * newRatio + 0.9375;
+			else if (newRatio < 2.5f / d1) {
+				newRatio = n1 * (newRatio -= 2.25f / d1) * newRatio + 0.9375f;
 			}
 			else {
-				newRatio = n1 * (newRatio -= 2.625 / d1) * newRatio + 0.984375;
+				newRatio = n1 * (newRatio -= 2.625f / d1) * newRatio + 0.984375f;
 			}
 
-			newRatio = (1 - newRatio) / 2;
+			newRatio = (1.0f - newRatio) / 2.0f;
 		}
 		else
 		{
-			newRatio = 2 * newRatio - 1;
+			newRatio = 2.0f * newRatio - 1.0f;
 
-			if (newRatio < 1 / d1) {
+			if (newRatio < 1.0f / d1) {
 				newRatio = n1 * newRatio * newRatio;
 			}
-			else if (newRatio < 2 / d1) {
-				newRatio = n1 * (newRatio -= 1.5 / d1) * newRatio + 0.75;
+			else if (newRatio < 2.0f / d1) {
+				newRatio = n1 * (newRatio -= 1.5f / d1) * newRatio + 0.75f;
 			}
-			else if (newRatio < 2.5 / d1) {
-				newRatio = n1 * (newRatio -= 2.25 / d1) * newRatio + 0.9375;
+			else if (newRatio < 2.5f / d1) {
+				newRatio = n1 * (newRatio -= 2.25f / d1) * newRatio + 0.9375f;
 			}
 			else {
-				newRatio = n1 * (newRatio -= 2.625 / d1) * newRatio + 0.984375;
+				newRatio = n1 * (newRatio -= 2.625f / d1) * newRatio + 0.984375f;
 			}
 
-			newRatio = (1 + newRatio) / 2;
+			newRatio = (1.0f + newRatio) / 2.0f;
 		}
 
 		theDelta = keyFrames[1].value * newRatio - keyFrames[1].value * oldRatio;

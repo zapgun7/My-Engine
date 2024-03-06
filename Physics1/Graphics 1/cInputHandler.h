@@ -29,13 +29,13 @@ struct sMouse
 	bool RPressEvent = false;
 	bool RReleaseEvent = false;
 
-	double prevX = 0.0f;
-	double currX = 0.0f;
-	double deltaX = 0.0f;
+	double prevX = 0.0;
+	double currX = 0.0;
+	double deltaX = 0.0;
 
-	double prevY = 0.0f;
-	double currY = 0.0f;
-	double deltaY = 0.0f;
+	double prevY = 0.0;
+	double currY = 0.0;
+	double deltaY = 0.0;
 
 	MouseStates mouseType = NORMAL;
 
@@ -43,8 +43,8 @@ struct sMouse
 
 struct sMonitorInfo
 {
-	int height = 0.0f;
-	int width = 0.0f;
+	int height = 0;
+	int width = 0;
 };
 
 class cInputHandler

@@ -11,7 +11,7 @@
 #include "sModelDrawInfo.h"
 #include "../cAnimationManager.h"
 
-class aiNode;
+struct aiNode;
 
 
 

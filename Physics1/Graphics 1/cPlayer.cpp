@@ -13,7 +13,7 @@ cPlayer::cPlayer(GLFWwindow* window)
 	m_CameraType = FLYCAM;
 
 	m_KICKREACH = 15.0f;
-	m_MAXKICKFORCE = 25.0f;
+	m_MAXKICKFORCE = 40.0f;
 
 }
 
@@ -73,7 +73,7 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 				m_pInput->GetMouseDeltas(deltaMouseX, deltaMouseY);
 
 				float deltaX, deltaY, deltaZ;
-				deltaY = deltaMouseX / m_InverseSensitivity;
+				deltaY = static_cast<float>(deltaMouseX) / m_InverseSensitivity;
 
 				// For other pitch and roll start by getting signed ratios of the forward vector
 
@@ -84,8 +84,8 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 
 
 
-				deltaZ = deltaMouseY / m_InverseSensitivity * xLook;
-				deltaX = -deltaMouseY / m_InverseSensitivity * zLook;
+				deltaZ = static_cast<float>(deltaMouseY) / m_InverseSensitivity * xLook;
+				deltaX = static_cast<float>(-deltaMouseY) / m_InverseSensitivity * zLook;
 
 				glm::quat deltaQuat = glm::quat(glm::radians(glm::vec3(deltaX, deltaY, deltaZ)));
 
@@ -167,7 +167,7 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 // 		deltaMouseY -= mouseYPos; // for this tick
 
 		float deltaX, deltaY, deltaZ;
-		deltaY = deltaMouseX / m_InverseSensitivity;
+		deltaY = static_cast<float>(deltaMouseX) / m_InverseSensitivity;
 
 
 		glm::vec3 normXZ = glm::normalize(XZForwardVec);
@@ -176,8 +176,8 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 
 
 
-		deltaZ = deltaMouseY / m_InverseSensitivity * xLook;
-		deltaX = -deltaMouseY / m_InverseSensitivity * zLook;
+		deltaZ = static_cast<float>(deltaMouseY) / m_InverseSensitivity * xLook;
+		deltaX = static_cast<float>(-deltaMouseY) / m_InverseSensitivity * zLook;
 
 		glm::quat deltaQuat = glm::quat(glm::radians(glm::vec3(deltaX, deltaY, deltaZ)));
 
@@ -260,7 +260,12 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 		{
 			//m_pPlayerObject->velocity -= deltaMove; // Remove any velocity that was gained
 			if (hVel > preVelLen) // Only if the player tries to go faster
-				m_pPlayerObject->velocity = glm::normalize(m_pPlayerObject->velocity) * preVelLen; // This keeps what direction the player was trying to change to
+			{
+				XZVel = glm::normalize(XZVel) * preVelLen;
+				m_pPlayerObject->velocity.x = XZVel.x;
+				m_pPlayerObject->velocity.z = XZVel.z;
+				//m_pPlayerObject->velocity = glm::normalize(m_pPlayerObject->velocity) * preVelLen; // This keeps what direction the player was trying to change to
+			}
 		}
 
 

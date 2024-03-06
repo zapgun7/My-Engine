@@ -113,7 +113,7 @@ bool cGraphicsMain::Initialize()
 	{
 		std::cout << "Error: Couldn't compile or link:" << std::endl;
 		std::cout << m_pShaderThing->getLastError();
-		return -1;
+		return 0;
 	}
 
 
@@ -322,8 +322,8 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 	/////////// UV OFFSET UPDATE /////////////
 	for (unsigned int i = 0; i < m_vec_pAllMeshes.size(); i++)
 	{
-		m_vec_pAllMeshes[i]->uv_Offset_Scale.x += m_vec_pAllMeshes[i]->uvOffsetSpeed.x * deltaTime;
-		m_vec_pAllMeshes[i]->uv_Offset_Scale.y += m_vec_pAllMeshes[i]->uvOffsetSpeed.y * deltaTime;
+		m_vec_pAllMeshes[i]->uv_Offset_Scale.x += m_vec_pAllMeshes[i]->uvOffsetSpeed.x * static_cast<float>(deltaTime);
+		m_vec_pAllMeshes[i]->uv_Offset_Scale.y += m_vec_pAllMeshes[i]->uvOffsetSpeed.y * static_cast<float>(deltaTime);
 
 		// Keeps values within proper range (good for longevity)
 // 		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.x > 1.0f)
@@ -512,7 +512,7 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 	glfwSwapBuffers(m_window);
 
 	if (glfwWindowShouldClose(m_window))
-		return -1;
+		return 1;
 	else
 		return 0;
 }
@@ -527,7 +527,7 @@ bool cGraphicsMain::Update2(double deltaTime)
 		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_1->ID);
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		float ratio;
-		int width, height;
+		//int width, height;
 
 		ratio = m_pFBO_1->width / (float)m_pFBO_1->height;
 		glViewport(0, 0, m_pFBO_1->width, m_pFBO_1->height);
@@ -577,7 +577,7 @@ bool cGraphicsMain::Update2(double deltaTime)
 
 
 	if (glfwWindowShouldClose(m_window))
-		return -1;
+		return 1;
 	else
 		return 0;
 
@@ -1529,12 +1529,12 @@ void cGraphicsMain::flyCameraInput(int width, int height)
 			deltaMouseY -= mouseYPos; // for this tick
 
 			// Camera rotation here :)
-			m_cameraRotation.x -= deltaMouseX / 1000;
+			m_cameraRotation.x -= static_cast<float>(deltaMouseX) / 1000;
 
-			m_cameraRotation.y -= deltaMouseY / 1000;
+			m_cameraRotation.y -= static_cast<float>(deltaMouseY) / 1000;
 			m_cameraTarget.y = m_cameraRotation.y;     // This is pitch
 			m_cameraTarget.x = sin(m_cameraRotation.x);         // This is just y-rotation
-			m_cameraTarget.z = sin(m_cameraRotation.x + 1.57);  //
+			m_cameraTarget.z = sin(m_cameraRotation.x + 1.57f);  //
 			m_cameraTarget = glm::normalize(m_cameraTarget);
 			m_cameraTarget.y *= 2;
 			glfwSetCursorPos(m_window, width / 2, height / 2);

@@ -1,7 +1,7 @@
 #pragma once
 
 
-class sAnimInfo;
+struct sAnimInfo;
 
 enum AnimType
 {

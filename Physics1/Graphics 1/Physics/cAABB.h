@@ -12,7 +12,7 @@
 //	either the actual vertices of the triangle, or the index to the triangle...
 //struct sTriangle_A;
 class cVAOManager;
-class sPhysicsProperties;
+struct sPhysicsProperties;
 
 
 struct sCapsuleInfo // For recursive traversal

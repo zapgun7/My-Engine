@@ -17,7 +17,7 @@
 
 
 struct sNode;
-class sPhysicsProperties; // This will be the medium of updating position, orientation, etc.
+struct sPhysicsProperties; // This will be the medium of updating position, orientation, etc.
 class cVAOManager;
 
 

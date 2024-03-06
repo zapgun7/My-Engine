@@ -60,17 +60,17 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 	{
 		// Object filename and friendlyname
 		str = MeshVec[i]->meshName; // filename
-		string.SetString(str.c_str(), str.length(), output.GetAllocator());
+		string.SetString(str.c_str(), static_cast<rapidjson::SizeType>(str.length()), output.GetAllocator());
 		meshobj.AddMember("meshName", string, output.GetAllocator()); // Add meshname
 
 		str = MeshVec[i]->friendlyName; // friendlyname
-		string.SetString(str.c_str(), str.length(), output.GetAllocator());
+		string.SetString(str.c_str(), static_cast<rapidjson::SizeType>(str.length()), output.GetAllocator());
 		meshobj.AddMember("friendlyName", string, output.GetAllocator()); // Add friendlyname
 
 		// Texture Info: name array, ratio array
 		for (unsigned int e = 0; e < cMesh::NUM_TEXTURES; e++)
 		{
-			string.SetString(MeshVec[i]->textureName[e].c_str(), MeshVec[i]->textureName[e].length(), output.GetAllocator());
+			string.SetString(MeshVec[i]->textureName[e].c_str(), static_cast<rapidjson::SizeType>(MeshVec[i]->textureName[e].length()), output.GetAllocator());
 			vec.PushBack(string, output.GetAllocator());
 		}
 		meshobj.AddMember("texNames", vec, output.GetAllocator()); // Add texture names
@@ -163,7 +163,7 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 	{
 		// Friendly Name
 		str = PhysVec[i]->friendlyName; // friendlyname
-		string.SetString(str.c_str(), str.length(), output.GetAllocator());
+		string.SetString(str.c_str(), static_cast<rapidjson::SizeType>(str.length()), output.GetAllocator());
 		physobj.AddMember("friendlyName", string, output.GetAllocator()); // Add friendlyname
 
 		// Shape Type
@@ -210,7 +210,7 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 	for (unsigned int i = 0; i < Lights->NUMBER_OF_LIGHTS_IM_USING; i++) // Iterate through all lights (yes even the ones we're not using)
 	{
 		str = Lights->theLights[i].friendlyName; // friendlyname
-		string.SetString(str.c_str(), str.length(), output.GetAllocator());
+		string.SetString(str.c_str(), static_cast<rapidjson::SizeType>(str.length()), output.GetAllocator());
 		lightobj.AddMember("friendlyname", string, output.GetAllocator()); // Add friendlyname
 		// Position
 		vec4 = Lights->theLights[i].position;

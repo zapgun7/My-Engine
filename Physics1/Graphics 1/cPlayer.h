@@ -50,7 +50,7 @@ private:
 	float m_KICKREACH;
 	float m_MAXKICKFORCE;
 	float m_BuildingKickPower = 0.0f;
-	float m_KICKCHARGESPEED = 2.0f; // Scales off delta time (of course) i.e. how long to fully charge?
+	float m_KICKCHARGESPEED = 4.0f; // Scales off delta time (of course) i.e. how long to fully charge?
 
 	float m_MAX_H_SPD = 15.0f;
 	float m_PLAYERSPEED = 40.0f;
