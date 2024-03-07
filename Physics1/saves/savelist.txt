@@ -8,3 +8,7 @@ MultiMeshContinuous
 IntenseMultiTest
 TestFPScene
 FPMovementPlay
+MovementPGFloor
+MovementPGLighting
+MovementPGRamp
+MovementPGRampUpdt

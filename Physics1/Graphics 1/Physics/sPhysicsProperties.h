@@ -8,6 +8,26 @@
 #include <limits.h>
 #include <vector>
 
+struct sPlayerPhysics
+{
+	float friction = 0.5f;
+	float airDrag = 0.8f;
+
+	glm::vec3 groundNorm = glm::vec3(0); // Current normal the player is standing on
+
+	unsigned int jumpNormThisFrame = 0; // 0 = grounded
+	unsigned int framesAirborne = 0; // This must be over, say 5 to be considered airborne
+	bool isGrounded = false;
+
+	bool isInputting = false; // Moving 
+	bool isSprinting = false; // This removes ground friction and increases horizontal speed cap on regular WASD movement
+
+	// These get set in the cPlayer
+	float maxHSpeed = 0.0f;
+	float sprintSpeedIncrease = 0.0f;
+};
+
+
 
 // This is where we are going to head...
 struct sPhysicsProperties
@@ -180,16 +200,12 @@ struct sPhysicsProperties
 	glm::vec3 upVec = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	bool isPlayer = false;
-	bool isInputting = false; // Moving 
 
 	float restitution = 0.0f; // Some bounce default
 	glm::vec3 scale = glm::vec3(1.0f);
 
-	glm::vec3 groundNorm = glm::vec3(0);
-	unsigned int jumpNormThisFrame = 0;
-	float friction = 0.8f;
-	float airDrag = 0.8f;
-
+	sPlayerPhysics* playerInfo = nullptr;
+	
 //	glm::vec3 orientation = glm::vec3(0.0f);
 	void setRotationFromEuler(glm::vec3 newEulerAngleXYZ)
 	{

@@ -67,24 +67,60 @@ void cPhysics::Update(double deltaTime)
 		// Infinite mass? 
 		if (pObject->inverse_mass >= 0.0f)
 		{
-			// Start with player value dampening
+			////////////////////// PLAYER CHARACTER UPDATES ///////////////////
 			if (pObject->isPlayer)
 			{
-				if (!pObject->isInputting) // If not pressing WASD
+				///////// GROUNDED DETECTION //////////
+				if (!pObject->playerInfo->jumpNormThisFrame)
 				{
-					if (pObject->jumpNormThisFrame) // Touching "valid" ground
+					pObject->playerInfo->framesAirborne++;
+				}
+				else
+				{
+					pObject->playerInfo->framesAirborne = 0;
+				}
+				// If more than 3 frames of not touching valid ground, considered airborne
+				if (pObject->playerInfo->framesAirborne > 3) pObject->playerInfo->isGrounded = false;
+				else pObject->playerInfo->isGrounded = true;
+				//////////// END OF GROUNDED DETECTION /////////////
+
+				
+				if ((!pObject->playerInfo->isInputting) && (!pObject->playerInfo->isSprinting))// If not pressing WASD
+				{
+					if (pObject->playerInfo->isGrounded) // Touching "valid" ground
 					{
-						pObject->velocity.x *= 0.7f;
-						pObject->velocity.z *= 0.7f;
+						glm::vec3 velReduction = (glm::vec3(pObject->velocity.x, 0, pObject->velocity.z)) * pObject->playerInfo->friction;
+						velReduction = (velReduction - glm::vec3(pObject->velocity.x, 0, pObject->velocity.z)) * static_cast<float>(deltaTime) * 10.0f;
+						pObject->velocity += velReduction;
 					}
 					else // Midair
 					{
-						pObject->velocity.x *= 0.95f;
-						pObject->velocity.z *= 0.95f;
+						glm::vec3 velReduction = (glm::vec3(pObject->velocity.x, 0, pObject->velocity.z)) * pObject->playerInfo->airDrag;
+						velReduction = (velReduction - glm::vec3(pObject->velocity.x, 0, pObject->velocity.z)) * static_cast<float>(deltaTime) * 10.0f;
+						pObject->velocity += velReduction;
+					}
+				}
+				else // Still inputting and/or sprinting
+				{
+					// Reduce speed if touching the ground
+					if (pObject->playerInfo->isGrounded)
+					{
+						float currHSpd = glm::length(glm::vec3(pObject->velocity.x, 0, pObject->velocity.z));
+						float addSprntSpd = 0.0f;
+						if (pObject->playerInfo->isSprinting) addSprntSpd = pObject->playerInfo->sprintSpeedIncrease;
+
+						if (currHSpd > pObject->playerInfo->maxHSpeed + addSprntSpd)
+						{
+							glm::vec3 velReduction = (glm::vec3(pObject->velocity.x, 0, pObject->velocity.z)) * pObject->playerInfo->friction;
+							velReduction = (velReduction - glm::vec3(pObject->velocity.x, 0, pObject->velocity.z)) * static_cast<float>(deltaTime) * 10.0f;
+							pObject->velocity += velReduction;
+						}
+						
 					}
 				}
 			}
-
+			
+			///////////////////// END OF PLAYER CHARACTER UPDATES /////////////////
 
 
 
@@ -99,7 +135,7 @@ void cPhysics::Update(double deltaTime)
 			// This part: (Accel * DeltaTime)
 			glm::vec3 deltaVelocityThisFrame;
 
-			if (pObject->jumpNormThisFrame) // If touching the ground
+			if (pObject->playerInfo->jumpNormThisFrame) // If touching the ground
 				deltaVelocityThisFrame = (pObject->acceleration) * static_cast<float>(deltaTime);
 			else
 				deltaVelocityThisFrame = (pObject->acceleration + m_WorldGravity) * static_cast<float>(deltaTime);
@@ -128,7 +164,7 @@ void cPhysics::Update(double deltaTime)
 	for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)
 	{
 		if (pObject->shapeType == sPhysicsProperties::CAPSULE)
-			pObject->jumpNormThisFrame = 0;
+			pObject->playerInfo->jumpNormThisFrame = 0;
 	}
 
 
@@ -194,15 +230,15 @@ void cPhysics::Update(double deltaTime)
 					m_Sphere_Collision(pObjectA, theCollision);
 					break;
 				case sPhysicsProperties::CAPSULE:
-					m_Capsule_Collision(pObjectA, theCollision);
+					m_Capsule_Collision(pObjectA, theCollision, deltaTime);
 					
 					// Set if the player can jump
 					if (theCollision.hitNorm.y > 0)
 					{
 						if (acos(glm::dot(glm::normalize(theCollision.hitNorm), glm::vec3(0, 1, 0))) < 45)
 						{
-							pObjectA->jumpNormThisFrame++;
-							pObjectA->groundNorm = theCollision.hitNorm; // This will cause inconsistencies when on multiple differen surfaces !!! TODO
+							pObjectA->playerInfo->jumpNormThisFrame = 1;
+							pObjectA->playerInfo->groundNorm = theCollision.hitNorm; // This will cause inconsistencies when on multiple differen surfaces !!! TODO
 						}
 					}
 

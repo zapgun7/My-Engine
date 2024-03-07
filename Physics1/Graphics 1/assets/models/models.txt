@@ -13,3 +13,7 @@ slab.ply
 bslab.ply
 cube9.ply
 door.ply
+pillar.ply
+ramp.ply
+sramp.ply
+wall corner1.ply

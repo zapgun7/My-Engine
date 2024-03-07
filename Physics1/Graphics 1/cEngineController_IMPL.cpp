@@ -96,9 +96,16 @@ bool cEngineController_IMPL::Initialize(void)
 	playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 1.0f));
 	playerObj->shapeType = sPhysicsProperties::CAPSULE;
 	playerObj->friendlyName = "plyr";
-	//playerObj->acceleration.y = -20.0f;
-	playerObj->position = glm::vec3(0, 120, 0);
+
+	playerObj->position = glm::vec3(50, 15, 50);
 	playerObj->restitution = 0.0f;
+// Add PlayerInfo Struct
+	sPlayerPhysics* plyrPhys = new sPlayerPhysics();
+	playerObj->playerInfo = plyrPhys;
+	
+	plyrPhys->friction = 0.1f;
+	plyrPhys->airDrag = 0.99f;
+	playerObj->isPlayer = true;
 	m_ThePlayer->setPlayerObject(playerObj);
 
 
@@ -112,7 +119,7 @@ bool cEngineController_IMPL::Initialize(void)
 	playerObj->pTheAssociatedMesh = playerMesh;
 
 	// Load test scene
-	m_pTheSceneManager->loadScene("FPMovementPlay");
+	m_pTheSceneManager->loadScene("MovementPGRampUpdt");
 	//m_pThePhysics->AddShape(playerObj);
 	addCustomObject(playerMesh, playerObj);
 

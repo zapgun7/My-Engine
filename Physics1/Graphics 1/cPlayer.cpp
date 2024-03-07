@@ -25,6 +25,9 @@ cPlayer::~cPlayer()
 void cPlayer::setPlayerObject(sPhysicsProperties* theObj)
 {
 	m_pPlayerObject = theObj;
+	m_pPlayerObject->playerInfo->maxHSpeed = m_MAX_H_SPD;
+	m_pPlayerObject->playerInfo->sprintSpeedIncrease = m_SPRINT_H_SPD_INCR;
+
 	return;
 }
 
@@ -209,7 +212,7 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 		bool isInputMove = false;
 
 		float modifiedPlayerSpeed;
-		if (m_pPlayerObject->jumpNormThisFrame) // Is Grounded
+		if (m_pPlayerObject->playerInfo->isGrounded) // Is Grounded
 		{
 			modifiedPlayerSpeed = m_PLAYERSPEED;
 		}
@@ -219,6 +222,20 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 		}
 
 		float preVelLen = glm::length(glm::vec3(m_pPlayerObject->velocity.x, 0, m_pPlayerObject->velocity.z));
+
+		bool isSprinting = false;
+		float sprintSpdIncr = 0.0f;
+		if (m_pInput->IsPressed(GLFW_KEY_LEFT_SHIFT))
+		{
+			m_pPlayerObject->playerInfo->isSprinting = true;
+			isSprinting = true;
+			sprintSpdIncr = m_SPRINT_H_SPD_INCR;
+		}
+		else
+		{
+			m_pPlayerObject->playerInfo->isSprinting = false;
+		}
+
 
 		glm::vec3 deltaMove = glm::vec3(0);
 		if (m_pInput->IsPressed(GLFW_KEY_W)) // Move forward
@@ -252,11 +269,11 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 			m_pPlayerObject->velocity -= moveAmt;
 			isInputMove = true;
 		}
-		m_pPlayerObject->isInputting = isInputMove; // Let physics know if we're moving the player
+		m_pPlayerObject->playerInfo->isInputting = isInputMove; // Let physics know if we're moving the player
 
 		glm::vec3 XZVel = glm::vec3(m_pPlayerObject->velocity.x, 0, m_pPlayerObject->velocity.z);
 		float hVel = glm::length(XZVel);
-		if (hVel > m_MAX_H_SPD)
+		if (hVel > m_MAX_H_SPD + sprintSpdIncr)
 		{
 			//m_pPlayerObject->velocity -= deltaMove; // Remove any velocity that was gained
 			if (hVel > preVelLen) // Only if the player tries to go faster
@@ -269,9 +286,9 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 		}
 
 
-		if ((m_pInput->IsPressed(GLFW_KEY_SPACE)) && (m_pPlayerObject->jumpNormThisFrame)) // Jump
+		if ((m_pInput->IsPressed(GLFW_KEY_SPACE)) && (m_pPlayerObject->playerInfo->jumpNormThisFrame)) // Jump
 		{
-			m_pPlayerObject->velocity += m_pPlayerObject->groundNorm * m_PLAYERJUMPFORCE;// glm::vec3(0, m_PLAYERJUMPFORCE, 0);
+			m_pPlayerObject->velocity += m_pPlayerObject->playerInfo->groundNorm * m_PLAYERJUMPFORCE;// glm::vec3(0, m_PLAYERJUMPFORCE, 0);
 		}
 
 
@@ -300,14 +317,14 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 		cameraPosition = m_pPlayerObject->position + glm::vec3(0, 1, 0);
 
 
-		if (isInputMove)
-		{
-			m_pPlayerObject->friction = 1.0f;
-		}
-		else
-		{
-			m_pPlayerObject->friction = 0.95f;
-		}
+// 		if (isInputMove)
+// 		{
+// 			m_pPlayerObject->playerInfo->friction = 1.0f;
+// 		}
+// 		else
+// 		{
+// 			m_pPlayerObject->playerInfo->friction = 0.95f;
+// 		}
 	}
 		
 

@@ -53,7 +53,8 @@ private:
 	float m_KICKCHARGESPEED = 4.0f; // Scales off delta time (of course) i.e. how long to fully charge?
 
 	float m_MAX_H_SPD = 15.0f;
-	float m_PLAYERSPEED = 40.0f;
+	float m_SPRINT_H_SPD_INCR = 20.0f;
+	float m_PLAYERSPEED = 10.0f;
 	float m_AIR_SPD_RED = 0.05f;
 	float m_PLAYERJUMPFORCE = 10.0f;
 };

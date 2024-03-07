@@ -68,7 +68,7 @@ void cPhysics::m_Sphere_Collision(sPhysicsProperties* pSphere, sPossibleCollisio
 
 
 // The same as sphere collision handling, for now
-void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollision& collision)
+void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollision& collision, double dt)
 {
 	float degDiff = acos(glm::dot(collision.hitNorm, glm::vec3(0, 1, 0)));
 
@@ -85,8 +85,13 @@ void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollis
 		pCapsule->velocity -= projSubVec;
 
 
-		if (degDiff < 50) // TODO need dt on this one, not the lower one though
-			pCapsule->velocity *= pCapsule->friction;
+// 		if (degDiff < 40) // TODO need dt on this one, not the lower one though
+// 		{
+// 			glm::vec3 hypoDeltaVel = pCapsule->velocity * pCapsule->friction;
+// 			hypoDeltaVel = hypoDeltaVel - pCapsule->velocity;
+// 
+// 			pCapsule->velocity += hypoDeltaVel * static_cast<float>(dt);
+// 		}
 		// I think this is it???
 	}
 	else // Regular triangle hit beyond the start and before the end of the update window
