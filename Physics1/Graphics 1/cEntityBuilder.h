@@ -7,7 +7,8 @@
 
 enum eEntityType
 {
-	AIPROJ
+	AIPROJ,
+	AIPROJ2
 };
 
 

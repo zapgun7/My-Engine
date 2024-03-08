@@ -93,7 +93,7 @@ bool cEngineController_IMPL::Initialize(void)
 	m_ThePlayer = new cPlayer(m_pTheGraphics->getWindow());
 
 	sPhysicsProperties* playerObj = new sPhysicsProperties();
-	playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 1.0f));
+	playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 0.5f));
 	playerObj->shapeType = sPhysicsProperties::CAPSULE;
 	playerObj->friendlyName = "plyr";
 
@@ -119,7 +119,7 @@ bool cEngineController_IMPL::Initialize(void)
 	playerObj->pTheAssociatedMesh = playerMesh;
 
 	// Load test scene
-	m_pTheSceneManager->loadScene("MovementPGRampUpdt");
+	m_pTheSceneManager->loadScene("MovementPGCorners+");
 	//m_pThePhysics->AddShape(playerObj);
 	addCustomObject(playerMesh, playerObj);
 

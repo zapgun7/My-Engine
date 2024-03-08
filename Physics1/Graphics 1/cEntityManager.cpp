@@ -23,14 +23,12 @@ void cEntityManager::Initialize(void)
 	aiPoss.push_back(glm::vec3(50, 0, 0));
 	aiPoss.push_back(glm::vec3(0, 0, 50));
 	aiPoss.push_back(glm::vec3(-50, 0, 0));
-	aiPoss.push_back(glm::vec3(0, 0, -50));
-	aiPoss.push_back(glm::vec3(50, 0, 50));
 
-	for (unsigned int i = 0; i < 5; i++)
+	for (unsigned int i = 0; i < 3; i++)
 	{
-		m_vecEntities.push_back(m_pEntityBuilder->MakeEntity(AIPROJ, aiPoss[i]));
+		m_vecEntities.push_back(m_pEntityBuilder->MakeEntity(AIPROJ2, aiPoss[i]));
 
-		(static_cast<cEnemyEntity*>(m_vecEntities[i]))->setTargetObject(m_pPlayerObj);
+		//(static_cast<cEnemyEntity*>(m_vecEntities[i]))->setTargetObject(m_pPlayerObj);
 	}
 }
 

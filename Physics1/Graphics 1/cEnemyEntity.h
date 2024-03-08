@@ -16,7 +16,10 @@ enum eAIType
 	FLEE,
 	PURSUE,
 	EVADE,
-	APPROACH
+	APPROACH,
+	WANDER1,
+	WANDER2,
+	WANDER3
 };
 
 
@@ -39,6 +42,12 @@ private:
 	sPhysicsProperties* m_pEntityObject = nullptr;
 	sPhysicsProperties* m_pPlayerEntity = nullptr; // Do it this way, or pass target object every update
 
+
+	// Wandering Vars
+	glm::vec3 currMoveDirGoal = glm::vec3(0.0f, 0.0f, 1.0f);
+	float remainingDist = 0.0f;
+
+	//End of Wandering Vars
 
 	glm::vec3 getLookVector(void); // Look vector in XZ
 

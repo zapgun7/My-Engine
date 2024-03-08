@@ -20,137 +20,193 @@ cEnemyEntity::~cEnemyEntity()
 // PURSUE
 // EVADE
 // APPROACH
+// WANDER1
+// WANDER2
+// WANDER3
 void cEnemyEntity::Update(double dt)
 {
-	bool isMoving = false;
-
-	glm::vec3 vecToGoal;// = m_pPlayerEntity->position - m_pEntityObject->position;
-	glm::vec3 goalPos;
-	//glm::vec3 vecToGoalNorm;// = glm::normalize(vecToGoal);
-
-	if ((m_eType == SEEK) || (m_eType == FLEE) || (m_eType == APPROACH)) // Make this 2x (!condition)'s? 
+	if ((m_eType == WANDER1) || (m_eType == WANDER2) || (m_eType == WANDER3))
 	{
-		vecToGoal = m_pPlayerEntity->position - m_pEntityObject->position;
-		goalPos = m_pPlayerEntity->position;
+		if (remainingDist <= 0)
+		{
+			if (m_eType == WANDER1) // Move far, keep general direction
+			{
+				remainingDist = 12.0f;
+				glm::vec3 adjustRot = glm::vec3(0, static_cast<float>(rand() % 15 + 5), 0);
+				if (rand() % 2 == 0) adjustRot.y *= -1;
+
+				currMoveDirGoal = glm::quat(glm::radians(adjustRot)) * currMoveDirGoal;
+			}
+			else if (m_eType == WANDER2) // Move medium keep general direction
+			{
+				remainingDist = 8.0f;
+				glm::vec3 adjustRot = glm::vec3(0, static_cast<float>(rand() % 50 + 20), 0);
+				if (rand() % 2 == 0) adjustRot.y *= -1;
+
+				currMoveDirGoal = glm::quat(glm::radians(adjustRot)) * currMoveDirGoal;
+			}
+			else if (m_eType == WANDER3) // Move short, Have more varying direction
+			{
+				remainingDist = 4.0f;
+				glm::vec3 adjustRot = glm::vec3(0, static_cast<float>(rand() % 90 + 45), 0);
+				if (rand() % 2 == 0) adjustRot.y *= -1;
+
+				currMoveDirGoal = glm::quat(glm::radians(adjustRot)) * currMoveDirGoal;
+			}
+		}
+
+		// Start by turning towards the goal direction
+		glm::vec3 crossResult = glm::cross(getLookVector(), glm::normalize(currMoveDirGoal));
+		if (crossResult.y > 0) // Turn left
+		{
+			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
+			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+		}
+		else // Turn right
+		{
+			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
+			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+		}
+
+
+		// Move entity in its look direction
+		glm::vec3 deltaMove = getLookVector() * static_cast<float>(dt) * MOVESPEED / 4.0f;
+		remainingDist -= glm::length(deltaMove);
+
+		m_pEntityObject->position += deltaMove;
 	}
 	else
 	{
-		goalPos = m_pPlayerEntity->position + m_pPlayerEntity->velocity * PREDICTIONOFFSET;
-		vecToGoal = goalPos - m_pEntityObject->position;
-	}
+		bool isMoving = false;
 
-	glm::vec3 vecToGoalNorm = glm::normalize(vecToGoal);
+		glm::vec3 vecToGoal;// = m_pPlayerEntity->position - m_pEntityObject->position;
+		glm::vec3 goalPos;
+		//glm::vec3 vecToGoalNorm;// = glm::normalize(vecToGoal);
 
-	//float radDiff = abs(acos(glm::dot(getLookVector(), vecToGoal) / glm::length(m_NewDir) * glm::length(m_dir)));
-	//float radDiff = acos(glm::dot(getLookVector(), glm::normalize(vecToGoal))); // As long as vecs are unit, we don't need to divide?
-
-	// Negative y: turn right,   Positive y: turn left       FOR SEEKING
-	glm::vec3 crossResult = glm::cross(getLookVector(), glm::normalize(vecToGoal));
-	float radDiff = asin(glm::length(crossResult));
-	
-	printf("Y: %.2f  |  %.2f\n", crossResult.y, radDiff);
-
-
-	// Depending on behavior do something related to the goal
-	if ((m_eType == SEEK) || (m_eType == PURSUE))
-	{
-		if (crossResult.y > 0) // Turn left
+		if ((m_eType == SEEK) || (m_eType == FLEE) || (m_eType == APPROACH)) // Make this 2x (!condition)'s? 
 		{
-			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
-			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+			vecToGoal = m_pPlayerEntity->position - m_pEntityObject->position;
+			goalPos = m_pPlayerEntity->position;
 		}
-		else // Turn right
+		else
 		{
-			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
-			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
-		}
-		if ((radDiff < 0.3f)
-			&& (glm::distance(m_pEntityObject->position, m_pPlayerEntity->position) > (glm::distance(m_pEntityObject->position + getLookVector(), m_pPlayerEntity->position))))
-		{
-			m_pEntityObject->velocity += getLookVector() * MOVESPEED * static_cast<float>(dt);
-			isMoving = true;
-		}
-	}
-	else if ((m_eType == FLEE) || (m_eType == EVADE))
-	{
-		if (crossResult.y > 0) 
-		{
-			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
-			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
-		}
-		else 
-		{
-			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
-			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
-		}
-		if ((radDiff < 0.8f) // Wider range to start fleeing/evading
-			&& (glm::distance(m_pEntityObject->position, m_pPlayerEntity->position) < (glm::distance(m_pEntityObject->position + getLookVector(), m_pPlayerEntity->position))))
-		{
-			m_pEntityObject->velocity += getLookVector() * MOVESPEED * static_cast<float>(dt);
-			isMoving = true;
-		}
-	}
-	else // Approach
-	{
-		if (crossResult.y > 0) // Turn left
-		{
-			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
-			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
-		}
-		else // Turn right
-		{
-			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
-			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+			goalPos = m_pPlayerEntity->position + m_pPlayerEntity->velocity * PREDICTIONOFFSET;
+			vecToGoal = goalPos - m_pEntityObject->position;
 		}
 
-		float entPlyrDist = glm::distance(m_pEntityObject->position, m_pPlayerEntity->position);
-		if ((radDiff < 0.2f)
-			&& (entPlyrDist > (glm::distance(m_pEntityObject->position + getLookVector(), m_pPlayerEntity->position))))
+		glm::vec3 vecToGoalNorm = glm::normalize(vecToGoal);
+
+		//float radDiff = abs(acos(glm::dot(getLookVector(), vecToGoal) / glm::length(m_NewDir) * glm::length(m_dir)));
+		//float radDiff = acos(glm::dot(getLookVector(), glm::normalize(vecToGoal))); // As long as vecs are unit, we don't need to divide?
+
+		// Negative y: turn right,   Positive y: turn left       FOR SEEKING
+		glm::vec3 crossResult = glm::cross(getLookVector(), glm::normalize(vecToGoal));
+		float radDiff = asin(glm::length(crossResult));
+
+		printf("Y: %.2f  |  %.2f\n", crossResult.y, radDiff);
+
+
+		// Depending on behavior do something related to the goal
+		if ((m_eType == SEEK) || (m_eType == PURSUE))
 		{
-			if (entPlyrDist > APPROACHDIST + APPROACHAMP) // If too far away
+			if (crossResult.y > 0) // Turn left
 			{
-				// moveSpdAdjust reduces how much then enemy rubber bands back and forth trying to keep the certain distance
-				// It just reduces its acceleration the closer to the sweet spot it is
-				float moveSpdAdjust = (entPlyrDist - (APPROACHDIST + APPROACHAMP)) * 0.05f; 
-				moveSpdAdjust = (moveSpdAdjust > 1) ? 1 : moveSpdAdjust;
-				
-				m_pEntityObject->velocity += getLookVector() * MOVESPEED * moveSpdAdjust * static_cast<float>(dt);
-				isMoving = true;
+				glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
+				m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
 			}
-			else if (entPlyrDist < APPROACHDIST - APPROACHAMP) // If too close
+			else // Turn right
 			{
-				float moveSpdAdjust = ((APPROACHDIST + APPROACHAMP) - entPlyrDist) * 0.05f;
-				moveSpdAdjust = (moveSpdAdjust > 1) ? 1 : moveSpdAdjust;
-
-				m_pEntityObject->velocity += getLookVector() * (-MOVESPEED) * moveSpdAdjust * static_cast<float>(dt);
+				glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
+				m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+			}
+			if ((radDiff < 0.3f)
+				&& (glm::distance(m_pEntityObject->position, m_pPlayerEntity->position) > (glm::distance(m_pEntityObject->position + getLookVector(), m_pPlayerEntity->position))))
+			{
+				m_pEntityObject->velocity += getLookVector() * MOVESPEED * static_cast<float>(dt);
 				isMoving = true;
 			}
 		}
-	}
+		else if ((m_eType == FLEE) || (m_eType == EVADE))
+		{
+			if (crossResult.y > 0)
+			{
+				glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
+				m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+			}
+			else
+			{
+				glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
+				m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+			}
+			if ((radDiff < 0.8f) // Wider range to start fleeing/evading
+				&& (glm::distance(m_pEntityObject->position, m_pPlayerEntity->position) < (glm::distance(m_pEntityObject->position + getLookVector(), m_pPlayerEntity->position))))
+			{
+				m_pEntityObject->velocity += getLookVector() * MOVESPEED * static_cast<float>(dt);
+				isMoving = true;
+			}
+		}
+		else // Approach
+		{
+			if (crossResult.y > 0) // Turn left
+			{
+				glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
+				m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+			}
+			else // Turn right
+			{
+				glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
+				m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+			}
+
+			float entPlyrDist = glm::distance(m_pEntityObject->position, m_pPlayerEntity->position);
+			if ((radDiff < 0.2f)
+				&& (entPlyrDist > (glm::distance(m_pEntityObject->position + getLookVector(), m_pPlayerEntity->position))))
+			{
+				if (entPlyrDist > APPROACHDIST + APPROACHAMP) // If too far away
+				{
+					// moveSpdAdjust reduces how much then enemy rubber bands back and forth trying to keep the certain distance
+					// It just reduces its acceleration the closer to the sweet spot it is
+					float moveSpdAdjust = (entPlyrDist - (APPROACHDIST + APPROACHAMP)) * 0.05f;
+					moveSpdAdjust = (moveSpdAdjust > 1) ? 1 : moveSpdAdjust;
+
+					m_pEntityObject->velocity += getLookVector() * MOVESPEED * moveSpdAdjust * static_cast<float>(dt);
+					isMoving = true;
+				}
+				else if (entPlyrDist < APPROACHDIST - APPROACHAMP) // If too close
+				{
+					float moveSpdAdjust = ((APPROACHDIST + APPROACHAMP) - entPlyrDist) * 0.05f;
+					moveSpdAdjust = (moveSpdAdjust > 1) ? 1 : moveSpdAdjust;
+
+					m_pEntityObject->velocity += getLookVector() * (-MOVESPEED) * moveSpdAdjust * static_cast<float>(dt);
+					isMoving = true;
+				}
+			}
+		}
 
 
 
-	// Limit overall speed
-	if (glm::length(m_pEntityObject->velocity) > VELOCITYLIMIT)
-	{
-		m_pEntityObject->velocity = glm::normalize(m_pEntityObject->velocity) * VELOCITYLIMIT;
-	}
+		// Limit overall speed
+		if (glm::length(m_pEntityObject->velocity) > VELOCITYLIMIT)
+		{
+			m_pEntityObject->velocity = glm::normalize(m_pEntityObject->velocity) * VELOCITYLIMIT;
+		}
 
-	if (true)//(!isMoving)
-	{
-		// Regular speed reduction
-		m_pEntityObject->velocity -= m_pEntityObject->velocity * SPEEDREDUCTION * static_cast<float>(dt);
-	}
+		if (true)//(!isMoving)
+		{
+			// Regular speed reduction
+			m_pEntityObject->velocity -= m_pEntityObject->velocity * SPEEDREDUCTION * static_cast<float>(dt);
+		}
 
 
-	// Keep in bounds so fleeing entites don't truly escape
-	if (abs(m_pEntityObject->position.x) > BOUNDSX)
-	{
-		m_pEntityObject->position.x = BOUNDSX * (abs(m_pEntityObject->position.x) / m_pEntityObject->position.x);
-	}
-	if (abs(m_pEntityObject->position.z) > BOUNDSZ)
-	{
-		m_pEntityObject->position.z = BOUNDSX * (abs(m_pEntityObject->position.z) / m_pEntityObject->position.z);
+		// Keep in bounds so fleeing entites don't truly escape
+		if (abs(m_pEntityObject->position.x) > BOUNDSX)
+		{
+			m_pEntityObject->position.x = BOUNDSX * (abs(m_pEntityObject->position.x) / m_pEntityObject->position.x);
+		}
+		if (abs(m_pEntityObject->position.z) > BOUNDSZ)
+		{
+			m_pEntityObject->position.z = BOUNDSX * (abs(m_pEntityObject->position.z) / m_pEntityObject->position.z);
+		}
 	}
 
 

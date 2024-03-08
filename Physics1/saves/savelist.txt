@@ -12,3 +12,8 @@ MovementPGFloor
 MovementPGLighting
 MovementPGRamp
 MovementPGRampUpdt
+MovementPGMore
+MovementPGMoree
+MovementPGMoreee
+MovementPGCorners
+MovementPGCorners+

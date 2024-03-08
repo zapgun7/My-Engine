@@ -1,6 +1,8 @@
 #include "cPlayer.h"
 #include <iostream>
 
+
+//#include <glm/gtc/constants.hpp>
 #include "Physics/cPhysics.h" // For tests
 
 
@@ -13,7 +15,10 @@ cPlayer::cPlayer(GLFWwindow* window)
 	m_CameraType = FLYCAM;
 
 	m_KICKREACH = 15.0f;
-	m_MAXKICKFORCE = 40.0f;
+	m_MAXKICKFORCE = 60.0f;
+	m_LOOKDIRKICKINFLUENCE = 0.1f;
+	m_YVELRED = 20.0f;
+	m_AIR_SPD_RED = 0.2f;
 
 }
 
@@ -33,8 +38,6 @@ void cPlayer::setPlayerObject(sPhysicsProperties* theObj)
 
 void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cameraRotation)
 {
-// 	int stat = glfwGetKey(m_window, GLFW_KEY_ESCAPE);
-// 	static bool isPressed = false;
 
 	if (m_pInput->IsPressedEvent(GLFW_KEY_ESCAPE))
 	{
@@ -51,11 +54,6 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 
 
 
-
-
-
-	//static double mouseXPos = 0;
-	//static double mouseYPos = 0;
 	if (m_CameraType == FLYCAM)
 	{
 		glm::vec3 forwardVector = glm::vec3(0, 0, 1) * (cameraRotation);
@@ -147,27 +145,23 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 	}
 	else if (m_CameraType == FIRSTPERSON) // The "player" character
 	{
-// 		static double mouseXPos = 0;
-// 		static double mouseYPos = 0;
 
-// 		int width, height;
-// 		glfwGetFramebufferSize(m_window, &width, &height);
+		if (m_pInput->IsPressedEvent(GLFW_KEY_TAB))
+		{
+			m_pPlayerObject->position = glm::vec3(50, 15, 50);
+			m_pPlayerObject->velocity = glm::vec3(0);
+		}
 
 		glm::vec3 forwardVector = glm::vec3(0, 0, 1) * (cameraRotation);
 		glm::vec3 XZForwardVec(forwardVector.x, 0, forwardVector.z);
 
-// 		mouseXPos = width / 2;
-// 		mouseYPos = height / 2;
-		//glfwSetCursorPos(m_window, width / 2, height / 2);
-		//glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 		m_pInput->ChangeMouseState(HIDDEN);
 
 
 		double deltaMouseX, deltaMouseY;
 		m_pInput->GetMouseDeltas(deltaMouseX, deltaMouseY);
-		//glfwGetCursorPos(m_window, &deltaMouseX, &deltaMouseY); // Get current mouse position
-// 		deltaMouseX -= mouseXPos; // Set the delta mouse positions
-// 		deltaMouseY -= mouseYPos; // for this tick
+
 
 		float deltaX, deltaY, deltaZ;
 		deltaY = static_cast<float>(deltaMouseX) / m_InverseSensitivity;
@@ -271,6 +265,18 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 		}
 		m_pPlayerObject->playerInfo->isInputting = isInputMove; // Let physics know if we're moving the player
 
+		if (m_pInput->IsMousePressed(GLFW_MOUSE_BUTTON_RIGHT))
+		{
+			
+			if (m_pPlayerObject->velocity.y > 0)
+			{
+				float redSpd = m_pPlayerObject->velocity.y * 0.5f * static_cast<float>(deltaTime);
+				m_pPlayerObject->velocity.y -= redSpd;
+			}
+			m_pPlayerObject->velocity.y -= m_YVELRED * static_cast<float>(deltaTime);
+		}
+
+
 		glm::vec3 XZVel = glm::vec3(m_pPlayerObject->velocity.x, 0, m_pPlayerObject->velocity.z);
 		float hVel = glm::length(XZVel);
 		if (hVel > m_MAX_H_SPD + sprintSpdIncr)
@@ -294,6 +300,7 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 
 		// KICK HANDLING
 
+		//std::cout << "Speed: " << glm::length(m_pPlayerObject->velocity) << std::endl;
 
 		if (m_pInput->IsMousePressed(GLFW_MOUSE_BUTTON_LEFT))
 		{
@@ -305,30 +312,112 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 			glm::vec3 norm = glm::vec3(0.0f);
 			if (m_pThePhysics->GetKickNorm(m_pPlayerObject->position, forwardVector, m_KICKREACH, norm))
 			{
-				norm = glm::normalize(norm - forwardVector * 0.5f);
-				m_pPlayerObject->velocity += norm * m_MAXKICKFORCE * m_BuildingKickPower;
-				m_BuildingKickPower = 0.0f;
+				Kick(norm, forwardVector);
+// 				norm = glm::normalize(norm - forwardVector * 0.5f);
+// 				m_pPlayerObject->velocity += norm * m_MAXKICKFORCE * m_BuildingKickPower;
 			}
+			m_BuildingKickPower = 0.0f;
 		}
 
 
 
-
+		// Set camera positon to a little above the capsule midsection
 		cameraPosition = m_pPlayerObject->position + glm::vec3(0, 1, 0);
-
-
-// 		if (isInputMove)
-// 		{
-// 			m_pPlayerObject->playerInfo->friction = 1.0f;
-// 		}
-// 		else
-// 		{
-// 			m_pPlayerObject->playerInfo->friction = 0.95f;
-// 		}
 	}
 		
 
 	return;
 }
 
+void cPlayer::Kick(glm::vec3& hitNorm, glm::vec3& lookVec)
+{
+	// We want the kick to, under certain conditions, redirect some of the velocity the player has, rather than just adding to the overall velocity
+	// 90 degree reflection would be the ideal max redirect, decreasing gradient from there. There should be ALMOST no reflection on 180 (so the player can't infinitely pogo)
+	///////// STEPS: ///////
+	// 1. Reflect Move vec + look vec (reduced weight on look) 
+	// 2. Degree diff from move vec and this reflected vector will provide scaling on velocity transference 
+	// 3. Max transference will be at 90 deg difference; reducing to smaller (not 0) amount and 180 and 0
+
+	// RANGE: abs(degDiff - pi/2) --> This way we can work with blocks of range rather than two, yucky
+	// 
+	// 0 - 15   Optimal transference 
+	// 15+ - 40 Okay transference     
+	// 40+ - 70 Meh transference      
+	// 70+ - 90 Minimal transference 
+
+	// For additional speed gained from kicking, it will be some gradient based off of the player's current speed (calc'd after or before velocity redirection?)
+	// Higher speed will gain less, lower speed will gain more
+
+
+// 	hitNorm = glm::normalize(hitNorm - lookVec * 0.5f);
+// 	m_pPlayerObject->velocity += hitNorm * m_MAXKICKFORCE * m_BuildingKickPower;
+
+	glm::vec3 finalHitNorm = glm::normalize(hitNorm - lookVec * m_LOOKDIRKICKINFLUENCE);
+	glm::vec3 moveVec = glm::normalize(glm::vec3 (m_pPlayerObject->velocity.x, m_pPlayerObject->velocity.y + std::numeric_limits<float>::epsilon(), m_pPlayerObject->velocity.z));
+
+	glm::vec3 reflectedVec = glm::reflect(moveVec, finalHitNorm);
+	float degDiff = acos(glm::dot(reflectedVec, moveVec));
+
+	degDiff = degDiff - glm::half_pi<float>();
+
+	float maxRedirectedLen = m_BuildingKickPower * 150.0f;
+	float currMoveLen = glm::length(m_pPlayerObject->velocity);
+
+	float redirectedLen = currMoveLen <= maxRedirectedLen ? currMoveLen : maxRedirectedLen;
+	glm::vec3 finalVel = m_pPlayerObject->velocity;
+
+
+
+	// Project move vec onto norm
+	glm::vec3 velLenOnNorm = glm::dot(m_pPlayerObject->velocity, hitNorm) * hitNorm;
+	float velLenOnNormLen = glm::length(velLenOnNorm);
+
+	float addVelMod = 100.0f - velLenOnNormLen;
+	addVelMod = addVelMod < 5.0f ? 5.0f : addVelMod; 
+	addVelMod /= 100.0f;
+
+	float additionalVel = m_BuildingKickPower * m_MAXKICKFORCE * addVelMod;
+	glm::vec3 addVelVec = additionalVel * hitNorm;
+
+
+	const float transferRate1 = 0.99f;
+	const float transferRate2 = 0.90f;
+	const float transferRate3 = 0.60f;
+	const float transferRate4 = 0.30f;
+
+	// This must also somehow scall off of the kick power
+	if (degDiff < 0.26178f) // ~15 deg
+	{
+		finalVel -= moveVec * transferRate1 * redirectedLen;
+		finalVel += reflectedVec * transferRate1 * redirectedLen;
+		//finalVel += additionalVel * hitNorm;
+	}
+	else if (degDiff < 0.698133f) // ~40 deg
+	{
+		finalVel -= moveVec * transferRate2 * redirectedLen;
+		finalVel += reflectedVec * transferRate2 * redirectedLen;
+		//finalVel += additionalVel * hitNorm;
+	}
+	else if (degDiff < 1.22174f) // ~70 deg
+	{
+		finalVel -= moveVec * transferRate3 * redirectedLen;
+		finalVel += reflectedVec * transferRate3 * redirectedLen;
+		//finalVel += additionalVel * hitNorm;
+	}
+	else
+	{
+		finalVel -= moveVec * transferRate4 * redirectedLen;
+		finalVel += reflectedVec * transferRate4 * redirectedLen;
+		//finalVel += additionalVel * hitNorm;
+	}
+
+	m_pPlayerObject->velocity.x = finalVel.x;
+	m_pPlayerObject->velocity.z = finalVel.z;
+	if (m_pPlayerObject->velocity.y < 0)
+		m_pPlayerObject->velocity.y = finalVel.y * 0.1;
+	else
+		m_pPlayerObject->velocity.y = finalVel.y;
+	m_pPlayerObject->velocity += addVelVec;
+
+}
 

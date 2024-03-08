@@ -100,7 +100,7 @@ void cPhysics::Update(double deltaTime)
 						pObject->velocity += velReduction;
 					}
 				}
-				else // Still inputting and/or sprinting
+				else if (false) // Still inputting and/or sprinting
 				{
 					// Reduce speed if touching the ground
 					if (pObject->playerInfo->isGrounded)
