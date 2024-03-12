@@ -293,12 +293,12 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 	{
 		//	Give each thread an (almost) equal amount of work
 		//m_ThreadInfos[threadIDX].theShape = &reverseTransformedSphere;
-		this->m_ThreadInfos[threadIDX].theShape = this->m_pReversedObject;
-		this->m_ThreadInfos[threadIDX].theTriangles = &(trisToCheck[currTriIdxToGive]);
+		this->m_ThreadInfos[threadIDX].theShape = this->m_pReversedObject; // Give thread the sphere
+		this->m_ThreadInfos[threadIDX].theTriangles = &(trisToCheck[currTriIdxToGive]); // Give thread the triangle array
 
 		int amntToAdd = overflowCount-- > 0 ? perThreadTriCount + 1 : perThreadTriCount;
-		this->m_ThreadInfos[threadIDX].arraySize = amntToAdd;
-		this->m_ThreadInfos[threadIDX].hasWork = true;
+		this->m_ThreadInfos[threadIDX].arraySize = amntToAdd; // Tell thread how far to go into array given
+		this->m_ThreadInfos[threadIDX].hasWork = true; // Start the thread
 		currTriIdxToGive += amntToAdd;
 	}
 
@@ -309,11 +309,21 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 		{
 			Sleep(0);
 		}
+		// Thread is done, grab its processed info
+// 		if (m_ThreadInfos[threadIDX].soonestHit < m_pTheSoonestCollision->q)
+// 		{
+// 			m_pTheSoonestCollision->q = m_ThreadInfos[threadIDX].soonestHit;
+// 			m_pTheSoonestCollision->hitNorm = m_ThreadInfos[threadIDX].hn;
+// 			m_ThreadInfos[threadIDX].soonestHit = FLT_MAX; // Set up for next time thread runs
+// 		}
 	}
 
 	// All threads are done at this point
 	if (this->m_pTheSoonestCollision->q <= 1.0f)
+	{
+		this->m_pTheSoonestCollision->hitNorm = (matModelR * glm::vec4(this->m_pTheSoonestCollision->hitNorm, 1.0f));
 		return true;
+	}
 
 
 

@@ -91,7 +91,9 @@ bool cEngineController_IMPL::Initialize(void)
 	// Make the camera object
 	m_TheCamera = new sPhysicsProperties();
 	m_TheCamera->friendlyName = "cam";
+	m_TheCamera->position = glm::vec3(0, 20, -40);
 	m_ThePlayer = new cPlayer(m_pTheGraphics->getWindow());
+
 
 // 	sPhysicsProperties* playerObj = new sPhysicsProperties();
 // 	playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 0.5f));
@@ -120,7 +122,7 @@ bool cEngineController_IMPL::Initialize(void)
 // 	playerObj->pTheAssociatedMesh = playerMesh;
 
 	// Load test scene
-	//m_pTheSceneManager->loadScene("MovementPGCorners+");
+	m_pTheSceneManager->loadScene("test");
 	//m_pThePhysics->AddShape(playerObj);
 	//addCustomObject(playerMesh, playerObj);
 

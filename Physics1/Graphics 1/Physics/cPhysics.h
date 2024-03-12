@@ -34,6 +34,9 @@ struct sThreadCollisionInfo
 	unsigned int arraySize = 0;
 	cPhysics* thePhysics = nullptr;
 	bool hasWork = false;
+
+	float soonestHit = FLT_MAX;
+	glm::vec3 hn = glm::vec3(0, 0, 0);
 };
 
 
@@ -55,7 +58,7 @@ private:
 	DWORD* m_ThreadIDs;
 	HANDLE* m_ThreadHandles;
 	sThreadCollisionInfo* m_ThreadInfos;
-	const unsigned int NUM_THREADS = 4;
+	const unsigned int NUM_THREADS = 10;
 
 	sPossibleCollision* m_pTheSoonestCollision = nullptr; // This is what the threads attempt to update when they get a collision
 	sPhysicsProperties* m_pReversedObject = nullptr;

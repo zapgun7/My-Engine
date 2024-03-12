@@ -8,45 +8,44 @@ DWORD WINAPI ThreadedIntersectionLoop(LPVOID lpParamater)
 {
 	sThreadCollisionInfo* myInfo = (sThreadCollisionInfo*)lpParamater;
 	float t = 0;
-	float soonestT = FLT_MAX;
+	//float soonestT = FLT_MAX;
 	glm::vec3 hn = glm::vec3(0.0f);
-	glm::vec3 soonestHN = hn;
+	//glm::vec3 soonestHN = hn;
 
 
 	while (true) // Just loop forever for now, maybe add some bool to check later
 	{
-		if (myInfo->hasWork) // Has work? do work
+// 		if (myInfo->hasWork) // Has work? do work
+// 		{
+
+		for (unsigned int triIDX = 0; triIDX < myInfo->arraySize; triIDX++)
 		{
-
-			for (unsigned int triIDX = 0; triIDX < myInfo->arraySize; triIDX++)
+			//if (!myInfo->thePhysics->m_TestMovingSphereTriangle(myInfo->theShape, &(myInfo->theTriangles[triIDX]), t, hn))
+			if (!cPhysics::m_TestMovingSphereTriangle(myInfo->theShape, &(myInfo->theTriangles[triIDX]), t, hn))
 			{
-				//if (!myInfo->thePhysics->m_TestMovingSphereTriangle(myInfo->theShape, &(myInfo->theTriangles[triIDX]), t, hn))
-				if (!cPhysics::m_TestMovingSphereTriangle(myInfo->theShape, &(myInfo->theTriangles[triIDX]), t, hn))
+				continue;
+			}
+			else
+			{
+				if (t < myInfo->soonestHit)
 				{
-					continue;
-				}
-				else
-				{
-					if (t < soonestT)
-					{
-						soonestT = t;
-						soonestHN = hn;
-					}
+					myInfo->soonestHit = t;
+					myInfo->hn = hn;
 				}
 			}
-			if (soonestT <= 1.0f)
-			{
-				myInfo->thePhysics->UpdateCollision(soonestT, soonestHN);
-			}
-			myInfo->hasWork = false;
-			soonestT = FLT_MAX;
-
 		}
-		else // No work? I sleep
+		if (myInfo->soonestHit <= 1.0f)
 		{
-			Sleep(0);
-			//SleepEx(1, myInfo->hasWork);
+			myInfo->thePhysics->UpdateCollision(myInfo->soonestHit, myInfo->hn);
+		}
+		myInfo->hasWork = false;
+		myInfo->soonestHit = FLT_MAX;
 			
+
+		while(!myInfo->hasWork)
+		{
+			Sleep(5);
+			//SleepEx(1, myInfo->hasWork);
 		}
 	}
 }
@@ -78,7 +77,7 @@ int cPhysics::Initialize(void)
 		this->m_ThreadInfos[threadIDX].thePhysics = this->m_pTheOnePhysics;
 		this->m_ThreadInfos[threadIDX].theShape = nullptr;
 
-		void* pParams = (void*)(&this->m_ThreadInfos[threadIDX]);
+		void* pParams = (void*)(&(this->m_ThreadInfos[threadIDX]));
 
 		this->m_ThreadHandles[threadIDX] = CreateThread(
 			NULL,
@@ -175,7 +174,7 @@ void cPhysics::generateAABBs(std::vector<std::string> models)
 		 itModel++)
 	{
 		cAABB* newAABB = new cAABB();
-		newAABB->StartMakeTree(*itModel, m_pMeshManager, 100);
+		newAABB->StartMakeTree(*itModel, m_pMeshManager, 2000);
 		m_map_ModelAABBs[*itModel] = newAABB;
 	}
 
