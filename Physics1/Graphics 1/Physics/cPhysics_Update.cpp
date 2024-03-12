@@ -67,6 +67,13 @@ void cPhysics::Update(double deltaTime)
 		// Infinite mass? 
 		if (pObject->inverse_mass >= 0.0f)
 		{
+
+			// Velocity change is based on the acceleration over this time frame 
+			// This part: (Accel * DeltaTime)
+			glm::vec3 deltaVelocityThisFrame;
+
+
+
 			////////////////////// PLAYER CHARACTER UPDATES ///////////////////
 			if (pObject->isPlayer)
 			{
@@ -122,7 +129,10 @@ void cPhysics::Update(double deltaTime)
 			
 			///////////////////// END OF PLAYER CHARACTER UPDATES /////////////////
 
-
+			if ((pObject->isPlayer) && (pObject->playerInfo->jumpNormThisFrame)) // If touching the ground
+				deltaVelocityThisFrame = (pObject->acceleration) * static_cast<float>(deltaTime);
+			else
+				deltaVelocityThisFrame = (pObject->acceleration + m_WorldGravity) * static_cast<float>(deltaTime);
 
 			// Explicit forward Euler "integration step"
 			//		NewVelocity = LastVel + (Accel * DeltaTime)
@@ -131,14 +141,6 @@ void cPhysics::Update(double deltaTime)
 			// Update the "old" position
 			pObject->oldPosition = pObject->position;
 
-			// Velocity change is based on the acceleration over this time frame 
-			// This part: (Accel * DeltaTime)
-			glm::vec3 deltaVelocityThisFrame;
-
-			if (pObject->playerInfo->jumpNormThisFrame) // If touching the ground
-				deltaVelocityThisFrame = (pObject->acceleration) * static_cast<float>(deltaTime);
-			else
-				deltaVelocityThisFrame = (pObject->acceleration + m_WorldGravity) * static_cast<float>(deltaTime);
 
 			// Update the velocity based on this delta velocity
 			// Then this part: NewVelocity = LastVel + ...
@@ -182,6 +184,7 @@ void cPhysics::Update(double deltaTime)
 			{
 				if (pObjectA == pObjectB) continue;
 
+				m_pTheSoonestCollision->q = FLT_MAX; // Reset this
 				sPossibleCollision newCollision;
 
 				switch (pObjectA->shapeType)
@@ -193,11 +196,14 @@ void cPhysics::Update(double deltaTime)
 						break;
 
 					case sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT:
-						if (this->m_Sphere_TriMeshIndirect_IntersectionTest(pObjectA, pObjectB, newCollision))
+						//if (this->m_Sphere_TriMeshIndirect_IntersectionTest(pObjectA, pObjectB, newCollision))
+						if (this->m_Sphere_TriMeshIndirect_IntersectionTest(pObjectA, pObjectB))
 						{
-							if (newCollision.q < theCollision.q)
-								theCollision = newCollision;
-							didCollide = true;
+							if (m_pTheSoonestCollision->q < theCollision.q)
+							{
+								theCollision = *m_pTheSoonestCollision;
+								didCollide = true;
+							}
 						}
 						break;
 					}

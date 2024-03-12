@@ -190,8 +190,14 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 		num = PhysVec[i]->getUniqueID();
 		physobj.AddMember("ID", num, output.GetAllocator());
 
+		// Inverse Mass
+		flt = PhysVec[i]->inverse_mass;
+		physobj.AddMember("inv_mass", flt, output.GetAllocator());
+
 		phys.PushBack(physobj, output.GetAllocator());
 		physobj.SetObject();
+
+		
 
 	}
 	output.AddMember("phys", phys, output.GetAllocator());
@@ -391,6 +397,7 @@ void cSceneManagement::loadScene(std::string fileName)
 		newMesh->uniqueID = itr->value.GetInt();
 
 
+
 		//newMesh->setRotationFromEuler(newMesh->eulerOrientation);
 
 		newMeshVec.push_back(newMesh); // Add complete new mesh to vector
@@ -449,6 +456,13 @@ void cSceneManagement::loadScene(std::string fileName)
 
 				break;
 			}
+		}
+
+		if (phys[i].HasMember("inv_mass"))
+		{
+			itr = phys[i].FindMember("inv_mass");
+			float flt = itr->value.GetFloat();
+			newPhys->inverse_mass = flt;
 		}
 
 		newPhysVec.push_back(newPhys);

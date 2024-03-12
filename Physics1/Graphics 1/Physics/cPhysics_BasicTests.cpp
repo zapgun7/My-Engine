@@ -451,8 +451,8 @@ int cPhysics::m_IntersectRayAABB(glm::vec3 p, glm::vec3 d, cAABB* a, float& tmin
 			}
 
 			// Compute the intersection of slab intersection intervals
-			tmin = glm::max(tmin, t1);
-			tmax = glm::min(tmax, t2);
+			tmin = glm::max<float>(tmin, t1);
+			tmax = glm::min<float>(tmax, t2);
 
 			// Exit with no collision as soon as slab intersection becomes empty
 			if (tmin > tmax) return 0;

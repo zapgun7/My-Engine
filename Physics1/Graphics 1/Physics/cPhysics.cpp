@@ -4,9 +4,92 @@
 
 cPhysics* cPhysics::m_pTheOnePhysics = nullptr;
 
+DWORD WINAPI ThreadedIntersectionLoop(LPVOID lpParamater)
+{
+	sThreadCollisionInfo* myInfo = (sThreadCollisionInfo*)lpParamater;
+	float t = 0;
+	float soonestT = FLT_MAX;
+	glm::vec3 hn = glm::vec3(0.0f);
+	glm::vec3 soonestHN = hn;
+
+
+	while (true) // Just loop forever for now, maybe add some bool to check later
+	{
+		if (myInfo->hasWork) // Has work? do work
+		{
+
+			for (unsigned int triIDX = 0; triIDX < myInfo->arraySize; triIDX++)
+			{
+				//if (!myInfo->thePhysics->m_TestMovingSphereTriangle(myInfo->theShape, &(myInfo->theTriangles[triIDX]), t, hn))
+				if (!cPhysics::m_TestMovingSphereTriangle(myInfo->theShape, &(myInfo->theTriangles[triIDX]), t, hn))
+				{
+					continue;
+				}
+				else
+				{
+					if (t < soonestT)
+					{
+						soonestT = t;
+						soonestHN = hn;
+					}
+				}
+			}
+			if (soonestT <= 1.0f)
+			{
+				myInfo->thePhysics->UpdateCollision(soonestT, soonestHN);
+			}
+			myInfo->hasWork = false;
+			soonestT = FLT_MAX;
+
+		}
+		else // No work? I sleep
+		{
+			Sleep(0);
+			//SleepEx(1, myInfo->hasWork);
+			
+		}
+	}
+}
+
+
+
 cPhysics::cPhysics()
 {
-	
+
+}
+
+int cPhysics::Initialize(void)
+{
+	this->m_pTheSoonestCollision = new sPossibleCollision();
+	this->m_pReversedObject = new sPhysicsProperties();
+	InitializeCriticalSection(&(this->m_CollisionUpdate));
+
+	// Generate Threads and thread info
+	//sPhysicsProperties* theShape = nullptr;
+	//sPhysicsProperties** theShapePtr = new sPhysicsProperties*[1];
+
+
+	this->m_ThreadInfos = new sThreadCollisionInfo[NUM_THREADS];
+	this->m_ThreadHandles = new HANDLE[NUM_THREADS];
+	this->m_ThreadIDs = new DWORD[NUM_THREADS];
+
+	for (unsigned int threadIDX = 0; threadIDX < NUM_THREADS; threadIDX++)
+	{
+		this->m_ThreadInfos[threadIDX].thePhysics = this->m_pTheOnePhysics;
+		this->m_ThreadInfos[threadIDX].theShape = nullptr;
+
+		void* pParams = (void*)(&this->m_ThreadInfos[threadIDX]);
+
+		this->m_ThreadHandles[threadIDX] = CreateThread(
+			NULL,
+			0,
+			ThreadedIntersectionLoop,
+			pParams,
+			0,
+			&(this->m_ThreadIDs[threadIDX]));
+	}
+
+	return 1;
 }
 
 cPhysics* cPhysics::GetInstance(void)
@@ -14,6 +97,7 @@ cPhysics* cPhysics::GetInstance(void)
 	if (cPhysics::m_pTheOnePhysics == nullptr)
 	{
 		cPhysics::m_pTheOnePhysics = new cPhysics();
+		cPhysics::m_pTheOnePhysics->Initialize();
 	}
 	return cPhysics::m_pTheOnePhysics;
 }
@@ -58,26 +142,32 @@ void cPhysics::setVAOManager(cVAOManager* pTheMeshManager)
 	return;
 }
 
+void cPhysics::UpdateCollision(float& t, glm::vec3& hn)
+{
+	while (!TryEnterCriticalSection(&(this->m_CollisionUpdate)))
+	{
+		Sleep(0);
+	}
+
+	if (t < this->m_pTheSoonestCollision->q)
+	{
+		this->m_pTheSoonestCollision->q = t;
+		this->m_pTheSoonestCollision->hitNorm = hn;
+	}
+
+	LeaveCriticalSection(&(this->m_CollisionUpdate));
+}
+
+
+void cPhysics::ToggleThreading(void)
+{
+	this->m_bUseThreading = this->m_bUseThreading ? false : true;
+	std::cout << "Threading: " << this->m_bUseThreading << std::endl;
+	return;
+}
 
 void cPhysics::generateAABBs(std::vector<std::string> models)
 {
-	// Temp test area
-	// float m_ClosestPtSegmentSegment(glm::vec3 p1, glm::vec3 q1, glm::vec3 p2, glm::vec3 q2, float& s, float& t, glm::vec3& c1, glm::vec3& c2)
-
-// 	float returnVal, s, t;
-// 	glm::vec3 c1, c2;
-// 
-// 	glm::vec3 p1(0, -1, 0);
-// 	glm::vec3 q1(0, 1, 0);
-// 
-// 	glm::vec3 p2(-1, 0, 1);
-// 	glm::vec3 q2(1, 0, 1);
-// 
-// 	returnVal = m_ClosestPtSegmentSegment(p1, q1, p2, q2, s, t, c1, c2);
-// 
-// 
-// 	printf("Distance %.3f", returnVal);
-
 	std::cout << "Generating AABBs..." << std::endl;
 
 	for (std::vector<std::string>::iterator itModel = models.begin();
@@ -85,7 +175,7 @@ void cPhysics::generateAABBs(std::vector<std::string> models)
 		 itModel++)
 	{
 		cAABB* newAABB = new cAABB();
-		newAABB->StartMakeTree(*itModel, m_pMeshManager, 25);
+		newAABB->StartMakeTree(*itModel, m_pMeshManager, 100);
 		m_map_ModelAABBs[*itModel] = newAABB;
 	}
 

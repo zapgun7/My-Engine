@@ -7,6 +7,9 @@
 
 #include <iostream>
 
+
+
+
 bool cPhysics::m_Sphere_Sphere_IntersectionTest(sPhysicsProperties* pSphereA, sPhysicsProperties* pSphereB)
 {
 	sPhysicsProperties::sSphere* sphereA = (sPhysicsProperties::sSphere*)(pSphereA->pShape);
@@ -129,7 +132,8 @@ bool cPhysics::m_Sphere_Capsule_IntersectionTest(sPhysicsProperties* pSphere, sP
 	return false;
 }
 
-bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSphere_General, sPhysicsProperties* pTriMesh_General, sPossibleCollision& returnCollision)
+//bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSphere_General, sPhysicsProperties* pTriMesh_General, sPossibleCollision& returnCollision)
+bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSphere_General, sPhysicsProperties* pTriMesh_General)
 {
 
 	// Do we have a mesh manager? 
@@ -194,14 +198,18 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 
 
 
-	sPhysicsProperties reverseTransformedSphere = *pSphere_General;
+	//sPhysicsProperties reverseTransformedSphere = *pSphere_General;
+	this->m_pReversedObject->position = pSphere_General->position;
+	this->m_pReversedObject->oldPosition = pSphere_General->oldPosition;
+	this->m_pReversedObject->pShape = pSphere_General->pShape;
+
 	// Transform current to fit default triangle mesh
-	reverseTransformedSphere.position = (matRevModelT * glm::vec4(reverseTransformedSphere.position, 1.0f));
-	reverseTransformedSphere.position = (matRevModelR * glm::vec4(reverseTransformedSphere.position, 1.0f));
+	this->m_pReversedObject->position = (matRevModelT * glm::vec4(this->m_pReversedObject->position, 1.0f));
+	this->m_pReversedObject->position = (matRevModelR * glm::vec4(this->m_pReversedObject->position, 1.0f));
 
 	// Do it to old position too for continuous collision detection
-	reverseTransformedSphere.oldPosition = (matRevModelT * glm::vec4(reverseTransformedSphere.oldPosition, 1.0f));
-	reverseTransformedSphere.oldPosition = (matRevModelR * glm::vec4(reverseTransformedSphere.oldPosition, 1.0f));
+	this->m_pReversedObject->oldPosition = (matRevModelT * glm::vec4(this->m_pReversedObject->oldPosition, 1.0f));
+	this->m_pReversedObject->oldPosition = (matRevModelR * glm::vec4(this->m_pReversedObject->oldPosition, 1.0f));
 
 	// Rotate velocity to match default tri mesh
 	//reverseTransformedSphere.velocity = (matRevModelR * glm::vec4(reverseTransformedSphere.velocity, 1.0f)); // Don't need this anymore
@@ -210,107 +218,105 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 	
 	// Recursive AABB function to return near triangles
 	//std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sphereCollision(&reverseTransformedSphere); // TODO make this capsule detection for the sphere sweep
-	std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sweepingSphereCollision(&reverseTransformedSphere);
+	std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sweepingSphereCollision(this->m_pReversedObject);
+
+	int triSize = static_cast<int>(trisToCheck.size());
+
+	
+
+	if (triSize == 0) return false; // No tris to check
+	//std::cout << triSize << std::endl;
+
+	//std::cout << pSphere_General->position.y << "    " << pSphere_General->oldPosition.y << std::endl;
 
 
-	// The new and improved code
-
-// 		float closestDistanceSoFar = FLT_MAX;
-// 		glm::vec3 closestTriangleVertices[3] = { glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f) };
-// 		glm::vec3 closestContactPoint = glm::vec3(0.0f);
-// 		unsigned int indexOfClosestTriangle = INT_MAX;
-
-
-	// We now have the mesh object location and the detailed mesh information 
-					// Which triangle is closest to this sphere (right now)
-// 	for(std::vector<sTriangle_A>::iterator itTri = trisToCheck.begin(); 
-// 		itTri != trisToCheck.end(); 
-// 		itTri++)
-// 	{
-// 		// And make sure you multiply the normal by the inverse transpose
-// 		// OR recalculate it right here! 
-// 
-// 		// ******************************************************
-// 
-// 		//glm::vec3 thisTriangleClosestPoint = this->m_ClosestPtPointTriangle(pSphere_General->position,
-// 		//	itTri->vertices[0], itTri->vertices[1], itTri->vertices[2]);
-// 		glm::vec3 thisTriangleClosestPoint = this->m_ClosestPtPointTriangle(reverseTransformedSphere.position,
-// 				itTri->vertices[0], itTri->vertices[1], itTri->vertices[2]);
-// 
-// 		// Is this the closest so far
-// 		//float distanceToThisTriangle = glm::distance(thisTriangleClosestPoint, pSphere_General->position);
-// 		float distanceToThisTriangle = glm::distance(thisTriangleClosestPoint, reverseTransformedSphere.position);
-// 
-// 		if (distanceToThisTriangle < closestDistanceSoFar) // TODO Keep track of all triangles that are in/touching the sphere, figure out which one it hit first
-// 		{
-// 			// this one is closer
-// 			closestDistanceSoFar = distanceToThisTriangle;
-// 			// Make note of the triangle index
-// 			//indexOfClosestTriangle = index;
-// 			// 
-// 			closestTriangleVertices[0] = itTri->vertices[0];
-// 			closestTriangleVertices[1] = itTri->vertices[1];
-// 			closestTriangleVertices[2] = itTri->vertices[2];
-// 
-// 			closestContactPoint = thisTriangleClosestPoint;
-// 		}
-// 
-// 
-// 	} //for ( unsigned int index...
-
-	float earliestTime = FLT_MAX; // Time (0-1) over current update the sphere collides
-	glm::vec3 hitNorm; // Normal used to calculate reflection
-
-	// The newest code for dealing with continuous collision detection
-	for (std::vector<sTriangle_A>::iterator itTri = trisToCheck.begin();
-		itTri != trisToCheck.end();
-		itTri++)
+	if (!this->m_bUseThreading)
 	{
-		// And make sure you multiply the normal by the inverse transpose
-		// OR recalculate it right here! 
+		float earliestTime = FLT_MAX; // Time (0-1) over current update the sphere collides
+		glm::vec3 hitNorm; // Normal used to calculate reflection
 
-		// ******************************************************
-
-		//glm::vec3 thisTriangleClosestPoint = this->m_ClosestPtPointTriangle(pSphere_General->position,
-		//	itTri->vertices[0], itTri->vertices[1], itTri->vertices[2]);
-		//glm::vec3 thisTriangleClosestPoint = this->m_ClosestPtPointTriangle(reverseTransformedSphere.position,
-		//	itTri->vertices[0], itTri->vertices[1], itTri->vertices[2]);
-
-		// Is this the closest so far
-		//float distanceToThisTriangle = glm::distance(thisTriangleClosestPoint, pSphere_General->position);
-		//float distanceToThisTriangle = glm::distance(thisTriangleClosestPoint, reverseTransformedSphere.position);
-
-		float t; // Time (0-1) over current update the sphere collides
-		glm::vec3 hn; // Normal used to calculate reflection
-
-		if (!m_TestMovingSphereTriangle(&reverseTransformedSphere, &*itTri, t, hn))
+		// The newest code for dealing with continuous collision detection
+		for (std::vector<sTriangle_A>::iterator itTri = trisToCheck.begin();
+			itTri != trisToCheck.end();
+			itTri++)
 		{
-			// No collision, go to next triangle
-			continue;
-		}
+			float t; // Time (0-1) over current update the sphere collides
+			glm::vec3 hn; // Normal used to calculate reflection
+
+			if (!m_TestMovingSphereTriangle(this->m_pReversedObject, &*itTri, t, hn))
+			{
+				// No collision, go to next triangle
+				continue;
+			}
 
 
-		// Collision confirmed within update range
+			// Collision confirmed within update range
 
-		if (t < earliestTime) // If this collision happens sooner than the one stored
+			if (t < earliestTime) // If this collision happens sooner than the one stored
+			{
+				earliestTime = t;
+				hitNorm = hn;
+			}
+
+
+		} //for ( unsigned int index...
+
+
+		if (earliestTime <= 1.0f) // If earliest collision detected is within the update range
 		{
-			earliestTime = t;
-			hitNorm = hn;
+			this->m_pTheSoonestCollision->q = earliestTime;
+			this->m_pTheSoonestCollision->collisionObject = pTriMesh_General;
+			hitNorm = (matModelR * glm::vec4(hitNorm, 1.0f));
+			this->m_pTheSoonestCollision->hitNorm = hitNorm;
+			return true;
+
 		}
+		return false;
+	}
+
+	
+	unsigned int currTri = 0;
+
+	// Set all thread info's shape to the sphere
+	//m_ThreadInfos[0].theShape = &m_pReversedObject; // Set the pointer to point to the address of the current shape; should update for all threads?
+
+	// !!! Will have to set shape type when this threading is set up for more than just sphere-tri_mesh
+	
+
+	int perThreadTriCount = triSize / NUM_THREADS;
+	int overflowCount = triSize % NUM_THREADS;
+
+	int currTriIdxToGive = 0;
 
 
-	} //for ( unsigned int index...
-
-
-	if (earliestTime <= 1.0f) // If earliest collision detected is within the update range
+	for (unsigned int threadIDX = 0; threadIDX < NUM_THREADS; threadIDX++)
 	{
-		returnCollision.q = earliestTime;
-		returnCollision.collisionObject = pTriMesh_General;
-		hitNorm = (matModelR * glm::vec4(hitNorm, 1.0f));
-		returnCollision.hitNorm = hitNorm;
+		//	Give each thread an (almost) equal amount of work
+		//m_ThreadInfos[threadIDX].theShape = &reverseTransformedSphere;
+		this->m_ThreadInfos[threadIDX].theShape = this->m_pReversedObject;
+		this->m_ThreadInfos[threadIDX].theTriangles = &(trisToCheck[currTriIdxToGive]);
+
+		int amntToAdd = overflowCount-- > 0 ? perThreadTriCount + 1 : perThreadTriCount;
+		this->m_ThreadInfos[threadIDX].arraySize = amntToAdd;
+		this->m_ThreadInfos[threadIDX].hasWork = true;
+		currTriIdxToGive += amntToAdd;
+	}
+
+
+	for (unsigned int threadIDX = 0; threadIDX < NUM_THREADS; threadIDX++)
+	{
+		while (this->m_ThreadInfos[threadIDX].hasWork)
+		{
+			Sleep(0);
+		}
+	}
+
+	// All threads are done at this point
+	if (this->m_pTheSoonestCollision->q <= 1.0f)
 		return true;
 
-	}
+
+
 
 	// Didn't hit
 	return false;

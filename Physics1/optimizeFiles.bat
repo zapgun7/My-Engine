@@ -13,7 +13,7 @@ echo %OutputFolder%
 
 :: Lossy Compression
 for %%f in (*.png) do (
-	if exist Compressed/%%~nxf (
+	if exist CompressedLossy/%%~nxf (
 	echo already Compressed Lossy
 	) else (
 	"../../../CompressionProgs/pngquant.exe" --verbose --quality=45-85 --output %OutputFolder%\%%f "%%f"
@@ -22,7 +22,7 @@ for %%f in (*.png) do (
 
 :: Lossless Compression
 for %%f in (*.png) do (
-	if exist CompressedL/%%~nxf (
+	if exist CompressedLossless/%%~nxf (
 	echo already Compressed Lossless
 	) else (
 	"../../../CompressionProgs/optipng.exe" %%f -dir %OutputFolderL%
@@ -30,13 +30,15 @@ for %%f in (*.png) do (
 )
 
 :: Optimized Compression (PVR)
+
 for %%f in (*.png) do (
-	if exist Optimized/%%~nxf (
-	echo already Compressed Lossy
+	if exist PVROptimized\%%~nf.pvr (
+	echo already Compressed PVR Optimized
 	) else (
 	"../../../CompressionProgs/PVRTexToolCLI.exe" -m -f a1r5g5b5 -i %%f -o %OutputFolderO%\%%~nf.pvr
 	)
 )
+
 
 pause
 

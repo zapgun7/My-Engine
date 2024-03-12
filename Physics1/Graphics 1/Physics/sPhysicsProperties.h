@@ -1,7 +1,8 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include <glm/vec3.hpp>
+// #include <glm/glm.hpp>
+// #include <glm/vec3.hpp>
+#include "../glmCommon.h"
 #include <glm/gtc/quaternion.hpp>
 #include "iPhysicsMeshTransformAccess.h"
 #include <string>
@@ -260,7 +261,7 @@ public:
 
 
 	// Since division is "slow" and we are dividing my mass, 
-	// Could make this immovable by making this 0 (infinite mass)
+	// Could make this immovable by making this 0 (infinite mass) 
 	float inverse_mass = -1.0f;	//	float mass;		
 
 

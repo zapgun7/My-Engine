@@ -1,7 +1,7 @@
 // This is a class for retrieving relevant triangles in the oct-tree for various object types
 
-#include "cAABB.h"
-#include "sPhysicsProperties.h"
+//#include "cAABB.h"
+//#include "sPhysicsProperties.h"
 #include "cPhysics.h" // For the sweeping physics tests
 #include <algorithm>
 
@@ -405,12 +405,12 @@ std::vector<sTriangle_A> cAABB::sweepingCapsuleCollision(sPhysicsProperties* pCa
 
 
 	// TODO make it so a max vector is not re-checked for being a min
-	newInfo.max.x = glm::max(glm::max(oldUp.x, newUp.x), glm::max(oldDown.x, newDown.x));
-	newInfo.max.y = glm::max(glm::max(oldUp.y, newUp.y), glm::max(oldDown.y, newDown.y));
-	newInfo.max.z = glm::max(glm::max(oldUp.z, newUp.z), glm::max(oldDown.z, newDown.z));
-	newInfo.min.x = glm::min(glm::min(oldUp.x, newUp.x), glm::min(oldDown.x, newDown.x));
-	newInfo.min.y = glm::min(glm::min(oldUp.y, newUp.y), glm::min(oldDown.y, newDown.y));
-	newInfo.min.z = glm::min(glm::min(oldUp.z, newUp.z), glm::min(oldDown.z, newDown.z));
+	newInfo.max.x = glm::max<float>(glm::max<float>(oldUp.x, newUp.x), glm::max<float>(oldDown.x, newDown.x));
+	newInfo.max.y = glm::max<float>(glm::max<float>(oldUp.y, newUp.y), glm::max<float>(oldDown.y, newDown.y));
+	newInfo.max.z = glm::max<float>(glm::max<float>(oldUp.z, newUp.z), glm::max<float>(oldDown.z, newDown.z));
+	newInfo.min.x = glm::min<float>(glm::min<float>(oldUp.x, newUp.x), glm::min<float>(oldDown.x, newDown.x));
+	newInfo.min.y = glm::min<float>(glm::min<float>(oldUp.y, newUp.y), glm::min<float>(oldDown.y, newDown.y));
+	newInfo.min.z = glm::min<float>(glm::min<float>(oldUp.z, newUp.z), glm::min<float>(oldDown.z, newDown.z));
 
 
 

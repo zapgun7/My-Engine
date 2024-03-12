@@ -10,7 +10,33 @@
 
 #include "Verlet/cSoftBodyVerlet.h"
 
+#include <Windows.h>
+#define WIN32_LEAN_AND_MEAN
+
 //struct sPossibleCollision;
+class cPhysics;
+
+struct sThreadCollisionInfo
+{
+// 	enum eShapeType
+// 	{
+// 		SPHERE,
+// 		CAPSULE
+// 	};
+// 
+// 	eShapeType type = SPHERE;
+	
+
+
+
+	sPhysicsProperties* theShape = nullptr; // All threads can share this pointer, I think
+	sTriangle_A* theTriangles = nullptr; //Array of triangles (can't give one at a time, inefficient!)
+	unsigned int arraySize = 0;
+	cPhysics* thePhysics = nullptr;
+	bool hasWork = false;
+};
+
+
 
 
 class cPhysics
@@ -23,7 +49,25 @@ private:
 		float q = FLT_MAX; // Ratio of hit over update window (0 = start of window; 1 = end of window)
 	};
 	cPhysics();
+	int Initialize(void);
+
+	//////// THREAD DATA ///////
+	DWORD* m_ThreadIDs;
+	HANDLE* m_ThreadHandles;
+	sThreadCollisionInfo* m_ThreadInfos;
+	const unsigned int NUM_THREADS = 4;
+
+	sPossibleCollision* m_pTheSoonestCollision = nullptr; // This is what the threads attempt to update when they get a collision
+	sPhysicsProperties* m_pReversedObject = nullptr;
+	CRITICAL_SECTION m_CollisionUpdate;
+	bool m_bUseThreading = true;
 public:
+	void UpdateCollision(float& t, glm::vec3& hn);
+	void ToggleThreading(void);
+
+	////////// END OF THREAD DATA //////
+
+
 	static cPhysics* GetInstance(void);
 	~cPhysics();
 
@@ -86,7 +130,8 @@ private:
 	bool m_Sphere_Triangle_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriangle);
 	bool m_Sphere_AABB_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pAABB);
 	bool m_Sphere_Capsule_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pCapsule);
-	bool m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriMesh, sPossibleCollision& returnCollision);
+	//bool m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriMesh, sPossibleCollision& returnCollision);
+	bool m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriMesh);
 	bool m_Sphere_TriMeshLocal_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pTriMesh);
 
 	bool m_Capsule_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pCapsule, sPhysicsProperties* pTriMesh, sPossibleCollision& returnCollision);

@@ -10,6 +10,7 @@
 
 void cPhysics::m_Sphere_Collision(sPhysicsProperties* pSphere, sPossibleCollision& collision)
 {
+	//std::cout << pSphere->position.y << "      " << pSphere->oldPosition.y << std::endl;
 	if (collision.q == 0) // In or already touching triangle at start of update
 	{
 		glm::vec3 oldDeltaMove = pSphere->position - pSphere->oldPosition;

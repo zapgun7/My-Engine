@@ -127,6 +127,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -223,6 +224,7 @@
     <ClInclude Include="cSoundUtils.h" />
     <ClInclude Include="cVAOManager\cVAOManager.h" />
     <ClInclude Include="cVAOManager\sModelDrawInfo.h" />
+    <ClInclude Include="glmCommon.h" />
     <ClInclude Include="iEntity.h" />
     <ClInclude Include="Lua\cCommandFactory.h" />
     <ClInclude Include="Lua\cCommandGroup.h" />

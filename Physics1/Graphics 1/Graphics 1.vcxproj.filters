@@ -414,5 +414,8 @@
     <ClInclude Include="Physics\Verlet\cSoftBodyVerlet.h">
       <Filter>Physics\Verlet</Filter>
     </ClInclude>
+    <ClInclude Include="glmCommon.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -32,6 +32,7 @@ void cEngineController_IMPL::Run(void)
 	{
 		double deltaTime = m_pTheTimer->getFrameTime();
 		this->m_pInputHandler->Update();
+		if (this->m_pInputHandler->IsPressedEvent(GLFW_KEY_T)) m_pThePhysics->ToggleThreading();
 		//double deltaTime = m_pTheTimer->getFrameTimeUncapped();
 
 		// Messy, but will do this here
@@ -92,36 +93,36 @@ bool cEngineController_IMPL::Initialize(void)
 	m_TheCamera->friendlyName = "cam";
 	m_ThePlayer = new cPlayer(m_pTheGraphics->getWindow());
 
-	sPhysicsProperties* playerObj = new sPhysicsProperties();
-	playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 0.5f));
-	playerObj->shapeType = sPhysicsProperties::CAPSULE;
-	playerObj->friendlyName = "plyr";
+// 	sPhysicsProperties* playerObj = new sPhysicsProperties();
+// 	playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 0.5f));
+// 	playerObj->shapeType = sPhysicsProperties::CAPSULE;
+// 	playerObj->friendlyName = "plyr";
+// 
+// 	playerObj->position = glm::vec3(50, 15, 50);
+// 	playerObj->restitution = 0.0f;
+// // Add PlayerInfo Struct
+// 	sPlayerPhysics* plyrPhys = new sPlayerPhysics();
+// 	playerObj->playerInfo = plyrPhys;
+// 	
+// 	plyrPhys->friction = 0.1f;
+// 	plyrPhys->airDrag = 0.99f;
+// 	playerObj->isPlayer = true;
+// 	m_ThePlayer->setPlayerObject(playerObj);
 
-	playerObj->position = glm::vec3(50, 15, 50);
-	playerObj->restitution = 0.0f;
-// Add PlayerInfo Struct
-	sPlayerPhysics* plyrPhys = new sPlayerPhysics();
-	playerObj->playerInfo = plyrPhys;
-	
-	plyrPhys->friction = 0.1f;
-	plyrPhys->airDrag = 0.99f;
-	playerObj->isPlayer = true;
-	m_ThePlayer->setPlayerObject(playerObj);
 
-
-	cMesh* playerMesh = new cMesh();
-	playerMesh->meshName = "Sphere_1_unit_Radius.ply";
-	playerMesh->friendlyName = "Player";
-	playerMesh->textureName[0] = "metal_s01.bmp";
-	playerMesh->scale = glm::vec3(2.0f);
-	playerMesh->uniqueID = playerObj->getUniqueID();
-
-	playerObj->pTheAssociatedMesh = playerMesh;
+// 	cMesh* playerMesh = new cMesh();
+// 	playerMesh->meshName = "Sphere_1_unit_Radius.ply";
+// 	playerMesh->friendlyName = "Player";
+// 	playerMesh->textureName[0] = "metal_s01.bmp";
+// 	playerMesh->scale = glm::vec3(2.0f);
+// 	playerMesh->uniqueID = playerObj->getUniqueID();
+// 
+// 	playerObj->pTheAssociatedMesh = playerMesh;
 
 	// Load test scene
-	m_pTheSceneManager->loadScene("MovementPGCorners+");
+	//m_pTheSceneManager->loadScene("MovementPGCorners+");
 	//m_pThePhysics->AddShape(playerObj);
-	addCustomObject(playerMesh, playerObj);
+	//addCustomObject(playerMesh, playerObj);
 
 
 	// Make boned character

@@ -183,15 +183,6 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 		glm::vec3 RotVec = glm::vec3(0, 1, 0) * cameraRotation;
 		if (RotVec.y <= 0.01f)
 		{
-			// The camera's gonna go wacko fucky. Undo it before it does!
-			
-// 			glm::vec3 updatedForwardVector = glm::vec3(0, 0, 1) * (cameraRotation);
-// 			glm::vec3 updatedXZForwardVec(updatedForwardVector.x, 0, updatedForwardVector.z);
-// 			updatedForwardVector = glm::normalize(updatedForwardVector);
-// 
-// 
-// 			deltaZ = -deltaMouseY / m_InverseSensitivity * updatedForwardVector.x;
-// 			deltaX = deltaMouseY / m_InverseSensitivity * updatedForwardVector.z;
 
 			glm::quat fixQuat = glm::quat(glm::radians(glm::vec3(-deltaX, 0, -deltaZ)));
 			(cameraRotation) *= fixQuat;
@@ -292,7 +283,7 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 		}
 
 
-		if ((m_pInput->IsPressed(GLFW_KEY_SPACE)) && (m_pPlayerObject->playerInfo->jumpNormThisFrame)) // Jump
+		if ((m_pInput->IsPressed(GLFW_KEY_SPACE)) && (m_pPlayerObject->playerInfo->jumpNormThisFrame)) // Jump    TODO should use isGrounded but breaks when it does
 		{
 			m_pPlayerObject->velocity += m_pPlayerObject->playerInfo->groundNorm * m_PLAYERJUMPFORCE;// glm::vec3(0, m_PLAYERJUMPFORCE, 0);
 		}
@@ -404,7 +395,7 @@ void cPlayer::Kick(glm::vec3& hitNorm, glm::vec3& lookVec)
 		finalVel += reflectedVec * transferRate3 * redirectedLen;
 		//finalVel += additionalVel * hitNorm;
 	}
-	else
+	else // Everything else
 	{
 		finalVel -= moveVec * transferRate4 * redirectedLen;
 		finalVel += reflectedVec * transferRate4 * redirectedLen;
