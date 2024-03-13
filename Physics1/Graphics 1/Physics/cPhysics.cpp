@@ -155,14 +155,14 @@ void cPhysics::generateAABBs(std::vector<std::string> models)
 
 cSoftBodyVerlet* cPhysics::CreateVerlet(void)
 {
-	cSoftBodyVerlet* newSoftBody = new cSoftBodyVerlet();
-	newSoftBody->acceleration = glm::vec3(0.0f, -20.0f, 0.0f);
-	newSoftBody->tightnessFactor = 0.0005f;
-	newSoftBody->iterations = 1;
+	cSoftBodyVerlet* blobSoftBody = new cSoftBodyVerlet();
+	blobSoftBody->acceleration = glm::vec3(0.0f, -20.0f, 0.0f);
+	blobSoftBody->tightnessFactor = 0.0005f;
+	blobSoftBody->iterations = 1;
 
-	sModelDrawInfo softBodyObjectDrawingInfo;
+	sModelDrawInfo blobBodyObjectDrawingInfo;
 
-	if (m_pMeshManager->FindDrawInfoByModelName("sphere.ply", softBodyObjectDrawingInfo))
+	if (m_pMeshManager->FindDrawInfoByModelName("sphere.ply", blobBodyObjectDrawingInfo))
 	{
 		glm::mat4 matTransform = glm::mat4(1.0f);
 
@@ -173,16 +173,51 @@ cSoftBodyVerlet* cPhysics::CreateVerlet(void)
 
 		matTransform = glm::scale(matTransform, glm::vec3(4.0f)); // 4 radius
 
-		newSoftBody->CreateSoftBody(softBodyObjectDrawingInfo, matTransform);
+		blobSoftBody->CreateSoftBody(blobBodyObjectDrawingInfo, matTransform);
 
 		//newSoftBody->CreateRandomBracing(10, 6.0f, 0.0000001f, 0.5f);
-		newSoftBody->CreateRandomBracing(80, 7.6f, 0.003f, 1.0f);
+		blobSoftBody->CreateRandomBracing(80, 7.6f, 0.003f, 1.0f);
 
 
-		m_VerletObjs.push_back(newSoftBody);
+		m_VerletObjs.push_back(blobSoftBody);
 
-		return newSoftBody;
+		
 	}
+
+	// Now to create a platform
+
+	cSoftBodyVerlet* plat1SoftBody = new cSoftBodyVerlet();
+	plat1SoftBody->acceleration = glm::vec3(0.0f, -20.0f, 0.0f);
+	plat1SoftBody->tightnessFactor = 1.0f;
+	plat1SoftBody->iterations = 1;
+
+	sModelDrawInfo plat1BodyObjectDrawingInfo;
+	if (m_pMeshManager->FindDrawInfoByModelName("plat.ply", plat1BodyObjectDrawingInfo))
+	{
+		glm::mat4 matTransform = glm::mat4(1.0f);
+
+		matTransform = glm::translate(matTransform, glm::vec3(0.0f, 10.0f, 0.0f));
+
+		// 		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		// 		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		matTransform = glm::scale(matTransform, glm::vec3(4.0f)); // Plat, so w/l = 4 
+
+		plat1SoftBody->CreateSoftBody(plat1BodyObjectDrawingInfo, matTransform);
+
+		//newSoftBody->CreateRandomBracing(10, 6.0f, 0.0000001f, 0.5f);
+		plat1SoftBody->CreateRandomBracing(10, 8.1f, 1.0f, 0.0f);
+
+		plat1SoftBody->BuildPlatform();
+
+
+		m_VerletObjs.push_back(plat1SoftBody);
+
+		//return plat1SoftBody;
+	}
+
+	return blobSoftBody;
+
 
 	return nullptr;
 }

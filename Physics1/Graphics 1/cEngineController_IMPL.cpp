@@ -150,6 +150,15 @@ bool cEngineController_IMPL::Initialize(void)
 
 	m_pTheGraphics->addNewMesh(blobMesh);
 
+	cMesh* plat1Mesh = new cMesh();
+	plat1Mesh->friendlyName = "plat1";
+	plat1Mesh->meshName = "plat.ply";
+	plat1Mesh->bUseDebugColours = true;
+	plat1Mesh->wholeObjectDebugColourRGBA = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
+	//plat1Mesh->isDoubleSided = true;
+
+	m_pTheGraphics->addNewMesh(plat1Mesh);
+
 	cMesh* ground = new cMesh();
 	ground->friendlyName = "metalGround";
 	ground->meshName = "Big_Flat_Mesh.ply";

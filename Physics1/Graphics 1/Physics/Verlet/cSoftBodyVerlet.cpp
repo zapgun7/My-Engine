@@ -149,6 +149,7 @@ void cSoftBodyVerlet::UpdateVertexPositions(void)
 	// ENTER CRITICAL SECTION
 	for ( sParticle* curParticle : this->vec_pParticles)
 	{
+		if (!curParticle->isPartModel) continue;
 		curParticle->pModelVertex->x = curParticle->position.x;
 		curParticle->pModelVertex->y = curParticle->position.y;
 		curParticle->pModelVertex->z = curParticle->position.z;
@@ -363,6 +364,16 @@ void cSoftBodyVerlet::SatisfyConstraints(void)
 
 				float diff = (deltaLength - pCurConstraint->restLength) / deltaLength;
 
+				// -diff = push     +diff = pull
+				if (pCurConstraint->relationType == sConstraint::PULL)
+				{
+					diff = diff < 0 ? 0 : diff;
+				}
+				else if (pCurConstraint->relationType == sConstraint::PUSH)
+				{
+					diff = diff > 0 ? 0 : diff;
+				}
+
 				// If we were having this 'tear' or break apart, 
 				//	you could check some maximum length and if it's 'too long'
 				//	then the constraint 'breaks'
@@ -380,9 +391,10 @@ void cSoftBodyVerlet::SatisfyConstraints(void)
 				//float tightnessFactor = 0.01f;
 				float tightFac = pCurConstraint->tightFact;
 
-
-				pX1->position += delta * 0.5f * diff * tightFac;
-				pX2->position -= delta * 0.5f * diff * tightFac;
+				if (!pX1->isStatic)
+					pX1->position += delta * 0.5f * diff * tightFac;
+				if (!pX2->isStatic)
+					pX2->position -= delta * 0.5f * diff * tightFac;
 
 				this->cleanZeros(pX1->position);
 				this->cleanZeros(pX2->position);
@@ -623,6 +635,43 @@ void cSoftBodyVerlet::CreateRandomBracing(unsigned int numberOfBraces,
 	}
 
 	return;
+}
+
+void cSoftBodyVerlet::BuildPlatform(void)
+{
+	std::vector<sParticle*> fourHighest; fourHighest.reserve(4);
+
+	for (sParticle* currPart : vec_pParticles)
+	{
+		if (currPart->position.y > 0)
+			fourHighest.push_back(currPart);
+	}
+
+	// Now we have our four
+	for (sParticle* currPart : fourHighest)
+	{
+		this->AddRopeAttachment(currPart, 0.9f);
+	}
+
+}
+
+void cSoftBodyVerlet::AddRopeAttachment(sParticle* partToRope, float tightness)
+{
+	const float ROPE_HEIGHT = 5.0f;
+	// Here we create a new particle some length above this one, add a PULL attachment type to it
+	sParticle* newRopePart = new sParticle();
+	newRopePart->position = partToRope->position; newRopePart->position.y += ROPE_HEIGHT; newRopePart->old_position = newRopePart->position;
+	newRopePart->isPartModel = false;
+	newRopePart->isStatic = true;
+	this->vec_pParticles.push_back(newRopePart);
+	
+	sConstraint* newConstraint = new sConstraint();
+	newConstraint->pParticleA = newRopePart;
+	newConstraint->pParticleB = partToRope;
+	newConstraint->tightFact = tightness;
+	newConstraint->restLength = ROPE_HEIGHT + 1.0f/*so the plat kinda drops*/; // Might want to change this to calcDistBetween() later
+	newConstraint->relationType = sConstraint::PULL;
+	this->vec_pConstraints.push_back(newConstraint);
 }
 
 void cSoftBodyVerlet::Jump(double& deltaTime)
