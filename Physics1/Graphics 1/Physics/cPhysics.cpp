@@ -110,34 +110,6 @@ void cPhysics::setVAOManager(cVAOManager* pTheMeshManager)
 	this->m_pMeshManager = pTheMeshManager;
 
 
-	// For now gonna shove verlet initialization here
-
-// 	cSoftBodyVerlet* newSoftBody = new cSoftBodyVerlet();
-// 	newSoftBody->acceleration = glm::vec3(0.0f, -20.0f, 0.0f);
-// 	newSoftBody->tightnessFactor = 0.0008f;
-// 	newSoftBody->iterations = 1;
-// 
-// 	sModelDrawInfo softBodyObjectDrawingInfo;
-// 
-// 	if (m_pMeshManager->FindDrawInfoByModelName("Icosahedron.ply", softBodyObjectDrawingInfo))
-// 	{
-// 		glm::mat4 matTransform = glm::mat4(1.0f);
-// 
-// 		matTransform = glm::translate(matTransform, glm::vec3(0.0f, 50.0f, 0.0f));
-// 
-// 		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-// 		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-// 
-// 		matTransform = glm::scale(matTransform, glm::vec3(2.0f));
-// 
-// 		newSoftBody->CreateSoftBody(softBodyObjectDrawingInfo, matTransform);
-// 
-// 		newSoftBody->CreateRandomBracing(100, 1.0f);
-// 
-// 		m_VerletObjs.push_back(newSoftBody);
-// 	}
-
-
 	return;
 }
 
@@ -180,6 +152,40 @@ void cPhysics::generateAABBs(std::vector<std::string> models)
 
 }
 
+
+cSoftBodyVerlet* cPhysics::CreateVerlet(void)
+{
+	cSoftBodyVerlet* newSoftBody = new cSoftBodyVerlet();
+	newSoftBody->acceleration = glm::vec3(0.0f, -20.0f, 0.0f);
+	newSoftBody->tightnessFactor = 0.0005f;
+	newSoftBody->iterations = 1;
+
+	sModelDrawInfo softBodyObjectDrawingInfo;
+
+	if (m_pMeshManager->FindDrawInfoByModelName("sphere.ply", softBodyObjectDrawingInfo))
+	{
+		glm::mat4 matTransform = glm::mat4(1.0f);
+
+		matTransform = glm::translate(matTransform, glm::vec3(0.0f, 5.0f, 0.0f));
+
+		// 		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		// 		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		matTransform = glm::scale(matTransform, glm::vec3(4.0f)); // 4 radius
+
+		newSoftBody->CreateSoftBody(softBodyObjectDrawingInfo, matTransform);
+
+		//newSoftBody->CreateRandomBracing(10, 6.0f, 0.0000001f, 0.5f);
+		newSoftBody->CreateRandomBracing(80, 7.6f, 0.003f, 1.0f);
+
+
+		m_VerletObjs.push_back(newSoftBody);
+
+		return newSoftBody;
+	}
+
+	return nullptr;
+}
 
 cAABB* cPhysics::findAABBByModelName(std::string modelName)
 {

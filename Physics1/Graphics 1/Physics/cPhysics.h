@@ -58,12 +58,12 @@ private:
 	DWORD* m_ThreadIDs;
 	HANDLE* m_ThreadHandles;
 	sThreadCollisionInfo* m_ThreadInfos;
-	const unsigned int NUM_THREADS = 10;
+	const unsigned int NUM_THREADS = 0;
 
 	sPossibleCollision* m_pTheSoonestCollision = nullptr; // This is what the threads attempt to update when they get a collision
 	sPhysicsProperties* m_pReversedObject = nullptr;
 	CRITICAL_SECTION m_CollisionUpdate;
-	bool m_bUseThreading = true;
+	bool m_bUseThreading = false;
 public:
 	void UpdateCollision(float& t, glm::vec3& hn);
 	void ToggleThreading(void);
@@ -76,6 +76,13 @@ public:
 
 	void setVAOManager(cVAOManager* pTheMeshManager);
 	void generateAABBs(std::vector<std::string> models); // Will generate an AABB oct-tree for all models
+
+	/////// VERLET CREATION FOR PROJECTS OR WHATEVER ///////
+
+	cSoftBodyVerlet* CreateVerlet(void);
+
+	////////////////////////////////////////////////////////
+
 
 	// Once you pass this in, the cPhysics handles the lifetime
 	// (i.e. IT will call delete)

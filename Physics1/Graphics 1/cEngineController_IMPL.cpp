@@ -77,13 +77,17 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
 	std::vector<std::string> tempModelVec;
 	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
-	this->m_pThePhysics->generateAABBs(tempModelVec);
+	//this->m_pThePhysics->generateAABBs(tempModelVec);
 	
 	this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
 
 	this->m_pAnimationsManager = cAnimationManager::GetInstance();
 	this->m_pAnimationsManager->SetVAOManager(m_pTheGraphics->getVAOManager());
+
+
+	
+	cSoftBodyVerlet* theBlob = m_pThePhysics->CreateVerlet();
 
 	
 
@@ -93,6 +97,8 @@ bool cEngineController_IMPL::Initialize(void)
 	m_TheCamera->friendlyName = "cam";
 	m_TheCamera->position = glm::vec3(0, 20, -40);
 	m_ThePlayer = new cPlayer(m_pTheGraphics->getWindow());
+
+	m_ThePlayer->setPlayerVerlet(theBlob);
 
 
 // 	sPhysicsProperties* playerObj = new sPhysicsProperties();
@@ -122,7 +128,7 @@ bool cEngineController_IMPL::Initialize(void)
 // 	playerObj->pTheAssociatedMesh = playerMesh;
 
 	// Load test scene
-	m_pTheSceneManager->loadScene("test");
+	// m_pTheSceneManager->loadScene("test");
 	//m_pThePhysics->AddShape(playerObj);
 	//addCustomObject(playerMesh, playerObj);
 
@@ -133,6 +139,24 @@ bool cEngineController_IMPL::Initialize(void)
 // 	bonedBoy->friendlyName = "a";
 
 	//m_pTheGraphics->addNewMesh(bonedBoy);
+
+
+	cMesh* blobMesh = new cMesh();
+	blobMesh->friendlyName = "blobPlayer";
+	blobMesh->meshName = "sphere.ply";
+	blobMesh->bUseDebugColours = true;
+	blobMesh->wholeObjectDebugColourRGBA = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
+	blobMesh->isDoubleSided = true;
+
+	m_pTheGraphics->addNewMesh(blobMesh);
+
+	cMesh* ground = new cMesh();
+	ground->friendlyName = "metalGround";
+	ground->meshName = "Big_Flat_Mesh.ply";
+	ground->textureName[0] = "metal_s01.bmp";
+	ground->drawPosition.y = -0.1f;
+
+	m_pTheGraphics->addNewMesh(ground);
 
 
 

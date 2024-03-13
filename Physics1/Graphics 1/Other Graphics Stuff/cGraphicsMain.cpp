@@ -1141,7 +1141,14 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 
 			glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
 
+			if (pCurrentMesh->isDoubleSided)
+				glDisable(GL_CULL_FACE);
+			
 			DrawObject(pCurrentMesh, matModel, m_shaderProgramID);
+
+			if (pCurrentMesh->isDoubleSided)
+				glEnable(GL_CULL_FACE);
+
 		}//if (pCurrentMesh->bIsVisible)
 
 	}//for ( unsigned int index

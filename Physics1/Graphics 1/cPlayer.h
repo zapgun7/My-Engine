@@ -9,6 +9,7 @@
 #include "Physics/sPhysicsProperties.h"
 #include "Other Graphics Stuff/OpenGLCommon.h"
 #include "cInputHandler.h"
+#include "Physics/Verlet/cSoftBodyVerlet.h"
 
 #include "cEngineController.h"
 
@@ -28,6 +29,7 @@ public:
 	~cPlayer();
 
 	void setPlayerObject(sPhysicsProperties* theObj);
+	void setPlayerVerlet(cSoftBodyVerlet* theObj);
 
 	void Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cameraRotation); // Updates these based on inputs in the last frame
 
@@ -40,6 +42,7 @@ private:
 	eCameraType m_CameraType = FLYCAM;
 
 	sPhysicsProperties* m_pPlayerObject = nullptr;
+	cSoftBodyVerlet* m_pPlayerVerlet = nullptr;
 
 	cPhysics* m_pThePhysics; // ONLY FOR TESTS OKAY?????
 

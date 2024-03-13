@@ -17,3 +17,5 @@ pillar.ply
 ramp.ply
 sramp.ply
 wall corner1.ply
+sphere.ply
+sphere2.ply

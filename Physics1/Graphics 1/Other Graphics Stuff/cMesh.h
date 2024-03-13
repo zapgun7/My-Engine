@@ -31,6 +31,8 @@ public:
 
 	bool bIsVisible;
 
+	bool isDoubleSided = false;
+
 	bool bUseDebugColours;
 	glm::vec4 wholeObjectDebugColourRGBA;
 

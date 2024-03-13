@@ -36,19 +36,24 @@ void cPlayer::setPlayerObject(sPhysicsProperties* theObj)
 	return;
 }
 
+void cPlayer::setPlayerVerlet(cSoftBodyVerlet* theObj)
+{
+	m_pPlayerVerlet = theObj;
+}
+
 void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cameraRotation)
 {
 
 	if (m_pInput->IsPressedEvent(GLFW_KEY_ESCAPE))
 	{
-		if (m_CameraType == FIRSTPERSON)
+		if (m_CameraType == THIRDPERSON)
 		{
 			m_CameraType = FLYCAM;
 			m_pInput->ChangeMouseState(NORMAL);
 		}
 		else
 		{
-			m_CameraType = FIRSTPERSON;
+			m_CameraType = THIRDPERSON;
 		}
 	}
 
@@ -314,6 +319,85 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 
 		// Set camera positon to a little above the capsule midsection
 		cameraPosition = m_pPlayerObject->position + glm::vec3(0, 1, 0);
+	}
+	else if (m_CameraType == THIRDPERSON)
+	{
+		glm::vec3 forwardVector = glm::vec3(0, 0, 1) * (cameraRotation);
+		glm::vec3 XZForwardVec(forwardVector.x, 0, forwardVector.z);
+
+
+		m_pInput->ChangeMouseState(HIDDEN);
+
+
+		double deltaMouseX, deltaMouseY;
+		m_pInput->GetMouseDeltas(deltaMouseX, deltaMouseY);
+
+
+		float deltaX, deltaY, deltaZ;
+		deltaY = static_cast<float>(deltaMouseX) / m_InverseSensitivity;
+
+
+		glm::vec3 normXZ = glm::normalize(XZForwardVec);
+		float xLook = normXZ.x;
+		float zLook = normXZ.z;
+
+
+
+		deltaZ = static_cast<float>(deltaMouseY) / m_InverseSensitivity * xLook;
+		deltaX = static_cast<float>(-deltaMouseY) / m_InverseSensitivity * zLook;
+
+		glm::quat deltaQuat = glm::quat(glm::radians(glm::vec3(deltaX, deltaY, deltaZ)));
+
+		(cameraRotation) *= deltaQuat;
+
+		glm::vec3 RotVec = glm::vec3(0, 1, 0) * cameraRotation;
+		if (RotVec.y <= 0.01f)
+		{
+
+			glm::quat fixQuat = glm::quat(glm::radians(glm::vec3(-deltaX, 0, -deltaZ)));
+			(cameraRotation) *= fixQuat;
+
+		}
+
+		// Blob Controls
+
+		if (m_pInput->IsPressed(GLFW_KEY_SPACE)) // Jump
+		{
+			m_pPlayerVerlet->Jump(deltaTime);
+		}
+
+		if (m_pInput->IsPressed(GLFW_KEY_W)) // Move forward
+		{
+			glm::vec3 moveDir = glm::normalize(XZForwardVec);
+			m_pPlayerVerlet->Move(moveDir, deltaTime);
+		}
+
+		if (m_pInput->IsPressed(GLFW_KEY_S)) // Move backwards
+		{
+			glm::vec3 moveDir = -glm::normalize(XZForwardVec);
+			m_pPlayerVerlet->Move(moveDir, deltaTime);
+		}
+
+		if (m_pInput->IsPressed(GLFW_KEY_A)) // Move left
+		{
+			glm::vec3 moveDir = glm::normalize(glm::cross(glm::vec3(0, 1, 0), XZForwardVec));
+			m_pPlayerVerlet->Move(moveDir, deltaTime);
+		}
+
+		if (m_pInput->IsPressed(GLFW_KEY_D)) // Move right
+		{
+			glm::vec3 moveDir = -glm::normalize(glm::cross(glm::vec3(0, 1, 0), XZForwardVec));
+			m_pPlayerVerlet->Move(moveDir, deltaTime);
+		}
+
+
+
+		// Blob Camera Setting
+
+		const float DIST_TO_BLOB = 40.0f;
+		glm::vec3 blobCentre = m_pPlayerVerlet->getCentrePoint();
+
+		cameraPosition = blobCentre - forwardVector * DIST_TO_BLOB;
 	}
 		
 

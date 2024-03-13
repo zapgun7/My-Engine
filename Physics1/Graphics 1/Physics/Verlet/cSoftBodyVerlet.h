@@ -25,7 +25,15 @@ public:
 	// Create random constraints within the object to 'brace' the shape
 	// These are invisible, though
 	void CreateRandomBracing(unsigned int numberOfBraces,
-							 float minDistanceBetweenVertices);
+							float minDistanceBetweenVertices);
+	void CreateRandomBracing(unsigned int numberOfBraces,
+							 float minDistanceBetweenVertices,
+							float constraintTightness,
+							float addRestDist);
+
+	void Jump(double& deltaTime);
+
+	void Move(glm::vec3& dir, double& deltaTime);
 
 	// This will update the draw info vertex information from the 
 	//	soft body simulation state (at the current moment)
@@ -43,6 +51,7 @@ public:
 		glm::vec3 old_position = glm::vec3(0.0f);
 		// Pointer back to the model vertex info
 		sVertex* pModelVertex = NULL;
+		std::vector<sParticle*> neighbours;
 	};
 
 	void cleanZeros(glm::vec3& value);
@@ -58,10 +67,12 @@ public:
 		sConstraint() {}
 		sParticle* pParticleA = NULL;
 		sParticle* pParticleB = NULL;
+
 		// How far away they are supposed to be 'at rest'
 		float restLength = 0.0f;
 
 		unsigned int numIterations = 1;
+		float tightFact = 1.0f;
 
 		// if false, this isnt' checked
 		// Like if the constraint is 'broken'
@@ -78,6 +89,9 @@ public:
 
 	float tightnessFactor = 1.0f;
 	unsigned int iterations = 1;
+
+	// For the player
+	bool canJump = false;
 
 
 	std::vector< sParticle* > vec_pParticles;

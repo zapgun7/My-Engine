@@ -110,20 +110,29 @@ bool cSoftBodyVerlet::CreateSoftBody(sModelDrawInfo ModelInfo, glm::mat4 matInit
 		sParticle* pParticle2 = this->vec_pParticles[ this->m_ModelVertexInfo.pIndices[index + 1] ];
 		sParticle* pParticle3 = this->vec_pParticles[ this->m_ModelVertexInfo.pIndices[index + 2] ];
 
+		// Add neighbours
+		pParticle1->neighbours.push_back(pParticle2); pParticle1->neighbours.push_back(pParticle3);
+		pParticle2->neighbours.push_back(pParticle1); pParticle2->neighbours.push_back(pParticle3);
+		pParticle3->neighbours.push_back(pParticle1); pParticle3->neighbours.push_back(pParticle2);
+
+
 		sConstraint* pEdge1 = new sConstraint();
 		pEdge1->pParticleA = pParticle1;
 		pEdge1->pParticleB = pParticle2;
 		pEdge1->restLength = this->calcDistanceBetween(pEdge1->pParticleA, pEdge1->pParticleB);
+		pEdge1->tightFact = this->tightnessFactor;
 
 		sConstraint* pEdge2 = new sConstraint();
 		pEdge2->pParticleA = pParticle2;
 		pEdge2->pParticleB = pParticle3;
 		pEdge2->restLength = this->calcDistanceBetween(pEdge2->pParticleA, pEdge2->pParticleB);
+		pEdge2->tightFact = this->tightnessFactor;
 
 		sConstraint* pEdge3 = new sConstraint();
 		pEdge3->pParticleA = pParticle3;
 		pEdge3->pParticleB = pParticle1;
 		pEdge3->restLength = this->calcDistanceBetween(pEdge3->pParticleA, pEdge3->pParticleB);
+		pEdge3->tightFact = this->tightnessFactor;
 
 		this->vec_pConstraints.push_back(pEdge1);
 		this->vec_pConstraints.push_back(pEdge2);
@@ -275,39 +284,55 @@ void cSoftBodyVerlet::VerletUpdate(double deltaTime)
 
 void cSoftBodyVerlet::ApplyCollision(double deltaTime)
 {
+	bool isGrounded = false;
 	// HACK: Stop any particles that go below the "ground"
 	for (sParticle* pCurrentParticle : vec_pParticles)
 	{
 		if ( pCurrentParticle->position.y < 0.0f )
 		{
 			pCurrentParticle->position.y = 0.0f;
+			isGrounded = true;
+
+			// "Friction"
+			const float FRICTION_VAL = 2.0f; // Higher = more friction
+
+			// X
+			float diff = (pCurrentParticle->old_position.x - pCurrentParticle->position.x) * FRICTION_VAL;
+			pCurrentParticle->position.x += diff * static_cast<float>(deltaTime);
+
+			// Z
+			diff = (pCurrentParticle->old_position.z - pCurrentParticle->position.z) * FRICTION_VAL;
+			pCurrentParticle->position.z += diff * static_cast<float>(deltaTime);
 		}
 	}
+
+	canJump = isGrounded;
+
 
 //	this->vec_pParticles[5'000]->position = glm::vec3(0.0f, 30.0f, 0.0f);
 
 	// Collide with a sphere at 20 units above the origin
 	//	with a radius of 5 units.
 	// Check to see if this particle is inside this sphere...
-	for (sParticle* pCurrentParticle : vec_pParticles)
-	{
-		glm::vec3 sphereCentre = glm::vec3(0.0f, 20.0f, 24.0f);
-		float sphereRadius = 15.0f;
-
-		float distanceToSphere = glm::distance(pCurrentParticle->position,
-											   sphereCentre);
-		if (distanceToSphere < sphereRadius )
-		{
-			// it's 'inside' the sphere
-			// Shift or slide the point along the ray from the centre of the sphere
-			glm::vec3 particleToCentreRay = pCurrentParticle->position - sphereCentre;
-			// Normalize to get the direction
-			particleToCentreRay = glm::normalize(particleToCentreRay);
-			// 
-			pCurrentParticle->position = (particleToCentreRay * sphereRadius) + sphereCentre;
-
-		}
-	}//for (sParticle* pCurrentParticle
+// 	for (sParticle* pCurrentParticle : vec_pParticles)
+// 	{
+// 		glm::vec3 sphereCentre = glm::vec3(0.0f, 20.0f, 24.0f);
+// 		float sphereRadius = 15.0f;
+// 
+// 		float distanceToSphere = glm::distance(pCurrentParticle->position,
+// 											   sphereCentre);
+// 		if (distanceToSphere < sphereRadius )
+// 		{
+// 			// it's 'inside' the sphere
+// 			// Shift or slide the point along the ray from the centre of the sphere
+// 			glm::vec3 particleToCentreRay = pCurrentParticle->position - sphereCentre;
+// 			// Normalize to get the direction
+// 			particleToCentreRay = glm::normalize(particleToCentreRay);
+// 			// 
+// 			pCurrentParticle->position = (particleToCentreRay * sphereRadius) + sphereCentre;
+// 
+// 		}
+// 	}//for (sParticle* pCurrentParticle
 
 
 
@@ -353,9 +378,11 @@ void cSoftBodyVerlet::SatisfyConstraints(void)
 				// Making this non-one, will change how quickly the objects move together
 				// For example, making this < 1.0 will make it "bouncier"
 				//float tightnessFactor = 0.01f;
+				float tightFac = pCurConstraint->tightFact;
 
-				pX1->position += delta * 0.5f * diff * tightnessFactor;
-				pX2->position -= delta * 0.5f * diff * tightnessFactor;
+
+				pX1->position += delta * 0.5f * diff * tightFac;
+				pX2->position -= delta * 0.5f * diff * tightFac;
 
 				this->cleanZeros(pX1->position);
 				this->cleanZeros(pX2->position);
@@ -538,12 +565,17 @@ void cSoftBodyVerlet::CreateWheelBracing(void)
 }
 
 
-
+void cSoftBodyVerlet::CreateRandomBracing(unsigned int numberOfBraces, float minDistanceBetweenVertices)
+{
+	CreateRandomBracing(numberOfBraces, minDistanceBetweenVertices, this->tightnessFactor, 0);
+}
 
 
 
 void cSoftBodyVerlet::CreateRandomBracing(unsigned int numberOfBraces,
-										  float minDistanceBetweenVertices)
+										  float minDistanceBetweenVertices,
+										  float constraintTightness, 
+										  float addRestDist)
 {
 	for ( unsigned int count = 0; count != numberOfBraces; count++ )
 	{
@@ -578,9 +610,10 @@ void cSoftBodyVerlet::CreateRandomBracing(unsigned int numberOfBraces,
 			{
 				// Distance is OK, so make a constraint
 				sConstraint* pBracingConstraint = new sConstraint();
+				pBracingConstraint->tightFact = constraintTightness;
 				pBracingConstraint->pParticleA = pParticle1;
 				pBracingConstraint->pParticleB = pParticle2;
-				pBracingConstraint->restLength = this->calcDistanceBetween(pBracingConstraint->pParticleA, pBracingConstraint->pParticleB);
+				pBracingConstraint->restLength = this->calcDistanceBetween(pBracingConstraint->pParticleA, pBracingConstraint->pParticleB) + addRestDist;
 			
 				this->vec_pConstraints.push_back(pBracingConstraint);
 			}
@@ -591,3 +624,68 @@ void cSoftBodyVerlet::CreateRandomBracing(unsigned int numberOfBraces,
 
 	return;
 }
+
+void cSoftBodyVerlet::Jump(double& deltaTime)
+{
+	if (!canJump) return;
+
+
+	sParticle* theHighestParticle = vec_pParticles[0];
+
+	for (unsigned int i = 1; i < vec_pParticles.size(); i++)
+	{
+		if (vec_pParticles[i]->position.y > theHighestParticle->position.y)
+		{
+			theHighestParticle = vec_pParticles[i];
+		}
+	}
+	const float JUMPFORCE = 0.5f;
+	// Now we have the highest particle
+	theHighestParticle->position.y += JUMPFORCE * static_cast<float>(deltaTime);
+
+	for (sParticle* currPart : theHighestParticle->neighbours)
+	{
+		currPart->position.y += JUMPFORCE * static_cast<float>(deltaTime) * 0.5f;
+		for (sParticle* currPart2 : currPart->neighbours)
+		{
+			currPart2->position.y += JUMPFORCE * static_cast<float>(deltaTime) * 0.2f;
+		}
+	}
+
+}
+
+void cSoftBodyVerlet::Move(glm::vec3& dir, double& deltaTime)
+{
+	sParticle* theFarthestParticle = vec_pParticles[0];
+	glm::vec3 goal = this->getCentrePoint() + dir * 10.0f;
+	float currDist = glm::distance(theFarthestParticle->position, goal);
+
+	float newDist = 0.0f;
+
+	for (unsigned int i = 1; i < vec_pParticles.size(); i++)
+	{
+		// Distance to goal dir ov current particle
+		newDist = glm::distance(vec_pParticles[i]->position, goal);
+
+		if (newDist < currDist) // If closer than one stored, store that one
+		{
+			theFarthestParticle = vec_pParticles[i];
+			currDist = newDist;
+		}
+	}
+
+
+	const float MOVEFORCE = 0.2f;
+	// Now we have the highest particle
+	theFarthestParticle->position += dir * MOVEFORCE * static_cast<float>(deltaTime);
+
+	for (sParticle* currPart : theFarthestParticle->neighbours)
+	{
+		currPart->position += dir * MOVEFORCE * static_cast<float>(deltaTime) * 0.5f;
+		for (sParticle* currPart2 : currPart->neighbours)
+		{
+			currPart2->position += dir * MOVEFORCE * static_cast<float>(deltaTime) * 0.2f;
+		}
+	}
+}
+
