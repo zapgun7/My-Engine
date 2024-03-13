@@ -22,11 +22,12 @@ void cPhysics::Update(double deltaTime)
 
 	// Start by updating verlet objects!
 
+
 	for (cSoftBodyVerlet* currSoftBod : m_VerletObjs)
 	{
 		currSoftBod->VerletUpdate(deltaTime);
 		currSoftBod->ApplyCollision(deltaTime);
-		currSoftBod->SatisfyConstraints();
+		currSoftBod->SatisfyConstraints(deltaTime);
 		currSoftBod->UpdateVertexPositions();
 		currSoftBod->UpdateNormals();
 

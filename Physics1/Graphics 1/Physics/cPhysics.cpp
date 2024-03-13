@@ -157,7 +157,8 @@ cSoftBodyVerlet* cPhysics::CreateVerlet(void)
 {
 	cSoftBodyVerlet* blobSoftBody = new cSoftBodyVerlet();
 	blobSoftBody->acceleration = glm::vec3(0.0f, -20.0f, 0.0f);
-	blobSoftBody->tightnessFactor = 0.0005f;
+	//blobSoftBody->tightnessFactor = 0.0005f;
+	blobSoftBody->tightnessFactor = 0.01f;
 	blobSoftBody->iterations = 1;
 
 	sModelDrawInfo blobBodyObjectDrawingInfo;
@@ -176,7 +177,8 @@ cSoftBodyVerlet* cPhysics::CreateVerlet(void)
 		blobSoftBody->CreateSoftBody(blobBodyObjectDrawingInfo, matTransform);
 
 		//newSoftBody->CreateRandomBracing(10, 6.0f, 0.0000001f, 0.5f);
-		blobSoftBody->CreateRandomBracing(80, 7.6f, 0.003f, 1.0f);
+		//blobSoftBody->CreateRandomBracing(80, 7.6f, 0.003f, 1.0f);
+		blobSoftBody->CreateRandomBracing(80, 7.6f, 0.005f, 1.0f);
 
 
 		m_VerletObjs.push_back(blobSoftBody);
@@ -213,10 +215,13 @@ cSoftBodyVerlet* cPhysics::CreateVerlet(void)
 
 		m_VerletObjs.push_back(plat1SoftBody);
 
+		blobSoftBody->vec_pCollisionObjects.push_back(plat1SoftBody);
+
 		//return plat1SoftBody;
 	}
 
 	return blobSoftBody;
+	//return plat1SoftBody;
 
 
 	return nullptr;

@@ -1,5 +1,8 @@
 #include "cSoftBodyVerlet.h"
 
+#include "../cPhysics.h" // For segment-triangle test
+
+
 #if _DEBUG 
 #include <iostream>
 #endif
@@ -114,6 +117,13 @@ bool cSoftBodyVerlet::CreateSoftBody(sModelDrawInfo ModelInfo, glm::mat4 matInit
 		pParticle1->neighbours.push_back(pParticle2); pParticle1->neighbours.push_back(pParticle3);
 		pParticle2->neighbours.push_back(pParticle1); pParticle2->neighbours.push_back(pParticle3);
 		pParticle3->neighbours.push_back(pParticle1); pParticle3->neighbours.push_back(pParticle2);
+
+		// Add Triangle
+		sParticleTriangle* newTri = new sParticleTriangle();
+		newTri->pA = pParticle1; newTri->pB = pParticle2; newTri->pC = pParticle3;
+
+		this->vec_Triangles.push_back(newTri);
+
 
 
 		sConstraint* pEdge1 = new sConstraint();
@@ -255,6 +265,8 @@ void cSoftBodyVerlet::VerletUpdate(double deltaTime)
 
 	for (sParticle* pCurrentParticle : vec_pParticles )
 	{
+		if (pCurrentParticle->isStatic) continue;
+
 		glm::vec3 current_pos = pCurrentParticle->position;
 		glm::vec3 old_pos = pCurrentParticle->old_position;
 
@@ -307,6 +319,24 @@ void cSoftBodyVerlet::ApplyCollision(double deltaTime)
 		}
 	}
 
+	// Now to apply collision to other soft bodies (oh god the computations)
+
+	for (cSoftBodyVerlet* currBody : vec_pCollisionObjects)
+	{
+		// Iterate through this vec of things we need to check for each particle on this blob
+		for (sParticle* currPart : vec_pParticles)
+		{
+
+		}
+	}
+
+
+
+
+
+
+
+
 	canJump = isGrounded;
 
 
@@ -341,7 +371,7 @@ void cSoftBodyVerlet::ApplyCollision(double deltaTime)
 }
 
 
-void cSoftBodyVerlet::SatisfyConstraints(void)
+void cSoftBodyVerlet::SatisfyConstraints(double deltaTime)
 {
 	//const unsigned int NUM_ITERATIONS = 1;
 	
@@ -392,9 +422,9 @@ void cSoftBodyVerlet::SatisfyConstraints(void)
 				float tightFac = pCurConstraint->tightFact;
 
 				if (!pX1->isStatic)
-					pX1->position += delta * 0.5f * diff * tightFac;
+					pX1->position += delta * 0.5f * diff * tightFac * (1.0f + static_cast<float>(deltaTime));
 				if (!pX2->isStatic)
-					pX2->position -= delta * 0.5f * diff * tightFac;
+					pX2->position -= delta * 0.5f * diff * tightFac * (1.0f + static_cast<float>(deltaTime));
 
 				this->cleanZeros(pX1->position);
 				this->cleanZeros(pX2->position);
@@ -640,11 +670,20 @@ void cSoftBodyVerlet::CreateRandomBracing(unsigned int numberOfBraces,
 void cSoftBodyVerlet::BuildPlatform(void)
 {
 	std::vector<sParticle*> fourHighest; fourHighest.reserve(4);
-
-	for (sParticle* currPart : vec_pParticles)
+	fourHighest.push_back(vec_pParticles[0]);
+	fourHighest.push_back(vec_pParticles[1]);
+	fourHighest.push_back(vec_pParticles[2]);
+	fourHighest.push_back(vec_pParticles[3]);
+	for (unsigned int i = 4 ; i < vec_pParticles.size(); i++)
 	{
-		if (currPart->position.y > 0)
-			fourHighest.push_back(currPart);
+		for (unsigned int e = 0; e < fourHighest.size(); e++)
+		{
+			if (vec_pParticles[i]->position.y < fourHighest[e]->position.y)
+			{
+				fourHighest[e] = vec_pParticles[i];
+				break;
+			}
+		}
 	}
 
 	// Now we have our four
@@ -660,7 +699,10 @@ void cSoftBodyVerlet::AddRopeAttachment(sParticle* partToRope, float tightness)
 	const float ROPE_HEIGHT = 5.0f;
 	// Here we create a new particle some length above this one, add a PULL attachment type to it
 	sParticle* newRopePart = new sParticle();
-	newRopePart->position = partToRope->position; newRopePart->position.y += ROPE_HEIGHT; newRopePart->old_position = newRopePart->position;
+	newRopePart->position = partToRope->position; 
+	newRopePart->position.y += ROPE_HEIGHT; 
+	newRopePart->old_position = newRopePart->position;
+
 	newRopePart->isPartModel = false;
 	newRopePart->isStatic = true;
 	this->vec_pParticles.push_back(newRopePart);

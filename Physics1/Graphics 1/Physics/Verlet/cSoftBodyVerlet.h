@@ -56,6 +56,13 @@ public:
 
 	};
 
+	struct sParticleTriangle
+	{
+		sParticle* pA = nullptr;
+		sParticle* pB = nullptr;
+		sParticle* pC = nullptr;
+	};
+
 
 	// This is for loading the original model
 	// The 2nd param is the identy matrix 
@@ -91,7 +98,7 @@ public:
 	// This is for the ground, hitting something, etc.
 	void ApplyCollision(double deltaTime);
 
-	void SatisfyConstraints(void);
+	void SatisfyConstraints(double deltaTime);
 
 	
 
@@ -117,6 +124,8 @@ public:
 
 	std::vector< sParticle* > vec_pParticles;
 	std::vector< sConstraint* > vec_pConstraints;
+	std::vector < cSoftBodyVerlet* > vec_pCollisionObjects;
+	std::vector < sParticleTriangle* > vec_Triangles;
 
 	// Make this private...
 	sModelDrawInfo m_ModelVertexInfo;
