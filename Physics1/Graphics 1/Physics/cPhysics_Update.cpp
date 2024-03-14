@@ -22,18 +22,31 @@ void cPhysics::Update(double deltaTime)
 
 	// Start by updating verlet objects!
 
+	const double UPDATEINTERVAL = 0.005;
+	static double timeSinceLastUpdate = 0.0;
 
-	for (cSoftBodyVerlet* currSoftBod : m_VerletObjs)
+	timeSinceLastUpdate += deltaTime;
+
+
+	if (timeSinceLastUpdate >= UPDATEINTERVAL)
 	{
-		currSoftBod->VerletUpdate(deltaTime);
-		currSoftBod->ApplyCollision(deltaTime);
-		currSoftBod->SatisfyConstraints(deltaTime);
-		currSoftBod->UpdateVertexPositions();
-		currSoftBod->UpdateNormals();
+		for (cSoftBodyVerlet* currSoftBod : m_VerletObjs)
+		{
+			currSoftBod->VerletUpdate(UPDATEINTERVAL);
+			currSoftBod->SatisfyConstraints(UPDATEINTERVAL);
+			currSoftBod->ApplyCollision(UPDATEINTERVAL);
+			currSoftBod->UpdateVertexPositions();
+			currSoftBod->UpdateNormals();
 
-		m_pMeshManager->UpdateVAOBuffers(currSoftBod->m_ModelVertexInfo.meshName, currSoftBod->m_ModelVertexInfo, (GLuint)3); // Lazy, but this is the only shader program we're using now
-		
+			m_pMeshManager->UpdateVAOBuffers(currSoftBod->m_ModelVertexInfo.meshName, currSoftBod->m_ModelVertexInfo, (GLuint)3); // Lazy, but this is the only shader program we're using now
+
+		}
+
+		timeSinceLastUpdate -= UPDATEINTERVAL;
 	}
+
+
+	
 
 
 

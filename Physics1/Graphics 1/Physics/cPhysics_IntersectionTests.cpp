@@ -955,10 +955,10 @@ bool cPhysics::m_LineSegment_TriMeshIndirect_IntersectionTest(glm::vec3 pos, glm
 		itTri != trisToCheck.end();
 		itTri++)
 	{
-		float t;
+		float t, u, v, w;
 		glm::vec3 hn;
 
-		if (!m_IntersectSegmentTriangle(pos, pos2, &*itTri, hn, t))
+		if (!m_IntersectSegmentTriangle(pos, pos2, &*itTri, u, v, w, hn, t))
 		{
 			// No collision
 			continue;

@@ -321,12 +321,159 @@ void cSoftBodyVerlet::ApplyCollision(double deltaTime)
 
 	// Now to apply collision to other soft bodies (oh god the computations)
 
-	for (cSoftBodyVerlet* currBody : vec_pCollisionObjects)
-	{
-		// Iterate through this vec of things we need to check for each particle on this blob
-		for (sParticle* currPart : vec_pParticles)
-		{
+	sTriangle_A tri;
+	glm::vec3 norm = glm::vec3(0.0f);
+	float t, u, v, w;
+	glm::vec3 forceToApplyA = glm::vec3(0.0f);
+	glm::vec3 forceToApplyB = glm::vec3(0.0f);
+	glm::vec3 forceToApplyC = glm::vec3(0.0f);
 
+	for (cSoftBodyVerlet* currBody : this->vec_pCollisionObjects)
+	{
+		for (sParticleTriangle* currTri : currBody->vec_Triangles)
+		{
+			tri.vertices[0] = currTri->pA->position;
+			tri.vertices[2] = currTri->pB->position;
+			tri.vertices[1] = currTri->pC->position;
+
+			// Iterate through this vec of things we need to check for each particle on this blob
+			for (sParticle* currPart : this->vec_pParticles)
+			{
+				if (cPhysics::m_IntersectSegmentTriangle(currPart->position, currPart->old_position, &tri, u, v, w, norm, t))
+				{
+					// This particle hit this triangle
+					isGrounded = true;
+					// For now just stop the blob, we'll worry about moving the plat later
+					glm::vec3 deltaMove = currPart->position - currPart->old_position;
+					glm::vec3 deltaPastTri = currPart->position - (currPart->old_position + (deltaMove * t)); // For calculating forces on triangle
+					currPart->position = currPart->old_position - (deltaMove * t);
+					//currPart->position = currPart->old_position;
+
+					glm::vec3 projSubVec = glm::dot(deltaMove, norm) * norm;
+					glm::vec3 deNormedDeltaMove = deltaMove - projSubVec;
+					currPart->position = currPart->position + deNormedDeltaMove;
+
+
+					// Now apply the same friction as we did for the basic y 0 ground
+					const float FRICTION_VAL = 1.0f; // Higher = more friction
+
+					// X
+					float diff = (currPart->old_position.x - currPart->position.x) * FRICTION_VAL;
+					currPart->position.x += diff * static_cast<float>(deltaTime);
+
+					// Y
+					diff = (currPart->old_position.y - currPart->position.y) * FRICTION_VAL;
+					currPart->position.y += diff * static_cast<float>(deltaTime);
+
+					// Z
+					diff = (currPart->old_position.z - currPart->position.z) * FRICTION_VAL;
+					currPart->position.z += diff * static_cast<float>(deltaTime);
+
+
+					// Now add forces to the platform
+					deltaPastTri = glm::dot(deltaPastTri, norm) * norm;
+					float pastTriLen = glm::length(deltaPastTri);
+
+					const float FORCE_INCREASE = 1.5f;
+					// u - 0
+					glm::vec3 directForceU = u * deltaPastTri * static_cast<float>(deltaTime);
+					//currTri->pA->position += directForceU + glm::length(directForceU) * deNormedDeltaMove;
+					forceToApplyA += directForceU + glm::length(directForceU) * deNormedDeltaMove * FORCE_INCREASE;
+
+					// v - 1
+					glm::vec3 directForceV = v * deltaPastTri * static_cast<float>(deltaTime);
+					//currTri->pC->position += directForceV + glm::length(directForceV) * deNormedDeltaMove;
+					forceToApplyC += directForceV + glm::length(directForceV) * deNormedDeltaMove * FORCE_INCREASE;
+
+					// w - 2
+					glm::vec3 directForceW = w * deltaPastTri * static_cast<float>(deltaTime);
+					//currTri->pB->position += directForceW + glm::length(directForceW) * deNormedDeltaMove;
+					forceToApplyB += directForceW + glm::length(directForceW) * deNormedDeltaMove * FORCE_INCREASE;
+				}
+				else // Have to check if the movement of the platform skipped past the particle
+				{
+					// If particle is on different sides of plane made by old and current triangle positions
+					// AND if the particle projects inside both triangles 
+					glm::vec3 ab = currTri->pB->old_position - currTri->pA->old_position;
+					glm::vec3 ac = currTri->pC->old_position - currTri->pA->old_position;
+					glm::vec3 nOLD = glm::normalize(glm::cross(ab, ac));
+					float pdOLD = glm::dot(nOLD, currTri->pA->old_position);
+					bool isOldPositive, isOldPositive2;
+					//if (glm::dot(currPart->position - currTri->pA->old_position, nOLD)/* + pdOLD*/ < 0)
+					if (glm::dot(currPart->position, nOLD) - pdOLD < 0)
+					{
+						isOldPositive = false;
+					}
+					else
+					{
+						isOldPositive = true;
+					}
+					if (glm::dot(currPart->old_position, nOLD) - pdOLD < 0)
+					{
+						isOldPositive2 = false;
+					}
+					else
+					{
+						isOldPositive2 = true;
+					}
+
+
+					ab = currTri->pB->position - currTri->pA->position;
+					ac = currTri->pC->position - currTri->pA->position;
+					glm::vec3 nNEW = glm::normalize(glm::cross(ab, ac));
+					float pdNEW = glm::dot(nNEW, currTri->pA->position);
+					bool isNewPositive, isNewPositive2;
+					//if (glm::dot(currPart->position - currTri->pA->position, nNEW)/* + pdNEW*/ < 0)
+					if (glm::dot(currPart->position, nNEW) - pdNEW < 0)
+					{
+						isNewPositive = false;
+					}
+					else
+					{
+						isNewPositive = true;
+					}
+					if (glm::dot(currPart->old_position, nNEW) - pdNEW < 0)
+					{
+						isNewPositive2 = false;
+					}
+					else
+					{
+						isNewPositive2 = true;
+					}
+
+					
+					if ((isNewPositive == isOldPositive) && (isNewPositive2 == isOldPositive2) && (isNewPositive == isNewPositive2))
+					{
+						continue;
+					}
+
+					// Potential Collision, check if both points project in the triangle
+// 					if (m_DoesPointProjectOntoTri(currPart->position, currTri->pA->old_position, currTri->pB->old_position, currTri->pC->old_position)
+// 						&& m_DoesPointProjectOntoTri(currPart->position, currTri->pA->position, currTri->pB->position, currTri->pC->position))
+					if (m_DoesPointProjectOntoTri(currPart->position, currTri->pA->position, currTri->pB->position, currTri->pC->position))
+					{
+						isGrounded = true;
+						// Collision!
+						// Project point onto new triangle
+   						glm::vec3 delta = currPart->position - currTri->pA->position;
+						glm::vec3 projSubVec = glm::dot(delta, nNEW) * nNEW; // For getting the projected point on the plane
+
+
+						glm::vec3 newPos = currTri->pA->position + delta - projSubVec + nNEW * 1.0e-5f;
+						glm::vec3 deltaMove = newPos - currPart->old_position;
+						glm::vec3 projSubVec2 = glm::dot(deltaMove, nNEW) * nNEW; // For calculating final updated position (not just projected, but slides too)
+						deltaMove = deltaMove - projSubVec2;
+
+						currPart->position = newPos;// -deltaMove;
+
+					}
+				}
+			}
+			// Apply built up tri forces
+
+ 			currTri->pA->position += forceToApplyA;
+ 			currTri->pB->position += forceToApplyB;
+ 			currTri->pC->position += forceToApplyC;
 		}
 	}
 
@@ -421,10 +568,13 @@ void cSoftBodyVerlet::SatisfyConstraints(double deltaTime)
 				//float tightnessFactor = 0.01f;
 				float tightFac = pCurConstraint->tightFact;
 
+				float safeDT = deltaTime > 0.01 ? 0.01f : static_cast<float>(deltaTime);
+
+
 				if (!pX1->isStatic)
-					pX1->position += delta * 0.5f * diff * tightFac * (1.0f + static_cast<float>(deltaTime));
+					pX1->position += delta * 0.5f * diff * tightFac * static_cast<float>(safeDT) * 150.0f;//(1.0f + static_cast<float>(deltaTime));
 				if (!pX2->isStatic)
-					pX2->position -= delta * 0.5f * diff * tightFac * (1.0f + static_cast<float>(deltaTime));
+					pX2->position -= delta * 0.5f * diff * tightFac * static_cast<float>(safeDT) * 150.0f;//(1.0f + static_cast<float>(deltaTime));
 
 				this->cleanZeros(pX1->position);
 				this->cleanZeros(pX2->position);
@@ -607,6 +757,60 @@ void cSoftBodyVerlet::CreateWheelBracing(void)
 }
 
 
+bool cSoftBodyVerlet::m_DoesPointProjectOntoTri(glm::vec3& p, glm::vec3& a, glm::vec3& b, glm::vec3& c)
+{
+	glm::vec3 ab = b - a;
+	glm::vec3 ac = c - a;
+	glm::vec3 bc = c - b;
+
+	// Compute parametric position s for projection P' of P on AB,
+	// P' = A + s*AB, s = snom/(snom+sdenom)
+	float snom = glm::dot(p - a, ab), sdenom = glm::dot(p - b, a - b);
+
+	// Compute parametric position t for projection P' of P on AC,
+	// P' = A + t*AC, s = tnom/(tnom+tdenom)
+	float tnom = glm::dot(p - a, ac), tdenom = glm::dot(p - c, a - c);
+
+	if (snom <= 0.0f && tnom <= 0.0f) return false; // Vertex region early out
+
+	// Compute parametric position u for projection P' of P on BC,
+	// P' = B + u*BC, u = unom/(unom+udenom)
+	float unom = glm::dot(p - b, bc), udenom = glm::dot(p - c, b - c);
+
+	if (sdenom <= 0.0f && unom <= 0.0f) return false; // Vertex region early out
+	if (tdenom <= 0.0f && udenom <= 0.0f) return false; // Vertex region early out
+
+
+	// P is outside (or on) AB if the triple scalar product [N PA PB] <= 0
+	glm::vec3 n = glm::cross(b - a, c - a);
+	float vc = glm::dot(n, glm::cross(a - p, b - p));
+	// If P outside AB and within feature region of AB,
+	// return projection of P onto AB
+	if (vc <= 0.0f && snom >= 0.0f && sdenom >= 0.0f)
+		return false;
+
+	// P is outside (or on) BC if the triple scalar product [N PB PC] <= 0
+	float va = glm::dot(n, glm::cross(b - p, c - p));
+	// If P outside BC and within feature region of BC,
+	// return projection of P onto BC
+	if (va <= 0.0f && unom >= 0.0f && udenom >= 0.0f)
+		return false;
+
+	// P is outside (or on) CA if the triple scalar product [N PC PA] <= 0
+	float vb = glm::dot(n, glm::cross(c - p, a - p));
+	// If P outside CA and within feature region of CA,
+	// return projection of P onto CA
+	if (vb <= 0.0f && tnom >= 0.0f && tdenom >= 0.0f)
+		return false;
+
+	return true;
+// 	// P must project inside face region. Compute Q using barycentric coordinates
+// 		float u = va / (va + vb + vc);
+// 		float v = vb / (va + vb + vc);
+// 		float w = 1.0f - u - v; // = vc / (va + vb + vc)
+// 		return u * a + v * b + w * c;
+}
+
 void cSoftBodyVerlet::CreateRandomBracing(unsigned int numberOfBraces, float minDistanceBetweenVertices)
 {
 	CreateRandomBracing(numberOfBraces, minDistanceBetweenVertices, this->tightnessFactor, 0);
@@ -699,7 +903,7 @@ void cSoftBodyVerlet::AddRopeAttachment(sParticle* partToRope, float tightness)
 	const float ROPE_HEIGHT = 5.0f;
 	// Here we create a new particle some length above this one, add a PULL attachment type to it
 	sParticle* newRopePart = new sParticle();
-	newRopePart->position = partToRope->position; 
+	newRopePart->position = partToRope->position * 1.2f; 
 	newRopePart->position.y += ROPE_HEIGHT; 
 	newRopePart->old_position = newRopePart->position;
 
@@ -711,7 +915,7 @@ void cSoftBodyVerlet::AddRopeAttachment(sParticle* partToRope, float tightness)
 	newConstraint->pParticleA = newRopePart;
 	newConstraint->pParticleB = partToRope;
 	newConstraint->tightFact = tightness;
-	newConstraint->restLength = ROPE_HEIGHT + 1.0f/*so the plat kinda drops*/; // Might want to change this to calcDistBetween() later
+	newConstraint->restLength = ROPE_HEIGHT + 2.0f/*so the plat kinda drops*/; // Might want to change this to calcDistBetween() later
 	newConstraint->relationType = sConstraint::PULL;
 	this->vec_pConstraints.push_back(newConstraint);
 }
@@ -730,7 +934,7 @@ void cSoftBodyVerlet::Jump(double& deltaTime)
 			theHighestParticle = vec_pParticles[i];
 		}
 	}
-	const float JUMPFORCE = 0.5f;
+	const float JUMPFORCE = 0.6f;
 	// Now we have the highest particle
 	theHighestParticle->position.y += JUMPFORCE * static_cast<float>(deltaTime);
 
@@ -755,7 +959,7 @@ void cSoftBodyVerlet::Move(glm::vec3& dir, double& deltaTime)
 
 	for (unsigned int i = 1; i < vec_pParticles.size(); i++)
 	{
-		// Distance to goal dir ov current particle
+		// Distance from goal dir to current particle
 		newDist = glm::distance(vec_pParticles[i]->position, goal);
 
 		if (newDist < currDist) // If closer than one stored, store that one
@@ -766,7 +970,7 @@ void cSoftBodyVerlet::Move(glm::vec3& dir, double& deltaTime)
 	}
 
 
-	const float MOVEFORCE = 0.2f;
+	const float MOVEFORCE = 0.3f;
 	// Now we have the highest particle
 	theFarthestParticle->position += dir * MOVEFORCE * static_cast<float>(deltaTime);
 

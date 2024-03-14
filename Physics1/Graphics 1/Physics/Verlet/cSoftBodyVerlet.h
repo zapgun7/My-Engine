@@ -151,5 +151,10 @@ public:
 	// Creates constraints from the other vertices to the edges of the wheel
 	void CreateWheelBracing(void);
 
+
+
+	private:
+		bool m_DoesPointProjectOntoTri(glm::vec3& p, glm::vec3& a, glm::vec3& b, glm::vec3& c);
+
 };
 

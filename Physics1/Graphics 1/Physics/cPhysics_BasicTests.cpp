@@ -552,7 +552,7 @@ int cPhysics::m_IntersectSegmentAABB(glm::vec3& p0, glm::vec3& p1, cAABB& b)
 	return 1;
 }
 
-int cPhysics::m_IntersectSegmentTriangle(glm::vec3 p, glm::vec3 q, sTriangle_A* pTri/*glm::vec3 a, glm::vec3 b, glm::vec3 c*/, /*float& u, float& v, float& w*/glm::vec3& norm, float& t)
+int cPhysics::m_IntersectSegmentTriangle(glm::vec3 p, glm::vec3 q, sTriangle_A* pTri/*glm::vec3 a, glm::vec3 b, glm::vec3 c*/, float& u, float& v, float& w, glm::vec3& norm, float& t)
 {
 	glm::vec3 a = pTri->vertices[0];
 	glm::vec3 b = pTri->vertices[1];
@@ -565,8 +565,6 @@ int cPhysics::m_IntersectSegmentTriangle(glm::vec3 p, glm::vec3 q, sTriangle_A* 
 	
 
 	glm::vec3 n = glm::cross(ab, ac);
-
-	float u, v, w;
 
 
 	float d = glm::dot(qp, n);

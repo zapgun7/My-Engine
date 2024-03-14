@@ -366,30 +366,33 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 			m_pPlayerVerlet->Jump(deltaTime);
 		}
 
+		glm::vec3 moveDir = glm::vec3(0.0f);
+
 		if (m_pInput->IsPressed(GLFW_KEY_W)) // Move forward
 		{
-			glm::vec3 moveDir = glm::normalize(XZForwardVec);
-			m_pPlayerVerlet->Move(moveDir, deltaTime);
+			moveDir += glm::normalize(XZForwardVec);
+			//m_pPlayerVerlet->Move(moveDir, deltaTime);
 		}
 
 		if (m_pInput->IsPressed(GLFW_KEY_S)) // Move backwards
 		{
-			glm::vec3 moveDir = -glm::normalize(XZForwardVec);
-			m_pPlayerVerlet->Move(moveDir, deltaTime);
+			moveDir += -glm::normalize(XZForwardVec);
+			//m_pPlayerVerlet->Move(moveDir, deltaTime);
 		}
 
 		if (m_pInput->IsPressed(GLFW_KEY_A)) // Move left
 		{
-			glm::vec3 moveDir = glm::normalize(glm::cross(glm::vec3(0, 1, 0), XZForwardVec));
-			m_pPlayerVerlet->Move(moveDir, deltaTime);
+			moveDir += glm::normalize(glm::cross(glm::vec3(0, 1, 0), XZForwardVec));
+			//m_pPlayerVerlet->Move(moveDir, deltaTime);
 		}
 
 		if (m_pInput->IsPressed(GLFW_KEY_D)) // Move right
 		{
-			glm::vec3 moveDir = -glm::normalize(glm::cross(glm::vec3(0, 1, 0), XZForwardVec));
-			m_pPlayerVerlet->Move(moveDir, deltaTime);
+			moveDir += -glm::normalize(glm::cross(glm::vec3(0, 1, 0), XZForwardVec));
+			//m_pPlayerVerlet->Move(moveDir, deltaTime);
 		}
 
+		m_pPlayerVerlet->Move(moveDir, deltaTime);
 
 
 		// Blob Camera Setting

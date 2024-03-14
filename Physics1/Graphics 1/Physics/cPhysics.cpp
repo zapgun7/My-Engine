@@ -158,7 +158,7 @@ cSoftBodyVerlet* cPhysics::CreateVerlet(void)
 	cSoftBodyVerlet* blobSoftBody = new cSoftBodyVerlet();
 	blobSoftBody->acceleration = glm::vec3(0.0f, -20.0f, 0.0f);
 	//blobSoftBody->tightnessFactor = 0.0005f;
-	blobSoftBody->tightnessFactor = 0.01f;
+	blobSoftBody->tightnessFactor = 0.005f;
 	blobSoftBody->iterations = 1;
 
 	sModelDrawInfo blobBodyObjectDrawingInfo;
@@ -167,7 +167,7 @@ cSoftBodyVerlet* cPhysics::CreateVerlet(void)
 	{
 		glm::mat4 matTransform = glm::mat4(1.0f);
 
-		matTransform = glm::translate(matTransform, glm::vec3(0.0f, 5.0f, 0.0f));
+		matTransform = glm::translate(matTransform, glm::vec3(-8.0f, 80.0f, -8.0f));
 
 		// 		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		// 		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
@@ -178,7 +178,7 @@ cSoftBodyVerlet* cPhysics::CreateVerlet(void)
 
 		//newSoftBody->CreateRandomBracing(10, 6.0f, 0.0000001f, 0.5f);
 		//blobSoftBody->CreateRandomBracing(80, 7.6f, 0.003f, 1.0f);
-		blobSoftBody->CreateRandomBracing(80, 7.6f, 0.005f, 1.0f);
+		blobSoftBody->CreateRandomBracing(80, 7.6f, 0.02f, 1.0f);
 
 
 		m_VerletObjs.push_back(blobSoftBody);
@@ -203,12 +203,13 @@ cSoftBodyVerlet* cPhysics::CreateVerlet(void)
 		// 		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		// 		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		matTransform = glm::scale(matTransform, glm::vec3(4.0f)); // Plat, so w/l = 4 
+		const float SCALE = 20.0f;
+		matTransform = glm::scale(matTransform, glm::vec3(SCALE)); // Plat, so w/l = 16
 
 		plat1SoftBody->CreateSoftBody(plat1BodyObjectDrawingInfo, matTransform);
 
 		//newSoftBody->CreateRandomBracing(10, 6.0f, 0.0000001f, 0.5f);
-		plat1SoftBody->CreateRandomBracing(10, 8.1f, 1.0f, 0.0f);
+		plat1SoftBody->CreateRandomBracing(10, SCALE * 2.0f, 1.0f, 0.0f);
 
 		plat1SoftBody->BuildPlatform();
 
