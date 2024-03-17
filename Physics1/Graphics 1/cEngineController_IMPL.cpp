@@ -77,7 +77,7 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
 	std::vector<std::string> tempModelVec;
 	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
-	//this->m_pThePhysics->generateAABBs(tempModelVec);
+	this->m_pThePhysics->generateAABBs(tempModelVec);
 	
 	this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
@@ -87,7 +87,7 @@ bool cEngineController_IMPL::Initialize(void)
 
 
 	
-	cSoftBodyVerlet* theBlob = m_pThePhysics->CreateVerlet();
+	//cSoftBodyVerlet* theBlob = m_pThePhysics->CreateVerlet();
 
 	
 
@@ -98,7 +98,7 @@ bool cEngineController_IMPL::Initialize(void)
 	m_TheCamera->position = glm::vec3(0, 20, -40);
 	m_ThePlayer = new cPlayer(m_pTheGraphics->getWindow());
 
-	m_ThePlayer->setPlayerVerlet(theBlob);
+	//m_ThePlayer->setPlayerVerlet(theBlob);
 
 
 // 	sPhysicsProperties* playerObj = new sPhysicsProperties();
@@ -139,33 +139,39 @@ bool cEngineController_IMPL::Initialize(void)
 // 	bonedBoy->friendlyName = "a";
 
 	//m_pTheGraphics->addNewMesh(bonedBoy);
+	m_pTheSceneManager->loadScene("test4");
+	if (false)
+	{
+		//m_pTheSceneManager->loadScene("FacilityScreens3");
 
+		cMesh* blobMesh = new cMesh();
+		blobMesh->friendlyName = "blobPlayer";
+		blobMesh->meshName = "sphere.ply";
+		blobMesh->bUseDebugColours = true;
+		blobMesh->wholeObjectDebugColourRGBA = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
+		blobMesh->isDoubleSided = true;
+		//blobMesh->isSpooky = true; // Just gonna test the fbo thang on this thang
+		blobMesh->transparencyAlpha = 0.6f;
 
-	cMesh* blobMesh = new cMesh();
-	blobMesh->friendlyName = "blobPlayer";
-	blobMesh->meshName = "sphere.ply";
-	blobMesh->bUseDebugColours = true;
-	blobMesh->wholeObjectDebugColourRGBA = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
-	blobMesh->isDoubleSided = true;
+		m_pTheGraphics->addNewMesh(blobMesh);
+		
+		cMesh* plat1Mesh = new cMesh();
+		plat1Mesh->friendlyName = "plat1";
+		plat1Mesh->meshName = "plat.ply";
+		plat1Mesh->bUseDebugColours = true;
+		plat1Mesh->wholeObjectDebugColourRGBA = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
+		//plat1Mesh->isDoubleSided = true;
 
-	m_pTheGraphics->addNewMesh(blobMesh);
+		m_pTheGraphics->addNewMesh(plat1Mesh);
 
-	cMesh* plat1Mesh = new cMesh();
-	plat1Mesh->friendlyName = "plat1";
-	plat1Mesh->meshName = "plat.ply";
-	plat1Mesh->bUseDebugColours = true;
-	plat1Mesh->wholeObjectDebugColourRGBA = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
-	//plat1Mesh->isDoubleSided = true;
+		cMesh* ground = new cMesh();
+		ground->friendlyName = "metalGround";
+		ground->meshName = "Big_Flat_Mesh.ply";
+		ground->textureName[0] = "metal_s01.bmp";
+		ground->drawPosition.y = -0.1f;
 
-	m_pTheGraphics->addNewMesh(plat1Mesh);
-
-	cMesh* ground = new cMesh();
-	ground->friendlyName = "metalGround";
-	ground->meshName = "Big_Flat_Mesh.ply";
-	ground->textureName[0] = "metal_s01.bmp";
-	ground->drawPosition.y = -0.1f;
-
-	m_pTheGraphics->addNewMesh(ground);
+		m_pTheGraphics->addNewMesh(ground);
+	}
 
 
 

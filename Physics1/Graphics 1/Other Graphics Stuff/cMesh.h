@@ -45,6 +45,8 @@ public:
 	bool bUseReflect;
 	bool bUseRefract;
 
+	bool isSpooky = false; // Spooky shader effect
+
 	// These two will update at the draw call based off deltaTime
 	glm::vec3 uv_Offset_Scale; // The actual offset value      // Scale portion can effectively enable tiling :)
 	glm::vec2 uvOffsetSpeed; // per second speed of the uvoffset

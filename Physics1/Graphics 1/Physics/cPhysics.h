@@ -37,6 +37,17 @@ struct sThreadCollisionInfo
 
 	float soonestHit = FLT_MAX;
 	glm::vec3 hn = glm::vec3(0, 0, 0);
+
+	int ID;
+};
+
+
+struct sThreadAABBGenInfo
+{
+	cAABB* theAABB;
+	std::string theModel;
+	cVAOManager* theMeshManager;
+	unsigned int minTris;
 };
 
 
@@ -58,14 +69,14 @@ private:
 	DWORD* m_ThreadIDs;
 	HANDLE* m_ThreadHandles;
 	sThreadCollisionInfo* m_ThreadInfos;
-	const unsigned int NUM_THREADS = 0;
+	const unsigned int NUM_THREADS = 6;
 
 	sPossibleCollision* m_pTheSoonestCollision = nullptr; // This is what the threads attempt to update when they get a collision
 	sPhysicsProperties* m_pReversedObject = nullptr;
 	CRITICAL_SECTION m_CollisionUpdate;
 	bool m_bUseThreading = false;
 public:
-	void UpdateCollision(float& t, glm::vec3& hn);
+	void UpdateCollision(float& t, glm::vec3& hn, int& testID);
 	void ToggleThreading(void);
 
 	////////// END OF THREAD DATA //////

@@ -214,7 +214,6 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 	// Rotate velocity to match default tri mesh
 	//reverseTransformedSphere.velocity = (matRevModelR * glm::vec4(reverseTransformedSphere.velocity, 1.0f)); // Don't need this anymore
 	
-
 	
 	// Recursive AABB function to return near triangles
 	//std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sphereCollision(&reverseTransformedSphere); // TODO make this capsule detection for the sphere sweep
@@ -296,7 +295,10 @@ bool cPhysics::m_Sphere_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pSp
 		this->m_ThreadInfos[threadIDX].theShape = this->m_pReversedObject; // Give thread the sphere
 		this->m_ThreadInfos[threadIDX].theTriangles = &(trisToCheck[currTriIdxToGive]); // Give thread the triangle array
 
+
 		int amntToAdd = overflowCount-- > 0 ? perThreadTriCount + 1 : perThreadTriCount;
+
+
 		this->m_ThreadInfos[threadIDX].arraySize = amntToAdd; // Tell thread how far to go into array given
 		this->m_ThreadInfos[threadIDX].hasWork = true; // Start the thread
 		currTriIdxToGive += amntToAdd;

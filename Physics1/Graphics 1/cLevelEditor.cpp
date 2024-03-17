@@ -220,7 +220,7 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 			for (int n = 0; n < ActiveMeshVec.size(); n++)
 	 			{
 	 				const bool is_selected = (m_mesh_obj_idx == n);
-	 				if (ImGui::Selectable(ActiveMeshVec[n]->friendlyName.c_str(), is_selected))
+	 				if (ImGui::Selectable((std::to_string(n) + " - " + ActiveMeshVec[n]->friendlyName).c_str(), is_selected))
 						m_mesh_obj_idx = n;
 	 
 	 				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)

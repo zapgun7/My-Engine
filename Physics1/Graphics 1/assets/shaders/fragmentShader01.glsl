@@ -14,6 +14,12 @@ in vec4 ex_BoneId;
 
 
 
+// Stuff for spooky redaction-esque effects
+uniform vec4 isSpooky;// x = Generate heat map   y = use heatmap
+uniform sampler2D spookyHeatMap;
+
+
+
 //uniform vec3 directionalLightColour;
 // rgb are the rgb of the light colour
 //uniform vec4 directionalLight_Direction_power;
@@ -46,6 +52,9 @@ uniform sampler2D texture_04;
 uniform sampler2D texture_05;
 uniform sampler2D texture_06;
 uniform sampler2D texture_07;
+
+
+uniform bool bIsCamera;
 
 //
 uniform bool bUseHeightMap;
@@ -108,6 +117,9 @@ vec4 calculateLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 // 2nd pass effects
 vec3 getFBOColour();
 
+// Spooky Effects
+int getDistToDistortion(vec2 textureCoords);
+
 
 void main()
 {
@@ -143,6 +155,82 @@ void main()
 		
 		return;
 	}
+
+
+	if (isSpooky.x == 1.0f) // If generating the heatmap
+	{
+		outputColour = vec4(1.0f, 0.0f, 0.0f, 1.0f); // Pure Red
+		return;
+	}
+
+
+
+
+if (isSpooky.y == 1.0f) // Spooky heatmap application
+{
+	int distDist = getDistToDistortion(textureCoords);
+	if (distDist != -1)
+	{
+		float finalSCoord = textureCoords.s;
+		float finalTCoord = textureCoords.t;
+		
+		bool isPos = false;
+		if (cos(textureCoords.s * 333 + textureCoords.t * 99) < 0) isPos = true;
+		
+		if (cos(textureCoords.s * 1000) < 0)
+		{
+			if (isPos)
+				finalSCoord -= 0.001f * distDist;
+			else
+				finalSCoord += 0.001f * distDist;
+		}
+		else
+		{
+			if (isPos)
+				finalSCoord += 0.001f * distDist;
+			else
+				finalSCoord -= 0.001f * distDist;
+		}
+		if (cos(textureCoords.t * 1000) < 0)
+		{
+			if (isPos)
+				finalTCoord += 0.001f * distDist;
+			else
+				finalTCoord -= 0.001f * distDist;
+		}
+		else
+		{
+			if (isPos)
+				finalTCoord -= 0.001f * distDist;
+			else
+				finalTCoord += 0.001f * distDist;
+		}
+		
+		
+		
+		
+		outputColour = vec4(texture(textureOffScreen, vec2(finalSCoord, finalTCoord)).rgb, 1.0f);
+		return;
+	}
+	else
+	{
+		outputColour = vec4(texture(textureOffScreen, textureCoords.st).rgb, 1.0f);
+		return;
+	}
+}
+
+if (isSpooky.z == 1.0f)
+{
+	vec3 spookyTexValue = texture( spookyHeatMap, textureCoords.st ).rgb;
+	spookyTexValue.r -= (1.0f * isSpooky.w);
+	if (spookyTexValue.r < 0) spookyTexValue.r = 0;
+	
+	
+	outputColour = vec4(spookyTexValue, 1.0f);
+	return;
+}
+
+
 
 //	gl_FragColor = vec4(color, 1.0);
 
@@ -205,7 +293,7 @@ void main()
 		vec3 maskValues = texture( maskSamplerTexture01, (textureCoords.st + uv_Offset_Scale.xy) * uv_Offset_Scale.z ).rgb;
 		float maskValue = maskValues.r + maskValues.g + maskValues.b; // Ensure it is pure black that gets removed
 		// If "black" then discard
-		if ( maskValue < 0.02f )
+		if ( maskValue < 0.1f )
 		{
 			discard;
 //			outputColour.rgba = vec4( 1.0f, 0.0f, 0.0f, 1.0f );
@@ -263,13 +351,21 @@ void main()
 	//outputColour.a = 1.0f;
 	//return;
 	
-
-	vec4 textureColour = 
+	
+	vec4 textureColour;
+	
+	if (bIsCamera)
+	{
+		textureColour = texture(textureOffScreen, textureCoords.st).rgba;
+	}
+	else
+	{
+		textureColour = 
 			  texture( texture_00, (textureCoords.st + uv_Offset_Scale.xy) * uv_Offset_Scale.z ).rgba * textureMixRatio_0_3.x 	
 			//+ texture( texture_01, textureCoords.st ).rgba * textureMixRatio_0_3.y
 			+ texture( texture_02, textureCoords.st ).rgba * textureMixRatio_0_3.z;
 			//+ texture( texture_03, textureCoords.st ).rgba * textureMixRatio_0_3.w;
-
+	}
 	// Make the 'vertex colour' the texture colour we sampled...
 	vec4 vertexRGBA = textureColour;	
 	
@@ -331,6 +427,47 @@ vec3 getFBOColour()
 	
 	return theColour;
 }
+
+
+int getDistToDistortion(vec2 textureCoords)
+{
+	//if (texture(spookyHeatMap, vec2(textureCoords.s + (50.0f / 1920.0f), textureCoords.t)).r > 0.0f) return 1;
+	//return -1;
+	
+	
+	
+	//vec3 spookValue = texture(spookyHeatMap, textureCoords.st).rgb;
+	//if (spookValue.r > 0) return 0;
+	
+//	int distOut = 0;
+	// Now scan out to find distance to effect, (max 10)
+	for(int i = 1; i < 20; i++)
+	{
+		float posOffsetS = i / screenWidthAndHeight.x;
+		float posOffsetT = i / screenWidthAndHeight.y;
+//		distOut++;
+		// Diagonal 1
+		if ( texture(spookyHeatMap, vec2(textureCoords.s - posOffsetS, textureCoords.t - posOffsetT)).r > 0) return i;
+		// Diagonal 2
+		if ( texture(spookyHeatMap, vec2(textureCoords.s + posOffsetS, textureCoords.t - posOffsetT)).r > 0) return i;
+		// Diagonal 3
+		if ( texture(spookyHeatMap, vec2(textureCoords.s - posOffsetS, textureCoords.t + posOffsetT)).r > 0) return i;
+		// Diagonal 4
+		if ( texture(spookyHeatMap, vec2(textureCoords.s + posOffsetS, textureCoords.t + posOffsetT)).r > 0) return i;
+		
+		// Cardinal 1
+		if ( texture(spookyHeatMap, vec2(textureCoords.s, textureCoords.t + posOffsetT)).r > 0) return i;
+		// Cardinal 2
+		if ( texture(spookyHeatMap, vec2(textureCoords.s, textureCoords.t - posOffsetT)).r > 0) return i;
+		// Cardinal 3
+		if ( texture(spookyHeatMap, vec2(textureCoords.s + posOffsetS, textureCoords.t)).r > 0) return i;
+		// Cardinal 4
+		if ( texture(spookyHeatMap, vec2(textureCoords.s - posOffsetS, textureCoords.t)).r > 0) return i;
+	}
+	
+	return -1; // Not in range
+}
+
 
 vec4 calculateLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 
                             vec3 vertexWorldPos, vec4 vertexSpecular )

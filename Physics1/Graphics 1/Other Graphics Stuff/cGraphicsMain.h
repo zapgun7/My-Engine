@@ -37,6 +37,7 @@ public:
 
 	bool Update(double deltaTime); // return false when window is triggered to close
 	bool Update2(double deltaTime);
+	bool UpdateProject(double deltaTime);
 	void Destroy();
 	//void addToDrawMesh(cMesh* newMesh);
 	void removeFromDrawMesh(int ID);
@@ -82,7 +83,10 @@ private:
 	bool LoadParticles(void);
 
 	// Draw Passes
-	void DrawPass_1(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec3 cameraEye, glm::vec3 cameraTarget);
+	void DrawPass_HeatMapReduction(GLuint shaderProgramID, int screenWidth, int screenHeight, double deltaTime);
+	void DrawPass_SpookyHeatmap(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec3 cameraEye, glm::vec3 cameraTarget);
+	void DrawPass_1(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec3 cameraEye, glm::vec3 cameraTarget, bool isPlayer);
+	void DrawPass_ApplySpook(GLuint shaderProgramID, int screenWidth, int screenHeight);
 	void DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int screeneight);
 
 
@@ -111,6 +115,8 @@ private:
 	glm::vec3 m_upVector;
 
 
+	float m_FOV = 1.2f;
+
 	cShaderManager* m_pShaderThing;
 	GLuint m_shaderProgramID;
 
@@ -137,6 +143,11 @@ private:
 	///////// FBO STUFF ///////////
 	cFBO* m_pFBO_1 = nullptr;
 	cFBO* m_pFBO_2 = nullptr;
+	cFBO* m_pFBO_3 = nullptr; // Spooky heatmap
+	cFBO* m_pFBO_4 = nullptr; // Applying spooky effect to main capture (fov messes up this step if done in FSQ which is at a lower fov)
+	cFBO* m_pFBO_5 = nullptr;
+	cFBO* m_pFBO_6 = nullptr;
+	cFBO* m_pFBO_7 = nullptr;
 
 
 

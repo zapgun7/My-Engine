@@ -7,7 +7,7 @@ cPhysics* cPhysics::m_pTheOnePhysics = nullptr;
 DWORD WINAPI ThreadedIntersectionLoop(LPVOID lpParamater)
 {
 	sThreadCollisionInfo* myInfo = (sThreadCollisionInfo*)lpParamater;
-	float t = 0;
+	float t = 0.0f;
 	//float soonestT = FLT_MAX;
 	glm::vec3 hn = glm::vec3(0.0f);
 	//glm::vec3 soonestHN = hn;
@@ -20,23 +20,22 @@ DWORD WINAPI ThreadedIntersectionLoop(LPVOID lpParamater)
 
 		for (unsigned int triIDX = 0; triIDX < myInfo->arraySize; triIDX++)
 		{
-			//if (!myInfo->thePhysics->m_TestMovingSphereTriangle(myInfo->theShape, &(myInfo->theTriangles[triIDX]), t, hn))
-			if (!cPhysics::m_TestMovingSphereTriangle(myInfo->theShape, &(myInfo->theTriangles[triIDX]), t, hn))
+			if (!myInfo->thePhysics->m_TestMovingSphereTriangle(myInfo->theShape, &(myInfo->theTriangles[triIDX]), t, hn))
+			//if (!cPhysics::m_TestMovingSphereTriangle(myInfo->theShape, &(myInfo->theTriangles[triIDX]), t, hn))
 			{
 				continue;
 			}
-			else
+
+			if (t < myInfo->soonestHit)
 			{
-				if (t < myInfo->soonestHit)
-				{
-					myInfo->soonestHit = t;
-					myInfo->hn = hn;
-				}
+				myInfo->soonestHit = t;
+				myInfo->hn = hn;
 			}
+
 		}
 		if (myInfo->soonestHit <= 1.0f)
 		{
-			myInfo->thePhysics->UpdateCollision(myInfo->soonestHit, myInfo->hn);
+			myInfo->thePhysics->UpdateCollision(myInfo->soonestHit, myInfo->hn, myInfo->ID);
 		}
 		myInfo->hasWork = false;
 		myInfo->soonestHit = FLT_MAX;
@@ -44,10 +43,22 @@ DWORD WINAPI ThreadedIntersectionLoop(LPVOID lpParamater)
 
 		while(!myInfo->hasWork)
 		{
-			Sleep(5);
+			Sleep(0);
 			//SleepEx(1, myInfo->hasWork);
 		}
 	}
+
+}
+
+// Multithreaded AABB generation
+DWORD WINAPI ThreadedAABBGeneration(LPVOID lpParamater)
+{
+	sThreadAABBGenInfo* myInfo = (sThreadAABBGenInfo*)lpParamater;
+
+	myInfo->theAABB->StartMakeTree(myInfo->theModel, myInfo->theMeshManager, myInfo->minTris);
+
+
+	return 1;
 }
 
 
@@ -76,6 +87,8 @@ int cPhysics::Initialize(void)
 	{
 		this->m_ThreadInfos[threadIDX].thePhysics = this->m_pTheOnePhysics;
 		this->m_ThreadInfos[threadIDX].theShape = nullptr;
+
+		this->m_ThreadInfos[threadIDX].ID = threadIDX;
 
 		void* pParams = (void*)(&(this->m_ThreadInfos[threadIDX]));
 
@@ -113,11 +126,11 @@ void cPhysics::setVAOManager(cVAOManager* pTheMeshManager)
 	return;
 }
 
-void cPhysics::UpdateCollision(float& t, glm::vec3& hn)
+void cPhysics::UpdateCollision(float& t, glm::vec3& hn, int& testID)
 {
 	while (!TryEnterCriticalSection(&(this->m_CollisionUpdate)))
 	{
-		Sleep(0);
+		Sleep(0); // Shouldn't have to wait long
 	}
 
 	if (t < this->m_pTheSoonestCollision->q)
@@ -125,6 +138,8 @@ void cPhysics::UpdateCollision(float& t, glm::vec3& hn)
 		this->m_pTheSoonestCollision->q = t;
 		this->m_pTheSoonestCollision->hitNorm = hn;
 	}
+
+	//printf("%d\n", testID);
 
 	LeaveCriticalSection(&(this->m_CollisionUpdate));
 }
@@ -139,16 +154,71 @@ void cPhysics::ToggleThreading(void)
 
 void cPhysics::generateAABBs(std::vector<std::string> models)
 {
+	const unsigned int MINTRICOUNT = 9000;
 	std::cout << "Generating AABBs..." << std::endl;
 
-	for (std::vector<std::string>::iterator itModel = models.begin();
-		 itModel != models.end();
-		 itModel++)
+	double timeBefore = glfwGetTime();
+	if (false)
 	{
-		cAABB* newAABB = new cAABB();
-		newAABB->StartMakeTree(*itModel, m_pMeshManager, 2000);
-		m_map_ModelAABBs[*itModel] = newAABB;
+
+		for (std::vector<std::string>::iterator itModel = models.begin();
+			itModel != models.end();
+			itModel++)
+		{
+			cAABB* newAABB = new cAABB();
+			newAABB->StartMakeTree(*itModel, m_pMeshManager, MINTRICOUNT);
+			m_map_ModelAABBs[*itModel] = newAABB;
+		}
+
+		double timeAfter = glfwGetTime();
+		printf("Old way took %f seconds\n", timeAfter - timeBefore);
+		return;
 	}
+
+	int modelCount = models.size();
+	// THREADING VERSION
+	sThreadAABBGenInfo* threadInfo = new sThreadAABBGenInfo[modelCount];
+	HANDLE* threadHandles = new HANDLE[modelCount];
+	DWORD* threadIDs = new DWORD[modelCount];
+	cAABB* theNewAABBs = new cAABB[modelCount];
+
+	for (unsigned int modelIdx = 0; modelIdx < modelCount; modelIdx++)
+	{
+		//cAABB* newAABB = new cAABB(); // Shoudl I let the threads make this? nah
+		threadInfo[modelIdx].minTris = MINTRICOUNT;
+		threadInfo[modelIdx].theAABB = &theNewAABBs[modelIdx];
+		threadInfo[modelIdx].theMeshManager = m_pMeshManager;
+		threadInfo[modelIdx].theModel = models[modelIdx];
+
+		void* pParams = (void*)(&(threadInfo[modelIdx]));
+
+		// Now spawn the thread
+		threadHandles[modelIdx] = CreateThread(
+			NULL,
+			0,
+			ThreadedAABBGeneration,
+			pParams,
+			0,
+			&(threadIDs[modelIdx]));
+	}
+
+	// As threads work, we can do one other thing in the mean time
+	for (unsigned int i = 0; i < modelCount; i++)
+	{
+		m_map_ModelAABBs[models[i]] = &theNewAABBs[i];
+	}
+
+
+	WaitForMultipleObjects(modelCount, threadHandles, true, INFINITE);
+
+
+	delete[] threadHandles;
+	delete[] threadIDs;
+	delete[] threadInfo;
+
+	double timeAfter = glfwGetTime();
+	printf("New way took %f seconds\n", timeAfter - timeBefore);
+	return;
 
 }
 
@@ -168,6 +238,7 @@ cSoftBodyVerlet* cPhysics::CreateVerlet(void)
 		glm::mat4 matTransform = glm::mat4(1.0f);
 
 		matTransform = glm::translate(matTransform, glm::vec3(-8.0f, 80.0f, -8.0f));
+		
 
 		// 		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		// 		matTransform = glm::rotate(matTransform, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));

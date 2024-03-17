@@ -465,7 +465,6 @@ void cSoftBodyVerlet::ApplyCollision(double deltaTime)
 						deltaMove = deltaMove - projSubVec2;
 
 						currPart->position = newPos;// -deltaMove;
-
 					}
 				}
 			}

@@ -1,0 +1,6360 @@
+{
+    "meshes": [
+        {
+            "meshName": "Big_Flat_Mesh.ply",
+            "friendlyName": "Floor",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                50.0
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 3
+        },
+        {
+            "meshName": "door.ply",
+            "friendlyName": "ViewingFrame1",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                3.609999895095825
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 4
+        },
+        {
+            "meshName": "Flat_1x1_plane.ply",
+            "friendlyName": "Window1",
+            "texNames": [
+                "red.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 0.1850000023841858,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 0.4000000059604645,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 5
+        },
+        {
+            "meshName": "Flat_1x1_plane.ply",
+            "friendlyName": "Window2",
+            "texNames": [
+                "purple.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 0.1850000023841858,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 0.4000000059604645,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 6
+        },
+        {
+            "meshName": "Flat_1x1_plane.ply",
+            "friendlyName": "S1",
+            "texNames": [
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 0.05000000074505806,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 7
+        },
+        {
+            "meshName": "Flat_1x1_plane.ply",
+            "friendlyName": "S2",
+            "texNames": [
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 0.05000000074505806,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 8
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall1",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 9
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall2",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 10
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall3",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 11
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall4",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 12
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall5",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 13
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall6",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 14
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall7",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 15
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall8",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 16
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall9",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 17
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall10",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 18
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall11",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 19
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall12",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 20
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall13",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 21
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall14",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 22
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall15",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 23
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall16",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 24
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall17",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 25
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall18",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 26
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall19",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 27
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall20",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 28
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall21",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 29
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall22",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 30
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall23",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 31
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall24",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 32
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall25",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 33
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall26",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 34
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall27",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 35
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall28",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 36
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall29",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 37
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall30",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 38
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall31",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 39
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall32",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 40
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall33",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 41
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall34",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 42
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall35",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 43
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall36",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 44
+        },
+        {
+            "meshName": "bslab.ply",
+            "friendlyName": "Wall37",
+            "texNames": [
+                "wall_texture.bmp",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##",
+                "##"
+            ],
+            "texRatios": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "uv_OS": [
+                0.0,
+                0.0,
+                2.7799999713897705
+            ],
+            "uv_Spd": [
+                0.0,
+                0.0
+            ],
+            "scale": 1.0,
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 45
+        }
+    ],
+    "phys": [
+        {
+            "friendlyName": "Floor",
+            "shape_t": 0,
+            "pos": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 3,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "ViewingFrame1",
+            "shape_t": 0,
+            "pos": [
+                0.0,
+                3.5999999046325684,
+                0.0
+            ],
+            "ori": [
+                0.0,
+                89.98021697998047,
+                0.0
+            ],
+            "ID": 4,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Window1",
+            "shape_t": 0,
+            "pos": [
+                3.6500000953674316,
+                0.949999988079071,
+                0.0
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 5,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Window2",
+            "shape_t": 0,
+            "pos": [
+                -2.3499999046325684,
+                0.949999988079071,
+                0.0
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 6,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "S1",
+            "shape_t": 0,
+            "pos": [
+                -6.300000190734863,
+                13.100000381469727,
+                -12.149999618530273
+            ],
+            "ori": [
+                63.86900329589844,
+                63.514244079589844,
+                -179.99818420410156
+            ],
+            "ID": 7,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "S2",
+            "shape_t": 0,
+            "pos": [
+                -7.300000190734863,
+                13.100000381469727,
+                11.399999618530273
+            ],
+            "ori": [
+                -116.1097183227539,
+                62.79197311401367,
+                0.00018673042359296232
+            ],
+            "ID": 8,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall1",
+            "shape_t": 0,
+            "pos": [
+                1.149999976158142,
+                10.050000190734863,
+                -19.799999237060547
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 9,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall2",
+            "shape_t": 0,
+            "pos": [
+                16.049999237060547,
+                10.050000190734863,
+                -34.349998474121094
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 10,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall3",
+            "shape_t": 0,
+            "pos": [
+                35.95000076293945,
+                10.050000190734863,
+                -34.349998474121094
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 11,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall4",
+            "shape_t": 0,
+            "pos": [
+                50.70000076293945,
+                10.050000190734863,
+                -19.799999237060547
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 12,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall5",
+            "shape_t": 0,
+            "pos": [
+                50.70000076293945,
+                10.050000190734863,
+                -0.05000000074505806
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 13,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall6",
+            "shape_t": 0,
+            "pos": [
+                50.70000076293945,
+                10.050000190734863,
+                19.950000762939453
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 14,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall7",
+            "shape_t": 0,
+            "pos": [
+                50.70000076293945,
+                10.050000190734863,
+                39.900001525878906
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 15,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall8",
+            "shape_t": 0,
+            "pos": [
+                50.70000076293945,
+                10.050000190734863,
+                59.75
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 16,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall9",
+            "shape_t": 0,
+            "pos": [
+                35.95000076293945,
+                10.050000190734863,
+                74.75
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 17,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall10",
+            "shape_t": 0,
+            "pos": [
+                16.049999237060547,
+                10.050000190734863,
+                74.75
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 18,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall11",
+            "shape_t": 0,
+            "pos": [
+                -3.8499999046325684,
+                10.050000190734863,
+                74.75
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 19,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall12",
+            "shape_t": 0,
+            "pos": [
+                -23.850000381469727,
+                10.050000190734863,
+                74.75
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 20,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall13",
+            "shape_t": 0,
+            "pos": [
+                -43.70000076293945,
+                10.050000190734863,
+                74.75
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 21,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall14",
+            "shape_t": 0,
+            "pos": [
+                -63.650001525878906,
+                10.050000190734863,
+                74.75
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 22,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall15",
+            "shape_t": 0,
+            "pos": [
+                -83.6500015258789,
+                10.050000190734863,
+                74.75
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 23,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall16",
+            "shape_t": 0,
+            "pos": [
+                -98.44999694824219,
+                10.050000190734863,
+                59.75
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 24,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall17",
+            "shape_t": 0,
+            "pos": [
+                -98.44999694824219,
+                10.050000190734863,
+                39.849998474121094
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 25,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall18",
+            "shape_t": 0,
+            "pos": [
+                -98.44999694824219,
+                10.050000190734863,
+                19.899999618530273
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 26,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall19",
+            "shape_t": 0,
+            "pos": [
+                -98.44999694824219,
+                10.050000190734863,
+                0.10000000149011612
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 27,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall20",
+            "shape_t": 0,
+            "pos": [
+                -98.44999694824219,
+                10.050000190734863,
+                -19.75
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 28,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall21",
+            "shape_t": 0,
+            "pos": [
+                -83.6500015258789,
+                10.050000190734863,
+                -34.650001525878906
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 29,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall22",
+            "shape_t": 0,
+            "pos": [
+                -63.849998474121094,
+                10.050000190734863,
+                -34.650001525878906
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 30,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall23",
+            "shape_t": 0,
+            "pos": [
+                -43.95000076293945,
+                10.050000190734863,
+                -34.650001525878906
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 31,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall24",
+            "shape_t": 0,
+            "pos": [
+                -24.049999237060547,
+                10.050000190734863,
+                -34.650001525878906
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 32,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall25",
+            "shape_t": 0,
+            "pos": [
+                -4.150000095367432,
+                10.050000190734863,
+                -34.650001525878906
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 33,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall26",
+            "shape_t": 0,
+            "pos": [
+                9.449999809265137,
+                10.050000190734863,
+                14.949999809265137
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 34,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall27",
+            "shape_t": 0,
+            "pos": [
+                14.449999809265137,
+                10.050000190734863,
+                29.950000762939453
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 35,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall28",
+            "shape_t": 0,
+            "pos": [
+                9.449999809265137,
+                10.050000190734863,
+                44.95000076293945
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 36,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall29",
+            "shape_t": 0,
+            "pos": [
+                -10.5,
+                10.050000190734863,
+                44.95000076293945
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 37,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall30",
+            "shape_t": 0,
+            "pos": [
+                -30.399999618530273,
+                10.050000190734863,
+                44.95000076293945
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 38,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall31",
+            "shape_t": 0,
+            "pos": [
+                -50.400001525878906,
+                10.050000190734863,
+                44.95000076293945
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 39,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall32",
+            "shape_t": 0,
+            "pos": [
+                -65.3499984741211,
+                10.050000190734863,
+                39.849998474121094
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 40,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall33",
+            "shape_t": 0,
+            "pos": [
+                -65.3499984741211,
+                10.050000190734863,
+                19.850000381469727
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 41,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall34",
+            "shape_t": 0,
+            "pos": [
+                -65.3499984741211,
+                10.050000190734863,
+                -0.10000000149011612
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 42,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall35",
+            "shape_t": 0,
+            "pos": [
+                -50.45000076293945,
+                10.050000190734863,
+                -5.099999904632568
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 43,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall36",
+            "shape_t": 0,
+            "pos": [
+                -45.400001525878906,
+                10.050000190734863,
+                9.850000381469727
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 44,
+            "inv_mass": 1.0
+        },
+        {
+            "friendlyName": "Wall37",
+            "shape_t": 0,
+            "pos": [
+                -45.599998474121094,
+                10.050000190734863,
+                29.850000381469727
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 45,
+            "inv_mass": 1.0
+        }
+    ],
+    "lights": [
+        {
+            "friendlyname": "GenLight1",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.10000000149011612,
+                -0.30000001192092896,
+                0.10000000149011612,
+                0.0
+            ],
+            "param1": [
+                2.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "GenLight2",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                -0.05000000074505806,
+                0.20000000298023224,
+                -0.05000000074505806,
+                0.0
+            ],
+            "param1": [
+                2.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Point1",
+            "position": [
+                26.190000534057617,
+                15.300000190734863,
+                -6.840000152587891,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                0.10000000149011612,
+                0.10000000149011612,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                1.0,
+                0.0010000000474974513,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Point2",
+            "position": [
+                33.119998931884766,
+                10.949999809265137,
+                28.799999237060547,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                0.10000000149011612,
+                0.10000000149011612,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                1.0,
+                0.10000000149011612,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Point3",
+            "position": [
+                33.505001068115234,
+                10.600000381469727,
+                59.42499923706055,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                0.10000000149011612,
+                0.10000000149011612,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                1.0,
+                0.10000000149011612,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Point4",
+            "position": [
+                -6.789999961853027,
+                8.670000076293945,
+                59.404998779296875,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                0.10000000149011612,
+                0.10000000149011612,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                1.0,
+                0.10000000149011612,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Point5",
+            "position": [
+                -45.880001068115234,
+                10.899999618530273,
+                60.165000915527344,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                0.10000000149011612,
+                0.10000000149011612,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                1.0,
+                0.10000000149011612,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Point6",
+            "position": [
+                -80.5199966430664,
+                9.960000038146973,
+                57.59000015258789,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                0.10000000149011612,
+                0.10000000149011612,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                1.0,
+                0.10000000149011612,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Point7",
+            "position": [
+                -81.4000015258789,
+                11.734999656677246,
+                20.385000228881836,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                0.10000000149011612,
+                0.10000000149011612,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                1.0,
+                0.10000000149011612,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Point8",
+            "position": [
+                -81.55000305175781,
+                8.149999618530273,
+                -19.75,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                0.10000000149011612,
+                0.10000000149011612,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                1.0,
+                0.10000000149011612,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Point9",
+            "position": [
+                -45.29499816894531,
+                9.979999542236328,
+                -20.75,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                0.10000000149011612,
+                0.10000000149011612,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                1.0,
+                0.10000000149011612,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Point10",
+            "position": [
+                -20.2450008392334,
+                9.5,
+                -16.020000457763672,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                0.10000000149011612,
+                0.10000000149011612,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                1.0,
+                0.10000000149011612,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Point11",
+            "position": [
+                -20.604999542236328,
+                9.800000190734863,
+                10.779999732971191,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                0.10000000149011612,
+                0.10000000149011612,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                1.0,
+                0.10000000149011612,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Point12",
+            "position": [
+                -8.845000267028809,
+                9.550000190734863,
+                29.264999389648438,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                0.10000000149011612,
+                0.10000000149011612,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                1.0,
+                0.10000000149011612,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Spot1",
+            "position": [
+                25.75,
+                23.3799991607666,
+                -7.050000190734863,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.10000000149011612,
+                0.009999999776482582,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                1.0,
+                15.0,
+                30.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Spot2",
+            "position": [
+                32.28499984741211,
+                25.15999984741211,
+                27.25,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.10000000149011612,
+                0.009999999776482582,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                1.0,
+                15.0,
+                30.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Spot3",
+            "position": [
+                33.5,
+                22.049999237060547,
+                59.45000076293945,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.10000000149011612,
+                0.009999999776482582,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                1.0,
+                15.0,
+                30.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Spot4",
+            "position": [
+                -6.900000095367432,
+                21.5,
+                60.29999923706055,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.10000000149011612,
+                0.009999999776482582,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                1.0,
+                15.0,
+                30.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Spot5",
+            "position": [
+                -46.099998474121094,
+                22.18000030517578,
+                60.01499938964844,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.10000000149011612,
+                0.009999999776482582,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                1.0,
+                15.0,
+                30.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Spot6",
+            "position": [
+                -80.12000274658203,
+                21.079999923706055,
+                57.599998474121094,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.10000000149011612,
+                0.009999999776482582,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                1.0,
+                15.0,
+                30.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Spot7",
+            "position": [
+                -82.5,
+                21.899999618530273,
+                19.75,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.10000000149011612,
+                0.009999999776482582,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                1.0,
+                15.0,
+                30.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Spot8",
+            "position": [
+                -81.69999694824219,
+                21.604999542236328,
+                -19.5,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.10000000149011612,
+                0.009999999776482582,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                1.0,
+                15.0,
+                30.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Spot9",
+            "position": [
+                -46.0,
+                21.450000762939453,
+                -20.799999237060547,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.10000000149011612,
+                0.009999999776482582,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                1.0,
+                15.0,
+                30.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Spot10",
+            "position": [
+                -21.200000762939453,
+                21.899999618530273,
+                -16.200000762939453,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.10000000149011612,
+                0.009999999776482582,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                1.0,
+                15.0,
+                30.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Spot11",
+            "position": [
+                -20.399999618530273,
+                22.549999237060547,
+                10.25,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.10000000149011612,
+                0.009999999776482582,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                1.0,
+                15.0,
+                30.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "Spot12",
+            "position": [
+                -9.050000190734863,
+                22.350000381469727,
+                29.350000381469727,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.10000000149011612,
+                0.009999999776482582,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                1.0,
+                15.0,
+                30.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        }
+    ]
+}
