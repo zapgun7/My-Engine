@@ -38,8 +38,8 @@ struct sVertex_p4t4n4b4w4
 struct sBoneInfo
 {
 	glm::mat4 BoneOffset;// = glm::mat4(1.0f);				// Offset from the parent bone/node
-	glm::mat4 FinalTransformation;// = glm::mat4(1.0f);		// Calculated transformation used for rendering
-	glm::mat4 GlobalTransformation;// = glm::mat4(1.0f);		// used for the bone hierarchy transformation calculations when animating
+	glm::mat4 FinalTransformation = glm::mat4(1.0f);		// Calculated transformation used for rendering
+	glm::mat4 GlobalTransformation = glm::mat4(1.0f);		// used for the bone hierarchy transformation calculations when animating
 };
 
 // Connection Node for hierarchy

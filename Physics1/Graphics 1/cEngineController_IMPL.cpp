@@ -77,7 +77,7 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
 	std::vector<std::string> tempModelVec;
 	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
-	this->m_pThePhysics->generateAABBs(tempModelVec);
+	//this->m_pThePhysics->generateAABBs(tempModelVec);
 	
 	this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
@@ -134,12 +134,12 @@ bool cEngineController_IMPL::Initialize(void)
 
 
 	// Make boned character
-// 	cMesh* bonedBoy = new cMesh();
-// 	bonedBoy->meshName = "Adventurer Aland@Idle.FBX";
-// 	bonedBoy->friendlyName = "a";
+ 	cMesh* bonedBoy = new cMesh();
+ 	bonedBoy->meshName = "Adventurer Aland@Idle.FBX";
+ 	bonedBoy->friendlyName = "a";
 
-	//m_pTheGraphics->addNewMesh(bonedBoy);
-	m_pTheSceneManager->loadScene("test4");
+	m_pTheGraphics->addNewMesh(bonedBoy);
+	//m_pTheSceneManager->loadScene("test4");
 	if (false)
 	{
 		//m_pTheSceneManager->loadScene("FacilityScreens3");

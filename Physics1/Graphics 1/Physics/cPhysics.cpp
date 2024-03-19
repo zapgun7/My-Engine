@@ -154,11 +154,10 @@ void cPhysics::ToggleThreading(void)
 
 void cPhysics::generateAABBs(std::vector<std::string> models)
 {
-	const unsigned int MINTRICOUNT = 9000;
+	const unsigned int MINTRICOUNT = 2000;
 	std::cout << "Generating AABBs..." << std::endl;
 
-	double timeBefore = glfwGetTime();
-	if (false)
+	if (true)
 	{
 
 		for (std::vector<std::string>::iterator itModel = models.begin();
@@ -170,8 +169,6 @@ void cPhysics::generateAABBs(std::vector<std::string> models)
 			m_map_ModelAABBs[*itModel] = newAABB;
 		}
 
-		double timeAfter = glfwGetTime();
-		printf("Old way took %f seconds\n", timeAfter - timeBefore);
 		return;
 	}
 
@@ -216,8 +213,6 @@ void cPhysics::generateAABBs(std::vector<std::string> models)
 	delete[] threadIDs;
 	delete[] threadInfo;
 
-	double timeAfter = glfwGetTime();
-	printf("New way took %f seconds\n", timeAfter - timeBefore);
 	return;
 
 }

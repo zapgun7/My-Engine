@@ -1,11 +1,23 @@
 Big_Flat_Mesh.ply
 Flat_1x1_plane.ply
 Sphere_1_unit_Radius.ply
+rusty_ship.ply
 Terrain.ply
+Icosahedron.ply
 Quad_1_sided_aligned_on_XY_plane.ply
-Terrain2.ply
-Terrain3.ply
-Terrain4.ply
-Terrain5.ply
-Terrain6.ply
-Terrain7.ply
+box.ply
+cone.ply
+cone1.ply
+cone2.ply
+slab.ply
+bslab.ply
+cube9.ply
+door.ply
+pillar.ply
+ramp.ply
+sramp.ply
+wall corner1.ply
+sphere.ply
+sphere2.ply
+plat.ply
+Adventurer Aland@Idle.FBX

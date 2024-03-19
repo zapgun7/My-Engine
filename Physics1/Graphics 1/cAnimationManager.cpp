@@ -96,8 +96,7 @@ void cAnimationManager::Update(double dt)
 // 	//m_pVAOManager->UpdateVAOBuffers(model->meshName, *model, 0);
 // 	m_pVAOManager->UpdateBoneShit(model->meshName, *model, 0);
 
-//	return;
-
+	return;
 
 	for (sAnimInfo* currAnim : m_Animations) // Go through all animations
 	{
