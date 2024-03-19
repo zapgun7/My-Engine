@@ -88,13 +88,13 @@ void cAnimationManager::Update(double dt)
 // 	if (!m_bIsRunning) return;
 // 	dt *= m_TimeScale;
 	
-// 	glm::mat4 tempMat = glm::mat4(1.0f);
-// 	m_BonedAnimations[0]->TimeSoFar += dt;
-// 	CalculateMatrices(m_BonedAnimations[0], m_BonedAnimations[0]->rootNode, tempMat, m_BonedAnimations[0]->TimeSoFar);
-// 
-// 	sModelDrawInfo* model = &(m_BonedAnimations[0]->theModel);
-// 	//m_pVAOManager->UpdateVAOBuffers(model->meshName, *model, 0);
-// 	m_pVAOManager->UpdateBoneShit(model->meshName, *model, 0);
+	glm::mat4 tempMat = glm::mat4(1.0f);
+	m_BonedAnimations[0]->TimeSoFar += dt;
+	CalculateMatrices(m_BonedAnimations[0], m_BonedAnimations[0]->rootNode, tempMat, m_BonedAnimations[0]->TimeSoFar);
+
+	sModelDrawInfo* model = &(m_BonedAnimations[0]->theModel);
+	//m_pVAOManager->UpdateVAOBuffers(model->meshName, *model, 0);
+	m_pVAOManager->UpdateBoneShit(model->meshName, *model, 0);
 
 	return;
 
@@ -769,7 +769,7 @@ void cAnimationManager::CalculateMatrices(sBonedAnimation* animation, sNode* nod
 	if (boneMapIt != model->BoneNameToIdMap.end())
 	{
 		sBoneInfo& boneInfo = model->BoneInfoVec[boneMapIt->second];
-		boneInfo.FinalTransformation = model->GlobalInverseTransformation * globalTransformation * boneInfo.BoneOffset;
+		boneInfo.FinalTransformation = model->GlobalInverseTransformation * globalTransformation/* * boneInfo.BoneOffset*/;
 		boneInfo.GlobalTransformation = globalTransformation;
 	}
 
