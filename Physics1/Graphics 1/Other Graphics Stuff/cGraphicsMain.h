@@ -76,6 +76,8 @@ private:
 	cGraphicsMain();
 	bool Initialize();
 
+	int GenerateUBOs(void);
+
 	cMesh* m_pFindMeshByFriendlyName(std::string friendlyNameToFind);
 	void DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GLuint shaderProgramID);
 	bool LoadModels(void);
@@ -149,6 +151,14 @@ private:
 	cFBO* m_pFBO_6 = nullptr;
 	cFBO* m_pFBO_7 = nullptr;
 
+
+
+	///////// UBO Variables //////////
+
+	unsigned int m_UBOMatrices;
+
+
+	////////////////////////////////////
 
 
 	////////// VERLET DRAWING ///////

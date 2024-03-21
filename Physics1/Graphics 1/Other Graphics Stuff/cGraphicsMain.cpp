@@ -81,8 +81,8 @@ bool cGraphicsMain::Initialize()
 	const char* glsl_version = "#version 130";
 
 	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // This causes cubemap creation to crash on my laptop
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
 
 	m_window = glfwCreateWindow(640, 480, "Ausgine Render", NULL, NULL);
@@ -281,6 +281,19 @@ bool cGraphicsMain::Initialize()
 
 
 
+
+int cGraphicsMain::GenerateUBOs(void)
+{
+	glGenBuffers(1, &m_UBOMatrices);
+	glBindBuffer(GL_UNIFORM_BUFFER, m_UBOMatrices);
+	glBufferData(GL_UNIFORM_BUFFER, 2 * (sizeof(glm::mat4)), NULL, GL_STATIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+	// Bind buffer to binding point 0
+	glBindBufferRange(GL_UNIFORM_BUFFER, 0, m_UBOMatrices, 0, 2 * sizeof(glm::mat4));
+
+	return 1;
+}
 
 bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not really a loop, just gets called every tick
 {
@@ -598,12 +611,12 @@ bool cGraphicsMain::Update2(double deltaTime)
 
 
 	{
+		float ratio;
+		ratio = m_pFBO_1->width / (float)m_pFBO_1->height;
+
 		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_1->ID);
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		float ratio;
-		//int width, height;
-
-		ratio = m_pFBO_1->width / (float)m_pFBO_1->height;
+		
 		glViewport(0, 0, m_pFBO_1->width, m_pFBO_1->height);
 
 		m_pFBO_1->clearBuffers(true, true);
@@ -1609,26 +1622,32 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 	glUniform4f(eyeLocation_UL,
 		sceneEye.x, sceneEye.y, sceneEye.z, 1.0f);
 
-
+	// Set Camera Matrices
+	glm::mat4 projMat = glm::perspective(glm::radians(90.0f), ratio, 0.1f, 1100.0f);
+	glm::mat4 viewMat = glm::lookAt(sceneEye, sceneEye + sceneTarget, m_upVector);
+	glBindBuffer(GL_UNIFORM_BUFFER, m_UBOMatrices);
+	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projMat));
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewMat));
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	//       //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-	glm::mat4 matProjection = glm::perspective(m_FOV,
-		ratio,
-		0.1f,
-		1100.0f); // n/f plane
+// 	glm::mat4 matProjection = glm::perspective(m_FOV,
+// 		ratio,
+// 		0.1f,
+// 		1100.0f); // n/f plane
 
 
-	glm::mat4 matView = glm::lookAt(sceneEye,
-		sceneEye + sceneTarget,
-		m_upVector);
+// 	glm::mat4 matView = glm::lookAt(sceneEye,
+// 		sceneEye + sceneTarget,
+// 		m_upVector);
 
 
 
-	GLint matProjection_UL = glGetUniformLocation(m_shaderProgramID, "matProjection");
-	glUniformMatrix4fv(matProjection_UL, 1, GL_FALSE, glm::value_ptr(matProjection));
-
-	GLint matView_UL = glGetUniformLocation(m_shaderProgramID, "matView");
-	glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(matView));
+// 	GLint matProjection_UL = glGetUniformLocation(m_shaderProgramID, "matProjection");
+// 	glUniformMatrix4fv(matProjection_UL, 1, GL_FALSE, glm::value_ptr(matProjection));
+// 
+// 	GLint matView_UL = glGetUniformLocation(m_shaderProgramID, "matView");
+// 	glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(matView));
 
 	/////////// UV OFFSET UPDATE /////////////
 // 	for (unsigned int i = 0; i < m_vec_pAllMeshes.size(); i++)
@@ -2022,22 +2041,29 @@ void cGraphicsMain::DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int sc
 		FSQ_CameraEye.x, FSQ_CameraEye.y, FSQ_CameraEye.z, 1.0f);
 
 
+	// Set Camera Matrices
+	glm::mat4 projMat = glm::perspective(0.6f, ratio, 0.1f, 100.0f);
+	glm::mat4 viewMat = glm::lookAt(FSQ_CameraEye, FSQ_CameraTarget, m_upVector);
+	glBindBuffer(GL_UNIFORM_BUFFER, m_UBOMatrices);
+	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projMat));
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewMat));
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	//       //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-	glm::mat4 matProjection = glm::perspective(0.6f,
-		ratio,
-		0.1f,        // Near (as big)
-		100.0f);    // Far (as small)
-
-	glm::mat4 matView = glm::lookAt(FSQ_CameraEye,
-		FSQ_CameraTarget,
-		m_upVector);
-
-	GLint matProjection_UL = glGetUniformLocation(shaderProgramID, "matProjection");
-	glUniformMatrix4fv(matProjection_UL, 1, GL_FALSE, glm::value_ptr(matProjection));
-
-	GLint matView_UL = glGetUniformLocation(shaderProgramID, "matView");
-	glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(matView));
+// 	glm::mat4 matProjection = glm::perspective(0.6f,
+// 		ratio,
+// 		0.1f,        // Near (as big)
+// 		100.0f);    // Far (as small)
+// 
+// 	glm::mat4 matView = glm::lookAt(FSQ_CameraEye,
+// 		FSQ_CameraTarget,
+// 		m_upVector);
+// 
+// 	GLint matProjection_UL = glGetUniformLocation(shaderProgramID, "matProjection");
+// 	glUniformMatrix4fv(matProjection_UL, 1, GL_FALSE, glm::value_ptr(matProjection));
+// 
+// 	GLint matView_UL = glGetUniformLocation(shaderProgramID, "matView");
+// 	glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(matView));
 
 	// Set up the textures for this offscreen quad
 	//uniform bool bIsOffScreenTextureQuad;

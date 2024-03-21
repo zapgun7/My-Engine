@@ -87,7 +87,7 @@ void cAnimationManager::Update(double dt)
 {
 // 	if (!m_bIsRunning) return;
 // 	dt *= m_TimeScale;
-	
+	return;
 	glm::mat4 tempMat = glm::mat4(1.0f);
 	m_BonedAnimations[0]->TimeSoFar += dt;
 	CalculateMatrices(m_BonedAnimations[0], m_BonedAnimations[0]->rootNode, tempMat, m_BonedAnimations[0]->TimeSoFar);

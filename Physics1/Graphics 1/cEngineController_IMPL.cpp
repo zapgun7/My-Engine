@@ -134,13 +134,13 @@ bool cEngineController_IMPL::Initialize(void)
 
 
 	// Make boned character
- 	cMesh* bonedBoy = new cMesh();
- 	bonedBoy->meshName = "Adventurer Aland@Idle.FBX";
- 	bonedBoy->friendlyName = "a";
-
-	m_pTheGraphics->addNewMesh(bonedBoy);
+//  	cMesh* bonedBoy = new cMesh();
+//  	bonedBoy->meshName = "Adventurer Aland@Idle.FBX";
+//  	bonedBoy->friendlyName = "a";
+// 
+// 	m_pTheGraphics->addNewMesh(bonedBoy);
 	//m_pTheSceneManager->loadScene("test4");
-	if (false)
+	if (false) // Setup for soft-bodied example
 	{
 		//m_pTheSceneManager->loadScene("FacilityScreens3");
 
