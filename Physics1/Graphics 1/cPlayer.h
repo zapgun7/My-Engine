@@ -10,6 +10,7 @@
 #include "Other Graphics Stuff/OpenGLCommon.h"
 #include "cInputHandler.h"
 #include "Physics/Verlet/cSoftBodyVerlet.h"
+#include "cSoundLuaBrain.h"
 
 #include "cEngineController.h"
 
@@ -37,6 +38,7 @@ public:
 
 private:
 	void Kick(glm::vec3& hitNorm, glm::vec3& lookVec);
+	void StepSound(void);
 
 
 	eCameraType m_CameraType = FLYCAM;
@@ -45,6 +47,8 @@ private:
 	cSoftBodyVerlet* m_pPlayerVerlet = nullptr;
 
 	cPhysics* m_pThePhysics; // ONLY FOR TESTS OKAY?????
+
+	cSoundLuaBrain* m_pLuaSoundCall;
 
 
 	cEngineController* m_pEngineController;

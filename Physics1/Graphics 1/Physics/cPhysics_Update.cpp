@@ -233,9 +233,14 @@ void cPhysics::Update(double deltaTime)
 					case sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT:
 						if (this->m_Capsule_TriMeshIndirect_IntersectionTest(pObjectA, pObjectB, newCollision))
 						{
-							if (newCollision.q < theCollision.q)
-								theCollision = newCollision;
-							didCollide = true;
+// 							if (newCollision.q < theCollision.q)
+// 								theCollision = newCollision;
+// 							didCollide = true;
+							if (m_pTheSoonestCollision->q < theCollision.q)
+							{
+								theCollision = *m_pTheSoonestCollision;
+								didCollide = true;
+							}
 						}
 						break;
 					}

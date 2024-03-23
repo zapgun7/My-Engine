@@ -1,0 +1,3 @@
+demoman_laugh.mp3
+woodstep1.ogg
+woodstep2.ogg

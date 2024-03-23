@@ -274,6 +274,8 @@ bool cGraphicsMain::Initialize()
 	}
 
 
+	GenerateUBOs();
+
 	return 1;
 }
 
@@ -1155,6 +1157,7 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 	GLint useBonesFrag_UL = glGetUniformLocation(shaderProgramID, "bUseBonesFrag");
 	if (pCurrentMesh->friendlyName == "a") // Boned model
 	{
+		glDisable(GL_CULL_FACE);
 		sModelDrawInfo theModel;
 		m_pMeshManager->FindDrawInfoByModelName(pCurrentMesh->meshName, theModel);
 		for (unsigned int i = 0; i < theModel.BoneInfoVec.size(); i++)

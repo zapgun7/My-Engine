@@ -163,8 +163,9 @@
     <ClCompile Include="cParticleSystem.cpp" />
     <ClCompile Include="cPlayer.cpp" />
     <ClCompile Include="cSceneManagement.cpp" />
+    <ClCompile Include="cSoundLuaBrain.cpp" />
+    <ClCompile Include="cSoundLuaCommands.cpp" />
     <ClCompile Include="cSoundManager.cpp" />
-    <ClCompile Include="cSoundUtils.cpp" />
     <ClCompile Include="cVAOManager\cVAOManager.cpp" />
     <ClCompile Include="Lua\cCommandFactory.cpp" />
     <ClCompile Include="Lua\cCommandGroup.cpp" />
@@ -220,8 +221,8 @@
     <ClInclude Include="cParticleManager.h" />
     <ClInclude Include="cParticleSystem.h" />
     <ClInclude Include="cPlayer.h" />
+    <ClInclude Include="cSoundLuaBrain.h" />
     <ClInclude Include="cSoundManager.h" />
-    <ClInclude Include="cSoundUtils.h" />
     <ClInclude Include="cVAOManager\cVAOManager.h" />
     <ClInclude Include="cVAOManager\sModelDrawInfo.h" />
     <ClInclude Include="glmCommon.h" />

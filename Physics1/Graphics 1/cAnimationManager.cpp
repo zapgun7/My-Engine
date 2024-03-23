@@ -89,7 +89,7 @@ void cAnimationManager::Update(double dt)
 // 	dt *= m_TimeScale;
 	return;
 	glm::mat4 tempMat = glm::mat4(1.0f);
-	m_BonedAnimations[0]->TimeSoFar += dt;
+	m_BonedAnimations[0]->TimeSoFar += dt * m_BonedAnimations[0]->TicksPerSecond;
 	CalculateMatrices(m_BonedAnimations[0], m_BonedAnimations[0]->rootNode, tempMat, m_BonedAnimations[0]->TimeSoFar);
 
 	sModelDrawInfo* model = &(m_BonedAnimations[0]->theModel);
@@ -730,6 +730,7 @@ void cAnimationManager::CalculateMatrices(sBonedAnimation* animation, sNode* nod
 	sAnimInfo* data  = animation->FindNodeData(node->Name);
 
 	if (data != nullptr)
+	//if (false)
 	{
 		 glm::vec3 position = GetAnimationPosition(data->mveKeyFrames, keyFrameTime);	/// POSITION update in previous function
 		 glm::vec3 scale = GetAnimationPosition(data->sclKeyFrames, keyFrameTime);		/// SCALE from your project
@@ -769,7 +770,7 @@ void cAnimationManager::CalculateMatrices(sBonedAnimation* animation, sNode* nod
 	if (boneMapIt != model->BoneNameToIdMap.end())
 	{
 		sBoneInfo& boneInfo = model->BoneInfoVec[boneMapIt->second];
-		boneInfo.FinalTransformation = model->GlobalInverseTransformation * globalTransformation/* * boneInfo.BoneOffset*/;
+		boneInfo.FinalTransformation = model->GlobalInverseTransformation * globalTransformation * boneInfo.BoneOffset;
 		boneInfo.GlobalTransformation = globalTransformation;
 	}
 

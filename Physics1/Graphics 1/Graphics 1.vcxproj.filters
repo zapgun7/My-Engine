@@ -77,6 +77,9 @@
     <Filter Include="Physics\Verlet">
       <UniqueIdentifier>{d2984273-e0fb-4780-9391-8e0c75d3d178}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Audio\Lua">
+      <UniqueIdentifier>{9dc5746b-4528-499a-a715-3da2af0cceb6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Basic Shader Manager\cShaderManager.cpp">
@@ -147,12 +150,6 @@
     </ClCompile>
     <ClCompile Include="cPlayer.cpp">
       <Filter>Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="cSoundManager.cpp">
-      <Filter>Audio</Filter>
-    </ClCompile>
-    <ClCompile Include="cSoundUtils.cpp">
-      <Filter>Audio</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager\C24BitBMPpixel.cpp">
       <Filter>Graphics Engine\TextureManager</Filter>
@@ -244,6 +241,15 @@
     <ClCompile Include="Physics\Verlet\cSoftBodyVerlet.cpp">
       <Filter>Physics\Verlet</Filter>
     </ClCompile>
+    <ClCompile Include="cSoundManager.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="cSoundLuaBrain.cpp">
+      <Filter>Audio\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="cSoundLuaCommands.cpp">
+      <Filter>Audio\Lua</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basic Shader Manager\cShaderManager.h">
@@ -311,12 +317,6 @@
     </ClInclude>
     <ClInclude Include="cPlayer.h">
       <Filter>Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="cSoundManager.h">
-      <Filter>Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="cSoundUtils.h">
-      <Filter>Audio</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager\C24BitBMPpixel.h">
       <Filter>Graphics Engine\TextureManager</Filter>
@@ -416,6 +416,12 @@
     </ClInclude>
     <ClInclude Include="glmCommon.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cSoundManager.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="cSoundLuaBrain.h">
+      <Filter>Audio\Lua</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

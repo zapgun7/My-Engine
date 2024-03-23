@@ -859,10 +859,15 @@ bool cPhysics::m_Capsule_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pC
 
 	if (earliestTime <= 1.0f)
 	{
-		returnCollision.q = earliestTime;
-		returnCollision.collisionObject = pTriMesh_General;
+// 		returnCollision.q = earliestTime;
+// 		returnCollision.collisionObject = pTriMesh_General;
+// 		hitNorm = (matModelR * glm::vec4(hitNorm, 1.0f));
+// 		returnCollision.hitNorm = hitNorm;
+// 		return true;
+		this->m_pTheSoonestCollision->q = earliestTime;
+		this->m_pTheSoonestCollision->collisionObject = pTriMesh_General;
 		hitNorm = (matModelR * glm::vec4(hitNorm, 1.0f));
-		returnCollision.hitNorm = hitNorm;
+		this->m_pTheSoonestCollision->hitNorm = hitNorm;
 		return true;
 	}
 

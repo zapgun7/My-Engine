@@ -33,6 +33,11 @@ void cEngineController_IMPL::Run(void)
 		double deltaTime = m_pTheTimer->getFrameTime();
 		this->m_pInputHandler->Update();
 		if (this->m_pInputHandler->IsPressedEvent(GLFW_KEY_T)) m_pThePhysics->ToggleThreading();
+		if (this->m_pInputHandler->IsPressedEvent(GLFW_KEY_R))
+		{
+			std::string soundName = "demoman_laugh";
+			m_pTheSound->StartSound(soundName);
+		}
 		//double deltaTime = m_pTheTimer->getFrameTimeUncapped();
 
 		// Messy, but will do this here
@@ -53,7 +58,7 @@ void cEngineController_IMPL::Run(void)
 		m_pTheEditor->Update(deltaTime); //m_pTheEditor->Update(uncappedDT); 
 		m_pThePhysics->Update(deltaTime);
 		shouldClose = m_pTheGraphics->Update(deltaTime);
-		m_pTheSound->Update();
+		m_pTheSound->Update(deltaTime);
 	}
 }
 
@@ -63,8 +68,8 @@ bool cEngineController_IMPL::Initialize(void)
 	cInputHandler::Initialize(this->m_pTheGraphics->getWindow());
 	this->m_pInputHandler = cInputHandler::GetInstance();
 
-	this->m_pThePhysics = cPhysics::GetInstance();//new cPhysics();
-	this->m_pTheSound = audio::cSoundManager::GetInstance();
+	this->m_pThePhysics = cPhysics::GetInstance();
+	this->m_pTheSound = cSoundManager::GetInstance();
 	this->m_pTheTimer = new cHiResTimer(30);
 
 
@@ -77,7 +82,7 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
 	std::vector<std::string> tempModelVec;
 	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
-	//this->m_pThePhysics->generateAABBs(tempModelVec);
+	this->m_pThePhysics->generateAABBs(tempModelVec);
 	
 	this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
@@ -101,45 +106,52 @@ bool cEngineController_IMPL::Initialize(void)
 	//m_ThePlayer->setPlayerVerlet(theBlob);
 
 
-// 	sPhysicsProperties* playerObj = new sPhysicsProperties();
-// 	playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 0.5f));
-// 	playerObj->shapeType = sPhysicsProperties::CAPSULE;
-// 	playerObj->friendlyName = "plyr";
-// 
-// 	playerObj->position = glm::vec3(50, 15, 50);
-// 	playerObj->restitution = 0.0f;
-// // Add PlayerInfo Struct
-// 	sPlayerPhysics* plyrPhys = new sPlayerPhysics();
-// 	playerObj->playerInfo = plyrPhys;
-// 	
-// 	plyrPhys->friction = 0.1f;
-// 	plyrPhys->airDrag = 0.99f;
-// 	playerObj->isPlayer = true;
-// 	m_ThePlayer->setPlayerObject(playerObj);
+	if (true) // First person player setup
+	{
+		sPhysicsProperties* playerObj = new sPhysicsProperties();
+		playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 0.5f));
+		playerObj->shapeType = sPhysicsProperties::CAPSULE;
+		playerObj->friendlyName = "plyr";
+
+		playerObj->position = glm::vec3(50, 15, 50);
+		playerObj->restitution = 0.0f;
+		// Add PlayerInfo Struct
+		sPlayerPhysics* plyrPhys = new sPlayerPhysics();
+		playerObj->playerInfo = plyrPhys;
+
+		plyrPhys->friction = 0.1f;
+		plyrPhys->airDrag = 0.99f;
+		playerObj->isPlayer = true;
+		m_ThePlayer->setPlayerObject(playerObj);
 
 
-// 	cMesh* playerMesh = new cMesh();
-// 	playerMesh->meshName = "Sphere_1_unit_Radius.ply";
-// 	playerMesh->friendlyName = "Player";
-// 	playerMesh->textureName[0] = "metal_s01.bmp";
-// 	playerMesh->scale = glm::vec3(2.0f);
-// 	playerMesh->uniqueID = playerObj->getUniqueID();
-// 
-// 	playerObj->pTheAssociatedMesh = playerMesh;
+		cMesh* playerMesh = new cMesh();
+		playerMesh->meshName = "Sphere_1_unit_Radius.ply";
+		playerMesh->friendlyName = "Player";
+		playerMesh->textureName[0] = "metal_s01.bmp";
+		playerMesh->scale = glm::vec3(2.0f);
+		playerMesh->uniqueID = playerObj->getUniqueID();
 
-	// Load test scene
-	// m_pTheSceneManager->loadScene("test");
-	//m_pThePhysics->AddShape(playerObj);
-	//addCustomObject(playerMesh, playerObj);
+		playerObj->pTheAssociatedMesh = playerMesh;
+
+		// Load test scene
+		m_pTheSceneManager->loadScene("MovementPGCorners+");
+		//m_pTheSceneManager->loadScene("test4");
+		//m_pThePhysics->AddShape(playerObj);
+		addCustomObject(playerMesh, playerObj);
+	}
 
 
 	// Make boned character
 //  	cMesh* bonedBoy = new cMesh();
 //  	bonedBoy->meshName = "Adventurer Aland@Idle.FBX";
 //  	bonedBoy->friendlyName = "a";
-// 
-// 	m_pTheGraphics->addNewMesh(bonedBoy);
-	//m_pTheSceneManager->loadScene("test4");
+
+	//m_pTheGraphics->addNewMesh(bonedBoy);
+// 	sPhysicsProperties* bonedBoyPhys = new sPhysicsProperties();
+// 	bonedBoyPhys->pTheAssociatedMesh = bonedBoy;
+// 	addCustomObject(bonedBoy, bonedBoyPhys);
+	
 	if (false) // Setup for soft-bodied example
 	{
 		//m_pTheSceneManager->loadScene("FacilityScreens3");

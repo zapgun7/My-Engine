@@ -154,10 +154,10 @@ void cPhysics::ToggleThreading(void)
 
 void cPhysics::generateAABBs(std::vector<std::string> models)
 {
-	const unsigned int MINTRICOUNT = 2000;
+	const unsigned int MINTRICOUNT = 30;
 	std::cout << "Generating AABBs..." << std::endl;
 
-	if (true)
+	if (false)
 	{
 
 		for (std::vector<std::string>::iterator itModel = models.begin();

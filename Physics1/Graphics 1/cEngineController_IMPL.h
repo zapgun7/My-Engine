@@ -59,7 +59,7 @@ private:
 	// All objects to represent various game components
 	cGraphicsMain* m_pTheGraphics;
 	cPhysics* m_pThePhysics;
-	audio::cSoundManager* m_pTheSound;
+	cSoundManager* m_pTheSound;
 	cHiResTimer* m_pTheTimer;
 	cLevelEditor* m_pTheEditor;
 	cSceneManagement* m_pTheSceneManager;

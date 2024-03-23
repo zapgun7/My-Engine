@@ -26,13 +26,19 @@ struct sFloat4
 	float x, y, z, w;
 };
 
+struct sInt4
+{
+	int x, y, z, w;
+};
+
 struct sVertex_p4t4n4b4w4
 {
 	sFloat4 Pos;
 	sFloat4 Normal;
 	sFloat4 TexUVx2;
 	sFloat4 BoneWeights;
-	sFloat4 BoneIds;
+	//sFloat4 BoneIds;
+	sInt4 BoneIds;
 };
 
 struct sBoneInfo

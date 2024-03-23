@@ -20,6 +20,8 @@ cPlayer::cPlayer(GLFWwindow* window)
 	m_YVELRED = 20.0f;
 	m_AIR_SPD_RED = 0.2f;
 
+	m_pLuaSoundCall = cSoundLuaBrain::GetInstance();
+
 }
 
 cPlayer::~cPlayer()
@@ -46,14 +48,14 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 
 	if (m_pInput->IsPressedEvent(GLFW_KEY_ESCAPE))
 	{
-		if (m_CameraType == THIRDPERSON)
+		if (m_CameraType == FIRSTPERSON)
 		{
 			m_CameraType = FLYCAM;
 			m_pInput->ChangeMouseState(NORMAL);
 		}
 		else
 		{
-			m_CameraType = THIRDPERSON;
+			m_CameraType = FIRSTPERSON;
 		}
 	}
 
@@ -150,6 +152,43 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 	}
 	else if (m_CameraType == FIRSTPERSON) // The "player" character
 	{
+
+		// Setup Area for Lua sound calls
+		static bool isGrounded = false;
+		static float deltaDistSinceStep = 0.0f;
+		static glm::vec3 oldPosXZ = glm::vec3(m_pPlayerObject->position.x, 0, m_pPlayerObject->position.z);
+
+
+		if (isGrounded)
+		{
+			if (!m_pPlayerObject->playerInfo->isGrounded)
+			{
+				isGrounded = false;
+			}
+			else
+			{
+				deltaDistSinceStep += glm::distance(oldPosXZ, glm::vec3(m_pPlayerObject->position.x, 0, m_pPlayerObject->position.z));
+				if (deltaDistSinceStep > 5.0f)
+				{
+					deltaDistSinceStep = 0.0f;
+					StepSound();
+				}
+			}
+		}
+		else
+		{
+			deltaDistSinceStep = 0.0f;
+			if (m_pPlayerObject->playerInfo->isGrounded)
+			{
+				isGrounded = true;
+				// Call step
+				StepSound();
+			}
+		}
+
+		oldPosXZ = glm::vec3(m_pPlayerObject->position.x, 0, m_pPlayerObject->position.z);
+
+
 
 		if (m_pInput->IsPressedEvent(GLFW_KEY_TAB))
 		{
@@ -497,5 +536,22 @@ void cPlayer::Kick(glm::vec3& hitNorm, glm::vec3& lookVec)
 		m_pPlayerObject->velocity.y = finalVel.y;
 	m_pPlayerObject->velocity += addVelVec;
 
+}
+
+void cPlayer::StepSound(void)
+{
+	float stepPitch = 1.0f;
+	float deltaPitch = (rand() % 100) / 1000.0f;
+	if (rand() % 2 == 0)
+		stepPitch += deltaPitch;
+	else
+		stepPitch -= deltaPitch;
+
+	std::string commandCall = "PlaySound(" + std::to_string(stepPitch) + ", 'woodstep1')";
+
+	m_pLuaSoundCall->RunScriptImmediately(commandCall.c_str());
+	//m_pLuaSoundCall->RunScriptImmediately("PlaySound(true, 'woodstep1')");
+	
+	return;
 }
 

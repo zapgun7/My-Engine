@@ -50,6 +50,10 @@ void AssimpToGLM(const aiMatrix4x4& a, glm::mat4& g)
 	g[1][0] = a.a2; g[1][1] = a.b2; g[1][2] = a.c2; g[1][3] = a.d2;
 	g[2][0] = a.a3; g[2][1] = a.b3; g[2][2] = a.c3; g[2][3] = a.d3;
 	g[3][0] = a.a4; g[3][1] = a.b4; g[3][2] = a.c4; g[3][3] = a.d4;
+// 	g[0][0] = a.a1; g[0][1] = a.a2; g[0][2] = a.a3; g[0][3] = a.a4;
+// 	g[1][0] = a.b1; g[1][1] = a.b2; g[1][2] = a.b3; g[1][3] = a.b4;
+// 	g[2][0] = a.c1; g[2][1] = a.c2; g[2][2] = a.c3; g[2][3] = a.c4;
+// 	g[3][0] = a.d1; g[3][1] = a.d2; g[3][2] = a.d3; g[3][3] = a.d4;
 }
 
 sNode* CreateAnimNode(aiNode* node)
@@ -70,12 +74,14 @@ sNode* sModelDrawInfo::GenerateBoneHierarchy(aiNode* assimpNode, const int depth
 	aiVector3D scaling;
 	transformation.Decompose(scaling, rotation, position);
 
-
 	glm::mat4 glmMatrix;
 	AssimpToGLM(transformation, glmMatrix);
 
 	glm::mat4 TranslationMatrix = glm::translate(glm::mat4(1.f), glm::vec3(position.x, position.y, position.z));
-	glm::mat4 RotationMatrix = glm::mat4_cast(glm::quat(rotation.w, rotation.x, rotation.y, rotation.z));
+
+	glm::mat4 RotationMatrix = glm::mat4_cast(glm::quat(rotation.w, rotation.x, rotation.y, rotation.z)/* * glm::quat(glm::vec3(glm::half_pi<float>(), 0.0f, 0.0f))*/);
+
+
 	glm::mat4 ScaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(scaling.x, scaling.y, scaling.z));
 
 	glm::mat4 ModelMatrix = TranslationMatrix * RotationMatrix * ScaleMatrix;
@@ -401,7 +407,7 @@ struct sBoneWeightInfo {
 		m_Weight[2] = 0.f;
 		m_Weight[3] = 0.f;
 	}
-	float m_BoneId[4];
+	int m_BoneId[4];
 	float m_Weight[4];
 };
 
@@ -409,7 +415,7 @@ struct sBoneWeightInfo {
 bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo& drawInfo, unsigned int shaderID)
 {
 	Assimp::Importer m_AssimpImporter;
-	drawInfo.scene = (aiScene*)m_AssimpImporter.ReadFile(theFileName, aiProcess_GenNormals);
+	drawInfo.scene = (aiScene*)m_AssimpImporter.ReadFile(theFileName, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs);//aiProcess_GenNormals);
 
 	aiMesh* mesh = drawInfo.scene->mMeshes[0];
 
@@ -478,6 +484,8 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 			sBoneInfo info;
 			AssimpToGLM(bone->mOffsetMatrix, info.BoneOffset);
 			drawInfo.BoneInfoVec.emplace_back(info);
+
+
 			printf("\n-----------\n");
 			printf("Bone: %s\n", name.c_str());
 			printf("Number of weights: %d\n", bone->mNumWeights);
@@ -494,7 +502,7 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 				{
 					if (boneInfo.m_Weight[infoIdx] == 0.0f)
 					{
-						boneInfo.m_BoneId[infoIdx] = static_cast<float>(boneIdx);
+						boneInfo.m_BoneId[infoIdx] = boneIdx;
 						boneInfo.m_Weight[infoIdx] = vertexWeight.mWeight;
 						break;
 					}
@@ -596,20 +604,20 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 	glGenVertexArrays(1, &(drawInfo.VAO_ID));
 	glBindVertexArray(drawInfo.VAO_ID);
 
-	// Vertex Info
-	glGenBuffers(1, &(drawInfo.VertexBufferID));
-	glBindBuffer(GL_ARRAY_BUFFER, drawInfo.VertexBufferID);
-
-	unsigned int totalVertBufferSizeBYTES = drawInfo.numberOfVertices * sizeof(sVertex_p4t4n4b4w4);
-	glBufferData(GL_ARRAY_BUFFER, totalVertBufferSizeBYTES, pTempVertArray, GL_STATIC_DRAW);
-
-
 	// Index Info
 	glGenBuffers(1, &(drawInfo.IndexBufferID));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawInfo.IndexBufferID);
 
 	unsigned int sizeOfIndexArrayInBytes = drawInfo.numberOfIndices * sizeof(GLuint);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfIndexArrayInBytes, pIndexArrayLocal, GL_STATIC_DRAW);
+
+
+	// Vertex Info
+	glGenBuffers(1, &(drawInfo.VertexBufferID));
+	glBindBuffer(GL_ARRAY_BUFFER, drawInfo.VertexBufferID);
+
+	unsigned int totalVertBufferSizeBYTES = drawInfo.numberOfVertices * sizeof(sVertex_p4t4n4b4w4);
+	glBufferData(GL_ARRAY_BUFFER, totalVertBufferSizeBYTES, pTempVertArray, GL_STATIC_DRAW);
 
 
 	// Set offset of vertex data
@@ -643,7 +651,8 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 
 	// Bone Ids
 	glEnableVertexAttribArray(vBoneIds_UL);
-	glVertexAttribPointer(vBoneIds_UL, 4, GL_FLOAT, GL_FALSE, bytesInOneVertex, (void*)offsetof(sVertex_p4t4n4b4w4, BoneIds));
+	//glVertexAttribPointer(vBoneIds_UL, 4, GL_FLOAT, GL_FALSE, bytesInOneVertex, (void*)offsetof(sVertex_p4t4n4b4w4, BoneIds));
+	glVertexAttribIPointer(vBoneIds_UL, 4, GL_INT, bytesInOneVertex, (void*)offsetof(sVertex_p4t4n4b4w4, BoneIds));
 
 
 
