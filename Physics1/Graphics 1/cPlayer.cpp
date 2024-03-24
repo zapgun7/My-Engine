@@ -160,7 +160,8 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 		if (storedSpd < actualSpd)
 		{
 			// update stored data
-			m_pDatabaseManager->UpdateData(0, actualSpd);
+			//m_pDatabaseManager->UpdateData(0, actualSpd);
+			m_pDatabaseManager->UpdateTopSpeed(actualSpd);
 		}
 
 		// Add button press to retrieve the stored "high score" of the player's speed
@@ -174,7 +175,8 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 
 		if (m_pInput->IsPressedEvent(GLFW_KEY_Z))
 		{
-			m_pDatabaseManager->UpdateData(0, 0.0f);
+			//m_pDatabaseManager->UpdateData(0, 0.0f);
+			m_pDatabaseManager->ResetData();
 			std::cout << "Successfully wiped stored speed record" << std::endl;
 		}
 

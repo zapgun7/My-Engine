@@ -5,7 +5,36 @@
 #include <stdio.h>
 #include <iostream>
 
+
+
+
 cDatabaseManager* cDatabaseManager::m_pTheOneDBManager = nullptr;
+
+DWORD WINAPI ThreadedDBCalls(LPVOID lpParamater)
+{
+	cDatabaseManager::sThreadDBInfo* myInfo = (cDatabaseManager::sThreadDBInfo*)lpParamater;
+
+	while (true)
+	{
+		myInfo->theManager->SelectData(0); // Update stored variable
+		if (myInfo->hasReset)
+		{
+			myInfo->theManager->UpdateData(0, 0.0f);
+			myInfo->hasReset = false;
+		}
+		else if (myInfo->dbNewVal > myInfo->theManager->GetTopSpeed())
+		{
+			myInfo->theManager->UpdateData(0, myInfo->dbNewVal);
+		}
+
+
+		Sleep(100);
+	}
+
+	return 0;
+}
+
+
 
 
 
@@ -46,6 +75,32 @@ void cDatabaseManager::Initialize(void)
 	//SelectData(0);
 	//UpdateData(0, 4.6f);
 	//SelectData(0);
+
+
+	// Set up the thread that will make calls to the DB
+	this->m_ThreadInfos = new sThreadDBInfo();
+	this->m_ThreadHandles = new HANDLE();
+	this->m_ThreadIDs = new DWORD();
+
+	
+// 	this->m_ThreadInfos[threadIDX].thePhysics = this->m_pTheOnePhysics;
+// 	this->m_ThreadInfos[threadIDX].theShape = nullptr;
+
+	this->m_ThreadInfos->dbNewVal = m_SavedTopSpd;
+	this->m_ThreadInfos->theManager = this;
+
+	//this->m_ThreadInfos[threadIDX].ID = threadIDX;
+
+	void* pParams = (void*)(this->m_ThreadInfos);
+
+	*this->m_ThreadHandles = CreateThread(
+		NULL,
+		0,
+		ThreadedDBCalls,
+		pParams,
+		0,
+		(this->m_ThreadIDs));
+	
 }
 
 
@@ -175,4 +230,18 @@ int cDatabaseManager::SelectCallback(void* NotUsed, int argc, char** argv, char*
 	//std::cout << std::endl;
 
 	return 1;
+}
+
+void cDatabaseManager::UpdateTopSpeed(float newSpeed)
+{
+	this->m_ThreadInfos->dbNewVal = newSpeed;
+	return;
+}
+
+void cDatabaseManager::ResetData(void)
+{
+	this->m_SavedTopSpd = 0.0f;
+	this->m_ThreadInfos->dbNewVal = 0.0f;
+	this->m_ThreadInfos->hasReset = true;
+	return;
 }
