@@ -13,6 +13,7 @@
 #include "cAnimationManager.h"
 #include "cEntityManager.h"
 #include "cInputHandler.h"
+#include "cDatabaseManager.h"
 
 class cEngineController_IMPL
 {
@@ -67,6 +68,7 @@ private:
 	cAnimationManager* m_pAnimationsManager;
 	cEntityManager* m_pEntityManager;
 	cInputHandler* m_pInputHandler;
+	cDatabaseManager* m_pDatabaseManager;
 	// Scene manager should be controlled by imgui or some game controller that loads levels
 
 	sPhysicsProperties* m_TheCamera; // Just gonna put this here for now

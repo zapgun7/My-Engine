@@ -11,6 +11,7 @@
 #include "cInputHandler.h"
 #include "Physics/Verlet/cSoftBodyVerlet.h"
 #include "cSoundLuaBrain.h"
+#include "cDatabaseManager.h"
 
 #include "cEngineController.h"
 
@@ -49,6 +50,8 @@ private:
 	cPhysics* m_pThePhysics; // ONLY FOR TESTS OKAY?????
 
 	cSoundLuaBrain* m_pLuaSoundCall;
+
+	cDatabaseManager* m_pDatabaseManager; // Lazy to give this to the player, but it is proof of concept or smthn
 
 
 	cEngineController* m_pEngineController;

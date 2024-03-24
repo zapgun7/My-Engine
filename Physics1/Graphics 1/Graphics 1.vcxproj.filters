@@ -47,9 +47,6 @@
     <Filter Include="Dev">
       <UniqueIdentifier>{90a600a9-55df-42cf-a465-bd47021d3536}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine Controller\SceneSave">
-      <UniqueIdentifier>{13d264ec-9916-40cf-8ba2-1d9b459b1941}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Physics\AABB">
       <UniqueIdentifier>{c42d4f2c-f0c7-444a-a32c-044b0b79d404}</UniqueIdentifier>
     </Filter>
@@ -79,6 +76,9 @@
     </Filter>
     <Filter Include="Audio\Lua">
       <UniqueIdentifier>{9dc5746b-4528-499a-a715-3da2af0cceb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine Controller\Persistence">
+      <UniqueIdentifier>{13d264ec-9916-40cf-8ba2-1d9b459b1941}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -131,7 +131,7 @@
       <Filter>Graphics Engine\ImGui\backends</Filter>
     </ClCompile>
     <ClCompile Include="cSceneManagement.cpp">
-      <Filter>Engine Controller\SceneSave</Filter>
+      <Filter>Engine Controller\Persistence</Filter>
     </ClCompile>
     <ClCompile Include="Physics\sPhysicsProperties.cpp">
       <Filter>Physics</Filter>
@@ -250,6 +250,9 @@
     <ClCompile Include="cSoundLuaCommands.cpp">
       <Filter>Audio\Lua</Filter>
     </ClCompile>
+    <ClCompile Include="cDatabaseManager.cpp">
+      <Filter>Engine Controller\Persistence</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basic Shader Manager\cShaderManager.h">
@@ -304,7 +307,7 @@
       <Filter>Graphics Engine\ImGui\backends</Filter>
     </ClInclude>
     <ClInclude Include="cSceneManagement.h">
-      <Filter>Engine Controller\SceneSave</Filter>
+      <Filter>Engine Controller\Persistence</Filter>
     </ClInclude>
     <ClInclude Include="Physics\iPhysicsMeshTransformAccess.h">
       <Filter>Graphics Engine\Mesh</Filter>
@@ -422,6 +425,9 @@
     </ClInclude>
     <ClInclude Include="cSoundLuaBrain.h">
       <Filter>Audio\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="cDatabaseManager.h">
+      <Filter>Engine Controller\Persistence</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

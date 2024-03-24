@@ -21,6 +21,7 @@ cPlayer::cPlayer(GLFWwindow* window)
 	m_AIR_SPD_RED = 0.2f;
 
 	m_pLuaSoundCall = cSoundLuaBrain::GetInstance();
+	m_pDatabaseManager = cDatabaseManager::GetInstance();
 
 }
 
@@ -152,6 +153,32 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 	}
 	else if (m_CameraType == FIRSTPERSON) // The "player" character
 	{
+		// Start by updating the TOPSPD stat
+		float storedSpd = m_pDatabaseManager->GetTopSpeed();//m_pDatabaseManager->SelectData(0); // Player ID 0
+		float actualSpd = glm::length(m_pPlayerObject->velocity);
+
+		if (storedSpd < actualSpd)
+		{
+			// update stored data
+			m_pDatabaseManager->UpdateData(0, actualSpd);
+		}
+
+		// Add button press to retrieve the stored "high score" of the player's speed
+		if (m_pInput->IsPressedEvent(GLFW_KEY_F))
+		{
+			storedSpd = m_pDatabaseManager->GetTopSpeed(); //m_pDatabaseManager->SelectData(0);
+
+			//std::cout << "Highest Speed Achieved: " << storedSpd << std::endl;
+			printf("Highest Speed Achieved: %.3f\n", storedSpd);
+		}
+
+		if (m_pInput->IsPressedEvent(GLFW_KEY_Z))
+		{
+			m_pDatabaseManager->UpdateData(0, 0.0f);
+			std::cout << "Successfully wiped stored speed record" << std::endl;
+		}
+
+
 
 		// Setup Area for Lua sound calls
 		static bool isGrounded = false;
@@ -168,7 +195,7 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 			else
 			{
 				deltaDistSinceStep += glm::distance(oldPosXZ, glm::vec3(m_pPlayerObject->position.x, 0, m_pPlayerObject->position.z));
-				if (deltaDistSinceStep > 5.0f)
+				if (deltaDistSinceStep > 5.0f + actualSpd / 20.0f)
 				{
 					deltaDistSinceStep = 0.0f;
 					StepSound();
@@ -348,6 +375,10 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 			if (m_pThePhysics->GetKickNorm(m_pPlayerObject->position, forwardVector, m_KICKREACH, norm))
 			{
 				Kick(norm, forwardVector);
+
+				// Play sound
+				m_pLuaSoundCall->RunScriptImmediately("PlaySound(1.0, 'kick')");
+
 // 				norm = glm::normalize(norm - forwardVector * 0.5f);
 // 				m_pPlayerObject->velocity += norm * m_MAXKICKFORCE * m_BuildingKickPower;
 			}

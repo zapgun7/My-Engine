@@ -90,7 +90,7 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pAnimationsManager = cAnimationManager::GetInstance();
 	this->m_pAnimationsManager->SetVAOManager(m_pTheGraphics->getVAOManager());
 
-
+	this->m_pDatabaseManager = cDatabaseManager::GetInstance();
 	
 	//cSoftBodyVerlet* theBlob = m_pThePhysics->CreateVerlet();
 
