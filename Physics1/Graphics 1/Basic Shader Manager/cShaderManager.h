@@ -82,6 +82,7 @@ public:
 	// !! Does not work with arrays[]
 	bool tryAddUL(std::string& line, cShaderProgram* program); // Takes line from the shader text, stores UL info if a uniform
 	void generateULs(cShaderProgram* program);
+	cShaderProgram* getActiveShader(void);
 
 	// Clears last error
 	std::string getLastError(void);
@@ -99,8 +100,10 @@ private:
 
 	std::map< unsigned int /*ID*/, cShaderProgram > m_ID_to_Shader;
 	std::map< std::string /*name*/, unsigned int /*ID*/ > m_name_to_ID;
+	std::unordered_map<std::string, cShaderProgram> m_mapName_to_Shader;
 
 	std::unordered_map<std::string, sULInfo::eDataType> map_Str_to_DType;
+	cShaderProgram* m_pActiveProgram;
 
 	// Little Helper Functions
 	sULInfo::eDataType getDataTypeFromStr(std::string& str);

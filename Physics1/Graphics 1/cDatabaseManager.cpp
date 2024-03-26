@@ -28,7 +28,7 @@ DWORD WINAPI ThreadedDBCalls(LPVOID lpParamater)
 		}
 
 
-		Sleep(100);
+		Sleep(500);
 	}
 
 	return 0;

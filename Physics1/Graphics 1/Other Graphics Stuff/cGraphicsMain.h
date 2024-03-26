@@ -35,8 +35,8 @@ public:
 	static cGraphicsMain* getGraphicsMain(void);
 
 
-	bool Update(double deltaTime); // return false when window is triggered to close
-	bool Update2(double deltaTime);
+	bool UpdateOLD(double deltaTime); // return false when window is triggered to close
+	bool Update(double deltaTime);
 	void Destroy();
 	//void addToDrawMesh(cMesh* newMesh);
 	void removeFromDrawMesh(int ID);

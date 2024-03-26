@@ -297,7 +297,7 @@ int cGraphicsMain::GenerateUBOs(void)
 	return 1;
 }
 
-bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not really a loop, just gets called every tick
+bool cGraphicsMain::UpdateOLD(double deltaTime) // Main "loop" of the window. Not really a loop, just gets called every tick
 {
 	// Check input for camera movement
 	//m_InputHandler->queryKeys(m_window);
@@ -453,6 +453,7 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 		// HACK: I'm making this here, but hey...
 		cMesh theSkyBox;
 		theSkyBox.meshName = "Sphere_1_unit_Radius.ply";
+		theSkyBox.isSkybox = true;
 		//theSkyBox.setUniformDrawScale(10.0f);
 
 		theSkyBox.setUniformDrawScale(1000.0f);
@@ -465,8 +466,8 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 		//            glDepthMask(GL_FALSE);          // Won't write to the depth buffer
 
 					// uniform bool bIsSkyBox;
-		GLint bIsSkyBox_UL = glGetUniformLocation(m_shaderProgramID, "bUseHeightmap_IsSkyBox_UseDiscard_NONE");
-		glUniform4f(bIsSkyBox_UL, (GLfloat)0.0f, (GLfloat)1.0f, (GLfloat)0.0f, (GLfloat)0.0f);
+		//GLint bIsSkyBox_UL = glGetUniformLocation(m_shaderProgramID, "bUseHeightmap_IsSkyBox_UseDiscard_NONE");
+		//glUniform4f(bIsSkyBox_UL, (GLfloat)0.0f, (GLfloat)1.0f, (GLfloat)0.0f, (GLfloat)0.0f);
 
 		// The normals for this sphere are facing "out" but we are inside the sphere
 		glCullFace(GL_FRONT);
@@ -474,7 +475,7 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 		DrawObject(&theSkyBox, glm::mat4(1.0f), m_shaderProgramID);
 
 		/*glUniform1f(bIsSkyBox_UL, (GLfloat)GL_FALSE);*/
-		glUniform4f(bIsSkyBox_UL, (GLfloat)0.0f, (GLfloat)0.0f, (GLfloat)0.0f, (GLfloat)0.0f);
+		//glUniform4f(bIsSkyBox_UL, (GLfloat)0.0f, (GLfloat)0.0f, (GLfloat)0.0f, (GLfloat)0.0f);
 
 		// Put the culling back to "normal" (back facing are not drawn)
 		glCullFace(GL_BACK);
@@ -577,7 +578,7 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 
 
 // Update for framebuffer stuff
-bool cGraphicsMain::Update2(double deltaTime)
+bool cGraphicsMain::Update(double deltaTime)
 {
 	// First reduce all red values on the heatmapf
 	if (false)
@@ -981,6 +982,7 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 	GLint bDiscardMaskTex_UL = glGetUniformLocation(shaderProgramID, "bUseHeightmap_IsSkyBox_UseDiscard_NONE");
 
 	glUniform4f(bDiscardMaskTex_UL, 0.0f, (GLfloat)pCurrentMesh->isSkybox, (GLfloat)pCurrentMesh->bUseDiscardMaskTex, 0.0f);
+
 // 	if (pCurrentMesh->bUseDiscardMaskTex)
 // 	{
 // 		// Set uniform to true
@@ -1344,7 +1346,8 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 	float ratio; //= screenWidth / (float)screenHeight;
 	//int width, height;
 
-	glUseProgram(m_shaderProgramID);
+	//glUseProgram(m_shaderProgramID);
+	m_pShaderThing->useShaderProgram("shader01");
 	cShaderManager::cShaderProgram* currProg = m_pShaderThing->pGetShaderProgramFromFriendlyName("shader01");
 
 

@@ -23,6 +23,7 @@ int cShaderManager::nextTextureNumber = 22;
 
 
 cShaderManager::cShaderManager()
+	:m_pActiveProgram(nullptr)
 {
 	// Initialize the map of str -> datatype
 
@@ -50,15 +51,17 @@ bool cShaderManager::useShaderProgram( unsigned int ID )
 
 bool cShaderManager::useShaderProgram( std::string friendlyName )
 {
-	std::map< std::string /*name*/, unsigned int /*ID*/ >::iterator 
-			itShad = this->m_name_to_ID.find(friendlyName);
+// 	std::map< std::string /*name*/, unsigned int /*ID*/ >::iterator 
+// 			itShad = this->m_name_to_ID.find(friendlyName);
+	std::unordered_map<std::string, cShaderProgram>::iterator itShad = m_mapName_to_Shader.find(friendlyName);
 
-	if ( itShad == this->m_name_to_ID.end() )
+	if ( itShad == this->m_mapName_to_Shader.end() )
 	{	// Didn't find it
 		// Maybe set glUseProgram(0)....?
 		return false;
 	}
-	glUseProgram(itShad->second);
+	glUseProgram(itShad->second.ID);
+	m_pActiveProgram = &itShad->second;
 
 	return true;
 }
@@ -75,8 +78,7 @@ unsigned int cShaderManager::getIDFromFriendlyName( std::string friendlyName )
 	return itShad->second;
 }
 
-cShaderManager::cShaderProgram* 
-	cShaderManager::pGetShaderProgramFromFriendlyName( std::string friendlyName )
+cShaderManager::cShaderProgram* cShaderManager::pGetShaderProgramFromFriendlyName( std::string friendlyName )
 {
 	unsigned int shaderID = this->getIDFromFriendlyName(friendlyName);
 
@@ -374,6 +376,8 @@ bool cShaderManager::createProgramFromFile(
 	// Save to other map, too
 	this->m_name_to_ID[curProgram.friendlyName] = curProgram.ID;
 
+	this->m_mapName_to_Shader[curProgram.friendlyName] = curProgram;
+
 
 	// Load up UL locations using the vec source
 // 	for (unsigned int i = 0; i < vertexShad.vecSource.size(); i++)
@@ -467,6 +471,11 @@ void cShaderManager::generateULs(cShaderProgram* program)
 		sULInfo* currUL = mapIT->second;
 		currUL->UL_Location = glGetUniformLocation(program->ID, (mapIT->first).c_str());
 	}
+}
+
+cShaderManager::cShaderProgram* cShaderManager::getActiveShader(void)
+{
+	return m_pActiveProgram;
 }
 
 void cShaderManager::cShaderProgram::setULValue(std::string& uniformName, void* val)
