@@ -37,7 +37,6 @@ public:
 
 	bool Update(double deltaTime); // return false when window is triggered to close
 	bool Update2(double deltaTime);
-	bool UpdateProject(double deltaTime);
 	void Destroy();
 	//void addToDrawMesh(cMesh* newMesh);
 	void removeFromDrawMesh(int ID);
@@ -87,7 +86,7 @@ private:
 	// Draw Passes
 	void DrawPass_HeatMapReduction(GLuint shaderProgramID, int screenWidth, int screenHeight, double deltaTime);
 	void DrawPass_SpookyHeatmap(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec3 cameraEye, glm::vec3 cameraTarget);
-	void DrawPass_1(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec3 cameraEye, glm::vec3 cameraTarget, bool isPlayer);
+	void DrawPass_1(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec3 cameraEye, glm::vec3 cameraTarget);
 	void DrawPass_ApplySpook(GLuint shaderProgramID, int screenWidth, int screenHeight);
 	void DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int screeneight);
 

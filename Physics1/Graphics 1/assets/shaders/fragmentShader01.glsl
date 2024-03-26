@@ -8,8 +8,31 @@ in vec2 textureCoords;
 
 out vec4 outputColour;		// To the frame buffer (aka screen)
 
+/////// Bool Vecs ///////
+uniform vec4 bBoneFrag;
+uniform vec4 bDontLight_CustomCol;
+//uniform bool bUseBonesFrag;
+//uniform bool bDoNotLight;		// Really a float (0.0 or not zero)
+//uniform bool bUseCustomColor;	// if this is true, then use debugColourRGBA for the colour
+//uniform bool bIsCamera;
+
+uniform vec4 bReflect_Refract_fAlpha_NONE;
+//uniform bool bUseReflect;
+//uniform bool bUseRefract;
+//uniform float transparencyAlpha;
+
+
+uniform vec4 bUseHeightmap_IsSkyBox_UseDiscard_NONE;
+//uniform bool bUseHeightMap;
+//uniform bool bIsSkyBox;
+//uniform bool bUseDiscardMaskTexture;
+
+
+
+
+
+
 // Bone Stuff
-uniform bool bUseBonesFrag;
 in vec4 ex_BoneId;
 
 
@@ -20,29 +43,15 @@ uniform sampler2D spookyHeatMap;
 
 
 
-//uniform vec3 directionalLightColour;
-// rgb are the rgb of the light colour
-//uniform vec4 directionalLight_Direction_power;
-// xyz is the normalized direction, w = power (between 0 and 1)
-
 // If true, then passes the colour without calculating lighting
-uniform bool bDoNotLight;		// Really a float (0.0 or not zero)
 
 uniform vec4 eyeLocation;
 
-uniform bool bUseDebugColour;	// if this is true, then use debugColourRGBA for the colour
-uniform vec4 debugColourRGBA;		
 
-// If FALSE, we use the texture colour as the vertex colour
-// (NOT the one from the model file)
-uniform bool bUseVertexColours;		// If true, then DOESN'T use texture colours
+uniform vec4 customColorRGBA;		
 
-// Usually, you would pass the alpha transparency as the 4th colour value, 
-// 	but for clarity, we'll pass it separately...
-uniform float transparencyAlpha;
 
-uniform bool bUseReflect;
-uniform bool bUseRefract;
+
 
 uniform sampler2D texture_00;			// 2D meaning x,y or s,t or u,v
 uniform sampler2D texture_01;
@@ -54,25 +63,25 @@ uniform sampler2D texture_06;
 uniform sampler2D texture_07;
 
 
-uniform bool bIsCamera;
+
 
 //
-uniform bool bUseHeightMap;
+
 uniform sampler2D heightMapSampler;		// Texture unit 20
 uniform sampler2D discardSampler;		// Texture unit 21
 
 // Skybox, cubemap, etc.
-uniform bool bIsSkyBox;
+
 uniform samplerCube skyBoxTexture;
 
 // For the discard example
-uniform bool bUseDiscardMaskTexture;
 uniform sampler2D maskSamplerTexture01;
 
 // FBO
-uniform bool bIsOffScreenTextureQuad;
 uniform sampler2D textureOffScreen;
-uniform vec2 screenWidthAndHeight;
+//uniform vec2 screenWidthAndHeight;
+uniform vec4 screenWidthAndHeight_bIsOffScreen;
+//uniform bool bIsOffScreenTextureQuad;
 
 
 //... and so on
@@ -81,8 +90,8 @@ uniform vec4 textureMixRatio_0_3;		// 1, 0, 0, 0
 uniform vec4 textureMixRatio_4_7;
 
 // uv-offset
-uniform vec3 uv_Offset_Scale;
-
+//uniform vec3 uv_Offset_Scale;
+uniform vec4 uv_Offset_Scale_NONE;
 
 struct sLight
 {
@@ -120,10 +129,10 @@ vec3 getFBOColour();
 // Spooky Effects
 int getDistToDistortion(vec2 textureCoords);
 
-
+//EOU
 void main()
-{
-	if (bUseBonesFrag)
+{	
+	if (bBoneFrag.x == 1.0f)
 	{
 		vec3 color = vec3(1);
 		if (int(ex_BoneId.x) % 6 == 0)
@@ -234,14 +243,14 @@ if (isSpooky.z == 1.0f)
 
 //	gl_FragColor = vec4(color, 1.0);
 
-//	if ( bUseHeightMap )
+//	if ( bUseHeightmap_IsSkyBox_UseDiscard_NONE.x )
 //	{
 //		outputColour.rgba = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 //		return;
 //	}
 
 	// Discard the water
-//	if ( bUseHeightMap )
+//	if ( bUseHeightmap_IsSkyBox_UseDiscard_NONE.x )
 //	{
 //		// Range of 0 to 1
 //		float height = texture( heightMapSampler, textureCoords.st ).r;
@@ -252,7 +261,7 @@ if (isSpooky.z == 1.0f)
 //		}
 //	}
 	
-	if ( bIsOffScreenTextureQuad )
+	if ( screenWidthAndHeight_bIsOffScreen.z == 1.0f )
 	{
 //		outputColour.rgb = vec3(1.0f, 0.0f, 0.0f);
 //		vec3 theColour = texture( textureOffScreen, fTextureCoords.st ).rgb;		
@@ -262,8 +271,8 @@ if (isSpooky.z == 1.0f)
 //
 		// Convert the integer pixel location (10, 15) or (1902, 546)
 		// 	into a texture coordinate from 0.0 to 1.0
-//		vec2 textCoordsScreen = vec2( gl_FragCoord.x / screenWidthAndHeight.x, 
-//		                              gl_FragCoord.y / screenWidthAndHeight.y );
+//		vec2 textCoordsScreen = vec2( gl_FragCoord.x / screenWidthAndHeight_bIsOffScreen.x, 
+//		                              gl_FragCoord.y / screenWidthAndHeight_bIsOffScreen.y );
 //		vec3 theColour = texture( textureOffScreen, textCoordsScreen.st ).rgb;	
 //		vec3 HUDTextureColour = texture( textureHUF, textCoordsScreen.st).rgb;
 //
@@ -285,12 +294,11 @@ if (isSpooky.z == 1.0f)
 		return;
 	}
 
+	
 
-
-
-	if ( bUseDiscardMaskTexture )
+	if ( bUseHeightmap_IsSkyBox_UseDiscard_NONE.z == 1.0f )
 	{
-		vec3 maskValues = texture( maskSamplerTexture01, (textureCoords.st + uv_Offset_Scale.xy) * uv_Offset_Scale.z ).rgb;
+		vec3 maskValues = texture( maskSamplerTexture01, (textureCoords.st + uv_Offset_Scale_NONE.xy) * uv_Offset_Scale_NONE.z ).rgb;
 		float maskValue = maskValues.r + maskValues.g + maskValues.b; // Ensure it is pure black that gets removed
 		// If "black" then discard
 		if ( maskValue < 0.1f )
@@ -301,7 +309,7 @@ if (isSpooky.z == 1.0f)
 		}	
 	}
 	
-	if ( bIsSkyBox )
+	if ( bUseHeightmap_IsSkyBox_UseDiscard_NONE.y == 1.0f )
 	{
 		//uniform samplerCube skyBoxTexture;
 		vec4 skyBoxSampleColour = texture( skyBoxTexture, vertexWorldNormal.xyz ).rgba;
@@ -310,30 +318,30 @@ if (isSpooky.z == 1.0f)
 		return;
 	}
 	
-	if (bUseReflect)
+	if (bReflect_Refract_fAlpha_NONE.x == 1.0f)
 	{
 		//vec3 eyeVector = normalize(eyeLocation.xyz - vertexWorldPos.xyz);
 		//vec3 reflectAngle = reflect( eyeVector, vertexWorldNormal.xyz);
 		//vec4 skyBoxSampleColour = texture( skyBoxTexture, reflectAngle.xyz ).rgba;
 		//outputColour.rgb = skyBoxSampleColour.rgb;
-		//outputColour.a = transparencyAlpha;
+		//outputColour.a = bReflect_Refract_fAlpha_NONE.z;
 		//return;
-		vec4 textureColour = texture( texture_00, (textureCoords.st + uv_Offset_Scale.xy) * uv_Offset_Scale.z ).rgba * textureMixRatio_0_3.x ;
+		vec4 textureColour = texture( texture_00, (textureCoords.st + uv_Offset_Scale_NONE.xy) * uv_Offset_Scale_NONE.z ).rgba * textureMixRatio_0_3.x ;
 		float reflectRatio = 1 - textureMixRatio_0_3.x;
 		vec3 eyeVector = normalize(eyeLocation.xyz - vertexWorldPos.xyz);
 		vec3 reflectAngle = reflect( eyeVector, vertexWorldNormal.xyz);
 		vec4 skyBoxSampleColour = texture( skyBoxTexture, reflectAngle.xyz ).rgba * reflectRatio;
 		outputColour.rgb = skyBoxSampleColour.rgb + textureColour.rgb;
-		outputColour.a = transparencyAlpha;
+		outputColour.a = bReflect_Refract_fAlpha_NONE.z;
 		return;
 	}
-	else if (bUseRefract)
+	else if (bReflect_Refract_fAlpha_NONE.y == 1.0f)
 	{
 		vec3 eyeVector = normalize(eyeLocation.xyz - vertexWorldPos.xyz);
 		vec3 reflectAngle = refract( eyeVector, vertexWorldNormal.xyz, 1.0);  //1.0 gives good results
 		vec4 skyBoxSampleColour = texture( skyBoxTexture, reflectAngle.xyz ).rgba;
 		outputColour.rgb = skyBoxSampleColour.rgb;
-		outputColour.a = transparencyAlpha;
+		outputColour.a = bReflect_Refract_fAlpha_NONE.z;
 		return;
 	}
 	
@@ -354,37 +362,26 @@ if (isSpooky.z == 1.0f)
 	
 	vec4 textureColour;
 	
-	if (bIsCamera)
-	{
-		textureColour = texture(textureOffScreen, textureCoords.st).rgba;
-	}
-	else
-	{
-		textureColour = 
-			  texture( texture_00, (textureCoords.st + uv_Offset_Scale.xy) * uv_Offset_Scale.z ).rgba * textureMixRatio_0_3.x 	
-			//+ texture( texture_01, textureCoords.st ).rgba * textureMixRatio_0_3.y
-			+ texture( texture_02, textureCoords.st ).rgba * textureMixRatio_0_3.z;
-			//+ texture( texture_03, textureCoords.st ).rgba * textureMixRatio_0_3.w;
-	}
+
+	textureColour = 
+		  texture( texture_00, (textureCoords.st + uv_Offset_Scale_NONE.xy) * uv_Offset_Scale_NONE.z ).rgba * textureMixRatio_0_3.x 	
+		//+ texture( texture_01, textureCoords.st ).rgba * textureMixRatio_0_3.y
+		+ texture( texture_02, textureCoords.st ).rgba * textureMixRatio_0_3.z;
+		//+ texture( texture_03, textureCoords.st ).rgba * textureMixRatio_0_3.w;
+
 	// Make the 'vertex colour' the texture colour we sampled...
 	vec4 vertexRGBA = textureColour;	
+
 	
-	// ...unless we want to use the vertex colours from the model
-	if (bUseVertexColours)
-	{
-		// Use model vertex colour and NOT the texture colour
-		//vertexRGBA = colour;
-	}
-	
-	if ( bUseDebugColour )
+	if ( bDontLight_CustomCol.y == 1.0f )
 	{	
-		vertexRGBA = debugColourRGBA;
+		vertexRGBA = customColorRGBA;
 	}
 
-	if ( bDoNotLight )
+	if ( bDontLight_CustomCol.x == 1.0f )
 	{
 		outputColour = vertexRGBA;
-		outputColour.a = transparencyAlpha;
+		outputColour.a = bReflect_Refract_fAlpha_NONE.z;
 		return;
 	}
 	
@@ -416,13 +413,13 @@ if (isSpooky.z == 1.0f)
 	outputColour.rgb *= 1.35f;
 	
 	//outputColour.a = 1.0f;
-	outputColour.a = transparencyAlpha;
+	outputColour.a = bReflect_Refract_fAlpha_NONE.z;
 }
 
 vec3 getFBOColour()
 {
-	vec2 textCoordsScreen = vec2( gl_FragCoord.x / screenWidthAndHeight.x, 
-	                              gl_FragCoord.y / screenWidthAndHeight.y );
+	vec2 textCoordsScreen = vec2( gl_FragCoord.x / screenWidthAndHeight_bIsOffScreen.x, 
+	                              gl_FragCoord.y / screenWidthAndHeight_bIsOffScreen.y );
 	vec3 theColour = texture( textureOffScreen, textCoordsScreen.st ).rgb;	
 	
 	return theColour;
@@ -443,8 +440,8 @@ int getDistToDistortion(vec2 textureCoords)
 	// Now scan out to find distance to effect, (max 10)
 	for(int i = 1; i < 20; i++)
 	{
-		float posOffsetS = i / screenWidthAndHeight.x;
-		float posOffsetT = i / screenWidthAndHeight.y;
+		float posOffsetS = i / screenWidthAndHeight_bIsOffScreen.x;
+		float posOffsetT = i / screenWidthAndHeight_bIsOffScreen.y;
 //		distOut++;
 		// Diagonal 1
 		if ( texture(spookyHeatMap, vec2(textureCoords.s - posOffsetS, textureCoords.t - posOffsetT)).r > 0) return i;

@@ -528,9 +528,10 @@ bool cPhysics::m_TestMovingCapsuleTriangle(sPhysicsProperties* pCapsule, sTriang
 	// Get the degree between our upVec and the triNorm
 
 	float degDiff = acos(glm::dot(triNorm, pCapsule->upVec)); // 0 - 90: favors lower cap    90-180: favors upper cap
-	bool favorDown;
-	if (degDiff > 90) favorDown = false;
-	else favorDown = true;
+	bool favorDown = false;
+	bool favorUp = false;
+	if (degDiff >= 90) favorUp = true;  // These both can be true
+	if (degDiff <= 90) favorDown = true;
 
 	sPhysicsProperties::sCapsule* capsule = (sPhysicsProperties::sCapsule*)pCapsule->pShape;
 
@@ -577,6 +578,7 @@ bool cPhysics::m_TestMovingCapsuleTriangle(sPhysicsProperties* pCapsule, sTriang
 			}
 			else
 			{
+				// Can still hit the edge; put off raycast to later
 				raycastLower = true;
 			}
 		}
@@ -596,20 +598,20 @@ bool cPhysics::m_TestMovingCapsuleTriangle(sPhysicsProperties* pCapsule, sTriang
 
 	//float pd = glm::dot(triNorm, pTri->vertices[0]);
 	//glm::vec3 q = glm::vec3(0);
-	m_IntersectMovingSpherePlane(&upperCap, triNorm, pd, t2, q2);
+	m_IntersectMovingSpherePlane(&upperCap, triNorm, pd, t2, q2); // TODO can we easily get this by working off the answer to the bottom cap calculation?
 
 
 	glm::vec3 closestTriPointUpper;
-	if (t2 > 1.0f)
+	if ((t2 > 1.0f) && (t1 > 1.0f))
 	{
-		if (t1 > 1.0f) // Neither sphere cap makes it to the plane this update
-			return 0;
+		// Neither sphere cap makes it to the plane this update
+		return 0;
 	}
 	else
 	{
 		closestTriPointUpper = m_ClosestPtTriPlanePointTriangle(q2, pTri->vertices[0], pTri->vertices[1], pTri->vertices[2]);
 		// Do the rest of the checks for this 
-		if (!favorDown)
+		if (favorUp)
 		{
 			// Favorable conditions for bouncing off the bottom of the sphere
 			if (glm::distance(closestTriPointUpper, q2) <= std::numeric_limits<float>::epsilon())
@@ -671,19 +673,22 @@ bool cPhysics::m_TestMovingCapsuleTriangle(sPhysicsProperties* pCapsule, sTriang
 			}
 			else
 			{
+				hitNorm = glm::normalize(lowerCap.oldPosition - rayHitOnSphere1);
+				t = t1;
+				return 1;
 				// Hits bottom of sphere
-				if (favorDown)
-				{
-					// Guaranteed hit here, we can return true
-					hitNorm = glm::normalize(lowerCap.oldPosition - rayHitOnSphere1);
-					t = t1;
-					return 1;
-				}
-				else
-				{
-					// Not guaranteed to hit this sphere
-					//t1 = t;
-				}
+// 				if (favorDown)
+// 				{
+// 					// Guaranteed hit here, we can return true
+// 					hitNorm = glm::normalize(lowerCap.oldPosition - rayHitOnSphere1);
+// 					t = t1;
+// 					return 1;
+// 				}
+// 				else
+// 				{
+// 					// Not guaranteed to hit this sphere
+// 					//t1 = t;
+// 				}
 			}
 		}
 	}
@@ -724,25 +729,34 @@ bool cPhysics::m_TestMovingCapsuleTriangle(sPhysicsProperties* pCapsule, sTriang
 			}
 			else
 			{
+				hitNorm = glm::normalize(upperCap.oldPosition - rayHitOnSphere2);
+				t = t2;
+				return 1;
 				// Hits top of sphere
-				if (!favorDown)
-				{
-					// Guaranteed hit here, we can return true
-					hitNorm = glm::normalize(upperCap.oldPosition - rayHitOnSphere2);
-					t = t2;
-					return 1;
-				}
-				else
-				{
-					// Not guaranteed to hit this sphere
-					//t2 = t;
-				}
+// 				if (favorUp)
+// 				{
+// 					// Guaranteed hit here, we can return true
+// 					hitNorm = glm::normalize(upperCap.oldPosition - rayHitOnSphere2);
+// 					t = t2;
+// 					return 1;
+// 				}
+// 				else
+// 				{
+// 					// Not guaranteed to hit this sphere
+// 					//t2 = t;
+// 				}
 			}
 		}
 	}
 
 
 	// At this point I'm PRETTY SURE we just have to calculate the midsection collision (not guaranteed collision)
+
+
+	//////// STRATEGY ////////
+	// - Flat swept capsule (midsection) creates a quad; can be split into 2x tris and simpler tri intersection code can be used
+	// - Idk gl future me
+
 	return 0;
 }
 

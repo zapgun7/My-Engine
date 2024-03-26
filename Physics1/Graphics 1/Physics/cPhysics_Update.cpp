@@ -188,8 +188,8 @@ void cPhysics::Update(double deltaTime)
 	{
 		bool isStillColliding = true;
 
-		while (isStillColliding)
-		{
+		while (isStillColliding) // TODO add an escape condition when object gets stuck in geometry; have loop counter, when reaching a certain number, "teleport" to surface of colliding object surface
+		{						 // Will have to add additional info to collision event, like pd so we can get a spot to put the object right off the surface
 			//std::vector<sPossibleCollision> possibleCollisions;
 			sPossibleCollision theCollision;
 			bool didCollide = false;
@@ -263,7 +263,7 @@ void cPhysics::Update(double deltaTime)
 						if (acos(glm::dot(glm::normalize(theCollision.hitNorm), glm::vec3(0, 1, 0))) < 45)
 						{
 							pObjectA->playerInfo->jumpNormThisFrame = 1;
-							pObjectA->playerInfo->groundNorm = theCollision.hitNorm; // This will cause inconsistencies when on multiple differen surfaces !!! TODO
+							pObjectA->playerInfo->groundNorm = theCollision.hitNorm; // This will cause inconsistencies when on multiple different surfaces !!! TODO
 						}
 					}
 
@@ -274,143 +274,6 @@ void cPhysics::Update(double deltaTime)
 			}
 		}
 	}
-
-
-	// See which object is colliding with which object...
-// 	for ( sPhysicsProperties* pObjectA : this->m_vec_pPhysicalProps )
-// 	{
-// 		
-// 		for (sPhysicsProperties* pObjectB : this->m_vec_pPhysicalProps )
-// 		{
-// 			// Are "A" and "B" the same object
-// 			if (pObjectA == pObjectB)
-// 			{
-// 				// Yup, so skip this
-// 				continue;
-// 			}
-// 
-// 
-// 			// What's the collision? 
-// 			switch (pObjectA->shapeType)
-// 			{
-// 			case sPhysicsProperties::SPHERE:
-// 				switch (pObjectB->shapeType)
-// 				{
-// 				case sPhysicsProperties::SPHERE:
-// 					// Sphere - Sphere
-// 					if (this->m_Sphere_Sphere_IntersectionTest(pObjectA, pObjectB))
-// 					{
-// 						//std::cout << "Hazzah!" << std::endl;
-// 						// Explode asteroid here
-// 					}
-// 					break;
-// 				case sPhysicsProperties::PLANE:
-// 					// Sphere - Plane
-// 					break;
-// 				case sPhysicsProperties::TRIANGLE:
-// 					// Sphere - Triangle
-// 					break;
-// 				case sPhysicsProperties::AABB:
-// 					// Sphere - AABB
-// 					break;
-// 				case sPhysicsProperties::CAPSULE:
-// 					// Sphere - Capsule
-// 					break;
-// 				case sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT:
-// 					// Sphere - Mesh triangle (indirect)
-// 					if ( this->m_Sphere_TriMeshIndirect_IntersectionTest( pObjectA, pObjectB))
-// 					{
-// 						//std::cout << "Hazzah!" << std::endl;
-// 						// Explode asteroid here
-// 					}
-// 					break;
-// 				case sPhysicsProperties::MESH_OF_TRIANGLES_LOCAL_VERTICES:
-// 					// Sphere - Mesh (local vertices)
-// 					break;
-// 				}//switch (pObjectB->shapeType)
-// 				break;
-// 
-// //			case sPhsyicsProperties::PLANE:
-// //				break;
-// //			case sPhsyicsProperties::TRIANGLE:
-// //				break;
-// // ??			case sPhsyicsProperties::AABB:
-// // ??			break;
-// 
-// 			case sPhysicsProperties::CAPSULE:
-// 				switch (pObjectB->shapeType)
-// 				{
-// 				case sPhysicsProperties::SPHERE:
-// 					// Capsule - Sphere
-// 					break;
-// 				case sPhysicsProperties::PLANE:
-// 					// Capsule - Plane
-// 					break;
-// 				case sPhysicsProperties::TRIANGLE:
-// 					// Capsule - Triangle
-// 					break;
-// 				case sPhysicsProperties::AABB:
-// 					// Capsule - AABB
-// 					break;
-// 				case sPhysicsProperties::CAPSULE:
-// 					// Capsule - Capsule
-// 					break;
-// 				case sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT:
-// 					// Capsule - Mesh triangle (indirect)
-// 					break;
-// 				case sPhysicsProperties::MESH_OF_TRIANGLES_LOCAL_VERTICES:
-// 					// Capsule - Mesh (local vertices)
-// 					break;
-// 				}//switch (pObjectB->shapeType)
-// 				break;
-// 
-// //			case sPhsyicsProperties::MESH_OF_TRIANGLES_INDIRECT:
-// //				switch (pObjectB->shapeType)
-// //				{
-// //				case sPhsyicsProperties::SPHERE:
-// //					break;
-// //				case sPhsyicsProperties::PLANE:
-// //					break;
-// //				case sPhsyicsProperties::TRIANGLE:
-// //					break;
-// //				case sPhsyicsProperties::AABB:
-// //					break;
-// //				case sPhsyicsProperties::CAPSULE:
-// //					break;
-// //				case sPhsyicsProperties::MESH_OF_TRIANGLES_INDIRECT:
-// //					break;
-// //				case sPhsyicsProperties::MESH_OF_TRIANGLES_LOCAL_VERTICES:
-// //					break;
-// //				}//switch (pObjectB->shapeType)
-// //				break;
-// //
-// //			case sPhsyicsProperties::MESH_OF_TRIANGLES_LOCAL_VERTICES:
-// //				switch (pObjectB->shapeType)
-// //				{
-// //				case sPhsyicsProperties::SPHERE:
-// //					break;
-// //				case sPhsyicsProperties::PLANE:
-// //					break;
-// //				case sPhsyicsProperties::TRIANGLE:
-// //					break;
-// //				case sPhsyicsProperties::AABB:
-// //					break;
-// //				case sPhsyicsProperties::CAPSULE:
-// //					break;
-// //				case sPhsyicsProperties::MESH_OF_TRIANGLES_INDIRECT:
-// //					break;
-// //				case sPhsyicsProperties::MESH_OF_TRIANGLES_LOCAL_VERTICES:
-// //					break;
-// //				}//switch (pObjectB->shapeType)
-// //				break;
-// // 
-// 			//UNKNOWN_OR_UNDEFINED
-// 
-// 			}//switch (pObjectA->shapeType)
-// 
-// 		}//for (sPhsyicsProperties* pObjectB
-// 
-// 	}//for (sPhsyicsProperties* pObjectA...
 
 
 	// Update the draw locations (and orientations) for all associated meshes

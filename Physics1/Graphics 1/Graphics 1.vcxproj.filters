@@ -80,6 +80,9 @@
     <Filter Include="Engine Controller\Persistence">
       <UniqueIdentifier>{13d264ec-9916-40cf-8ba2-1d9b459b1941}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics Engine\Shader Manager\ShaderFiles">
+      <UniqueIdentifier>{e3a654e5-cb2b-4d5b-a5d1-1682674c8c79}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Basic Shader Manager\cShaderManager.cpp">
@@ -252,6 +255,9 @@
     </ClCompile>
     <ClCompile Include="cDatabaseManager.cpp">
       <Filter>Engine Controller\Persistence</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\sqlite\sqlite3.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -429,5 +435,14 @@
     <ClInclude Include="cDatabaseManager.h">
       <Filter>Engine Controller\Persistence</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="assets\shaders\fragmentShader01.glsl">
+      <Filter>Graphics Engine\Shader Manager\ShaderFiles</Filter>
+    </None>
+    <None Include="assets\shaders\vertexShader01.glsl">
+      <Filter>Graphics Engine\Shader Manager\ShaderFiles</Filter>
+    </None>
   </ItemGroup>
 </Project>

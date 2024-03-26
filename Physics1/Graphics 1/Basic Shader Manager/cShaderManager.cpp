@@ -2,7 +2,11 @@
 
 #include "../Other Graphics Stuff/OpenGLCommon.h"	// For all the OpenGL calls, etc.
 
-
+#include <glm/glm.hpp>
+#include <glm/vec3.hpp> // glm::vec3
+#include <glm/vec4.hpp> // glm::vec4
+#include <glm/mat4x4.hpp> // glm::mat4
+#include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 
 #include <fstream>
 #include <sstream>		// "string stream"
@@ -11,8 +15,22 @@
 #include <algorithm>		// for the std::copy
 #include <iterator>			// for the back_inserter
 
+#include <sstream> // For tokenizing strings
+
+
+
+int cShaderManager::nextTextureNumber = 22;
+
+
 cShaderManager::cShaderManager()
 {
+	// Initialize the map of str -> datatype
+
+	map_Str_to_DType["vec4"] = sULInfo::eDataType::VEC4;
+	map_Str_to_DType["mat4"] = sULInfo::eDataType::MAT4;
+	map_Str_to_DType["sampler2D"] = sULInfo::eDataType::SAMPLER2D;
+	map_Str_to_DType["samplerCube"] = sULInfo::eDataType::SAMPLERCUBE;
+
 	return;
 }
 
@@ -187,6 +205,18 @@ bool cShaderManager::m_wasThereALinkError( unsigned int programID, std::string &
 }
 
 
+sULInfo::eDataType cShaderManager::getDataTypeFromStr(std::string& str)
+{
+	std::unordered_map<std::string, sULInfo::eDataType>::iterator uMapIT = map_Str_to_DType.find(str);
+
+	if (uMapIT == map_Str_to_DType.end())
+		return sULInfo::NA;
+	
+	return uMapIT->second;
+}
+
+
+
 std::string cShaderManager::getLastError(void)
 {
 	std::string lastErrorTemp = this->m_lastError;
@@ -344,5 +374,131 @@ bool cShaderManager::createProgramFromFile(
 	// Save to other map, too
 	this->m_name_to_ID[curProgram.friendlyName] = curProgram.ID;
 
+
+	// Load up UL locations using the vec source
+// 	for (unsigned int i = 0; i < vertexShad.vecSource.size(); i++)
+// 	{
+// 		if (!tryAddUL(vertexShad.vecSource[i], &curProgram)) break;
+// 	}
+// 	for (unsigned int i = 0; i < fragShader.vecSource.size(); i++)
+// 	{
+// 		if (!tryAddUL(fragShader.vecSource[i], &curProgram)) break;
+// 	}
+// 
+// 	generateULs(&curProgram);
+
+
 	return true;
+}
+
+
+// Returns false when it hits the void main{    (so no more uniforms)
+bool cShaderManager::tryAddUL(std::string& line, cShaderProgram* program) // !!! Does not work with arrays[]
+{
+	std::stringstream stream(line);
+	std::string token;
+
+	bool isUniform = false;
+
+	getline(stream, token, ' ');
+	if (token != "uniform")
+	{
+		if (token == "//EOU") return false; // Right before the main now, no more uniforms
+		return true;
+	}
+
+	sULInfo* newinfo = new sULInfo();
+
+	// Uniform value found
+	getline(stream, token, ' ');
+
+	newinfo->dataType = getDataTypeFromStr(token);
+
+	if (newinfo->dataType == sULInfo::NA)
+	{
+		delete newinfo;
+		std::cerr << "Failed to read uniform data type" << std::endl;
+		return true;
+	}
+	else if (newinfo->dataType == sULInfo::SAMPLER2D)
+	{
+		newinfo->textureNum = cShaderManager::nextTextureNumber++;
+	}
+
+	getline(stream, token, ' ');
+
+	int semicolonIDX = -1;
+	bool isArray = false;
+	for (int i = 1; i < token.length(); i++)
+	{
+		if (token[i] == ';')
+		{
+			semicolonIDX = i;
+			break;
+		}
+		else if (token[i] == '[')
+		{
+			semicolonIDX = i;
+			isArray = true;
+			break;
+		}
+	}
+	//token = token.substr(0, semicolonIDX);
+
+	token = isArray ? token.substr(0, semicolonIDX + 1) : token.substr(0, semicolonIDX);
+
+	if (isArray)
+	{
+		token += "0]";
+	}
+
+	program->map_UniformName_to_ULInfo[token] = newinfo;
+
+	return true;
+	
+}
+
+void cShaderManager::generateULs(cShaderProgram* program)
+{
+	for (std::unordered_map<std::string, sULInfo*>::iterator mapIT = program->map_UniformName_to_ULInfo.begin();
+		mapIT != program->map_UniformName_to_ULInfo.end();
+		mapIT++)
+	{
+		sULInfo* currUL = mapIT->second;
+		currUL->UL_Location = glGetUniformLocation(program->ID, (mapIT->first).c_str());
+	}
+}
+
+void cShaderManager::cShaderProgram::setULValue(std::string& uniformName, void* val)
+{
+	sULInfo* ULInfo = getUniformID_From_Name(uniformName);
+
+	switch (ULInfo->dataType)
+	{
+	case sULInfo::VEC4:
+	{
+		glm::vec4* valueVec = (glm::vec4*)val;
+		glUniform4f(ULInfo->UL_Location, valueVec->x, valueVec->y, valueVec->z, valueVec->w);
+		break;
+	}
+	case sULInfo::MAT4:
+	{
+		glm::mat4* valueMat = (glm::mat4*)val;
+		glUniformMatrix4fv(ULInfo->UL_Location, 1, GL_FALSE, glm::value_ptr(*valueMat));
+		break;
+	}
+	case sULInfo::SAMPLER2D:
+	{
+		GLint textureUnitNumber = ULInfo->textureNum;
+		GLuint* Texture03 = (GLuint*)val;//m_pTextureManager->getTextureIDFromName(pCurrentMesh->textureName[textureUnitNumber]);
+		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
+		glBindTexture(GL_TEXTURE_2D, *Texture03);
+		//GLint texture_03_UL = glGetUniformLocation(shaderProgramID, "texture_03");
+		glUniform1i(ULInfo->UL_Location, textureUnitNumber);
+		break;
+	}
+	case sULInfo::SAMPLERCUBE:
+		// Might use this later when we use different skyboxes in one instance
+		break;
+	}
 }

@@ -30,14 +30,14 @@ public:
 	std::string friendlyName;
 
 	bool bIsVisible;
-
 	bool isDoubleSided = false;
 
-	bool bUseDebugColours;
-	glm::vec4 wholeObjectDebugColourRGBA;
+	bool bUseCustomColors;
+	glm::vec4 customColorRGBA;
 
 	float transparencyAlpha;
 	bool bUseDiscardMaskTex;
+	bool isSkybox;
 
 	bool bIsWireframe;
 	bool bDoNotLight;

@@ -69,12 +69,12 @@ private:
 	DWORD* m_ThreadIDs;
 	HANDLE* m_ThreadHandles;
 	sThreadCollisionInfo* m_ThreadInfos;
-	const unsigned int NUM_THREADS = 6;
+	const unsigned int NUM_THREADS = 0;
 
 	sPossibleCollision* m_pTheSoonestCollision = nullptr; // This is what the threads attempt to update when they get a collision
 	sPhysicsProperties* m_pReversedObject = nullptr;
 	CRITICAL_SECTION m_CollisionUpdate;
-	bool m_bUseThreading = true;
+	bool m_bUseThreading = false;
 public:
 	void UpdateCollision(float& t, glm::vec3& hn, int& testID);
 	void ToggleThreading(void);

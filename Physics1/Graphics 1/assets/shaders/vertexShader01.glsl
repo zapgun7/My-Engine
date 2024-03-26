@@ -14,14 +14,17 @@ layout  (std140) uniform Matrices
 uniform mat4 matModel;			// Later...
 uniform mat4 matModel_IT;		// Inverse transpose of the model matrix
 
-uniform bool UseBones;
+//uniform bool UseBones;
+uniform vec4 bUseBones; // yzw empty spaces for future variables
 uniform mat4 BoneMatrices[50];
 
 //uniform vec3 modelScale;
 //uniform vec3 modelOffset;
 
 //in vec4 vCol;		// was vec3
+in vec4 vTest;
 in vec4 vPos;		// was vec3
+
 in vec4 vNormal;	// NEW for 2023!
 in vec4 vTextureCoords; // Keeping this vec2 for now
 in ivec4 vBoneIds;
@@ -40,7 +43,8 @@ void main()
 	vec4 position = vPos;
 	
 	
-	if (UseBones)
+	
+	if (bUseBones.x == 1.0)
 	{
 		ex_BoneId = vBoneIds;
 		
@@ -59,7 +63,6 @@ void main()
 	mat4 matMVP = matProjection * matView * matModel;
 	//gl_Position = matMVP * vec4(vPos.xyz, 1.0);
 	gl_Position = matMVP * vec4(position.xyz, 1.0);
-		
 	// Rotate the normal by the inverse transpose of the model matrix
 	// (so that it only is impacted by the rotation, not translation or scale)
 	vertexWorldNormal = matModel_IT * vec4(vNormal.xyz, 1.0f);

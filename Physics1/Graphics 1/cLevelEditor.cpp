@@ -258,8 +258,8 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 					}
 					newDupe->meshName = meshToCopy->meshName;
 					newDupe->bIsVisible = meshToCopy->bIsVisible;
-					newDupe->bUseDebugColours = meshToCopy->bUseDebugColours;
-					newDupe->wholeObjectDebugColourRGBA = meshToCopy->wholeObjectDebugColourRGBA;
+					newDupe->bUseCustomColors = meshToCopy->bUseCustomColors;
+					newDupe->customColorRGBA = meshToCopy->customColorRGBA;
 					newDupe->transparencyAlpha = meshToCopy->transparencyAlpha;
 					newDupe->bUseDiscardMaskTex = meshToCopy->bUseDiscardMaskTex;
 					newDupe->bIsWireframe = meshToCopy->bIsWireframe;
@@ -416,8 +416,8 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 
 				// GRAPHICS DATA
 				scale = selectedMesh->scale.x;
-	 			customColor = glm::vec3(selectedMesh->wholeObjectDebugColourRGBA);
-	 			useCustomColor = selectedMesh->bUseDebugColours;
+	 			customColor = glm::vec3(selectedMesh->customColorRGBA);
+	 			useCustomColor = selectedMesh->bUseCustomColors;
 				transparencyAlpha = selectedMesh->transparencyAlpha;
 				useDiscardMask = selectedMesh->bUseDiscardMaskTex;
 
@@ -610,8 +610,8 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 				selectedMesh->bIsVisible = isVisible;
 				selectedMesh->bIsWireframe = isWireframe;
 				selectedMesh->bDoNotLight = doNotLight;
-				selectedMesh->bUseDebugColours = useCustomColor;
-				selectedMesh->wholeObjectDebugColourRGBA = glm::vec4(customColor, 1);
+				selectedMesh->bUseCustomColors = useCustomColor;
+				selectedMesh->customColorRGBA = glm::vec4(customColor, 1);
 
 				selectedMesh->uvOffsetSpeed = glm::vec2(uvXSpeed, uvYSpeed);
 				selectedMesh->uv_Offset_Scale.z = uvScale;

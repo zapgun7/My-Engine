@@ -4,6 +4,24 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <unordered_map>
+
+struct sULInfo
+{
+	enum eDataType // New data types must be put in the map in the constructor!!!
+	{
+		VEC4,
+		MAT4,
+		SAMPLER2D,
+		SAMPLERCUBE,
+		NA // Return value when we cannot find in map
+	};
+	eDataType dataType = NA;
+	int UL_Location = -1;
+	int textureNum = -1;
+};
+
+
 
 class cShaderManager
 {
@@ -16,6 +34,7 @@ public:
 		{
 			VERTEX_SHADER,
 			FRAGMENT_SHADER,
+			COMPUTE_SHADER,
 			UNKNOWN
 		};
 		eShaderType shaderType;
@@ -35,15 +54,15 @@ public:
 		unsigned int ID;	// ID from OpenGL (calls it a "name")
 		std::string friendlyName;	// We give it this name
 
-		// TODO: For the students to do, because it's FUN, FUN, FUN
-		std::map< std::string /*name of uniform variable*/,
-		          int /* uniform location ID */ > 
-								mapUniformName_to_UniformLocation;
-		// Returns -1 (just like OpenGL) if NOT found
-		int getUniformID_From_Name(std::string name);
-		// Look up the uniform location and save it.
-		bool LoadUniformLocation(std::string variableName);
 
+		std::unordered_map< std::string, sULInfo*> map_UniformName_to_ULInfo;
+		
+		// Returns -1 (just like OpenGL) if NOT found
+		sULInfo* getUniformID_From_Name(std::string name);
+		
+		// Look up the uniform location and save it.
+		//bool LoadUniformLocation(std::string variableName);
+		void setULValue(std::string& uniformName, void* val);
 	};
 
 	cShaderManager();
@@ -60,6 +79,9 @@ public:
 	// Used to load the uniforms. Returns NULL if not found.
 	cShaderProgram* pGetShaderProgramFromFriendlyName( std::string friendlyName );
 
+	// !! Does not work with arrays[]
+	bool tryAddUL(std::string& line, cShaderProgram* program); // Takes line from the shader text, stores UL info if a uniform
+	void generateULs(cShaderProgram* program);
 
 	// Clears last error
 	std::string getLastError(void);
@@ -77,6 +99,14 @@ private:
 
 	std::map< unsigned int /*ID*/, cShaderProgram > m_ID_to_Shader;
 	std::map< std::string /*name*/, unsigned int /*ID*/ > m_name_to_ID;
+
+	std::unordered_map<std::string, sULInfo::eDataType> map_Str_to_DType;
+
+	// Little Helper Functions
+	sULInfo::eDataType getDataTypeFromStr(std::string& str);
+
+
+	static int nextTextureNumber;
 };
 
 #endif

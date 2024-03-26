@@ -98,7 +98,7 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 		//////// Now add all the vec2's and 3's //////
 
 		// Custom Color
-		vec3 = MeshVec[i]->wholeObjectDebugColourRGBA; // Custom Color
+		vec3 = MeshVec[i]->customColorRGBA; // Custom Color
 		vec.PushBack(vec3.x, output.GetAllocator());
 		vec.PushBack(vec3.y, output.GetAllocator());
 		vec.PushBack(vec3.z, output.GetAllocator());
@@ -129,7 +129,7 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 		meshobj.AddMember("isWireframe", state, output.GetAllocator()); // Add isWireframe
 		state = MeshVec[i]->bDoNotLight;
 		meshobj.AddMember("doNotLight", state, output.GetAllocator()); // Add doNotLight
-		state = MeshVec[i]->bUseDebugColours;
+		state = MeshVec[i]->bUseCustomColors;
 		meshobj.AddMember("useCustomColor", state, output.GetAllocator()); // Add useCustomColor
 
 		// Transparency Alpha
@@ -350,9 +350,9 @@ void cSceneManagement::loadScene(std::string fileName)
 // 		newMesh->eulerOrientation.y = itr->value[1].GetFloat();
 // 		newMesh->eulerOrientation.z = itr->value[2].GetFloat();
 		itr = meshes[i].FindMember("customColor");
-		newMesh->wholeObjectDebugColourRGBA.x = itr->value[0].GetFloat();
-		newMesh->wholeObjectDebugColourRGBA.y = itr->value[1].GetFloat();
-		newMesh->wholeObjectDebugColourRGBA.z = itr->value[2].GetFloat();
+		newMesh->customColorRGBA.x = itr->value[0].GetFloat();
+		newMesh->customColorRGBA.y = itr->value[1].GetFloat();
+		newMesh->customColorRGBA.z = itr->value[2].GetFloat();
 
 		// UV offset and scale
 		itr = meshes[i].FindMember("uv_OS");
@@ -376,7 +376,7 @@ void cSceneManagement::loadScene(std::string fileName)
 		itr = meshes[i].FindMember("doNotLight");
 		newMesh->bDoNotLight = itr->value.GetBool();
 		itr = meshes[i].FindMember("useCustomColor");
-		newMesh->bUseDebugColours = itr->value.GetBool();
+		newMesh->bUseCustomColors = itr->value.GetBool();
 
 		// Transparency Alpha
 		itr = meshes[i].FindMember("tAlph");

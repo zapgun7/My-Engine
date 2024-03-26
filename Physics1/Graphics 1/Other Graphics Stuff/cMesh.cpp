@@ -20,11 +20,12 @@ cMesh::cMesh()
 
 	this->bIsVisible = true;
 
-	this->bUseDebugColours = false;
-	this->wholeObjectDebugColourRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	this->bUseCustomColors = false;
+	this->customColorRGBA = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	this->transparencyAlpha = 1.0f;
 	this->bUseDiscardMaskTex = false;
+	this->isSkybox = false;
 
 	this->bUseReflect = false;
 	this->bUseRefract = false;

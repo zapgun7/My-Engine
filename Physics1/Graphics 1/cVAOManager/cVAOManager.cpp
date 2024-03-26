@@ -233,7 +233,7 @@ bool cVAOManager::LoadModelIntoVAO(
 
 
 	glEnableVertexAttribArray(vTextureCoords_location);	    // vTextureCoords;
-	glVertexAttribPointer(vTextureCoords_location, 2,		// in vec2 vTextureCoords;
+	glVertexAttribPointer(vTextureCoords_location, 4,		// in vec2 vTextureCoords;
 		GL_FLOAT, GL_FALSE,
 		sizeof(sVertex),
 		(void*)offsetof(sVertex, u));
@@ -345,8 +345,8 @@ bool cVAOManager::m_LoadTheFile(std::string theFileName, sModelDrawInfo& drawInf
 // 		{
 		drawInfo.pVertices[vertIndex].u = scene->mMeshes[0]->mTextureCoords[0][vertIndex].x;
 		drawInfo.pVertices[vertIndex].v = scene->mMeshes[0]->mTextureCoords[0][vertIndex].y;
-		drawInfo.pVertices[vertIndex].s = 0.0f;
-		drawInfo.pVertices[vertIndex].t = 0.0f;
+		drawInfo.pVertices[vertIndex].s = scene->mMeshes[0]->mTextureCoords[0][vertIndex].x;//0.0f;
+		drawInfo.pVertices[vertIndex].t = scene->mMeshes[0]->mTextureCoords[0][vertIndex].y;//0.0f;
 // 		}
 // 		else
 // 		{

@@ -376,7 +376,7 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 	GLint matView_UL = glGetUniformLocation(m_shaderProgramID, "matView");
 	glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(matView));
 
-	/////////// UV OFFSET UPDATE /////////////
+	/////////// OFFSET UPDATE /////////////
 	for (unsigned int i = 0; i < m_vec_pAllMeshes.size(); i++)
 	{
 		m_vec_pAllMeshes[i]->uv_Offset_Scale.x += m_vec_pAllMeshes[i]->uvOffsetSpeed.x * static_cast<float>(deltaTime);
@@ -465,15 +465,16 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 		//            glDepthMask(GL_FALSE);          // Won't write to the depth buffer
 
 					// uniform bool bIsSkyBox;
-		GLint bIsSkyBox_UL = glGetUniformLocation(m_shaderProgramID, "bIsSkyBox");
-		glUniform1f(bIsSkyBox_UL, (GLfloat)GL_TRUE);
+		GLint bIsSkyBox_UL = glGetUniformLocation(m_shaderProgramID, "bUseHeightmap_IsSkyBox_UseDiscard_NONE");
+		glUniform4f(bIsSkyBox_UL, (GLfloat)0.0f, (GLfloat)1.0f, (GLfloat)0.0f, (GLfloat)0.0f);
 
 		// The normals for this sphere are facing "out" but we are inside the sphere
 		glCullFace(GL_FRONT);
 
 		DrawObject(&theSkyBox, glm::mat4(1.0f), m_shaderProgramID);
 
-		glUniform1f(bIsSkyBox_UL, (GLfloat)GL_FALSE);
+		/*glUniform1f(bIsSkyBox_UL, (GLfloat)GL_FALSE);*/
+		glUniform4f(bIsSkyBox_UL, (GLfloat)0.0f, (GLfloat)0.0f, (GLfloat)0.0f, (GLfloat)0.0f);
 
 		// Put the culling back to "normal" (back facing are not drawn)
 		glCullFace(GL_BACK);
@@ -530,8 +531,8 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 		cMesh basicSphere;
 		basicSphere.meshName = "Sphere_1_unit_Radius.ply";
 		basicSphere.bDoNotLight = true;
-		basicSphere.bUseDebugColours = true;
-		basicSphere.wholeObjectDebugColourRGBA = glm::vec4(0, 1, 0, 1); // Green
+		basicSphere.bUseCustomColors = true;
+		basicSphere.customColorRGBA = glm::vec4(0, 1, 0, 1); // Green
 		basicSphere.bIsWireframe = true;
 
 		// Start by drawing a basic sphere at all the active light locations
@@ -540,11 +541,11 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 			if (m_pTheLights->theLights[i].param2.x == 1) // If light is on
 			{
 				if (selectedLight == i) // Have different color for selected light
-					basicSphere.wholeObjectDebugColourRGBA = glm::vec4(1, 0, 0, 1);
+					basicSphere.customColorRGBA = glm::vec4(1, 0, 0, 1);
 
 				basicSphere.drawPosition = m_pTheLights->theLights[i].position;
 				DrawObject(&basicSphere, matModel, m_shaderProgramID);
-				basicSphere.wholeObjectDebugColourRGBA = glm::vec4(0, 1, 0, 1);
+				basicSphere.customColorRGBA = glm::vec4(0, 1, 0, 1);
 			}
 		}
 
@@ -552,7 +553,7 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 		if (selectedMesh > -1)
 		{
 			basicSphere.drawPosition = m_vec_pAllMeshes[selectedMesh]->drawPosition;
-			basicSphere.wholeObjectDebugColourRGBA = glm::vec4(0, .5, .5, 1);
+			basicSphere.customColorRGBA = glm::vec4(0, .5, .5, 1);
 			DrawObject(&basicSphere, matModel, m_shaderProgramID);
 		}
 
@@ -578,7 +579,7 @@ bool cGraphicsMain::Update(double deltaTime) // Main "loop" of the window. Not r
 // Update for framebuffer stuff
 bool cGraphicsMain::Update2(double deltaTime)
 {
-	// First reduce all red values on the heatmap
+	// First reduce all red values on the heatmapf
 	if (false)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_3->ID);
@@ -626,7 +627,7 @@ bool cGraphicsMain::Update2(double deltaTime)
 		glm::vec3 scene_1_CameraEye = m_cameraEye;
 		glm::vec3 scene_1_CameraTarget = m_cameraTarget;
 
-		DrawPass_1(m_shaderProgramID, m_pFBO_1->width, m_pFBO_1->height, scene_1_CameraEye, scene_1_CameraTarget, true);
+		DrawPass_1(m_shaderProgramID, m_pFBO_1->width, m_pFBO_1->height, scene_1_CameraEye, scene_1_CameraTarget);
 	}
 
 	if (false)
@@ -686,260 +687,6 @@ bool cGraphicsMain::Update2(double deltaTime)
 	else
 		return 0;
 
-}
-
-bool cGraphicsMain::UpdateProject(double deltaTime)
-{
-	const glm::vec3 cam1Pos = glm::vec3(6.75f, 17.1f, -28.75f);
-	const glm::vec3 cam1Dir = glm::vec3(1.0f, -1.0f, 1.0f);
-
-	const glm::vec3 cam2Pos = glm::vec3(44.9f, 17.1f, 69.1f);
-	const glm::vec3 cam2Dir = glm::vec3(-1.0f, -1.0f, -1.0f);
-
-	const glm::vec3 cam3Pos = glm::vec3(-92.75f, 17.1f, 68.85f);
-	const glm::vec3 cam3Dir = glm::vec3(1.0f, -1.0f, -1.0f);
-
-	/////////////////// CAM 1 ////////////////////////
-	// Start with the spooky heatmap render
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_3->ID);
-		float ratio;
-		ratio = m_pFBO_3->width / (float)m_pFBO_3->height;
-		glViewport(0, 0, m_pFBO_3->width, m_pFBO_3->height);
-
-		m_pFBO_3->clearBuffers(true, true);
-
-		glm::vec3 camEye = cam1Pos;
-		glm::vec3 camTarget = cam1Dir;
-
-		DrawPass_SpookyHeatmap(m_shaderProgramID, m_pFBO_3->width, m_pFBO_3->height, camEye, camTarget);
-	}
-
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_1->ID);
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		float ratio;
-		//int width, height;
-
-		ratio = m_pFBO_1->width / (float)m_pFBO_1->height;
-		glViewport(0, 0, m_pFBO_1->width, m_pFBO_1->height);
-
-		m_pFBO_1->clearBuffers(true, true);
-
-		glm::vec3 scene_1_CameraEye = cam1Pos;
-		glm::vec3 scene_1_CameraTarget = cam1Dir;
-
-		DrawPass_1(m_shaderProgramID, m_pFBO_1->width, m_pFBO_1->height, scene_1_CameraEye, scene_1_CameraTarget, false);
-	}
-
-
-	{
-		// Apply spooky effect, pass in heatmap and FBO 1 as textures and paste to some arbitrary quad to make texture for FSQ pass?
-		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_5->ID);
-		float ratio;
-		ratio = m_pFBO_5->width / (float)m_pFBO_5->height;
-		glViewport(0, 0, m_pFBO_5->width, m_pFBO_5->height);
-
-		m_pFBO_5->clearBuffers(true, true);
-
-		glm::vec3 camEye = m_cameraEye;
-		glm::vec3 camTarget = m_cameraTarget;
-
-		DrawPass_ApplySpook(m_shaderProgramID, m_pFBO_5->width, m_pFBO_5->height);
-	}
-
-	/////////////////// CAM 2 ////////////////////////
-	// Start with the spooky heatmap render
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_3->ID);
-		float ratio;
-		ratio = m_pFBO_3->width / (float)m_pFBO_3->height;
-		glViewport(0, 0, m_pFBO_3->width, m_pFBO_3->height);
-
-		m_pFBO_3->clearBuffers(true, true);
-
-		glm::vec3 camEye = cam2Pos;
-		glm::vec3 camTarget = cam2Dir;
-
-		DrawPass_SpookyHeatmap(m_shaderProgramID, m_pFBO_3->width, m_pFBO_3->height, camEye, camTarget);
-	}
-
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_1->ID);
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		float ratio;
-		//int width, height;
-
-		ratio = m_pFBO_1->width / (float)m_pFBO_1->height;
-		glViewport(0, 0, m_pFBO_1->width, m_pFBO_1->height);
-
-		m_pFBO_1->clearBuffers(true, true);
-
-		glm::vec3 scene_1_CameraEye = cam2Pos;
-		glm::vec3 scene_1_CameraTarget = cam2Dir;
-
-		DrawPass_1(m_shaderProgramID, m_pFBO_1->width, m_pFBO_1->height, scene_1_CameraEye, scene_1_CameraTarget, false);
-	}
-
-
-	{
-		// Apply spooky effect, pass in heatmap and FBO 1 as textures and paste to some arbitrary quad to make texture for FSQ pass?
-		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_6->ID);
-		float ratio;
-		ratio = m_pFBO_6->width / (float)m_pFBO_6->height;
-		glViewport(0, 0, m_pFBO_6->width, m_pFBO_6->height);
-
-		m_pFBO_6->clearBuffers(true, true);
-
-		glm::vec3 camEye = m_cameraEye;
-		glm::vec3 camTarget = m_cameraTarget;
-
-		DrawPass_ApplySpook(m_shaderProgramID, m_pFBO_6->width, m_pFBO_6->height);
-	}
-
-	/////////////////// CAM 3 ////////////////////////
-	// Start with the spooky heatmap render
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_3->ID);
-		float ratio;
-		ratio = m_pFBO_3->width / (float)m_pFBO_3->height;
-		glViewport(0, 0, m_pFBO_3->width, m_pFBO_3->height);
-
-		m_pFBO_3->clearBuffers(true, true);
-
-		glm::vec3 camEye = cam3Pos;
-		glm::vec3 camTarget = cam3Dir;
-
-		DrawPass_SpookyHeatmap(m_shaderProgramID, m_pFBO_3->width, m_pFBO_3->height, camEye, camTarget);
-	}
-
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_1->ID);
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		float ratio;
-		//int width, height;
-
-		ratio = m_pFBO_1->width / (float)m_pFBO_1->height;
-		glViewport(0, 0, m_pFBO_1->width, m_pFBO_1->height);
-
-		m_pFBO_1->clearBuffers(true, true);
-
-		glm::vec3 scene_1_CameraEye = cam3Pos;
-		glm::vec3 scene_1_CameraTarget = cam3Dir;
-
-		DrawPass_1(m_shaderProgramID, m_pFBO_1->width, m_pFBO_1->height, scene_1_CameraEye, scene_1_CameraTarget, false);
-	}
-
-
-	{
-		// Apply spooky effect, pass in heatmap and FBO 1 as textures and paste to some arbitrary quad to make texture for FSQ pass?
-		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_7->ID);
-		float ratio;
-		ratio = m_pFBO_7->width / (float)m_pFBO_7->height;
-		glViewport(0, 0, m_pFBO_7->width, m_pFBO_7->height);
-
-		m_pFBO_7->clearBuffers(true, true);
-
-		glm::vec3 camEye = m_cameraEye;
-		glm::vec3 camTarget = m_cameraTarget;
-
-		DrawPass_ApplySpook(m_shaderProgramID, m_pFBO_7->width, m_pFBO_7->height);
-	}
-
-
-
-
-
-
-	//////////// PLAYER POV RENDER //////////////
-
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_3->ID);
-		float ratio;
-		ratio = m_pFBO_3->width / (float)m_pFBO_3->height;
-		glViewport(0, 0, m_pFBO_3->width, m_pFBO_3->height);
-
-		m_pFBO_3->clearBuffers(true, true);
-
-		glm::vec3 camEye = m_cameraEye;
-		glm::vec3 camTarget = m_cameraTarget;
-
-		DrawPass_SpookyHeatmap(m_shaderProgramID, m_pFBO_3->width, m_pFBO_3->height, camEye, camTarget);
-	}
-
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_1->ID);
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		float ratio;
-		//int width, height;
-
-		ratio = m_pFBO_1->width / (float)m_pFBO_1->height;
-		glViewport(0, 0, m_pFBO_1->width, m_pFBO_1->height);
-
-		m_pFBO_1->clearBuffers(true, true);
-
-		glm::vec3 scene_1_CameraEye = m_cameraEye;
-		glm::vec3 scene_1_CameraTarget = m_cameraTarget;
-
-		DrawPass_1(m_shaderProgramID, m_pFBO_1->width, m_pFBO_1->height, scene_1_CameraEye, scene_1_CameraTarget, true);
-	}
-
-
-	{
-		// Apply spooky effect, pass in heatmap and FBO 1 as textures and paste to some arbitrary quad to make texture for FSQ pass?
-		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_4->ID);
-		float ratio;
-		ratio = m_pFBO_4->width / (float)m_pFBO_4->height;
-		glViewport(0, 0, m_pFBO_4->width, m_pFBO_4->height);
-
-		m_pFBO_4->clearBuffers(true, true);
-
-		glm::vec3 camEye = m_cameraEye;
-		glm::vec3 camTarget = m_cameraTarget;
-
-		DrawPass_ApplySpook(m_shaderProgramID, m_pFBO_4->width, m_pFBO_4->height);
-	}
-
-
-	// Full screen quad
-	if (true)
-	{
-		// Output directed to screen
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		float ratio;
-		int screenWidth, screenHeight;
-		glfwGetFramebufferSize(m_window, &screenWidth, &screenHeight);
-		ratio = screenWidth / (float)screenHeight;
-		//            ratio = ::g_pFBO_1->width / (float)::g_pFBO_1->height;
-		//            glViewport(0, 0, ::g_pFBO_1->width, (float)::g_pFBO_1->height);
-
-		glViewport(0, 0, screenWidth, screenHeight);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//        ::g_pFBO_1->clearBuffers(true, true);
-
-
-		DrawPass_FSQ(m_shaderProgramID, screenWidth, screenHeight);
-	}
-
-
-	/*glEnable(GL_DEPTH_TEST);*/
-
-	glfwPollEvents();
-
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-	glfwSwapBuffers(m_window);
-
-	// 	glfwSwapBuffers(m_window);
-	// 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	// 	glfwPollEvents();
-
-
-	if (glfwWindowShouldClose(m_window))
-		return 1;
-	else
-		return 0;
 }
 
 void cGraphicsMain::Destroy()
@@ -1130,17 +877,9 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 	// Combine all these transformation
 	matModel = matModel * matTranslate;
 
-// 	matModel = matModel * matRotateX;
-// 	matModel = matModel * matRotateY;
-// 	matModel = matModel * matRotateZ;
-
 	matModel = matModel * matRotation;
 
 	matModel = matModel * matScale;
-
-	//        m = m * rotateZ;
-	//        m = m * rotateY;
-	//        m = m * rotateZ;
 
 
 
@@ -1153,8 +892,8 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 	
 
 
-	GLint useBones_UL = glGetUniformLocation(shaderProgramID, "UseBones");
-	GLint useBonesFrag_UL = glGetUniformLocation(shaderProgramID, "bUseBonesFrag");
+	GLint useBones_UL = glGetUniformLocation(shaderProgramID, "bUseBones");
+	GLint useBonesFrag_UL = glGetUniformLocation(shaderProgramID, "bBoneFrag");
 	if (pCurrentMesh->friendlyName == "a") // Boned model
 	{
 		glDisable(GL_CULL_FACE);
@@ -1168,13 +907,13 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 			glUniformMatrix4fv(boneMatrix_UL, 1, GL_FALSE, glm::value_ptr(theModel.BoneInfoVec[i].FinalTransformation));
 		}
 		
-		glUniform1f(useBones_UL, (GLfloat)GL_TRUE);
-		glUniform1f(useBonesFrag_UL, (GLfloat)GL_TRUE);
+		glUniform4f(useBones_UL, 1.0f, 0.0f, 0.0f, 0.0f);//(GLfloat)GL_TRUE);
+		glUniform4f(useBonesFrag_UL, 1.0f, 0.0f, 0.0f, 0.0f);
 	}
 	else
 	{
-		glUniform1f(useBones_UL, (GLfloat)GL_FALSE);
-		glUniform1f(useBonesFrag_UL, (GLfloat)GL_FALSE);
+		glUniform4f(useBones_UL, 0.0f, 0.0f, 0.0f, 0.0f);//(GLfloat)GL_FALSE);
+		glUniform4f(useBonesFrag_UL, 0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
 	GLint matModel_UL = glGetUniformLocation(shaderProgramID, "matModel");
@@ -1200,92 +939,101 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 
 
 			// uniform bool bDoNotLight;
-	GLint bDoNotLight_UL = glGetUniformLocation(shaderProgramID, "bDoNotLight");
-
-	if (pCurrentMesh->bDoNotLight)
-	{
-		// Set uniform to true
-		glUniform1f(bDoNotLight_UL, (GLfloat)GL_TRUE);
-	}
-	else
-	{
-		// Set uniform to false;
-		glUniform1f(bDoNotLight_UL, (GLfloat)GL_FALSE);
-	}
+	//GLint bDoNotLight_UL = glGetUniformLocation(shaderProgramID, "bDoNotLight");
+	GLint bDoNotLight_UL = glGetUniformLocation(shaderProgramID, "bDontLight_CustomCol");
+// 	if (pCurrentMesh->bDoNotLight)
+// 	{
+// 		// Set uniform to true
+// 		glUniform1f(bDoNotLight_UL, (GLfloat)GL_TRUE);
+// 	}
+// 	else
+// 	{
+// 		// Set uniform to false;
+// 		glUniform1f(bDoNotLight_UL, (GLfloat)GL_FALSE);
+// 	}
 
 	//uniform bool bUseDebugColour;	
-	GLint bUseDebugColour_UL = glGetUniformLocation(shaderProgramID, "bUseDebugColour");
-	if (pCurrentMesh->bUseDebugColours)
+	//GLint bUseDebugColour_UL = glGetUniformLocation(shaderProgramID, "bUseDebugColour");
+
+	glUniform4f(bDoNotLight_UL,
+		(GLfloat)pCurrentMesh->bDoNotLight,
+		(GLfloat)pCurrentMesh->bUseCustomColors,
+		0.0f,
+		0.0f);
+
+	if (pCurrentMesh->bUseCustomColors)
 	{
-		glUniform1f(bUseDebugColour_UL, (GLfloat)GL_TRUE);
+		//glUniform1f(bUseDebugColour_UL, (GLfloat)GL_TRUE);
 		//uniform vec4 debugColourRGBA;
-		GLint debugColourRGBA_UL = glGetUniformLocation(shaderProgramID, "debugColourRGBA");
+		GLint debugColourRGBA_UL = glGetUniformLocation(shaderProgramID, "customColorRGBA");
 		glUniform4f(debugColourRGBA_UL,
-			pCurrentMesh->wholeObjectDebugColourRGBA.r,
-			pCurrentMesh->wholeObjectDebugColourRGBA.g,
-			pCurrentMesh->wholeObjectDebugColourRGBA.b,
-			pCurrentMesh->wholeObjectDebugColourRGBA.a);
+			pCurrentMesh->customColorRGBA.r,
+			pCurrentMesh->customColorRGBA.g,
+			pCurrentMesh->customColorRGBA.b,
+			pCurrentMesh->customColorRGBA.a);
 	}
-	else
-	{
-		glUniform1f(bUseDebugColour_UL, (GLfloat)GL_FALSE);
-	}
+// 	else
+// 	{
+// 		glUniform1f(bUseDebugColour_UL, (GLfloat)GL_FALSE);
+// 	}
 
 	// Discard Mask bool
-	GLint bDiscardMaskTex_UL = glGetUniformLocation(shaderProgramID, "bUseDiscardMaskTexture");
+	GLint bDiscardMaskTex_UL = glGetUniformLocation(shaderProgramID, "bUseHeightmap_IsSkyBox_UseDiscard_NONE");
 
-	if (pCurrentMesh->bUseDiscardMaskTex)
-	{
-		// Set uniform to true
-		glUniform1f(bDiscardMaskTex_UL, (GLfloat)GL_TRUE);
-	}
-	else
-	{
-		// Set uniform to false;
-		glUniform1f(bDiscardMaskTex_UL, (GLfloat)GL_FALSE);
-	}
+	glUniform4f(bDiscardMaskTex_UL, 0.0f, (GLfloat)pCurrentMesh->isSkybox, (GLfloat)pCurrentMesh->bUseDiscardMaskTex, 0.0f);
+// 	if (pCurrentMesh->bUseDiscardMaskTex)
+// 	{
+// 		// Set uniform to true
+// 		glUniform1f(bDiscardMaskTex_UL, (GLfloat)GL_TRUE);
+// 	}
+// 	else
+// 	{
+// 		// Set uniform to false;
+// 		glUniform1f(bDiscardMaskTex_UL, (GLfloat)GL_FALSE);
+// 	}
 
 	/// REFLECTION & REFRACTION
 
-	GLint bUseReflect_UL = glGetUniformLocation(shaderProgramID, "bUseReflect");
-	if (pCurrentMesh->bUseReflect)
-	{
-		glUniform1f(bUseReflect_UL, (GLfloat)GL_TRUE);
-	}
-	else
-	{
-		glUniform1f(bUseReflect_UL, (GLfloat)GL_FALSE);
-	}
-
-	GLint bUseRefract_UL = glGetUniformLocation(shaderProgramID, "bUseRefract");
-	if (pCurrentMesh->bUseRefract)
-	{
-		glUniform1f(bUseRefract_UL, (GLfloat)GL_TRUE);
-	}
-	else
-	{
-		glUniform1f(bUseRefract_UL, (GLfloat)GL_FALSE);
-	}
-
-	/// ALPHA TRANSPARECY
-
-	GLint fTransparencyAlpha_UL = glGetUniformLocation(shaderProgramID, "transparencyAlpha");
-	glUniform1f(fTransparencyAlpha_UL, pCurrentMesh->transparencyAlpha);
+	GLint bUseReflect_UL = glGetUniformLocation(shaderProgramID, "bReflect_Refract_fAlpha_NONE");
+	glUniform4f(bUseReflect_UL, (GLfloat)pCurrentMesh->bUseReflect, (GLfloat)pCurrentMesh->bUseRefract, (GLfloat)pCurrentMesh->transparencyAlpha, 0.0f);
+// 	if (pCurrentMesh->bUseReflect)
+// 	{
+// 		glUniform1f(bUseReflect_UL, (GLfloat)GL_TRUE);
+// 	}
+// 	else
+// 	{
+// 		glUniform1f(bUseReflect_UL, (GLfloat)GL_FALSE);
+// 	}
+// 
+// 	GLint bUseRefract_UL = glGetUniformLocation(shaderProgramID, "bUseRefract");
+// 	if (pCurrentMesh->bUseRefract)
+// 	{
+// 		glUniform1f(bUseRefract_UL, (GLfloat)GL_TRUE);
+// 	}
+// 	else
+// 	{
+// 		glUniform1f(bUseRefract_UL, (GLfloat)GL_FALSE);
+// 	}
+// 
+// 	/// ALPHA TRANSPARECY
+// 
+// 	GLint fTransparencyAlpha_UL = glGetUniformLocation(shaderProgramID, "transparencyAlpha");
+// 	glUniform1f(fTransparencyAlpha_UL, pCurrentMesh->transparencyAlpha);
 
 
 
 	//////////////////// TEXTURE STUFF /////////////////////////
 
-	GLint bUseVertexColours_UL = glGetUniformLocation(shaderProgramID, "bUseVertexColours");
-	glUniform1f(bUseVertexColours_UL, (GLfloat)GL_FALSE);
+// 	GLint bUseVertexColours_UL = glGetUniformLocation(shaderProgramID, "bUseVertexColours");
+// 	glUniform1f(bUseVertexColours_UL, (GLfloat)GL_FALSE);
 
 
 	SetUpTextures(pCurrentMesh, shaderProgramID);
 
 
 	// Pass in uv-offset
-	GLint uvOffset_UL = glGetUniformLocation(shaderProgramID, "uv_Offset_Scale");
-	glUniform3f(uvOffset_UL, pCurrentMesh->uv_Offset_Scale.x, pCurrentMesh->uv_Offset_Scale.y, pCurrentMesh->uv_Offset_Scale.z);
+	GLint uvOffset_UL = glGetUniformLocation(shaderProgramID, "uv_Offset_Scale_NONE");
+	glUniform4f(uvOffset_UL, pCurrentMesh->uv_Offset_Scale.x, pCurrentMesh->uv_Offset_Scale.y, pCurrentMesh->uv_Offset_Scale.z, 0.0f);
 
 	/////////////////////////////////////////////////////////////
 
@@ -1388,8 +1136,8 @@ bool cGraphicsMain::LoadParticles(void)
 	//m_pBasicParticle->meshName = "Sphere_1_unit_Radius.ply";
 	m_pBasicParticle->meshName = "Icosahedron.ply";
 	m_pBasicParticle->bDoNotLight = false;
-	m_pBasicParticle->bUseDebugColours = true;
-	m_pBasicParticle->wholeObjectDebugColourRGBA = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
+	m_pBasicParticle->bUseCustomColors = true;
+	m_pBasicParticle->customColorRGBA = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
 
 	m_pParticleManager = cParticleManager::GetInstance();
 
@@ -1590,13 +1338,14 @@ void cGraphicsMain::DrawPass_SpookyHeatmap(GLuint shaderProgramID, int screenWid
 	return;
 }
 
-void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec3 sceneEye, glm::vec3 sceneTarget, bool isPlayer)
+void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec3 sceneEye, glm::vec3 sceneTarget)
 {
 
 	float ratio; //= screenWidth / (float)screenHeight;
 	//int width, height;
 
 	glUseProgram(m_shaderProgramID);
+	cShaderManager::cShaderProgram* currProg = m_pShaderThing->pGetShaderProgramFromFriendlyName("shader01");
 
 
 	//glfwGetFramebufferSize(m_window, &width, &height);
@@ -1624,6 +1373,7 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 
 	glUniform4f(eyeLocation_UL,
 		sceneEye.x, sceneEye.y, sceneEye.z, 1.0f);
+	//currProg->setULValue("eyeLocation", &glm::vec4(sceneEye.x, sceneEye.y, sceneEye.z, 1.0f));
 
 	// Set Camera Matrices
 	glm::mat4 projMat = glm::perspective(glm::radians(90.0f), ratio, 0.1f, 1100.0f);
@@ -1697,53 +1447,6 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 			if (pCurrentMesh->isDoubleSided)
 				glDisable(GL_CULL_FACE);
 
-			if ((isPlayer) && (pCurrentMesh->friendlyName == "S1"))
-			{
-				GLint bIsCamera_UL = glGetUniformLocation(shaderProgramID, "bIsCamera");
-				glUniform1f(bIsCamera_UL, (GLfloat)GL_TRUE);
-
-				// Apply texture to camera 1
-				GLint textureUnitNumber = 60;
-				glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
-				glBindTexture(GL_TEXTURE_2D, m_pFBO_5->colourTexture_0_ID);
-
-				//uniform sampler2D textureOffScreen;
-				GLint textureOffScreen_UL = glGetUniformLocation(m_shaderProgramID, "textureOffScreen");
-				glUniform1i(textureOffScreen_UL, textureUnitNumber);
-			}
-			else if ((isPlayer) && (pCurrentMesh->friendlyName == "S2"))
-			{
-				GLint bIsCamera_UL = glGetUniformLocation(shaderProgramID, "bIsCamera");
-				glUniform1f(bIsCamera_UL, (GLfloat)GL_TRUE);
-
-				// Apply texture to camera 1
-				GLint textureUnitNumber = 60;
-				glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
-				glBindTexture(GL_TEXTURE_2D, m_pFBO_6->colourTexture_0_ID);
-
-				//uniform sampler2D textureOffScreen;
-				GLint textureOffScreen_UL = glGetUniformLocation(m_shaderProgramID, "textureOffScreen");
-				glUniform1i(textureOffScreen_UL, textureUnitNumber);
-			}
-			else if ((isPlayer) && (pCurrentMesh->friendlyName == "S3"))
-			{
-				GLint bIsCamera_UL = glGetUniformLocation(shaderProgramID, "bIsCamera");
-				glUniform1f(bIsCamera_UL, (GLfloat)GL_TRUE);
-
-				// Apply texture to camera 1
-				GLint textureUnitNumber = 60;
-				glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
-				glBindTexture(GL_TEXTURE_2D, m_pFBO_7->colourTexture_0_ID);
-
-				//uniform sampler2D textureOffScreen;
-				GLint textureOffScreen_UL = glGetUniformLocation(m_shaderProgramID, "textureOffScreen");
-				glUniform1i(textureOffScreen_UL, textureUnitNumber);
-			}
-			else
-			{
-				GLint bIsCamera_UL = glGetUniformLocation(shaderProgramID, "bIsCamera");
-				glUniform1f(bIsCamera_UL, (GLfloat)GL_FALSE);
-			}
 			
 			DrawObject(pCurrentMesh, matModel, m_shaderProgramID);
 
@@ -1788,6 +1491,8 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 	{
 		// HACK: I'm making this here, but hey...
 		cMesh theSkyBox;
+		theSkyBox.bDoNotLight = true;
+		theSkyBox.isSkybox = true;
 		theSkyBox.meshName = "Sphere_1_unit_Radius.ply";
 		//theSkyBox.setUniformDrawScale(10.0f);
 
@@ -1801,15 +1506,15 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 		//            glDepthMask(GL_FALSE);          // Won't write to the depth buffer
 
 					// uniform bool bIsSkyBox;
-		GLint bIsSkyBox_UL = glGetUniformLocation(m_shaderProgramID, "bIsSkyBox");
-		glUniform1f(bIsSkyBox_UL, (GLfloat)GL_TRUE);
+		GLint bIsSkyBox_UL = glGetUniformLocation(m_shaderProgramID, "bUseHeightmap_IsSkyBox_UseDiscard_NONE");
+		glUniform4f(bIsSkyBox_UL, 0.0f, 1.0f, 0.0f, 0.0f);
 
 		// The normals for this sphere are facing "out" but we are inside the sphere
 		glCullFace(GL_FRONT);
 
 		DrawObject(&theSkyBox, glm::mat4(1.0f), m_shaderProgramID);
 
-		glUniform1f(bIsSkyBox_UL, (GLfloat)GL_FALSE);
+		//glUniform1f(bIsSkyBox_UL, (GLfloat)GL_FALSE);
 
 		// Put the culling back to "normal" (back facing are not drawn)
 		glCullFace(GL_BACK);
@@ -1866,8 +1571,8 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 		cMesh basicSphere;
 		basicSphere.meshName = "Sphere_1_unit_Radius.ply";
 		basicSphere.bDoNotLight = true;
-		basicSphere.bUseDebugColours = true;
-		basicSphere.wholeObjectDebugColourRGBA = glm::vec4(0, 1, 0, 1); // Green
+		basicSphere.bUseCustomColors = true;
+		basicSphere.customColorRGBA = glm::vec4(0, 1, 0, 1); // Green
 		basicSphere.bIsWireframe = true;
 
 		// Start by drawing a basic sphere at all the active light locations
@@ -1876,11 +1581,11 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 			if (m_pTheLights->theLights[i].param2.x == 1) // If light is on
 			{
 				if (selectedLight == i) // Have different color for selected light
-					basicSphere.wholeObjectDebugColourRGBA = glm::vec4(1, 0, 0, 1);
+					basicSphere.customColorRGBA = glm::vec4(1, 0, 0, 1);
 
 				basicSphere.drawPosition = m_pTheLights->theLights[i].position;
 				DrawObject(&basicSphere, matModel, m_shaderProgramID);
-				basicSphere.wholeObjectDebugColourRGBA = glm::vec4(0, 1, 0, 1);
+				basicSphere.customColorRGBA = glm::vec4(0, 1, 0, 1);
 			}
 		}
 
@@ -1888,7 +1593,7 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 		if (selectedMesh > -1)
 		{
 			basicSphere.drawPosition = m_vec_pAllMeshes[selectedMesh]->drawPosition;
-			basicSphere.wholeObjectDebugColourRGBA = glm::vec4(0, .5, .5, 1);
+			basicSphere.customColorRGBA = glm::vec4(0, .5, .5, 1);
 			DrawObject(&basicSphere, matModel, m_shaderProgramID);
 		}
 
@@ -2070,14 +1775,14 @@ void cGraphicsMain::DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int sc
 
 	// Set up the textures for this offscreen quad
 	//uniform bool bIsOffScreenTextureQuad;
-	GLint bIsOffScreenTextureQuad_UL = glGetUniformLocation(shaderProgramID, "bIsOffScreenTextureQuad");
-	glUniform1f(bIsOffScreenTextureQuad_UL, (GLfloat)GL_TRUE);
-
+	GLint bIsOffScreenTextureQuad_UL = glGetUniformLocation(shaderProgramID, "screenWidthAndHeight_bIsOffScreen");
+	//glUniform1f(bIsOffScreenTextureQuad_UL, (GLfloat)GL_TRUE);
+	glUniform4f(bIsOffScreenTextureQuad_UL, (GLfloat)screenWidth, (GLfloat)screenHeight, (GLfloat)GL_TRUE, 0.0f);
 	// uniform vec2 screenWidthAndHeight;	// x is width
-	GLint screenWidthAndHeight_UL = glGetUniformLocation(shaderProgramID, "screenWidthAndHeight");
-	glUniform2f(screenWidthAndHeight_UL,
-		(GLfloat)screenWidth,
-		(GLfloat)screenHeight);
+// 	GLint screenWidthAndHeight_UL = glGetUniformLocation(shaderProgramID, "screenWidthAndHeight");
+// 	glUniform2f(screenWidthAndHeight_UL,
+// 		(GLfloat)screenWidth,
+// 		(GLfloat)screenHeight);
 
 
 	// Point the FBO from the 1st pass to this texture...
@@ -2121,7 +1826,8 @@ void cGraphicsMain::DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int sc
 	DrawObject(&fullScreenQuad, glm::mat4(1.0f), shaderProgramID);
 
 
-	glUniform1f(bIsOffScreenTextureQuad_UL, (GLfloat)GL_FALSE);
+	//glUniform1f(bIsOffScreenTextureQuad_UL, (GLfloat)GL_FALSE);
+	glUniform4f(bIsOffScreenTextureQuad_UL, (GLfloat)screenWidth, (GLfloat)screenHeight, (GLfloat)GL_FALSE, 0.0f);
 
 
 	return;
@@ -2180,8 +1886,8 @@ void cGraphicsMain::updateMesh(int meshID, std::string newFriendlyName, int newT
 	meshToUpdate->bIsVisible = isVisible;
 	meshToUpdate->bIsWireframe = isWireframe;
 	meshToUpdate->bDoNotLight = doNotLight;
-	meshToUpdate->bUseDebugColours = useDebugColor;
-	meshToUpdate->wholeObjectDebugColourRGBA = debugColor;
+	meshToUpdate->bUseCustomColors = useDebugColor;
+	meshToUpdate->customColorRGBA = debugColor;
 
 
 	return;
@@ -2226,12 +1932,12 @@ void cGraphicsMain::duplicateMesh(int meshIdx, char* newName) // TODO also dupli
 	dupedMesh->friendlyName = newName;
 	dupedMesh->drawPosition = meshToCopy->drawPosition;
 	dupedMesh->eulerOrientation = meshToCopy->eulerOrientation;
-	dupedMesh->wholeObjectDebugColourRGBA = meshToCopy->wholeObjectDebugColourRGBA;
+	dupedMesh->customColorRGBA = meshToCopy->customColorRGBA;
 	dupedMesh->scale = meshToCopy->scale;
 	dupedMesh->bIsVisible = meshToCopy->bIsVisible;
 	dupedMesh->bIsWireframe = meshToCopy->bIsWireframe;
 	dupedMesh->bDoNotLight = meshToCopy->bDoNotLight;
-	dupedMesh->bUseDebugColours = meshToCopy->bUseDebugColours;
+	dupedMesh->bUseCustomColors = meshToCopy->bUseCustomColors;
 	dupedMesh->setRotationFromEuler(dupedMesh->getEulerOrientation());
 	m_vec_pMeshesToDraw.push_back(dupedMesh);
 }
@@ -2382,13 +2088,13 @@ void cGraphicsMain::SetUpTextures(cMesh* pCurrentMesh, GLuint shaderProgramID)
 	// Set up a skybox
 	{
 		// uniform samplerCube skyBoxTexture;		// Texture unit 30
-		GLint textureUnit30 = 30;
+		GLint textureUnit21 = 21;
 		GLuint skyBoxID = m_pTextureManager->getTextureIDFromName("SunnyDay");
-		glActiveTexture(GL_TEXTURE0 + textureUnit30);
+		glActiveTexture(GL_TEXTURE0 + textureUnit21);
 		// NOTE: Binding is NOT to GL_TEXTURE_2D
 		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxID);
 		GLint skyBoxSampler_UL = glGetUniformLocation(shaderProgramID, "skyBoxTexture");
-		glUniform1i(skyBoxSampler_UL, textureUnit30);
+		glUniform1i(skyBoxSampler_UL, textureUnit21);
 	}
 
 

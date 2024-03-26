@@ -82,7 +82,7 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
 	std::vector<std::string> tempModelVec;
 	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
-	this->m_pThePhysics->generateAABBs(tempModelVec);
+	//this->m_pThePhysics->generateAABBs(tempModelVec);
 	
 	this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
@@ -90,7 +90,7 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pAnimationsManager = cAnimationManager::GetInstance();
 	this->m_pAnimationsManager->SetVAOManager(m_pTheGraphics->getVAOManager());
 
-	this->m_pDatabaseManager = cDatabaseManager::GetInstance();
+	//this->m_pDatabaseManager = cDatabaseManager::GetInstance();
 	
 	//cSoftBodyVerlet* theBlob = m_pThePhysics->CreateVerlet();
 
@@ -115,6 +115,7 @@ bool cEngineController_IMPL::Initialize(void)
 
 		playerObj->position = glm::vec3(50, 15, 50);
 		playerObj->restitution = 0.0f;
+		playerObj->inverse_mass = 1.0f;
 		// Add PlayerInfo Struct
 		sPlayerPhysics* plyrPhys = new sPlayerPhysics();
 		playerObj->playerInfo = plyrPhys;
@@ -135,7 +136,8 @@ bool cEngineController_IMPL::Initialize(void)
 		playerObj->pTheAssociatedMesh = playerMesh;
 
 		// Load test scene
-		m_pTheSceneManager->loadScene("MovementPGCorners+");
+		//m_pTheSceneManager->loadScene("MovementPGCorners+");
+		m_pTheSceneManager->loadScene("TestCapCollision3");
 		//m_pTheSceneManager->loadScene("test4");
 		//m_pThePhysics->AddShape(playerObj);
 		addCustomObject(playerMesh, playerObj);
@@ -159,8 +161,8 @@ bool cEngineController_IMPL::Initialize(void)
 		cMesh* blobMesh = new cMesh();
 		blobMesh->friendlyName = "blobPlayer";
 		blobMesh->meshName = "sphere.ply";
-		blobMesh->bUseDebugColours = true;
-		blobMesh->wholeObjectDebugColourRGBA = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
+		blobMesh->bUseCustomColors = true;
+		blobMesh->customColorRGBA = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
 		blobMesh->isDoubleSided = true;
 		//blobMesh->isSpooky = true; // Just gonna test the fbo thang on this thang
 		blobMesh->transparencyAlpha = 0.6f;
@@ -170,8 +172,8 @@ bool cEngineController_IMPL::Initialize(void)
 		cMesh* plat1Mesh = new cMesh();
 		plat1Mesh->friendlyName = "plat1";
 		plat1Mesh->meshName = "plat.ply";
-		plat1Mesh->bUseDebugColours = true;
-		plat1Mesh->wholeObjectDebugColourRGBA = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
+		plat1Mesh->bUseCustomColors = true;
+		plat1Mesh->customColorRGBA = glm::vec4(0.4f, 0.4f, 0.4f, 1.0f);
 		//plat1Mesh->isDoubleSided = true;
 
 		m_pTheGraphics->addNewMesh(plat1Mesh);
