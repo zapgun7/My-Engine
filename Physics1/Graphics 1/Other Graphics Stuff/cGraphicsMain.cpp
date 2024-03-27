@@ -913,9 +913,9 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 	// Set Material Properties
 	GLint material_UL = glGetUniformLocation(shaderProgramID, "material.ambient");
 	glUniform4f(material_UL, pCurrentMesh->material.ambient.x, pCurrentMesh->material.ambient.y, pCurrentMesh->material.ambient.z, pCurrentMesh->material.ambient.w);
-	GLint material_UL = glGetUniformLocation(shaderProgramID, "material.diffuse");
+	material_UL = glGetUniformLocation(shaderProgramID, "material.diffuse");
 	glUniform4f(material_UL, pCurrentMesh->material.diffuse.x, pCurrentMesh->material.diffuse.y, pCurrentMesh->material.diffuse.z, pCurrentMesh->material.diffuse.w);
-	GLint material_UL = glGetUniformLocation(shaderProgramID, "material.specular");
+	material_UL = glGetUniformLocation(shaderProgramID, "material.specular");
 	glUniform4f(material_UL, pCurrentMesh->material.specular.x, pCurrentMesh->material.specular.y, pCurrentMesh->material.specular.z, pCurrentMesh->material.specular.w);
 
 

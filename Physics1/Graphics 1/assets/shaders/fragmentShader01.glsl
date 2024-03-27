@@ -117,7 +117,7 @@ struct sMaterial
 	vec4 ambient;
 	vec4 diffuse;
 	vec4 specular; // w is shininess
-}
+};
 
 uniform sMaterial material;
 
@@ -491,7 +491,7 @@ vec4 calulateLightContribNEW ( vec3 vertexMaterialColor, vec3 vertexNormal,
 		if (lightType == AMBIENT_LIGHT_TYPE)
 		{
 			//float ambientStr = 0.1f;
-			vec3 ambient = theLights[index].diffuse.xyz * theLights[index].diffuse.w; // w is power
+			vec3 ambient = theLights[index].diffuse.xyz * theLights[index].diffuse.w * material.ambient.w; // w is power
 			
 			finalObjectColor.rgb += ambient * vertexMaterialColor.xyz;
 			continue;
@@ -510,7 +510,7 @@ vec4 calulateLightContribNEW ( vec3 vertexMaterialColor, vec3 vertexNormal,
 		
 		float diffPower = max(dot(norm, -lightDir), 0.0f);
 		
-		vec3 diffuse = theLights[index].diffuse.xyz * diffPower;
+		vec3 diffuse = theLights[index].diffuse.xyz * (diffPower * material.diffuse.w * material.diffuse.xyz);
 		
 		
 		// Now specular
@@ -520,7 +520,7 @@ vec4 calulateLightContribNEW ( vec3 vertexMaterialColor, vec3 vertexNormal,
 		vec3 halfwayDir = normalize(lightDir + viewDir);
 		
 		float spec = pow(max(dot(viewDir, halfwayDir), 0.0f), 32); // 32 is shininess (should take from mesh object data)
-		vec3 specular = spec * theLights[index].specular.xyz;
+		vec3 specular = (spec * material.specular.w * material.specular.xyz) * theLights[index].specular.xyz;
 		
 		
 		

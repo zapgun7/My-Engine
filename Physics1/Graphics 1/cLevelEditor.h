@@ -25,6 +25,7 @@ public:
 	// Editor Windows
 	void RootWindow(std::vector<cMesh*> ActiveMeshVec, double dt);
 	void MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPhysicsProperties*> PhysVec);
+	void MaterialEditor(cMesh* SelectedMesh);
 	void PhysEditor(std::vector<sPhysicsProperties*> PhysVec);
 	void LightEditor(cLightManager* TheLights);
 	void SceneManager(std::vector<std::string> AvailableSaves);
@@ -33,10 +34,11 @@ private:
 	
 
 	// Window States
-	bool m_ShowMeshEditor;   // 
-	bool m_ShowLightEditor;  // Windows to edit existing meshes and lights respectively
-	bool m_ShowSceneManager; //
-	bool m_ShowPhysicsEditor;//
+	bool m_ShowMeshEditor;    // 
+	bool m_ShowLightEditor;   // Windows to edit existing meshes and lights respectively
+	bool m_ShowSceneManager;  //
+	bool m_ShowPhysicsEditor; //
+	bool m_ShowMaterialEditor;//
 
 	bool m_RenderDebug;
 	bool m_JustDeleted; // Bandaid fix

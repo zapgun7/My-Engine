@@ -50,7 +50,16 @@ void cLevelEditor::Update(double deltaTime)
 	RootWindow(MeshVec, deltaTime);
 
 	if (m_ShowMeshEditor)
+	{
 		MeshEditor(MeshVec, PhysVec);
+		if ((m_ShowMaterialEditor) && (!m_JustDeleted))
+		{
+			if ((m_mesh_obj_idx < MeshVec.size()) && (MeshVec[m_mesh_obj_idx] != nullptr))
+				MaterialEditor(MeshVec[m_mesh_obj_idx]);
+			else
+				MaterialEditor(nullptr);
+		}
+	}
 	if ((m_ShowPhysicsEditor) && (!m_JustDeleted)) // If we delete physics obj in above mesh editor, wrong vec will be passed to this, so just skip this frame :)
 		PhysEditor(PhysVec);
 	if (m_ShowLightEditor)
@@ -270,6 +279,7 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 					newDupe->uvOffsetSpeed = meshToCopy->uvOffsetSpeed;
 					newDupe->scale = meshToCopy->scale;
 					newDupe->uniqueID = meshToCopy->uniqueID; // For copying the physics
+					newDupe->material = meshToCopy->material;
 
 
 					//memcpy(newDupe, ActiveMeshVec[m_mesh_obj_idx], sizeof(cMesh));
@@ -324,6 +334,11 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 				toggalAllLight = true;
 	 			}
 	 		}
+
+			if (ImGui::Button("Material Editor"))
+			{
+				m_ShowMaterialEditor = m_ShowMaterialEditor ? false : true;
+			}
 
 			if (isExistingMesh)
 			{
@@ -625,6 +640,51 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 		ImGui::End();
 }
 
+
+void cLevelEditor::MaterialEditor(cMesh* SelectedMesh)
+{
+	ImGui::Begin("Material Editor");
+
+	glm::vec4 ambient(0.0f);
+	glm::vec4 diffuse(0.0f);
+	glm::vec4 specular(0.0f);
+
+	if (SelectedMesh != nullptr)
+	{
+		ambient = SelectedMesh->material.ambient;
+		diffuse = SelectedMesh->material.diffuse;
+		specular = SelectedMesh->material.specular;
+	}
+
+	// SLIDERS
+	ImGui::SeparatorText("Ambient");
+	ImGui::DragFloat("Amb-R", &ambient.x, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+	ImGui::DragFloat("Amb-G", &ambient.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+	ImGui::DragFloat("Amb-B", &ambient.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+	ImGui::DragFloat("Amb-Pow", &ambient.w, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+	ImGui::SeparatorText("Diffuse");
+	ImGui::DragFloat("Diff-R", &diffuse.x, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+	ImGui::DragFloat("Diff-G", &diffuse.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+	ImGui::DragFloat("Diff-B", &diffuse.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+	ImGui::DragFloat("Diff-Pow", &diffuse.w, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+	ImGui::SeparatorText("Specular");
+	ImGui::DragFloat("Spec-R", &specular.x, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+	ImGui::DragFloat("Spec-G", &specular.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+	ImGui::DragFloat("Spec-B", &specular.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+	ImGui::DragFloat("Spec-Pow", &specular.w, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+
+
+
+	if (SelectedMesh != nullptr)
+	{
+		SelectedMesh->material.ambient = ambient;
+		SelectedMesh->material.diffuse = diffuse;
+		SelectedMesh->material.specular = specular;
+	}
+
+
+	ImGui::End();
+}
 
 void cLevelEditor::PhysEditor(std::vector<sPhysicsProperties*> PhysVec)
 {
@@ -932,6 +992,7 @@ cLevelEditor::cLevelEditor(GLFWwindow* window)
 	: m_ShowLightEditor(false)
 	, m_ShowMeshEditor(false)
 	, m_ShowSceneManager(false)
+	, m_ShowMaterialEditor(false)
 	, m_mesh_obj_idx(0)
 	, m_phys_obj_idx(0)
 	, m_light_obj_idx(0)
