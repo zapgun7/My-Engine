@@ -64,14 +64,10 @@ uniform sampler2D texture_07;
 
 
 
-
-//
-
 uniform sampler2D heightMapSampler;		// Texture unit 20
 uniform sampler2D discardSampler;		// Texture unit 21
 
 // Skybox, cubemap, etc.
-
 uniform samplerCube skyBoxTexture;
 
 // For the discard example
@@ -110,18 +106,26 @@ struct sLight
 const int POINT_LIGHT_TYPE = 0;
 const int SPOT_LIGHT_TYPE = 1;
 const int DIRECTIONAL_LIGHT_TYPE = 2;
+const int AMBIENT_LIGHT_TYPE = 3;
 
 const int NUMBEROFLIGHTS = 80;
 uniform sLight theLights[NUMBEROFLIGHTS];  	// 70 uniforms
-//... is really:
-//uniform vec4 theLights[0].position;
-//uniform vec4 theLights[1].position;
-//uniform vec4 theLights[2].position;
-// etc...
 
 
-vec4 calculateLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 
+struct sMaterial
+{
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular; // w is shininess
+}
+
+uniform sMaterial material;
+
+vec4 calculateLightContrib( vec3 vertexMaterialColor, vec3 vertexNormal, 
                             vec3 vertexWorldPos, vec4 vertexSpecular );
+							
+vec4 calulateLightContribNEW( vec3 vertexMaterialColor, vec3 vertexNormal,
+							  vec3 vertexWorldPos, vec4 vertexSpecular);
 
 // 2nd pass effects
 vec3 getFBOColour();
@@ -295,7 +299,7 @@ if (isSpooky.z == 1.0f)
 	}
 
 	
-
+	// Discard
 	if ( bUseHeightmap_IsSkyBox_UseDiscard_NONE.z == 1.0f )
 	{
 		vec3 maskValues = texture( maskSamplerTexture01, (textureCoords.st + uv_Offset_Scale_NONE.xy) * uv_Offset_Scale_NONE.z ).rgb;
@@ -309,6 +313,7 @@ if (isSpooky.z == 1.0f)
 		}	
 	}
 	
+	// Skybox
 	if ( bUseHeightmap_IsSkyBox_UseDiscard_NONE.y == 1.0f )
 	{
 		//uniform samplerCube skyBoxTexture;
@@ -318,6 +323,7 @@ if (isSpooky.z == 1.0f)
 		return;
 	}
 	
+	// Reflect
 	if (bReflect_Refract_fAlpha_NONE.x == 1.0f)
 	{
 		//vec3 eyeVector = normalize(eyeLocation.xyz - vertexWorldPos.xyz);
@@ -335,6 +341,7 @@ if (isSpooky.z == 1.0f)
 		outputColour.a = bReflect_Refract_fAlpha_NONE.z;
 		return;
 	}
+	// Refract
 	else if (bReflect_Refract_fAlpha_NONE.y == 1.0f)
 	{
 		vec3 eyeVector = normalize(eyeLocation.xyz - vertexWorldPos.xyz);
@@ -360,10 +367,8 @@ if (isSpooky.z == 1.0f)
 	//return;
 	
 	
-	vec4 textureColour;
-	
 
-	textureColour = 
+	vec4 textureColour = 
 		  texture( texture_00, (textureCoords.st + uv_Offset_Scale_NONE.xy) * uv_Offset_Scale_NONE.z ).rgba * textureMixRatio_0_3.x 	
 		//+ texture( texture_01, textureCoords.st ).rgba * textureMixRatio_0_3.y
 		+ texture( texture_02, textureCoords.st ).rgba * textureMixRatio_0_3.z;
@@ -373,11 +378,12 @@ if (isSpooky.z == 1.0f)
 	vec4 vertexRGBA = textureColour;	
 
 	
+	// Custom Color
 	if ( bDontLight_CustomCol.y == 1.0f )
 	{	
 		vertexRGBA = customColorRGBA;
 	}
-
+	// Do not light
 	if ( bDontLight_CustomCol.x == 1.0f )
 	{
 		outputColour = vertexRGBA;
@@ -403,14 +409,16 @@ if (isSpooky.z == 1.0f)
 	//vec4 vertexColourLit = calculateLightContrib( vertexRGBA.rgb, bumpMap, 
 	//                                              vertexWorldPos.xyz, vertexSpecular );
 	
-	vec4 vertexColourLit = calculateLightContrib( vertexRGBA.rgb, vertexWorldNormal.xyz, 
-	                                              vertexWorldPos.xyz, vertexSpecular );
+	//vec4 vertexColorLit = calculateLightContrib( vertexRGBA.rgb, vertexWorldNormal.xyz, 
+	//                                              vertexWorldPos.xyz, vertexSpecular );
+	vec4 vertexColorLit = calulateLightContribNEW( vertexRGBA.rgb, vertexWorldNormal.xyz, 
+	                                               vertexWorldPos.xyz, vertexSpecular );
 	// *************************************
 			
-	outputColour.rgb = vertexColourLit.rgb;
+	outputColour.rgb = vertexColorLit.rgb;
 	
 	// Real gamma correction is a curve, but we'll Rock-n-Roll it here
-	outputColour.rgb *= 1.35f;
+	//outputColour.rgb *= 1.35f;
 	
 	//outputColour.a = 1.0f;
 	outputColour.a = bReflect_Refract_fAlpha_NONE.z;
@@ -465,13 +473,74 @@ int getDistToDistortion(vec2 textureCoords)
 	return -1; // Not in range
 }
 
+vec4 calulateLightContribNEW ( vec3 vertexMaterialColor, vec3 vertexNormal,
+							   vec3 vertexWorldPos, vec4 vertexSpecular)
+{
+	vec4 finalObjectColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	
+	for (int index = 0; index < NUMBEROFLIGHTS; index++)
+	{
+		// Skip if light is off
+		if ( theLights[index].param2.x == 0.0f )
+		{	// it's off
+			continue;
+		}
+		
+		int lightType = int(theLights[index].param1.x);
+		
+		if (lightType == AMBIENT_LIGHT_TYPE)
+		{
+			//float ambientStr = 0.1f;
+			vec3 ambient = theLights[index].diffuse.xyz * theLights[index].diffuse.w; // w is power
+			
+			finalObjectColor.rgb += ambient * vertexMaterialColor.xyz;
+			continue;
+		}
+		
+		if ((lightType == SPOT_LIGHT_TYPE) || (lightType == DIRECTIONAL_LIGHT_TYPE)) // TODO later
+		{
+			continue;
+		}
+		
+		// Assume point
+		vec3 norm = normalize(vertexNormal);
+		vec3 lightDir = vertexWorldPos.xyz - theLights[index].position.xyz;
+		float distFromLight = length(lightDir);
+		lightDir = normalize(lightDir);
+		
+		float diffPower = max(dot(norm, -lightDir), 0.0f);
+		
+		vec3 diffuse = theLights[index].diffuse.xyz * diffPower;
+		
+		
+		// Now specular
+		//float specStr = 0.5f; // For now hard coding it
+		vec3 viewDir = normalize(eyeLocation.xyz - vertexWorldPos);
+		//vec3 reflectDir = reflect(-lightDir, norm);
+		vec3 halfwayDir = normalize(lightDir + viewDir);
+		
+		float spec = pow(max(dot(viewDir, halfwayDir), 0.0f), 32); // 32 is shininess (should take from mesh object data)
+		vec3 specular = spec * theLights[index].specular.xyz;
+		
+		
+		
+		
+		finalObjectColor.xyz += (diffuse + specular) * vertexMaterialColor.xyz;
+	
+	}
 
-vec4 calculateLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal, 
+	finalObjectColor.a = 1.0f;
+	
+	return finalObjectColor;
+}
+
+
+vec4 calculateLightContrib( vec3 vertexMaterialColor, vec3 vertexNormal, 
                             vec3 vertexWorldPos, vec4 vertexSpecular )
 {
 	vec3 norm = normalize(vertexNormal);
 	
-	vec4 finalObjectColour = vec4( 0.0f, 0.0f, 0.0f, 1.0f );
+	vec4 finalObjectColor = vec4( 0.0f, 0.0f, 0.0f, 1.0f );
 	
 	for ( int index = 0; index < NUMBEROFLIGHTS; index++ )
 	{	
@@ -505,13 +574,13 @@ vec4 calculateLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 		
 			lightContrib *= dotProduct;		
 			
-			finalObjectColour.rgb += (vertexMaterialColour.rgb * theLights[index].diffuse.rgb * lightContrib); 
+			finalObjectColor.rgb += (vertexMaterialColor.rgb * theLights[index].diffuse.rgb * lightContrib); 
 									 //+ (materialSpecular.rgb * lightSpecularContrib.rgb);
 			// NOTE: There isn't any attenuation, like with sunlight.
 			// (This is part of the reason directional lights are fast to calculate)
 
 
-			//return finalObjectColour;		
+			//return finalObjectColor;		
 			continue;
 		}
 		
@@ -605,14 +674,14 @@ vec4 calculateLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 		
 		
 					
-		finalObjectColour.rgb += (vertexMaterialColour.rgb * lightDiffuseContrib.rgb)
+		finalObjectColor.rgb += (vertexMaterialColor.rgb * lightDiffuseContrib.rgb)
 								  + (vertexSpecular.rgb  * lightSpecularContrib.rgb );
 
 	}//for(intindex=0...
 	
-	finalObjectColour.a = 1.0f;
+	finalObjectColor.a = 1.0f;
 	
-	return finalObjectColour;
+	return finalObjectColor;
 }
 
 

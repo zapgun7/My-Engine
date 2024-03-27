@@ -33,11 +33,11 @@ void cEngineController_IMPL::Run(void)
 		double deltaTime = m_pTheTimer->getFrameTime();
 		this->m_pInputHandler->Update();
 		if (this->m_pInputHandler->IsPressedEvent(GLFW_KEY_T)) m_pThePhysics->ToggleThreading();
-		if (this->m_pInputHandler->IsPressedEvent(GLFW_KEY_R))
-		{
-			std::string soundName = "demoman_laugh";
-			m_pTheSound->StartSound(soundName);
-		}
+// 		if (this->m_pInputHandler->IsPressedEvent(GLFW_KEY_R))
+// 		{
+// 			std::string soundName = "demoman_laugh";
+// 			m_pTheSound->StartSound(soundName);
+// 		}
 		//double deltaTime = m_pTheTimer->getFrameTimeUncapped();
 
 		// Messy, but will do this here

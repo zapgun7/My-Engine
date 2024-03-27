@@ -827,6 +827,7 @@ void cLevelEditor::LightEditor(cLightManager* TheLights)
  	ImGui::DragFloat("Red Diffuse", &lightDiff.x, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
  	ImGui::DragFloat("Green Diffuse", &lightDiff.y, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
  	ImGui::DragFloat("Blue Diffuse", &lightDiff.z, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+	ImGui::DragFloat("Light Power", &lightDiff.w, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
  	ImGui::SeparatorText("Specular");
  	ImGui::DragFloat("Red Specular", &lightSpec.x, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
  	ImGui::DragFloat("Green Specular", &lightSpec.y, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
@@ -839,7 +840,7 @@ void cLevelEditor::LightEditor(cLightManager* TheLights)
  	ImGui::DragFloat("Distance Cutoff", &lightAtten.w, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
  
  	ImGui::SeparatorText("Other Light Options");
- 	const char* lightTypes[] = { "Point Light", "Spot Light", "Directional Light"};
+ 	const char* lightTypes[] = { "Point Light", "Spot Light", "Directional Light", "Ambient Light"};
  	static int ltype_current_idx = 0;
  	ltype_current_idx = lightParam1.x; // Set selected light type to one stored in the light
  	const char* combo_preview_value = lightTypes[ltype_current_idx];

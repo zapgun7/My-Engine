@@ -10,6 +10,14 @@
 #include "../Physics/iPhysicsMeshTransformAccess.h"
 
 
+struct sMaterial
+{
+	sMaterial() : ambient(1.0f), diffuse(1.0f), specular(1.0f, 1.0f, 1.0f, 32.0f) {};
+	glm::vec4 ambient;
+	glm::vec4 diffuse;
+	glm::vec4 specular; // w is shininess
+};
+
 class cMesh : public iPhysicsMeshTransformAccess
 {
 public:
@@ -51,6 +59,8 @@ public:
 	glm::vec3 uv_Offset_Scale; // The actual offset value      // Scale portion can effectively enable tiling :)
 	glm::vec2 uvOffsetSpeed; // per second speed of the uvoffset
 	 
+	//glm::vec4 diffusePow_specularPow; // TODO: Something to add to the shader
+	sMaterial material;
 
 
 	int uniqueID; // This should match the physics object id; so create physics first then take that ID and set this one to it

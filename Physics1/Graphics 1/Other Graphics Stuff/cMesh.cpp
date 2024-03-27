@@ -34,6 +34,8 @@ cMesh::cMesh()
 	this->uvOffsetSpeed = glm::vec2(0);
 
 	
+
+	
 	// These all add up to 1.0f
 	textureRatios[0] = 1.0f;
 	textureRatios[1] = 0.0f;

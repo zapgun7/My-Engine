@@ -128,14 +128,17 @@ bool cGraphicsMain::Initialize()
 	m_pTheLights = new cLightManager();
 	m_pTheLights->SetUniformLocations(m_shaderProgramID);
 
-	// Default directional lights
-	m_pTheLights->theLights[0].param1.x = 2;
+	// Default ambient & directional light
+	m_pTheLights->theLights[0].param1.x = 3;
 	m_pTheLights->theLights[0].param2.x = 1;
-	m_pTheLights->theLights[0].direction = glm::vec4(.2, -.6, .2, 0);
+	m_pTheLights->theLights[0].diffuse.w = 0.1f;
+	//m_pTheLights->theLights[0].direction = glm::vec4(.2, -.6, .2, 0);
+	m_pTheLights->theLights[0].friendlyName = "ambient";
 
 	m_pTheLights->theLights[1].param1.x = 2;
 	m_pTheLights->theLights[1].param2.x = 1;
-	m_pTheLights->theLights[1].direction = glm::vec4(-.05, .3, -.05, 0);
+	m_pTheLights->theLights[1].direction = glm::vec4(-.05, -.3, -.05, 0);
+	m_pTheLights->theLights[1].friendlyName = "GenDir";
 
 
 
@@ -853,21 +856,6 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 			pCurrentMesh->drawPosition.z));
 
 
-	// Rotation matrix generation
-// 	glm::mat4 matRotateX = glm::rotate(glm::mat4(1.0f),
-// 		pCurrentMesh->orientation.x, // (float)glfwGetTime(),
-// 		glm::vec3(1.0f, 0.0, 0.0f));
-// 
-// 
-// 	glm::mat4 matRotateY = glm::rotate(glm::mat4(1.0f),
-// 		pCurrentMesh->orientation.y, // (float)glfwGetTime(),
-// 		glm::vec3(0.0f, 1.0, 0.0f));
-// 
-// 	glm::mat4 matRotateZ = glm::rotate(glm::mat4(1.0f),
-// 		pCurrentMesh->orientation.z, // (float)glfwGetTime(),
-// 		glm::vec3(0.0f, 0.0, 1.0f));
-
-
 	// Quaternion Rotation
 	glm::mat4 matRotation = glm::mat4(pCurrentMesh->get_qOrientation());
 
@@ -885,16 +873,7 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 	matModel = matModel * matScale;
 
 
-
-	   //mat4x4_mul(mvp, p, m);
-	//    glm::mat4 mvp = matProjection * matView * matModel;
-
-	//    GLint mvp_location = glGetUniformLocation(shaderProgramID, "MVP");
-	//    //glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
-	//    glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(mvp));
-	
-
-
+	 /// BONES ///
 	GLint useBones_UL = glGetUniformLocation(shaderProgramID, "bUseBones");
 	GLint useBonesFrag_UL = glGetUniformLocation(shaderProgramID, "bBoneFrag");
 	if (pCurrentMesh->friendlyName == "a") // Boned model
@@ -918,25 +897,27 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 		glUniform4f(useBones_UL, 0.0f, 0.0f, 0.0f, 0.0f);//(GLfloat)GL_FALSE);
 		glUniform4f(useBonesFrag_UL, 0.0f, 0.0f, 0.0f, 0.0f);
 	}
+	/// ///// ///
 
-// 	GLint matModel_UL = glGetUniformLocation(shaderProgramID, "matModel");
-// 	glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(matModel));
 
 	static std::string matModelUName("matModel");
 	currProg->setULValue(matModelUName, &matModel);
 
-
 	// Also calculate and pass the "inverse transpose" for the model matrix
 	glm::mat4 matModel_InverseTranspose = glm::inverse(glm::transpose(matModel));
 
-
-
-	// uniform mat4 matModel_IT;
-// 	GLint matModel_IT_UL = glGetUniformLocation(shaderProgramID, "matModel_IT");
-// 	glUniformMatrix4fv(matModel_IT_UL, 1, GL_FALSE, glm::value_ptr(matModel_InverseTranspose));
-
 	static std::string matModelITUName("matModel_IT");
 	currProg->setULValue(matModelITUName, &matModel_InverseTranspose);
+
+	
+	// Set Material Properties
+	GLint material_UL = glGetUniformLocation(shaderProgramID, "material.ambient");
+	glUniform4f(material_UL, pCurrentMesh->material.ambient.x, pCurrentMesh->material.ambient.y, pCurrentMesh->material.ambient.z, pCurrentMesh->material.ambient.w);
+	GLint material_UL = glGetUniformLocation(shaderProgramID, "material.diffuse");
+	glUniform4f(material_UL, pCurrentMesh->material.diffuse.x, pCurrentMesh->material.diffuse.y, pCurrentMesh->material.diffuse.z, pCurrentMesh->material.diffuse.w);
+	GLint material_UL = glGetUniformLocation(shaderProgramID, "material.specular");
+	glUniform4f(material_UL, pCurrentMesh->material.specular.x, pCurrentMesh->material.specular.y, pCurrentMesh->material.specular.z, pCurrentMesh->material.specular.w);
+
 
 
 	if (pCurrentMesh->bIsWireframe)
@@ -949,29 +930,6 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 	}
 
 
-			// uniform bool bDoNotLight;
-	//GLint bDoNotLight_UL = glGetUniformLocation(shaderProgramID, "bDoNotLight");
-	
-// 	if (pCurrentMesh->bDoNotLight)
-// 	{
-// 		// Set uniform to true
-// 		glUniform1f(bDoNotLight_UL, (GLfloat)GL_TRUE);
-// 	}
-// 	else
-// 	{
-// 		// Set uniform to false;
-// 		glUniform1f(bDoNotLight_UL, (GLfloat)GL_FALSE);
-// 	}
-
-	//uniform bool bUseDebugColour;	
-	//GLint bUseDebugColour_UL = glGetUniformLocation(shaderProgramID, "bUseDebugColour");
-
-// 	GLint bDoNotLight_UL = glGetUniformLocation(shaderProgramID, "bDontLight_CustomCol");
-// 	glUniform4f(bDoNotLight_UL,
-// 		(GLfloat)pCurrentMesh->bDoNotLight,
-// 		(GLfloat)pCurrentMesh->bUseCustomColors,
-// 		0.0f,
-// 		0.0f);
 	static std::string dontLight_CustomCol("bDontLight_CustomCol");
 	static glm::vec4 noLight_CustCol = glm::vec4(0.0f);
 	noLight_CustCol.x = (GLfloat)pCurrentMesh->bDoNotLight; 
@@ -980,26 +938,11 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 
 	if (pCurrentMesh->bUseCustomColors)
 	{
-		//glUniform1f(bUseDebugColour_UL, (GLfloat)GL_TRUE);
-		//uniform vec4 debugColourRGBA;
-// 		GLint debugColourRGBA_UL = glGetUniformLocation(shaderProgramID, "customColorRGBA");
-// 		glUniform4f(debugColourRGBA_UL,
-// 			pCurrentMesh->customColorRGBA.r,
-// 			pCurrentMesh->customColorRGBA.g,
-// 			pCurrentMesh->customColorRGBA.b,
-// 			pCurrentMesh->customColorRGBA.a);
 		static std::string customColorUName("customColorRGBA");
 		currProg->setULValue(customColorUName, &pCurrentMesh->customColorRGBA);
 	}
-// 	else
-// 	{
-// 		glUniform1f(bUseDebugColour_UL, (GLfloat)GL_FALSE);
-// 	}
 
-	// Discard Mask bool
-	//GLint bDiscardMaskTex_UL = glGetUniformLocation(shaderProgramID, "bUseHeightmap_IsSkyBox_UseDiscard_NONE");
-
-	//glUniform4f(bDiscardMaskTex_UL, 0.0f, (GLfloat)pCurrentMesh->isSkybox, (GLfloat)pCurrentMesh->bUseDiscardMaskTex, 0.0f);
+	
 	static std::string height_sky_discard("bUseHeightmap_IsSkyBox_UseDiscard_NONE");
 	static glm::vec4 height_sky_discardVal(0.0f);
 	height_sky_discardVal.y = (GLfloat)pCurrentMesh->isSkybox;
@@ -1008,21 +951,9 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 	currProg->setULValue(height_sky_discard, &height_sky_discardVal);
 
 	
-// 	if (pCurrentMesh->bUseDiscardMaskTex)
-// 	{
-// 		// Set uniform to true
-// 		glUniform1f(bDiscardMaskTex_UL, (GLfloat)GL_TRUE);
-// 	}
-// 	else
-// 	{
-// 		// Set uniform to false;
-// 		glUniform1f(bDiscardMaskTex_UL, (GLfloat)GL_FALSE);
-// 	}
 
-	/// REFLECTION & REFRACTION
 
-// 	GLint bUseReflect_UL = glGetUniformLocation(shaderProgramID, "bReflect_Refract_fAlpha_NONE");
-// 	glUniform4f(bUseReflect_UL, (GLfloat)pCurrentMesh->bUseReflect, (GLfloat)pCurrentMesh->bUseRefract, (GLfloat)pCurrentMesh->transparencyAlpha, 0.0f);
+	/// REFLECTION & REFRACTION & ALPHA ///
 
 	static std::string reflect_refract_alpha("bReflect_Refract_fAlpha_NONE");
 	static glm::vec4 reflect_refract_alphaVal(0.0f);
@@ -1032,45 +963,12 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 
 	currProg->setULValue(reflect_refract_alpha, &reflect_refract_alphaVal);
 
-// 	if (pCurrentMesh->bUseReflect)
-// 	{
-// 		glUniform1f(bUseReflect_UL, (GLfloat)GL_TRUE);
-// 	}
-// 	else
-// 	{
-// 		glUniform1f(bUseReflect_UL, (GLfloat)GL_FALSE);
-// 	}
-// 
-// 	GLint bUseRefract_UL = glGetUniformLocation(shaderProgramID, "bUseRefract");
-// 	if (pCurrentMesh->bUseRefract)
-// 	{
-// 		glUniform1f(bUseRefract_UL, (GLfloat)GL_TRUE);
-// 	}
-// 	else
-// 	{
-// 		glUniform1f(bUseRefract_UL, (GLfloat)GL_FALSE);
-// 	}
-// 
-// 	/// ALPHA TRANSPARECY
-// 
-// 	GLint fTransparencyAlpha_UL = glGetUniformLocation(shaderProgramID, "transparencyAlpha");
-// 	glUniform1f(fTransparencyAlpha_UL, pCurrentMesh->transparencyAlpha);
-
-
 
 	//////////////////// TEXTURE STUFF /////////////////////////
-
-// 	GLint bUseVertexColours_UL = glGetUniformLocation(shaderProgramID, "bUseVertexColours");
-// 	glUniform1f(bUseVertexColours_UL, (GLfloat)GL_FALSE);
-
-
 	SetUpTextures(pCurrentMesh, shaderProgramID);
 
 
-	// Pass in uv-offset
-// 	GLint uvOffset_UL = glGetUniformLocation(shaderProgramID, "uv_Offset_Scale_NONE");
-// 	glUniform4f(uvOffset_UL, pCurrentMesh->uv_Offset_Scale.x, pCurrentMesh->uv_Offset_Scale.y, pCurrentMesh->uv_Offset_Scale.z, 0.0f);
-
+	/// UV-OFFSET & SCALE ///
 	static std::string uvOffset_scale("uv_Offset_Scale_NONE");
 	static glm::vec4 uvOffset_scaleVal(0.0f);
 	uvOffset_scaleVal.x = pCurrentMesh->uv_Offset_Scale.x;

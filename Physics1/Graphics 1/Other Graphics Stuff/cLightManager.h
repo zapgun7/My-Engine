@@ -13,7 +13,7 @@ public:
 
     std::string friendlyName;
     glm::vec4 position;
-    glm::vec4 diffuse;	// Colour of the light (used for diffuse)
+    glm::vec4 diffuse;	// Colour of the light (used for diffuse) // W is power
     glm::vec4 specular;	// rgb = highlight colour, w = power
     glm::vec4 atten;		// x = constant, y = linear, z = quadratic, w = DistanceCutOff
     glm::vec4 direction;	// Spot, directional lights
@@ -21,6 +21,7 @@ public:
                     // 0 = pointlight
                     // 1 = spot light
                     // 2 = directional light
+                    // 3 = Ambient light
     glm::vec4 param2;	// x = 0 for off, 1 for on
 
     void TurnOn(void);
