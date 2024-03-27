@@ -371,25 +371,27 @@ bool cShaderManager::createProgramFromFile(
 
 	curProgram.friendlyName = friendlyName;
 
+
+	// Load up UL locations using the vec source
+	for (unsigned int i = 0; i < vertexShad.vecSource.size(); i++)
+	{
+		if (!tryAddUL(vertexShad.vecSource[i], &curProgram)) break;
+	}
+	for (unsigned int i = 0; i < fragShader.vecSource.size(); i++)
+	{
+		if (!tryAddUL(fragShader.vecSource[i], &curProgram)) break;
+	}
+
+	generateULs(&curProgram);
+
+
+
 	// Add the shader to the map
 	this->m_ID_to_Shader[curProgram.ID] = curProgram;
 	// Save to other map, too
 	this->m_name_to_ID[curProgram.friendlyName] = curProgram.ID;
 
 	this->m_mapName_to_Shader[curProgram.friendlyName] = curProgram;
-
-
-	// Load up UL locations using the vec source
-// 	for (unsigned int i = 0; i < vertexShad.vecSource.size(); i++)
-// 	{
-// 		if (!tryAddUL(vertexShad.vecSource[i], &curProgram)) break;
-// 	}
-// 	for (unsigned int i = 0; i < fragShader.vecSource.size(); i++)
-// 	{
-// 		if (!tryAddUL(fragShader.vecSource[i], &curProgram)) break;
-// 	}
-// 
-// 	generateULs(&curProgram);
 
 
 	return true;
@@ -481,6 +483,12 @@ cShaderManager::cShaderProgram* cShaderManager::getActiveShader(void)
 void cShaderManager::cShaderProgram::setULValue(std::string& uniformName, void* val)
 {
 	sULInfo* ULInfo = getUniformID_From_Name(uniformName);
+
+	if (ULInfo == nullptr)
+	{
+		std::cerr << "ERROR: Could not find Uniform by name: " << uniformName << std::endl;
+		return;
+	}
 
 	switch (ULInfo->dataType)
 	{

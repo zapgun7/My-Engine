@@ -628,7 +628,7 @@ bool cGraphicsMain::Update(double deltaTime)
 		glm::vec3 scene_1_CameraEye = m_cameraEye;
 		glm::vec3 scene_1_CameraTarget = m_cameraTarget;
 
-		DrawPass_1(m_shaderProgramID, m_pFBO_1->width, m_pFBO_1->height, scene_1_CameraEye, scene_1_CameraTarget);
+		DrawPass_1(m_shaderProgramID, m_pFBO_1->width, m_pFBO_1->height, glm::vec4(scene_1_CameraEye, 1.0f), scene_1_CameraTarget);
 	}
 
 	if (false)
@@ -838,6 +838,8 @@ cMesh* cGraphicsMain::m_pFindMeshByFriendlyName(std::string friendlyNameToFind)
 
 void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GLuint shaderProgramID)
 {
+	cShaderManager::cShaderProgram* currProg = m_pShaderThing->getActiveShader();
+
 
 	//         mat4x4_identity(m);
 	glm::mat4 matModel = matModelParent;
@@ -917,16 +919,24 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 		glUniform4f(useBonesFrag_UL, 0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
-	GLint matModel_UL = glGetUniformLocation(shaderProgramID, "matModel");
-	glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(matModel));
+// 	GLint matModel_UL = glGetUniformLocation(shaderProgramID, "matModel");
+// 	glUniformMatrix4fv(matModel_UL, 1, GL_FALSE, glm::value_ptr(matModel));
+
+	static std::string matModelUName("matModel");
+	currProg->setULValue(matModelUName, &matModel);
 
 
 	// Also calculate and pass the "inverse transpose" for the model matrix
 	glm::mat4 matModel_InverseTranspose = glm::inverse(glm::transpose(matModel));
 
+
+
 	// uniform mat4 matModel_IT;
-	GLint matModel_IT_UL = glGetUniformLocation(shaderProgramID, "matModel_IT");
-	glUniformMatrix4fv(matModel_IT_UL, 1, GL_FALSE, glm::value_ptr(matModel_InverseTranspose));
+// 	GLint matModel_IT_UL = glGetUniformLocation(shaderProgramID, "matModel_IT");
+// 	glUniformMatrix4fv(matModel_IT_UL, 1, GL_FALSE, glm::value_ptr(matModel_InverseTranspose));
+
+	static std::string matModelITUName("matModel_IT");
+	currProg->setULValue(matModelITUName, &matModel_InverseTranspose);
 
 
 	if (pCurrentMesh->bIsWireframe)
@@ -941,7 +951,7 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 
 			// uniform bool bDoNotLight;
 	//GLint bDoNotLight_UL = glGetUniformLocation(shaderProgramID, "bDoNotLight");
-	GLint bDoNotLight_UL = glGetUniformLocation(shaderProgramID, "bDontLight_CustomCol");
+	
 // 	if (pCurrentMesh->bDoNotLight)
 // 	{
 // 		// Set uniform to true
@@ -956,22 +966,30 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 	//uniform bool bUseDebugColour;	
 	//GLint bUseDebugColour_UL = glGetUniformLocation(shaderProgramID, "bUseDebugColour");
 
-	glUniform4f(bDoNotLight_UL,
-		(GLfloat)pCurrentMesh->bDoNotLight,
-		(GLfloat)pCurrentMesh->bUseCustomColors,
-		0.0f,
-		0.0f);
+// 	GLint bDoNotLight_UL = glGetUniformLocation(shaderProgramID, "bDontLight_CustomCol");
+// 	glUniform4f(bDoNotLight_UL,
+// 		(GLfloat)pCurrentMesh->bDoNotLight,
+// 		(GLfloat)pCurrentMesh->bUseCustomColors,
+// 		0.0f,
+// 		0.0f);
+	static std::string dontLight_CustomCol("bDontLight_CustomCol");
+	static glm::vec4 noLight_CustCol = glm::vec4(0.0f);
+	noLight_CustCol.x = (GLfloat)pCurrentMesh->bDoNotLight; 
+	noLight_CustCol.y = (GLfloat)pCurrentMesh->bUseCustomColors;
+	currProg->setULValue(dontLight_CustomCol, &noLight_CustCol);
 
 	if (pCurrentMesh->bUseCustomColors)
 	{
 		//glUniform1f(bUseDebugColour_UL, (GLfloat)GL_TRUE);
 		//uniform vec4 debugColourRGBA;
-		GLint debugColourRGBA_UL = glGetUniformLocation(shaderProgramID, "customColorRGBA");
-		glUniform4f(debugColourRGBA_UL,
-			pCurrentMesh->customColorRGBA.r,
-			pCurrentMesh->customColorRGBA.g,
-			pCurrentMesh->customColorRGBA.b,
-			pCurrentMesh->customColorRGBA.a);
+// 		GLint debugColourRGBA_UL = glGetUniformLocation(shaderProgramID, "customColorRGBA");
+// 		glUniform4f(debugColourRGBA_UL,
+// 			pCurrentMesh->customColorRGBA.r,
+// 			pCurrentMesh->customColorRGBA.g,
+// 			pCurrentMesh->customColorRGBA.b,
+// 			pCurrentMesh->customColorRGBA.a);
+		static std::string customColorUName("customColorRGBA");
+		currProg->setULValue(customColorUName, &pCurrentMesh->customColorRGBA);
 	}
 // 	else
 // 	{
@@ -979,10 +997,17 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 // 	}
 
 	// Discard Mask bool
-	GLint bDiscardMaskTex_UL = glGetUniformLocation(shaderProgramID, "bUseHeightmap_IsSkyBox_UseDiscard_NONE");
+	//GLint bDiscardMaskTex_UL = glGetUniformLocation(shaderProgramID, "bUseHeightmap_IsSkyBox_UseDiscard_NONE");
 
-	glUniform4f(bDiscardMaskTex_UL, 0.0f, (GLfloat)pCurrentMesh->isSkybox, (GLfloat)pCurrentMesh->bUseDiscardMaskTex, 0.0f);
+	//glUniform4f(bDiscardMaskTex_UL, 0.0f, (GLfloat)pCurrentMesh->isSkybox, (GLfloat)pCurrentMesh->bUseDiscardMaskTex, 0.0f);
+	static std::string height_sky_discard("bUseHeightmap_IsSkyBox_UseDiscard_NONE");
+	static glm::vec4 height_sky_discardVal(0.0f);
+	height_sky_discardVal.y = (GLfloat)pCurrentMesh->isSkybox;
+	height_sky_discardVal.z = (GLfloat)pCurrentMesh->bUseDiscardMaskTex;
 
+	currProg->setULValue(height_sky_discard, &height_sky_discardVal);
+
+	
 // 	if (pCurrentMesh->bUseDiscardMaskTex)
 // 	{
 // 		// Set uniform to true
@@ -996,8 +1021,17 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 
 	/// REFLECTION & REFRACTION
 
-	GLint bUseReflect_UL = glGetUniformLocation(shaderProgramID, "bReflect_Refract_fAlpha_NONE");
-	glUniform4f(bUseReflect_UL, (GLfloat)pCurrentMesh->bUseReflect, (GLfloat)pCurrentMesh->bUseRefract, (GLfloat)pCurrentMesh->transparencyAlpha, 0.0f);
+// 	GLint bUseReflect_UL = glGetUniformLocation(shaderProgramID, "bReflect_Refract_fAlpha_NONE");
+// 	glUniform4f(bUseReflect_UL, (GLfloat)pCurrentMesh->bUseReflect, (GLfloat)pCurrentMesh->bUseRefract, (GLfloat)pCurrentMesh->transparencyAlpha, 0.0f);
+
+	static std::string reflect_refract_alpha("bReflect_Refract_fAlpha_NONE");
+	static glm::vec4 reflect_refract_alphaVal(0.0f);
+	reflect_refract_alphaVal.x = pCurrentMesh->bUseReflect;
+	reflect_refract_alphaVal.y = pCurrentMesh->bUseRefract;
+	reflect_refract_alphaVal.z = pCurrentMesh->transparencyAlpha;
+
+	currProg->setULValue(reflect_refract_alpha, &reflect_refract_alphaVal);
+
 // 	if (pCurrentMesh->bUseReflect)
 // 	{
 // 		glUniform1f(bUseReflect_UL, (GLfloat)GL_TRUE);
@@ -1034,8 +1068,16 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 
 
 	// Pass in uv-offset
-	GLint uvOffset_UL = glGetUniformLocation(shaderProgramID, "uv_Offset_Scale_NONE");
-	glUniform4f(uvOffset_UL, pCurrentMesh->uv_Offset_Scale.x, pCurrentMesh->uv_Offset_Scale.y, pCurrentMesh->uv_Offset_Scale.z, 0.0f);
+// 	GLint uvOffset_UL = glGetUniformLocation(shaderProgramID, "uv_Offset_Scale_NONE");
+// 	glUniform4f(uvOffset_UL, pCurrentMesh->uv_Offset_Scale.x, pCurrentMesh->uv_Offset_Scale.y, pCurrentMesh->uv_Offset_Scale.z, 0.0f);
+
+	static std::string uvOffset_scale("uv_Offset_Scale_NONE");
+	static glm::vec4 uvOffset_scaleVal(0.0f);
+	uvOffset_scaleVal.x = pCurrentMesh->uv_Offset_Scale.x;
+	uvOffset_scaleVal.y = pCurrentMesh->uv_Offset_Scale.y;
+	uvOffset_scaleVal.z = pCurrentMesh->uv_Offset_Scale.z;
+
+	currProg->setULValue(uvOffset_scale, &uvOffset_scaleVal);
 
 	/////////////////////////////////////////////////////////////
 
@@ -1340,7 +1382,7 @@ void cGraphicsMain::DrawPass_SpookyHeatmap(GLuint shaderProgramID, int screenWid
 	return;
 }
 
-void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec3 sceneEye, glm::vec3 sceneTarget)
+void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec4 sceneEye, glm::vec3 sceneTarget)
 {
 
 	float ratio; //= screenWidth / (float)screenHeight;
@@ -1366,36 +1408,29 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 
 	// *****************************************************************
 	// if ya want lights
-	m_pTheLights->UpdateUniformValues(m_shaderProgramID);
+	m_pTheLights->UpdateUniformValues(m_shaderProgramID); // TODO make this a uniform block, only updating when a light's data is changed
 
 
 	// *****************************************************************
 			
 	//uniform vec4 eyeLocation;
-	GLint eyeLocation_UL = glGetUniformLocation(m_shaderProgramID, "eyeLocation");
+	//GLint eyeLocation_UL = glGetUniformLocation(m_shaderProgramID, "eyeLocation");
 
-	glUniform4f(eyeLocation_UL,
-		sceneEye.x, sceneEye.y, sceneEye.z, 1.0f);
+// 	glUniform4f(eyeLocation_UL,
+// 		sceneEye.x, sceneEye.y, sceneEye.z, 1.0f);
+
+
+	static std::string eyeLoc = "eyeLocation"; 
+	currProg->setULValue(eyeLoc, &sceneEye);
 	//currProg->setULValue("eyeLocation", &glm::vec4(sceneEye.x, sceneEye.y, sceneEye.z, 1.0f));
 
 	// Set Camera Matrices
 	glm::mat4 projMat = glm::perspective(glm::radians(90.0f), ratio, 0.1f, 1100.0f);
-	glm::mat4 viewMat = glm::lookAt(sceneEye, sceneEye + sceneTarget, m_upVector);
+	glm::mat4 viewMat = glm::lookAt((glm::vec3)sceneEye, (glm::vec3)sceneEye + sceneTarget, m_upVector);
 	glBindBuffer(GL_UNIFORM_BUFFER, m_UBOMatrices);
 	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projMat));
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewMat));
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-	//       //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-// 	glm::mat4 matProjection = glm::perspective(m_FOV,
-// 		ratio,
-// 		0.1f,
-// 		1100.0f); // n/f plane
-
-
-// 	glm::mat4 matView = glm::lookAt(sceneEye,
-// 		sceneEye + sceneTarget,
-// 		m_upVector);
 
 
 
@@ -1425,8 +1460,11 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 
 
 	// Not getting spooky heatmap, so disable it
-	GLint spookyBool_UL = glGetUniformLocation(m_shaderProgramID, "isSpooky");
-	glUniform4f(spookyBool_UL, GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); // Disable heatmap capture
+	//GLint spookyBool_UL = glGetUniformLocation(m_shaderProgramID, "isSpooky");
+	static glm::vec4 spookDisable = glm::vec4(0.0f);
+	static std::string spookyUL("isSpooky");
+	//glUniform4f(spookyBool_UL, GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); // Disable heatmap capture
+	currProg->setULValue(spookyUL, &spookDisable);
 
 
 	// *********************************************************************
@@ -1509,8 +1547,14 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 		//            glDepthMask(GL_FALSE);          // Won't write to the depth buffer
 
 					// uniform bool bIsSkyBox;
-		GLint bIsSkyBox_UL = glGetUniformLocation(m_shaderProgramID, "bUseHeightmap_IsSkyBox_UseDiscard_NONE");
-		glUniform4f(bIsSkyBox_UL, 0.0f, 1.0f, 0.0f, 0.0f);
+				
+		// !!! Don't need to set UL's here anymore, they're set in drawObject
+// 		GLint bIsSkyBox_UL = glGetUniformLocation(m_shaderProgramID, "bUseHeightmap_IsSkyBox_UseDiscard_NONE");
+// 		glUniform4f(bIsSkyBox_UL, 0.0f, 1.0f, 0.0f, 0.0f);
+
+// 		static std::string hMap_sky_discard("bUseHeightmap_IsSkyBox_UseDiscard_NONE");
+// 		static glm::vec4 enableSkybox = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+// 		currProg->setULValue(hMap_sky_discard, &enableSkybox);
 
 		// The normals for this sphere are facing "out" but we are inside the sphere
 		glCullFace(GL_FRONT);

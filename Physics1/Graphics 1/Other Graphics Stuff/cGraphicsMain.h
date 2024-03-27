@@ -86,7 +86,7 @@ private:
 	// Draw Passes
 	void DrawPass_HeatMapReduction(GLuint shaderProgramID, int screenWidth, int screenHeight, double deltaTime);
 	void DrawPass_SpookyHeatmap(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec3 cameraEye, glm::vec3 cameraTarget);
-	void DrawPass_1(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec3 cameraEye, glm::vec3 cameraTarget);
+	void DrawPass_1(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec4 cameraEye, glm::vec3 cameraTarget);
 	void DrawPass_ApplySpook(GLuint shaderProgramID, int screenWidth, int screenHeight);
 	void DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int screeneight);
 
