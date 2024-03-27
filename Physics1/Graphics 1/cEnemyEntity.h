@@ -19,7 +19,8 @@ enum eAIType
 	APPROACH,
 	WANDER1,
 	WANDER2,
-	WANDER3
+	WANDER3,
+	FLOCK
 };
 
 
@@ -37,10 +38,18 @@ public:
 
 
 	void setTargetObject(sPhysicsProperties* goalObj);
+	void setFlockTarget(glm::vec3* target);
 
 private:
 	sPhysicsProperties* m_pEntityObject = nullptr;
 	sPhysicsProperties* m_pPlayerEntity = nullptr; // Do it this way, or pass target object every update
+
+	// Flocking Vars
+	glm::vec3* flockTarget;
+	float flockRadius = 40.0f;
+	glm::vec3 currGoal = glm::vec3(0.0f);
+	glm::vec3 currGoalDir;// = glm::vec3(0.0f, 0.0f, 0.0f);
+	bool isOnCourseForCircle = false;
 
 
 	// Wandering Vars
@@ -53,7 +62,7 @@ private:
 
 
 	const float MOVESPEED = 20.0f;
-	const float ROTATIONSPEED = 30.0f;
+	const float ROTATIONSPEED = 100.0f;
 	const float VELOCITYLIMIT = 15.0f;
 	const float SPEEDREDUCTION = 0.99f;
 

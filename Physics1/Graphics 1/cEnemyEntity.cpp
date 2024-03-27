@@ -3,17 +3,38 @@
 #include "Physics/sPhysicsProperties.h"
 
 
+
+glm::vec3 GetRandomDirection(void)
+{
+	glm::vec3 retVec;
+	retVec.y = 0.0f;
+	retVec.x = (rand() % 100) / 100.0f;
+	retVec.z = (rand() % 100) / 100.0f;
+
+	if (rand() % 2 == 0)
+		retVec.x *= -1;
+	if (rand() % 2 == 0)
+		retVec.z *= -1;
+
+	return glm::normalize(retVec);
+}
+
+
 cEnemyEntity::cEnemyEntity(sPhysicsProperties* entityObj, eAIType type)
 {
 	m_pEntityObject = entityObj;
 
 	m_eType = type;
+
+	currGoalDir = GetRandomDirection();
 }
 
 cEnemyEntity::~cEnemyEntity()
 {
 
 }
+
+
 
 // SEEK
 // FLEE
@@ -23,6 +44,7 @@ cEnemyEntity::~cEnemyEntity()
 // WANDER1
 // WANDER2
 // WANDER3
+// FLOCK
 void cEnemyEntity::Update(double dt)
 {
 	if ((m_eType == WANDER1) || (m_eType == WANDER2) || (m_eType == WANDER3))
@@ -74,6 +96,55 @@ void cEnemyEntity::Update(double dt)
 		remainingDist -= glm::length(deltaMove);
 
 		m_pEntityObject->position += deltaMove;
+	}
+	else if (m_eType == FLOCK)
+	{
+		float distToTarget = glm::distance(m_pEntityObject->position, *flockTarget);
+		// Start by checking if the entity is too far away
+		if ((distToTarget > flockRadius) && (!isOnCourseForCircle))
+		{
+			// Change direction to somewhere in the circle
+			glm::vec3 newGoalOffset = GetRandomDirection();
+			float distOffset = rand() % (int)(flockRadius * 0.8f);
+			newGoalOffset = newGoalOffset * distOffset + *flockTarget;
+			currGoal = newGoalOffset;
+
+			// Calculate new direction to go towards
+			currGoalDir = glm::normalize(currGoal - m_pEntityObject->position);
+			isOnCourseForCircle = true; // !!! This will break if we let the player move the flock target around
+
+			// Also want to rotate the entity to face the direction they're going
+			//m_pEntityObject->setRotationFromQuat(glm::quat(glm::lookAt(glm::vec3(0.0f), glm::vec3(currGoalDir.x, 0.0f, -currGoalDir.z), glm::vec3(0.0f, 1.0f, 0.0f))));
+		}
+		else if ((isOnCourseForCircle) && (distToTarget <= flockRadius))
+		{
+			isOnCourseForCircle = false;
+		}
+		else if (isOnCourseForCircle)
+		{
+			currGoalDir = glm::normalize(currGoal - m_pEntityObject->position);
+		}
+
+		// Update in the movement direction
+		glm::vec3 crossResult = glm::cross(getLookVector(), glm::normalize(currGoalDir));
+		if (crossResult.y > 0) // Turn left
+		{
+			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
+			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+		}
+		else // Turn right
+		{
+			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
+			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+		}
+
+
+		// Move entity in its look direction
+		glm::vec3 deltaMove = getLookVector() * static_cast<float>(dt) * MOVESPEED;
+		remainingDist -= glm::length(deltaMove);
+
+		m_pEntityObject->position += deltaMove;
+		//m_pEntityObject->position += currGoalDir * static_cast<float>(dt) * MOVESPEED;
 	}
 	else
 	{
@@ -226,6 +297,12 @@ glm::quat cEnemyEntity::getOrientation(void)
 void cEnemyEntity::setTargetObject(sPhysicsProperties* goalObj)
 {
 	this->m_pPlayerEntity = goalObj;
+	return;
+}
+
+void cEnemyEntity::setFlockTarget(glm::vec3* target)
+{
+	this->flockTarget = target;
 	return;
 }
 

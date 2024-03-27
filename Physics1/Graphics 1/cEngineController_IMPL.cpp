@@ -78,13 +78,16 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pTheSceneManager = new cSceneManagement();
 	this->m_pTheSceneManager->Initialize();
 
+// 	this->m_pEntityManager = new cEntityManager();
+// 	this->m_pEntityManager->Initialize();
+
 
 	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
 	std::vector<std::string> tempModelVec;
 	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
 	//this->m_pThePhysics->generateAABBs(tempModelVec);
 	
-	this->m_pLuaBrain = new cLuaBrain();
+	//this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
 
 	this->m_pAnimationsManager = cAnimationManager::GetInstance();
@@ -106,7 +109,7 @@ bool cEngineController_IMPL::Initialize(void)
 	//m_ThePlayer->setPlayerVerlet(theBlob);
 
 
-	if (true) // First person player setup
+	if (false) // First person player setup
 	{
 		sPhysicsProperties* playerObj = new sPhysicsProperties();
 		playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 0.5f));
@@ -143,16 +146,18 @@ bool cEngineController_IMPL::Initialize(void)
 		addCustomObject(playerMesh, playerObj);
 	}
 
+	if (false) // Boned animation characer test
+	{
+		// Make boned character
+		cMesh* bonedBoy = new cMesh();
+		bonedBoy->meshName = "Adventurer Aland@Idle.FBX";
+		bonedBoy->friendlyName = "a";
 
-	// Make boned character
-//  	cMesh* bonedBoy = new cMesh();
-//  	bonedBoy->meshName = "Adventurer Aland@Idle.FBX";
-//  	bonedBoy->friendlyName = "a";
-
-	//m_pTheGraphics->addNewMesh(bonedBoy);
-// 	sPhysicsProperties* bonedBoyPhys = new sPhysicsProperties();
-// 	bonedBoyPhys->pTheAssociatedMesh = bonedBoy;
-// 	addCustomObject(bonedBoy, bonedBoyPhys);
+		//m_pTheGraphics->addNewMesh(bonedBoy);
+		sPhysicsProperties* bonedBoyPhys = new sPhysicsProperties();
+		bonedBoyPhys->pTheAssociatedMesh = bonedBoy;
+		addCustomObject(bonedBoy, bonedBoyPhys);
+	}
 	
 	if (false) // Setup for soft-bodied example
 	{

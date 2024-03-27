@@ -303,7 +303,7 @@ bool cGraphicsMain::UpdateOLD(double deltaTime) // Main "loop" of the window. No
 	//m_InputHandler->queryKeys(m_window);
 
 
-	return Update2(deltaTime);
+	//return Update2(deltaTime);
 	//return UpdateProject(deltaTime);
 
 

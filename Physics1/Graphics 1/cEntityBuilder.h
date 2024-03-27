@@ -8,7 +8,8 @@
 enum eEntityType
 {
 	AIPROJ,
-	AIPROJ2
+	AIPROJ2,
+	AIPROJ3
 };
 
 
@@ -26,6 +27,8 @@ public:
 
 private:
 	cEngineController* m_pEngineController = nullptr;
+
+	glm::vec3* flockTarget;
 
 
 	int tempCounter4Project = 0;

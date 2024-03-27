@@ -8,11 +8,43 @@
 cEntityBuilder::cEntityBuilder()
 {
 	m_pEngineController = cEngineController::GetEngineController();
+	flockTarget = new glm::vec3(0.0f);
 }
 
 cEntityBuilder::~cEntityBuilder()
 {
 
+}
+
+glm::vec4 GetRandomColor(void)
+{
+	glm::vec3 retVec;// = glm::vec4(1.0f);
+	retVec.x = (rand() % 100 + 150);
+	retVec.y = (rand() % 100 + 150);
+	retVec.z = (rand() % 100 + 150);
+	
+	retVec = glm::normalize(retVec);
+	retVec *= 1.5f;
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (retVec[i] > 1.0f)
+		{
+			float remvAmt = retVec[i] - 1.0f;
+			retVec[i] -= remvAmt;
+			retVec[(i + 1) % 3] -= remvAmt;
+		}
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		if (retVec[i] < 0.0f)
+		{
+			retVec[i] = 0.0f;
+		}
+	}
+
+
+	return glm::vec4(retVec, 1.0f);
 }
 
 iEntity* cEntityBuilder::MakeEntity(eEntityType type, glm::vec3& pos)
@@ -29,7 +61,7 @@ iEntity* cEntityBuilder::MakeEntity(eEntityType type, glm::vec3& pos)
 	newEntMesh->bDoNotLight = false;
 	//newEntMesh->textureName[0] = "water.bmp";
 	newEntMesh->bUseCustomColors = true;
-	newEntMesh->customColorRGBA = glm::vec4(1.0f, 0, 0, 1.0f);
+	newEntMesh->customColorRGBA = GetRandomColor();//glm::vec4(1.0f, 0, 0, 1.0f);
 	newEntMesh->uniqueID = newEntPhys->getUniqueID();
 
 	newEntPhys->pTheAssociatedMesh = newEntMesh;
@@ -100,10 +132,10 @@ iEntity* cEntityBuilder::MakeEntity(eEntityType type, glm::vec3& pos)
 			newEntity = new cEnemyEntity(newEntPhys, EVADE);
 			tempCounter4Project++;
 		}
-
-
-
 		break;
+	case AIPROJ3:
+		newEntity = new cEnemyEntity(newEntPhys, FLOCK);
+		((cEnemyEntity*)newEntity)->setFlockTarget(flockTarget);
 	}
 
 
