@@ -6,3 +6,4 @@ water.bmp
 metal_s01.bmp
 wall_texture.bmp
 scratch.bmp
+defSpec.bmp

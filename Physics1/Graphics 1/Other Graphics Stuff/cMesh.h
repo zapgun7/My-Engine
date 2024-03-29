@@ -12,10 +12,10 @@
 
 struct sMaterial
 {
-	sMaterial() : ambient(1.0f), diffuse(1.0f), specular(1.0f, 1.0f, 1.0f, 32.0f) {};
-	glm::vec4 ambient;
-	glm::vec4 diffuse;
-	glm::vec4 specular; // w is shininess
+	sMaterial() : power(1.0f, 1.0f, 1.0f, 32.0f), diffuseTex(""), specularTex("defSpec.bmp") {};
+	std::string diffuseTex;
+	std::string specularTex;
+	glm::vec4 power;
 };
 
 class cMesh : public iPhysicsMeshTransformAccess

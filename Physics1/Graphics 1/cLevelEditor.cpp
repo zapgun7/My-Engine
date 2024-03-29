@@ -645,41 +645,99 @@ void cLevelEditor::MaterialEditor(cMesh* SelectedMesh)
 {
 	ImGui::Begin("Material Editor");
 
-	glm::vec4 ambient(0.0f);
-	glm::vec4 diffuse(0.0f);
-	glm::vec4 specular(0.0f);
+	std::string diffTex;
+	std::string specTex;
+	glm::vec4 power(0.0f);
+
+	int difftex_current_idx = 0;
+	int spectex_current_idx = 0;
+	int diffTextureIdx = 0;
+	int specTextureIdx = 0;
+	int textureCount = m_AvailableTextures.size();
 
 	if (SelectedMesh != nullptr)
 	{
-		ambient = SelectedMesh->material.ambient;
-		diffuse = SelectedMesh->material.diffuse;
-		specular = SelectedMesh->material.specular;
+		power = SelectedMesh->material.power;
+		diffTex = SelectedMesh->material.diffuseTex;
+		specTex = SelectedMesh->material.specularTex;
+
+		// Find selected texture for diffuse (if any)
+
+		for (unsigned int i = 0; i < m_AvailableTextures.size(); i++)
+		{
+			if (diffTex == m_AvailableTextures[i])
+			{
+				diffTextureIdx = i;
+			}
+			if (specTex == m_AvailableTextures[i])
+			{
+				specTextureIdx = i;
+			}
+		}
 	}
 
-	// SLIDERS
-	ImGui::SeparatorText("Ambient");
-	ImGui::DragFloat("Amb-R", &ambient.x, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-	ImGui::DragFloat("Amb-G", &ambient.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-	ImGui::DragFloat("Amb-B", &ambient.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-	ImGui::DragFloat("Amb-Pow", &ambient.w, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-	ImGui::SeparatorText("Diffuse");
-	ImGui::DragFloat("Diff-R", &diffuse.x, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-	ImGui::DragFloat("Diff-G", &diffuse.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-	ImGui::DragFloat("Diff-B", &diffuse.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-	ImGui::DragFloat("Diff-Pow", &diffuse.w, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-	ImGui::SeparatorText("Specular");
-	ImGui::DragFloat("Spec-R", &specular.x, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-	ImGui::DragFloat("Spec-G", &specular.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-	ImGui::DragFloat("Spec-B", &specular.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
-	ImGui::DragFloat("Spec-Pow", &specular.w, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+
+	// Combo-boxes for texture selecting
+
+	// DIFFUSE COMBO //
+	{
+		difftex_current_idx = diffTextureIdx; // Set id of texture in the vector
+		const char* combo_preview_value = m_AvailableTextures[difftex_current_idx].c_str();
+		ImGui::PushItemWidth(-ImGui::GetContentRegionAvail().x * 0.5f); //ImGui::PushItemWidth(300);
+		if (ImGui::BeginCombo("diffuseTexture", combo_preview_value))
+		{
+			for (int n = 0; n < textureCount; n++)
+			{
+				const bool is_selected = (difftex_current_idx == n);
+				if (ImGui::Selectable(m_AvailableTextures[n].c_str(), is_selected))
+					difftex_current_idx = n;
+
+				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+		ImGui::PopItemWidth();
+	}
+
+	// SPECULAR COMBO //
+	{
+		spectex_current_idx = specTextureIdx; // Set id of texture in the vector
+		const char* combo_preview_value = m_AvailableTextures[spectex_current_idx].c_str();
+		ImGui::PushItemWidth(-ImGui::GetContentRegionAvail().x * 0.5f); //ImGui::PushItemWidth(300);
+		if (ImGui::BeginCombo("specularTexture", combo_preview_value))
+		{
+			for (int n = 0; n < textureCount; n++)
+			{
+				const bool is_selected = (spectex_current_idx == n);
+				if (ImGui::Selectable(m_AvailableTextures[n].c_str(), is_selected))
+					spectex_current_idx = n;
+
+				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+		ImGui::PopItemWidth();
+	}
+
+
+	// Power Slider
+	ImGui::SeparatorText("Power");
+	ImGui::DragFloat("AmbientPow", &power.x, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+	ImGui::DragFloat("DiffusePow", &power.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+	ImGui::DragFloat("NothingForNow", &power.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+	ImGui::DragFloat("Shininess", &power.w, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
 
 
 
 	if (SelectedMesh != nullptr)
 	{
-		SelectedMesh->material.ambient = ambient;
-		SelectedMesh->material.diffuse = diffuse;
-		SelectedMesh->material.specular = specular;
+		SelectedMesh->material.power = power;
+		SelectedMesh->material.diffuseTex = m_AvailableTextures[difftex_current_idx];
+		SelectedMesh->material.specularTex = m_AvailableTextures[spectex_current_idx];
 	}
 
 

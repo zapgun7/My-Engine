@@ -114,9 +114,11 @@ uniform sLight theLights[NUMBEROFLIGHTS];  	// 70 uniforms
 
 struct sMaterial
 {
-	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular; // w is shininess
+	//vec4 ambient;
+	//vec4 diffuse;
+	sampler2D diffuse;
+	sampler2D specular;
+	vec4 power; // w is shininess
 };
 
 uniform sMaterial material;
@@ -375,7 +377,11 @@ if (isSpooky.z == 1.0f)
 		//+ texture( texture_03, textureCoords.st ).rgba * textureMixRatio_0_3.w;
 
 	// Make the 'vertex colour' the texture colour we sampled...
-	vec4 vertexRGBA = textureColour;	
+	
+	vec4 diffuseColor = texture(material.diffuse, textureCoords.st * uv_Offset_Scale_NONE.z).rgba;
+	
+	//vec4 vertexRGBA = textureColour;	
+	vec4 vertexRGBA = diffuseColor;
 
 	
 	// Custom Color
@@ -491,39 +497,99 @@ vec4 calulateLightContribNEW ( vec3 vertexMaterialColor, vec3 vertexNormal,
 		if (lightType == AMBIENT_LIGHT_TYPE)
 		{
 			//float ambientStr = 0.1f;
-			vec3 ambient = theLights[index].diffuse.xyz * theLights[index].diffuse.w * material.ambient.w; // w is power
+			vec3 ambient = theLights[index].diffuse.xyz * theLights[index].diffuse.w; // w is power
 			
 			finalObjectColor.rgb += ambient * vertexMaterialColor.xyz;
 			continue;
 		}
 		
-		if ((lightType == SPOT_LIGHT_TYPE) || (lightType == DIRECTIONAL_LIGHT_TYPE)) // TODO later
+		
+		// Vars needed below
+		float diffPower = 0.0f;
+		float attenuation = 1.0f;
+		vec3 diffuse = vec3(0.0f, 0.0f, 0.0f);
+		vec3 norm = normalize(vertexNormal);
+		vec3 lightDir = vec3(0.0f, 0.0f, 0.0f);
+		
+		// Spotlight Vars
+		float intensity = 1.0f;
+		
+		// Specular variables
+		float spec = 0.0f;
+		vec3 specular = vec3(0.0f, 0.0f, 0.0f);
+		vec3 specMapPower = texture(material.specular, textureCoords.st * uv_Offset_Scale_NONE.z).rgb;
+		vec3 viewDir = normalize(eyeLocation.xyz - vertexWorldPos);
+		vec3 halfwayDir = vec3(0.0f, 0.0f, 0.0f);
+		
+		
+		if (lightType == DIRECTIONAL_LIGHT_TYPE)
 		{
-			continue;
+			lightDir = normalize(theLights[index].direction.xyz);
+			
+		}
+		else if (lightType == POINT_LIGHT_TYPE)
+		{
+			lightDir = vertexWorldPos.xyz - theLights[index].position.xyz;
+			float lightDist = length(lightDir);
+			lightDir = normalize(lightDir);
+			attenuation = 1.0 / (theLights[index].atten.x + theLights[index].atten.y * lightDist +
+							     theLights[index].atten.z * (lightDist * lightDist));
+		}
+		else if (lightType == SPOT_LIGHT_TYPE) 
+		{
+			lightDir = vertexWorldPos.xyz - theLights[index].position.xyz;
+			lightDir = normalize(lightDir);
+			
+		    float theta = dot(lightDir, normalize(theLights[index].direction.xyz));
+			
+			if (theta > theLights[index].param1.z) // If within the outer ring
+			{
+				// This area is lit
+				float lightDist = length(lightDir);
+				attenuation = 1.0 / (theLights[index].atten.x + theLights[index].atten.y * lightDist +
+									 theLights[index].atten.z * (lightDist * lightDist));
+									 
+				float epsilon = theLights[index].param1.y - theLights[index].param1.z;
+				intensity = clamp((theta - theLights[index].param1.z) / epsilon, 0.0, 1.0);
+			}
+		    else
+				continue;
+		   
 		}
 		
-		// Assume point
-		vec3 norm = normalize(vertexNormal);
-		vec3 lightDir = vertexWorldPos.xyz - theLights[index].position.xyz;
-		float distFromLight = length(lightDir);
-		lightDir = normalize(lightDir);
 		
-		float diffPower = max(dot(norm, -lightDir), 0.0f);
+		diffPower = max(dot(norm, -lightDir), 0.0f);
+		diffuse = theLights[index].diffuse.xyz * (diffPower) * theLights[index].diffuse.w;
 		
-		vec3 diffuse = theLights[index].diffuse.xyz * (diffPower * material.diffuse.w * material.diffuse.xyz);
+		halfwayDir = normalize(lightDir + viewDir);
+		spec = pow(max(dot(viewDir, halfwayDir), 0.0f), material.power.w); // material.power.w is shininess
+		specular = (spec * specMapPower) * theLights[index].specular.xyz * theLights[index].specular.w;
+		
+		//vec3 lightDir = vertexWorldPos.xyz - theLights[index].position.xyz;
+		//float distFromLight = length(lightDir);
+		//lightDir = normalize(lightDir);
+		
+		//float diffPower = max(dot(norm, -lightDir), 0.0f);
+		
+		//vec3 diffuse = theLights[index].diffuse.xyz * (diffPower);
 		
 		
 		// Now specular
 		//float specStr = 0.5f; // For now hard coding it
-		vec3 viewDir = normalize(eyeLocation.xyz - vertexWorldPos);
+		
+		
 		//vec3 reflectDir = reflect(-lightDir, norm);
-		vec3 halfwayDir = normalize(lightDir + viewDir);
-		
-		float spec = pow(max(dot(viewDir, halfwayDir), 0.0f), 32); // 32 is shininess (should take from mesh object data)
-		vec3 specular = (spec * material.specular.w * material.specular.xyz) * theLights[index].specular.xyz;
 		
 		
+		//float spec = pow(max(dot(viewDir, halfwayDir), 0.0f), material.power.w); // 32 is shininess (should take from mesh object data)
+		//vec3 specular = (spec * specMapPower) * theLights[index].specular.xyz;
 		
+		
+		
+		diffuse  *= attenuation * intensity;
+		specular *= attenuation * intensity;
+		
+		specular = max(specular, 0.0f);
 		
 		finalObjectColor.xyz += (diffuse + specular) * vertexMaterialColor.xyz;
 	

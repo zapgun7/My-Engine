@@ -911,12 +911,12 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 
 	
 	// Set Material Properties
-	GLint material_UL = glGetUniformLocation(shaderProgramID, "material.ambient");
-	glUniform4f(material_UL, pCurrentMesh->material.ambient.x, pCurrentMesh->material.ambient.y, pCurrentMesh->material.ambient.z, pCurrentMesh->material.ambient.w);
-	material_UL = glGetUniformLocation(shaderProgramID, "material.diffuse");
-	glUniform4f(material_UL, pCurrentMesh->material.diffuse.x, pCurrentMesh->material.diffuse.y, pCurrentMesh->material.diffuse.z, pCurrentMesh->material.diffuse.w);
-	material_UL = glGetUniformLocation(shaderProgramID, "material.specular");
-	glUniform4f(material_UL, pCurrentMesh->material.specular.x, pCurrentMesh->material.specular.y, pCurrentMesh->material.specular.z, pCurrentMesh->material.specular.w);
+// 	GLint material_UL = glGetUniformLocation(shaderProgramID, "material.ambient");
+// 	glUniform4f(material_UL, pCurrentMesh->material.ambient.x, pCurrentMesh->material.ambient.y, pCurrentMesh->material.ambient.z, pCurrentMesh->material.ambient.w);
+// 	material_UL = glGetUniformLocation(shaderProgramID, "material.diffuse");
+// 	glUniform4f(material_UL, pCurrentMesh->material.diffuse.x, pCurrentMesh->material.diffuse.y, pCurrentMesh->material.diffuse.z, pCurrentMesh->material.diffuse.w);
+// 	material_UL = glGetUniformLocation(shaderProgramID, "material.specular");
+// 	glUniform4f(material_UL, pCurrentMesh->material.specular.x, pCurrentMesh->material.specular.y, pCurrentMesh->material.specular.z, pCurrentMesh->material.specular.w);
 
 
 
@@ -1961,6 +1961,32 @@ void cGraphicsMain::flyCameraInput(int width, int height)
 
 void cGraphicsMain::SetUpTextures(cMesh* pCurrentMesh, GLuint shaderProgramID)
 {
+	// New texture stuff (diffuse + specular)
+	{
+		GLint textureUnitNumber = 10;
+		GLuint textureDiff = m_pTextureManager->getTextureIDFromName(pCurrentMesh->material.diffuseTex);
+		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
+		glBindTexture(GL_TEXTURE_2D, textureDiff);
+		GLint textureDiff_UL = glGetUniformLocation(shaderProgramID, "material.diffuse");
+		glUniform1i(textureDiff_UL, textureUnitNumber);
+	}
+	{
+		GLint textureUnitNumber = 11;
+		GLuint textureDiff = m_pTextureManager->getTextureIDFromName(pCurrentMesh->material.specularTex);
+		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
+		glBindTexture(GL_TEXTURE_2D, textureDiff);
+		GLint textureDiff_UL = glGetUniformLocation(shaderProgramID, "material.specular");
+		glUniform1i(textureDiff_UL, textureUnitNumber);
+	}
+
+	// Set power
+	{
+		GLint matPower_UL = glGetUniformLocation(shaderProgramID, "material.power");
+		glUniform4f(matPower_UL, pCurrentMesh->material.power.x, pCurrentMesh->material.power.y, pCurrentMesh->material.power.z, pCurrentMesh->material.power.w);
+	}
+
+
+
 	{
 		GLint textureUnitNumber = 0;
 		GLuint Texture00 = m_pTextureManager->getTextureIDFromName(pCurrentMesh->textureName[textureUnitNumber]);
