@@ -78,7 +78,7 @@ unsigned int cShaderManager::getIDFromFriendlyName( std::string friendlyName )
 	return itShad->second;
 }
 
-cShaderManager::cShaderProgram* cShaderManager::pGetShaderProgramFromFriendlyName( std::string friendlyName )
+cShaderManager::cShaderProgram* cShaderManager::GetShaderProgramFromFriendlyName( std::string friendlyName )
 {
 	unsigned int shaderID = this->getIDFromFriendlyName(friendlyName);
 

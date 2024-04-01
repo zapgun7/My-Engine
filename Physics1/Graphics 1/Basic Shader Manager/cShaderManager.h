@@ -79,7 +79,7 @@ public:
 	unsigned int getIDFromFriendlyName( std::string friendlyName );
 
 	// Used to load the uniforms. Returns NULL if not found.
-	cShaderProgram* pGetShaderProgramFromFriendlyName( std::string friendlyName );
+	cShaderProgram* GetShaderProgramFromFriendlyName( std::string friendlyName );
 
 	// !! Does not work with arrays[]
 	bool tryAddUL(std::string& line, cShaderProgram* program); // Takes line from the shader text, stores UL info if a uniform

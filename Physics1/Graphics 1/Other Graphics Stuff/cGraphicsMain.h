@@ -79,12 +79,14 @@ private:
 
 	cMesh* m_pFindMeshByFriendlyName(std::string friendlyNameToFind);
 	void DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GLuint shaderProgramID);
+	void DrawHMObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GLuint shaderProgramID);
 	bool LoadModels(void);
 	bool LoadTextures(void);
 	bool LoadParticles(void);
 
 	// Draw Passes
 	void DrawPass_1(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec4 cameraEye, glm::vec3 cameraTarget);
+	void DrawPass_HM(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec4 cameraEye, glm::vec3 cameraTarget);
 	void DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int screeneight);
 
 

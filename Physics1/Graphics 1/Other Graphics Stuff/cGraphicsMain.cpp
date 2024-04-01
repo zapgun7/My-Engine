@@ -97,7 +97,7 @@ bool cGraphicsMain::Initialize()
 	glfwMakeContextCurrent(m_window);
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	//glfwSwapInterval(0); // No stinky v-sync
-	glfwSwapInterval(1); // Stinky
+	glfwSwapInterval(1); // Stinky, but is easy on my gpu :)
 
 
 	m_pShaderThing = new cShaderManager();
@@ -141,6 +141,22 @@ bool cGraphicsMain::Initialize()
 	if (!m_pShaderThing->createComputeProgramFromFile("compute01", computeShader))
 	{
 		std::cerr << "Error: Couldn't compile or link compute:" << std::endl;
+		std::cerr << m_pShaderThing->getLastError() << std::endl;
+		return 0;
+	}
+
+
+
+	// Heatmap Generation Shader
+	cShaderManager::cShader HMvertexShader;
+	HMvertexShader.fileName = "heatmapVertexShader.glsl";
+
+	cShaderManager::cShader HMfragmentShader;
+	HMfragmentShader.fileName = "heatmapFragmentShader.glsl";
+
+	if (!m_pShaderThing->createProgramFromFile("HMShader", HMvertexShader, HMfragmentShader))
+	{
+		std::cerr << "Error: Couldn't compile or link:" << std::endl;
 		std::cerr << m_pShaderThing->getLastError() << std::endl;
 		return 0;
 	}
@@ -624,45 +640,67 @@ bool cGraphicsMain::Update(double deltaTime)
 		DrawPass_1(m_shaderProgramID, m_pFBO_1->width, m_pFBO_1->height, glm::vec4(scene_1_CameraEye, 1.0f), scene_1_CameraTarget);
 	}
 
+	// Draw HeatMap
+	{
+		float ratio;
+		ratio = m_pFBO_2->width / (float)m_pFBO_2->height;
+		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_2->ID);
+
+		glViewport(0, 0, m_pFBO_2->width, m_pFBO_2->height);
+
+		m_pFBO_2->clearBuffers(true, true);
+
+		unsigned int HMID = m_pShaderThing->getIDFromFriendlyName("HMShader");
+		
+		glUseProgram(HMID);
+
+		DrawPass_HM(HMID, m_pFBO_2->width, m_pFBO_2->height, glm::vec4(m_cameraEye, 1.0f), m_cameraTarget);
+	}
+
+
 	// Compute shader
 	if (true)
 	{
-		unsigned int computeID = m_pShaderThing->getIDFromFriendlyName("compute01");
+		cShaderManager::cShaderProgram* computeProg = m_pShaderThing->GetShaderProgramFromFriendlyName("compute01");
+		//unsigned int computeID = m_pShaderThing->getIDFromFriendlyName("compute01");
 		//m_pShaderThing->useShaderProgram("compute01");
-		glUseProgram(computeID);
-
-
-
- 		//GLint outTex_UL = glGetUniformLocation(computeID, "imgOutput");
- 		//glUniform1i(outTex_UL, computeTexOutput);
-		//glBindImageTexture(0, computeTexOutput, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F); // Only outputting to this
+		glUseProgram(computeProg->ID);
 		
-		//GLint textureUnitNumber = 60;
-		//glActiveTexture(GL_TEXTURE0 + textureUnitNumber);// +textureUnitNumber);
-		//glBindTexture(GL_TEXTURE_2D, m_pFBO_1->colourTexture_0_ID);//m_pFBO_1->colourTexture_0_ID);
-		//glBindTexture(GL_TEXTURE_2D, computeTexOutput);
+
+
+		// Output
 		glBindImageTexture(0, computeTexOutput, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-		
-		
-		//glBindImageTexture(GL_TEXTURE0 + textureUnitNumber, m_pFBO_1->colourTexture_0_ID/*computeTexOutput*/, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-		
-		//glBindTexture(computeID, computeTexOutput);
-
-		GLint output_UL = glGetUniformLocation(computeID, "imgOutput");
+		GLint output_UL = glGetUniformLocation(computeProg->ID, "imgOutput");
 		glUniform1i(output_UL, computeTexOutput);
 
-		//unsigned int inputTexNum = 40;
-		//glActiveTexture(inputTexNum);
-		//glBindTexture(GL_TEXTURE_2D, m_pFBO_1->colourTexture_0_ID);
-
-
+		// Regular Render FBO
 		glBindImageTexture(1, m_pFBO_1->colourTexture_0_ID, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
-
-
-
-		GLint inputVals_UL = glGetUniformLocation(computeID, "imgInput");
-		//GLint inputVals_UL = glGetProgramResourceIndex(computeID, GL_UNIFORM, "imgInput");
+		GLint inputVals_UL = glGetUniformLocation(computeProg->ID, "imgInput");
 		glUniform1i(inputVals_UL, m_pFBO_1->colourTexture_0_ID);
+
+		// Heatmap FBO
+		glBindImageTexture(2, m_pFBO_2->colourTexture_0_ID, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+		GLint heatMap_UL = glGetUniformLocation(computeProg->ID, "heatMap");
+		glUniform1i(heatMap_UL, m_pFBO_2->colourTexture_0_ID);
+
+
+
+		// Noise Texture
+		GLint textureUnitNumber = 50;
+		GLuint nouseTex = m_pTextureManager->getTextureIDFromName("perlinnoise.bmp");
+		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+		glBindTexture(GL_TEXTURE_2D, nouseTex);
+		GLint nouseTex_UL = glGetUniformLocation(computeProg->ID, "noise");
+		glUniform1i(nouseTex_UL, textureUnitNumber);
+
+
+		// Set Current Time
+		glm::vec4 currTime = glm::vec4(glfwGetTime(), 0.0f, 0.0f, 0.0f);
+		static std::string timeVarName = "currTime";
+		computeProg->setULValue(timeVarName, &currTime);
+
 
 		glDispatchCompute((unsigned int)1920, (unsigned int)1080, 1);
 
@@ -1017,6 +1055,62 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 	return;
 }
 
+void cGraphicsMain::DrawHMObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GLuint shaderProgramID)
+{
+	cShaderManager::cShaderProgram* currProg = m_pShaderThing->getActiveShader();
+
+	glm::mat4 matModel = matModelParent;
+	glm::mat4 matTranslate = glm::translate(glm::mat4(1.0f),
+		glm::vec3(pCurrentMesh->drawPosition.x,
+			pCurrentMesh->drawPosition.y,
+			pCurrentMesh->drawPosition.z));
+
+
+	// Quaternion Rotation
+	glm::mat4 matRotation = glm::mat4(pCurrentMesh->get_qOrientation());
+
+
+	// Scaling matrix
+	glm::mat4 matScale = glm::scale(glm::mat4(1.0f),
+		pCurrentMesh->scale);
+	//--------------------------------------------------------------
+
+	// Combine all these transformation
+	matModel = matModel * matTranslate;
+
+	matModel = matModel * matRotation;
+
+	matModel = matModel * matScale;
+
+
+
+	static std::string matModelUName("matModel");
+	currProg->setULValue(matModelUName, &matModel);
+
+	// Also calculate and pass the "inverse transpose" for the model matrix
+	glm::mat4 matModel_InverseTranspose = glm::inverse(glm::transpose(matModel));
+
+	static std::string matModelITUName("matModel_IT");
+	currProg->setULValue(matModelITUName, &matModel_InverseTranspose);
+
+
+	sModelDrawInfo modelInfo;
+	if (m_pMeshManager->FindDrawInfoByModelName(pCurrentMesh->meshName, modelInfo))
+	{
+		// Found it!!!
+
+		glBindVertexArray(modelInfo.VAO_ID); 		//  enable VAO (and everything else)
+		glDrawElements(GL_TRIANGLES,
+			modelInfo.numberOfIndices,
+			GL_UNSIGNED_INT,
+			0);
+		glBindVertexArray(0); 			            // disable VAO (and everything else)
+
+	}
+
+	return;
+}
+
 // Loads in all models that are available to us into the VAO
 bool cGraphicsMain::LoadModels(void)
 {
@@ -1126,7 +1220,7 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 
 	//glUseProgram(m_shaderProgramID);
 	m_pShaderThing->useShaderProgram("shader01");
-	cShaderManager::cShaderProgram* currProg = m_pShaderThing->pGetShaderProgramFromFriendlyName("shader01");
+	cShaderManager::cShaderProgram* currProg = m_pShaderThing->GetShaderProgramFromFriendlyName("shader01");
 
 
 	//glfwGetFramebufferSize(m_window, &width, &height);
@@ -1387,6 +1481,48 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 // 		return 0;
 }
 
+// For generating the heatmap for cool object effects
+void cGraphicsMain::DrawPass_HM(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec4 sceneEye, glm::vec3 sceneTarget)
+{
+	float ratio = screenWidth / (float)screenHeight;
+	m_pShaderThing->useShaderProgram("HMShader");
+	cShaderManager::cShaderProgram* currProg = m_pShaderThing->GetShaderProgramFromFriendlyName("HMShader");
+
+	glCullFace(GL_BACK);
+
+	// Set Camera Matrices
+	glm::mat4 projMat = glm::perspective(glm::radians(90.0f), ratio, 0.1f, 1100.0f);
+	glm::mat4 viewMat = glm::lookAt((glm::vec3)sceneEye, (glm::vec3)sceneEye + sceneTarget, m_upVector);
+	glBindBuffer(GL_UNIFORM_BUFFER, m_UBOMatrices);
+	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projMat));
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewMat));
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+
+
+	for (unsigned int index = 0; index != m_vec_pAllMeshes.size(); index++) // Go through ALL meshes
+	{
+		cMesh* pCurrentMesh = m_vec_pMeshesToDraw[index];
+		if (!pCurrentMesh->isSpooky) continue;
+
+		if (pCurrentMesh->bIsVisible)
+		{
+
+			glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
+
+			if (pCurrentMesh->isDoubleSided)
+				glDisable(GL_CULL_FACE);
+
+
+			DrawHMObject(pCurrentMesh, matModel, currProg->ID);
+
+			if (pCurrentMesh->isDoubleSided)
+				glEnable(GL_CULL_FACE);
+
+		}//if (pCurrentMesh->bIsVisible)
+
+	}//for ( unsigned int index
+}
 
 void cGraphicsMain::DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int screenHeight)
 {
@@ -1411,13 +1547,13 @@ void cGraphicsMain::DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int sc
 
 	// Point the FBO from the 1st pass to this texture...
 
-	//GLint textureUnitNumber = 70;
-	glActiveTexture(GL_TEXTURE0);
+	GLint textureUnitNumber = 70;
+	glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
 	//glBindTexture(GL_TEXTURE_2D, m_pFBO_1->colourTexture_0_ID);//m_pFBO_1->colourTexture_0_ID);
 	glBindTexture(GL_TEXTURE_2D, computeTexOutput);
 
 	GLint FSQTex_UL = glGetUniformLocation(shaderProgramID, "FSQTex");
-	glUniform1i(FSQTex_UL, 0);
+	glUniform1i(FSQTex_UL, textureUnitNumber);
 
 
 	// Setting the spooky heatmap here too, as we want to influence how we read the above texture around this area

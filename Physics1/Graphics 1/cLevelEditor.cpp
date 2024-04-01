@@ -402,6 +402,7 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 			float uvScale = 1.0f;
 			float transparencyAlpha = 1.0f;
 	 		bool useCustomColor = false;
+			bool isSpooky = false; // Cool shader effect
 	 
 
 			cMesh* selectedMesh = nullptr;
@@ -448,6 +449,8 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 				textureRatios = selectedMesh->textureRatios;
 				isVisible = selectedMesh->bIsVisible;
 				isWireframe = selectedMesh->bIsWireframe;
+
+				isSpooky = selectedMesh->isSpooky;
 
 				//textureIdx = selectedMesh->textureIdx;
 // 				for (unsigned int i = 0; i < cMesh::NUM_TEXTURES; i++)
@@ -604,6 +607,8 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 		}
 	 		ImGui::SameLine();
 	 		ImGui::Text("  Deletes currently selected mesh");
+
+			ImGui::Checkbox("coolShader", &isSpooky);
 	 		
 	 		// List all object attributes the user is able to edit
 	 
@@ -630,6 +635,7 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 
 				selectedMesh->uvOffsetSpeed = glm::vec2(uvXSpeed, uvYSpeed);
 				selectedMesh->uv_Offset_Scale.z = uvScale;
+				selectedMesh->isSpooky = isSpooky;
 				
 				// This will call 2 functions: graphics and physics
 
