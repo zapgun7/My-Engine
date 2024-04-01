@@ -322,6 +322,7 @@ if (isSpooky.z == 1.0f)
 		vec4 skyBoxSampleColour = texture( skyBoxTexture, vertexWorldNormal.xyz ).rgba;
 		outputColour.rgb = skyBoxSampleColour.rgb;
 		outputColour.a = 1.0f;
+		//gl_FragDepth = 0.999f;
 		return;
 	}
 	

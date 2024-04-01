@@ -43,7 +43,6 @@ void main()
 	vec4 position = vPos;
 	
 	
-	
 	if (bUseBones.x == 1.0)
 	{
 		ex_BoneId = vBoneIds;
