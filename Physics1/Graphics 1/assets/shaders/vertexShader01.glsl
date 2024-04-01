@@ -22,7 +22,6 @@ uniform mat4 BoneMatrices[50];
 //uniform vec3 modelOffset;
 
 //in vec4 vCol;		// was vec3
-in vec4 vTest;
 in vec4 vPos;		// was vec3
 
 in vec4 vNormal;	// NEW for 2023!
@@ -40,6 +39,7 @@ out vec4 ex_BoneId;
 
 void main()
 {
+	
 	vec4 position = vPos;
 	
 	
@@ -62,6 +62,7 @@ void main()
 	mat4 matMVP = matProjection * matView * matModel;
 	//gl_Position = matMVP * vec4(vPos.xyz, 1.0);
 	gl_Position = matMVP * vec4(position.xyz, 1.0);
+	//gl_Position = vec4(vPos.xyz, 1.0f);
 	// Rotate the normal by the inverse transpose of the model matrix
 	// (so that it only is impacted by the rotation, not translation or scale)
 	vertexWorldNormal = matModel_IT * vec4(vNormal.xyz, 1.0f);

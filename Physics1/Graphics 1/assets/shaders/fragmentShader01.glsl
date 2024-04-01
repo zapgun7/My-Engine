@@ -297,6 +297,7 @@ if (isSpooky.z == 1.0f)
 		//outputColour.rgb = BlurScreenFaster(25);
 		
 		outputColour.a = 1.0f;
+		outputColour = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 		return;
 	}
 
@@ -436,6 +437,7 @@ vec3 getFBOColour()
 	vec2 textCoordsScreen = vec2( gl_FragCoord.x / screenWidthAndHeight_bIsOffScreen.x, 
 	                              gl_FragCoord.y / screenWidthAndHeight_bIsOffScreen.y );
 	vec3 theColour = texture( textureOffScreen, textCoordsScreen.st ).rgb;	
+	//vec3 theColour = texture( textureOffScreen, textureCoords.st ).rgb;	
 	
 	return theColour;
 }

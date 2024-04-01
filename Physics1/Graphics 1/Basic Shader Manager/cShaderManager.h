@@ -73,6 +73,8 @@ public:
 	bool createProgramFromFile( std::string friendlyName, 
 		                        cShader &vertexShad, 
 					            cShader &fragShader );
+	bool createComputeProgramFromFile(std::string friendlyName,
+								cShader& computeShader);
 	void setBasePath( std::string basepath );
 	unsigned int getIDFromFriendlyName( std::string friendlyName );
 

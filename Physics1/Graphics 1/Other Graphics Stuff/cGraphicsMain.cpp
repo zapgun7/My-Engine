@@ -103,6 +103,8 @@ bool cGraphicsMain::Initialize()
 	m_pShaderThing = new cShaderManager();
 	m_pShaderThing->setBasePath("assets/shaders");
 
+
+	// Default Shader
 	cShaderManager::cShader vertexShader;
 	vertexShader.fileName = "vertexShader01.glsl";
 
@@ -112,7 +114,34 @@ bool cGraphicsMain::Initialize()
 	if (!m_pShaderThing->createProgramFromFile("shader01", vertexShader, fragmentShader))
 	{
 		std::cout << "Error: Couldn't compile or link:" << std::endl;
-		std::cout << m_pShaderThing->getLastError();
+		std::cout << m_pShaderThing->getLastError() << std::endl;
+		return 0;
+	}
+
+
+	// FSQ Render Shader
+	cShaderManager::cShader FSQvertexShader;
+	FSQvertexShader.fileName = "FSQVertexShader.glsl";
+
+	cShaderManager::cShader FSQfragmentShader;
+	FSQfragmentShader.fileName = "FSQFragmentShader.glsl";
+
+	if (!m_pShaderThing->createProgramFromFile("FSQShader", FSQvertexShader, FSQfragmentShader))
+	{
+		std::cerr << "Error: Couldn't compile or link:" << std::endl;
+		std::cerr << m_pShaderThing->getLastError() << std::endl;
+		return 0;
+	}
+
+
+	// Compute Shader
+	cShaderManager::cShader computeShader;
+	computeShader.fileName = "computeShader01.glsl";
+
+	if (!m_pShaderThing->createComputeProgramFromFile("compute01", computeShader))
+	{
+		std::cerr << "Error: Couldn't compile or link compute:" << std::endl;
+		std::cerr << m_pShaderThing->getLastError() << std::endl;
 		return 0;
 	}
 
@@ -668,8 +697,9 @@ bool cGraphicsMain::Update(double deltaTime)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//        ::g_pFBO_1->clearBuffers(true, true);
 
-
-		DrawPass_FSQ(m_shaderProgramID, screenWidth, screenHeight);
+		unsigned int FSQShaderID = m_pShaderThing->getIDFromFriendlyName("FSQShader");
+		DrawPass_FSQ(FSQShaderID, screenWidth, screenHeight);
+		//DrawPass_FSQ(m_shaderProgramID, screenWidth, screenHeight);
 	}
 
 
@@ -1670,7 +1700,7 @@ void cGraphicsMain::DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int sc
 {
 	float ratio;
 
-	glUseProgram(m_shaderProgramID);
+	glUseProgram(shaderProgramID); // FSQ Shader
 
 	//glfwGetFramebufferSize(pWindow, &width, &height);
 	ratio = screenWidth / (float)screenHeight;
@@ -1682,52 +1712,9 @@ void cGraphicsMain::DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int sc
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
+	GLint widthHeight_UL = glGetUniformLocation(shaderProgramID, "screenWidth_Height");
+	glUniform4f(widthHeight_UL, (GLfloat)screenWidth, (GLfloat)screenHeight, 0.0f, 0.0f);
 
-	// Camera is pointing directly at the full screen quad
-	glm::vec3 FSQ_CameraEye = glm::vec3(0.0, 0.0, 5.0f);
-	glm::vec3 FSQ_CameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-
-
-	//uniform vec4 eyeLocation;
-	GLint eyeLocation_UL = glGetUniformLocation(shaderProgramID, "eyeLocation");
-	glUniform4f(eyeLocation_UL,
-		FSQ_CameraEye.x, FSQ_CameraEye.y, FSQ_CameraEye.z, 1.0f);
-
-
-	// Set Camera Matrices
-	glm::mat4 projMat = glm::perspective(0.6f, ratio, 0.1f, 100.0f);
-	glm::mat4 viewMat = glm::lookAt(FSQ_CameraEye, FSQ_CameraTarget, m_upVector);
-	glBindBuffer(GL_UNIFORM_BUFFER, m_UBOMatrices);
-	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projMat));
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewMat));
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-	//       //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-// 	glm::mat4 matProjection = glm::perspective(0.6f,
-// 		ratio,
-// 		0.1f,        // Near (as big)
-// 		100.0f);    // Far (as small)
-// 
-// 	glm::mat4 matView = glm::lookAt(FSQ_CameraEye,
-// 		FSQ_CameraTarget,
-// 		m_upVector);
-// 
-// 	GLint matProjection_UL = glGetUniformLocation(shaderProgramID, "matProjection");
-// 	glUniformMatrix4fv(matProjection_UL, 1, GL_FALSE, glm::value_ptr(matProjection));
-// 
-// 	GLint matView_UL = glGetUniformLocation(shaderProgramID, "matView");
-// 	glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(matView));
-
-	// Set up the textures for this offscreen quad
-	//uniform bool bIsOffScreenTextureQuad;
-	GLint bIsOffScreenTextureQuad_UL = glGetUniformLocation(shaderProgramID, "screenWidthAndHeight_bIsOffScreen");
-	//glUniform1f(bIsOffScreenTextureQuad_UL, (GLfloat)GL_TRUE);
-	glUniform4f(bIsOffScreenTextureQuad_UL, (GLfloat)screenWidth, (GLfloat)screenHeight, (GLfloat)GL_TRUE, 0.0f);
-	// uniform vec2 screenWidthAndHeight;	// x is width
-// 	GLint screenWidthAndHeight_UL = glGetUniformLocation(shaderProgramID, "screenWidthAndHeight");
-// 	glUniform2f(screenWidthAndHeight_UL,
-// 		(GLfloat)screenWidth,
-// 		(GLfloat)screenHeight);
 
 
 	// Point the FBO from the 1st pass to this texture...
@@ -1736,10 +1723,9 @@ void cGraphicsMain::DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int sc
 	glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
 	glBindTexture(GL_TEXTURE_2D, m_pFBO_1->colourTexture_0_ID);//m_pFBO_1->colourTexture_0_ID);
 
-	//uniform sampler2D textureOffScreen;
-	GLint textureOffScreen_UL = glGetUniformLocation(shaderProgramID, "textureOffScreen");
-	glUniform1i(textureOffScreen_UL, textureUnitNumber);
 
+	GLint FSQTex_UL = glGetUniformLocation(shaderProgramID, "FSQTex");
+	glUniform1i(FSQTex_UL, textureUnitNumber);
 
 
 	// Setting the spooky heatmap here too, as we want to influence how we read the above texture around this area
@@ -1755,24 +1741,21 @@ void cGraphicsMain::DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int sc
 	glUniform4f(spookyBool_UL, GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE); // Disable all these, as this pass only draws texture to quad!
 
 
+	//DrawObject(&fullScreenQuad, glm::mat4(1.0f), shaderProgramID);
 
-	cMesh fullScreenQuad;
-	fullScreenQuad.meshName = "Quad_1_sided_aligned_on_XY_plane.ply";
-	//fullScreenQuad.meshName = "Sphere_1_unit_Radius.ply";
-	//fullScreenQuad.meshName = "legospiderman_head_xyz_n_rgba_uv_at_Origin.ply";
+	sModelDrawInfo modelInfo;
+	if (m_pMeshManager->FindDrawInfoByModelName("Quad_1_sided_aligned_on_XY_plane.ply", modelInfo))
+	{
+		// Found it!!!
 
-	    fullScreenQuad.textureName[0] = "cyan.bmp";
-	    fullScreenQuad.textureRatios[0] = 1.0f;
-	fullScreenQuad.setUniformDrawScale(5.0f);
-	fullScreenQuad.drawPosition = glm::vec3(0.0f);
-	//fullScreenQuad.adjustRoationAngleFromEuler(glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f));
-	fullScreenQuad.adjustRotationAngleFromEuler(glm::vec3(0.0f, 0.0f, 0.0f));
+		glBindVertexArray(modelInfo.VAO_ID); 		//  enable VAO (and everything else)
+		glDrawElements(GL_TRIANGLES,
+			modelInfo.numberOfIndices,
+			GL_UNSIGNED_INT,
+			0);
+		glBindVertexArray(0); 			            // disable VAO (and everything else)
 
-	DrawObject(&fullScreenQuad, glm::mat4(1.0f), shaderProgramID);
-
-
-	//glUniform1f(bIsOffScreenTextureQuad_UL, (GLfloat)GL_FALSE);
-	glUniform4f(bIsOffScreenTextureQuad_UL, (GLfloat)screenWidth, (GLfloat)screenHeight, (GLfloat)GL_FALSE, 0.0f);
+	}
 
 
 	return;
