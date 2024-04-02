@@ -19,6 +19,9 @@
 #include "../Physics/cPhysics.h"
 
 
+#include "../cInputHandler.h"
+
+
 
 
 
@@ -687,17 +690,33 @@ bool cGraphicsMain::Update(double deltaTime)
 
 		// Noise Texture
 		GLint textureUnitNumber = 50;
-		GLuint nouseTex = m_pTextureManager->getTextureIDFromName("perlinnoise.bmp");
+		GLuint noiseTex = m_pTextureManager->getTextureIDFromName("perlinnoise.bmp");//("perlinnoise.bmp");
 		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-		glBindTexture(GL_TEXTURE_2D, nouseTex);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, noiseTex);
 		GLint nouseTex_UL = glGetUniformLocation(computeProg->ID, "noise");
 		glUniform1i(nouseTex_UL, textureUnitNumber);
 
 
-		// Set Current Time
-		glm::vec4 currTime = glm::vec4(glfwGetTime(), 0.0f, 0.0f, 0.0f);
+		static cInputHandler* input = cInputHandler::GetInstance();
+		static float mouseX = 0;
+		static float mouseY = 0;
+
+		double deltaX, deltaY;
+
+		input->GetMouseDeltas(deltaX, deltaY);
+		if (input->IsMousePressed(GLFW_MOUSE_BUTTON_RIGHT))
+		{
+			mouseX += deltaX;
+			mouseY += deltaY;
+		}
+
+
+		// Set Current Time and mouse info
+		glm::vec4 currTime = glm::vec4(glfwGetTime(), static_cast<float>(mouseX), static_cast<float>(mouseY), 0.0f);
 		static std::string timeVarName = "currTime";
 		computeProg->setULValue(timeVarName, &currTime);
 
@@ -1778,6 +1797,18 @@ void cGraphicsMain::SetUpTextures(cMesh* pCurrentMesh, GLuint shaderProgramID)
 		GLuint textureDiff = m_pTextureManager->getTextureIDFromName(pCurrentMesh->material.diffuseTex);
 		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
 		glBindTexture(GL_TEXTURE_2D, textureDiff);
+
+		if (pCurrentMesh->material.isDiffMirrored)
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+		}
+		else
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		}
+
 		GLint textureDiff_UL = glGetUniformLocation(shaderProgramID, "material.diffuse");
 		glUniform1i(textureDiff_UL, textureUnitNumber);
 	}
@@ -1786,6 +1817,18 @@ void cGraphicsMain::SetUpTextures(cMesh* pCurrentMesh, GLuint shaderProgramID)
 		GLuint textureDiff = m_pTextureManager->getTextureIDFromName(pCurrentMesh->material.specularTex);
 		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
 		glBindTexture(GL_TEXTURE_2D, textureDiff);
+
+		if (pCurrentMesh->material.isSpecMirrored)
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+		}
+		else
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		}
+
 		GLint textureDiff_UL = glGetUniformLocation(shaderProgramID, "material.specular");
 		glUniform1i(textureDiff_UL, textureUnitNumber);
 	}

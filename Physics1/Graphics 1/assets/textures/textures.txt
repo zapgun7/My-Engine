@@ -8,3 +8,10 @@ wall_texture.bmp
 scratch.bmp
 defSpec.bmp
 perlinnoise.bmp
+stingingeye.bmp
+swirls.bmp
+paths.bmp
+threads.bmp
+arrows1.bmp
+dreadpaths.bmp
+heavypaths.bmp

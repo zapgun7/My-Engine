@@ -14,7 +14,9 @@ struct sMaterial
 {
 	sMaterial() : power(1.0f, 1.0f, 1.0f, 32.0f), diffuseTex(""), specularTex("defSpec.bmp") {};
 	std::string diffuseTex;
+	bool isDiffMirrored = false;
 	std::string specularTex;
+	bool isSpecMirrored = false;
 	glm::vec4 power;
 };
 

@@ -658,7 +658,9 @@ void cLevelEditor::MaterialEditor(cMesh* SelectedMesh)
 	int difftex_current_idx = 0;
 	int spectex_current_idx = 0;
 	int diffTextureIdx = 0;
+	bool isDiffMirrored = false;
 	int specTextureIdx = 0;
+	bool isSpecMirrored = false;
 	int textureCount = m_AvailableTextures.size();
 
 	if (SelectedMesh != nullptr)
@@ -666,6 +668,9 @@ void cLevelEditor::MaterialEditor(cMesh* SelectedMesh)
 		power = SelectedMesh->material.power;
 		diffTex = SelectedMesh->material.diffuseTex;
 		specTex = SelectedMesh->material.specularTex;
+
+		isDiffMirrored = SelectedMesh->material.isDiffMirrored;
+		isSpecMirrored = SelectedMesh->material.isSpecMirrored;
 
 		// Find selected texture for diffuse (if any)
 
@@ -705,6 +710,10 @@ void cLevelEditor::MaterialEditor(cMesh* SelectedMesh)
 			ImGui::EndCombo();
 		}
 		ImGui::PopItemWidth();
+
+		// Mirrored Tex Toggle
+		ImGui::SameLine();
+		ImGui::Checkbox("DiffMirror", &isDiffMirrored);
 	}
 
 	// SPECULAR COMBO //
@@ -727,6 +736,9 @@ void cLevelEditor::MaterialEditor(cMesh* SelectedMesh)
 			ImGui::EndCombo();
 		}
 		ImGui::PopItemWidth();
+		// Mirrored Tex Toggle
+		ImGui::SameLine();
+		ImGui::Checkbox("SpecMirror", &isSpecMirrored);
 	}
 
 
@@ -744,6 +756,8 @@ void cLevelEditor::MaterialEditor(cMesh* SelectedMesh)
 		SelectedMesh->material.power = power;
 		SelectedMesh->material.diffuseTex = m_AvailableTextures[difftex_current_idx];
 		SelectedMesh->material.specularTex = m_AvailableTextures[spectex_current_idx];
+		SelectedMesh->material.isDiffMirrored = isDiffMirrored;
+		SelectedMesh->material.isSpecMirrored = isSpecMirrored;
 	}
 
 
