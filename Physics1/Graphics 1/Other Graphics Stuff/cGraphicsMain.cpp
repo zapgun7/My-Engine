@@ -703,16 +703,21 @@ bool cGraphicsMain::Update(double deltaTime)
 
 		static cInputHandler* input = cInputHandler::GetInstance();
 		static float mouseX = 0;
+		static float actualMouseX = 0;
 		static float mouseY = 0;
+		static float actualMouseY = 0;
 
 		double deltaX, deltaY;
 
 		input->GetMouseDeltas(deltaX, deltaY);
-		if (input->IsMousePressed(GLFW_MOUSE_BUTTON_RIGHT))
+		if (input->IsMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) // For now using the editor
 		{
-			mouseX += deltaX;
-			mouseY += deltaY;
+			actualMouseX += deltaX;
+			actualMouseY += deltaY;
 		}
+		// Have the noise delay-follow the mouse
+		mouseX += (actualMouseX - mouseX) * static_cast<float>(deltaTime) * 0.6f;
+		mouseY += (actualMouseY - mouseY) * static_cast<float>(deltaTime) * 0.2f;
 
 
 		// Set Current Time and mouse info

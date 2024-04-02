@@ -15,4 +15,4 @@ threads.bmp
 arrows1.bmp
 dreadpaths.bmp
 heavypaths.bmp
-colorfulnoisebmp.bmp
+colorfulnoise.bmp
