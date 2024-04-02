@@ -689,7 +689,7 @@ bool cGraphicsMain::Update(double deltaTime)
 
 
 		// Noise Texture
-		GLint textureUnitNumber = 50;
+		GLint textureUnitNumber = 50; // TODO find a similar perlin noise texture with more "holes"; they look spooky
 		GLuint noiseTex = m_pTextureManager->getTextureIDFromName("perlinnoise.bmp");//("perlinnoise.bmp");
 		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);

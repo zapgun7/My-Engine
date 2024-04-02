@@ -26,8 +26,8 @@ void main() {
 	//vec2 smallestSTDelta = vec2(1.0f / 1920.0f, 1.0f / 1080.0f);
 	
 	
-	float mouseXInfluence = currTime.y / 960; // Half resolution
-	float mouseYInfluence = currTime.z / 540; // 
+	float mouseXInfluence = currTime.y / 1920; // Half resolution
+	float mouseYInfluence = currTime.z / 1080; // 
 	
 	// Gradual scroll of the texture
 	vec2 noiseOffset = vec2(
@@ -99,8 +99,8 @@ void CurlingSpikes(float noiseSum, ivec2 textelCoords, vec4 value, vec3 time_mou
 	int spikeCurve = int(pow(
 							noiseSum 
 							+ sin(cos(pow(slowAmp * 3, 2))) // Slow oscilitaion from erratic change, to slow, back to erratic
-							+ sin(time_mouse.x - time_mouse.z / 540 + (textelCoords.t / 300) // Shift based on horizontal coord
-							+ (textelCoords.s / 100 + time_mouse.y / 960) // Shift based on vertical coord
+							+ sin(time_mouse.x - time_mouse.z / 1080 + (textelCoords.t / 300) // Shift based on horizontal coord
+							+ (textelCoords.s / 100 + time_mouse.y / 1920) // Shift based on vertical coord
 							) * 2, 2)); // Multiply all by 1.5 and power to 2
 							
 	vec4 testVal;
