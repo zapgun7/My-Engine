@@ -318,6 +318,16 @@ bool cGraphicsMain::Initialize()
 	glBindImageTexture(0, computeTexOutput, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 
 
+	// Making the small buffer to communicate with the compute
+	glm::vec4 tempForDataFill(0.0f);
+	glGenBuffers(1, &computeCommunicationBuffer);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, computeCommunicationBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER,
+				 sizeof(glm::vec4),
+				 &tempForDataFill,
+				 GL_DYNAMIC_DRAW);
+
+
 
 
 	GenerateUBOs();
@@ -626,6 +636,42 @@ bool cGraphicsMain::UpdateOLD(double deltaTime) // Main "loop" of the window. No
 // Update for framebuffer stuff
 bool cGraphicsMain::Update(double deltaTime)
 {
+	// Better system here, checking every ~.2s but still lowers frames a good amount when up close
+	const float TIMETILLUPDATEINTERVAL = 0.2f;
+	static float timeTillUpdate = TIMETILLUPDATEINTERVAL;
+	timeTillUpdate -= static_cast<float>(deltaTime);
+
+
+
+	// Start by checking if the shaded object is in view (based off of last frame)
+	if (timeTillUpdate <= 0)
+	{
+		timeTillUpdate = TIMETILLUPDATEINTERVAL;
+
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, computeCommunicationBuffer);
+		glm::vec4* computeInfo =
+			(glm::vec4*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER,
+				0,
+				sizeof(glm::vec4),
+				GL_MAP_READ_BIT); // We want to read and reset it
+
+		isShadedObjVisible = (bool)computeInfo->x; // Get info as a bool
+		//computeInfo->x = 0.0f; // Reset it
+
+		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+		// Set vec4 to 0's
+		static float temp = 0.0f;
+		glBufferSubData(GL_SHADER_STORAGE_BUFFER,
+						0,
+						sizeof(float),
+						&temp);
+
+		// unbind
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+	}
+
+
 	{
 		float ratio;
 		ratio = m_pFBO_1->width / (float)m_pFBO_1->height;
@@ -657,7 +703,7 @@ bool cGraphicsMain::Update(double deltaTime)
 		
 		glUseProgram(HMID);
 
-		DrawPass_HM(HMID, m_pFBO_2->width, m_pFBO_2->height, glm::vec4(m_cameraEye, 1.0f), m_cameraTarget);
+		DrawPass_HM(HMID, m_pFBO_2->width, m_pFBO_2->height, glm::vec4(m_cameraEye, 1.0f), m_cameraTarget, deltaTime);
 	}
 
 
@@ -701,6 +747,10 @@ bool cGraphicsMain::Update(double deltaTime)
 		glUniform1i(nouseTex_UL, textureUnitNumber);
 
 
+		// Bind buffer for bool communication
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, computeCommunicationBuffer);
+
+
 		static cInputHandler* input = cInputHandler::GetInstance();
 		static float mouseX = 0;
 		static float actualMouseX = 0;
@@ -712,6 +762,8 @@ bool cGraphicsMain::Update(double deltaTime)
 		input->GetMouseDeltas(deltaX, deltaY);
 		if (input->IsMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) // For now using the editor
 		{
+			mouseX += deltaX * 0.8f;
+			mouseY += deltaY * 0.9f;
 			actualMouseX += deltaX;
 			actualMouseY += deltaY;
 		}
@@ -728,7 +780,9 @@ bool cGraphicsMain::Update(double deltaTime)
 
 		glDispatchCompute((unsigned int)1920, (unsigned int)1080, 1);
 
-		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT & GL_SHADER_STORAGE_BARRIER_BIT);
+
+
 	}
 
 
@@ -1079,7 +1133,26 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 	return;
 }
 
-void cGraphicsMain::DrawHMObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GLuint shaderProgramID)
+// Zooms in/out the shader effect
+static void UpdateShaderZoom(float& currZoom, double& dt, bool isOnScreen)
+{
+	float distToMax = (1.0f - currZoom); // Small = fast zoom out, slow zoom in   Big = slow zoom out, fast zoom in
+	if (isOnScreen) // Zoom in
+	{
+		const float ZOOMINSPD = 0.6f; // Slower zoom in to appreciate the effects or whatever
+		currZoom += (static_cast<float>(dt) * distToMax) * ZOOMINSPD;
+	}
+	else // Zoom out
+	{
+		currZoom -= static_cast<float>(dt) * (1.0f - distToMax);
+	}
+
+	glm::clamp(currZoom, 0.0f, 1.0f);
+
+	return;
+}
+
+void cGraphicsMain::DrawHMObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GLuint shaderProgramID, double& dt)
 {
 	cShaderManager::cShaderProgram* currProg = m_pShaderThing->getActiveShader();
 
@@ -1101,9 +1174,7 @@ void cGraphicsMain::DrawHMObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, 
 
 	// Combine all these transformation
 	matModel = matModel * matTranslate;
-
 	matModel = matModel * matRotation;
-
 	matModel = matModel * matScale;
 
 
@@ -1117,6 +1188,24 @@ void cGraphicsMain::DrawHMObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, 
 	static std::string matModelITUName("matModel_IT");
 	currProg->setULValue(matModelITUName, &matModel_InverseTranspose);
 
+	static std::string intensityUName("intensity");
+
+
+	glm::vec3 objToCam = m_cameraEye - pCurrentMesh->drawPosition;
+	float objToCamDist = glm::length(objToCam);
+	objToCam = glm::normalize(objToCam);
+
+
+
+	// Scale the effect of the "pop-out" based on if the player is looking at it
+	// How to tell if the object is on screen? idk. // Set a specific pixel (i.e. 0,0) in some buffer 
+	// to a certain value in the compute when the heatmap is read
+
+	static float zoomAmp = 0.0f; // 0.0f - 1.0f range
+	const float ZOOMMAX = 0.037f;
+
+	UpdateShaderZoom(zoomAmp, dt, isShadedObjVisible);
+
 
 	sModelDrawInfo modelInfo;
 	if (m_pMeshManager->FindDrawInfoByModelName(pCurrentMesh->meshName, modelInfo))
@@ -1124,10 +1213,37 @@ void cGraphicsMain::DrawHMObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, 
 		// Found it!!!
 
 		glBindVertexArray(modelInfo.VAO_ID); 		//  enable VAO (and everything else)
-		glDrawElements(GL_TRIANGLES,
-			modelInfo.numberOfIndices,
-			GL_UNSIGNED_INT,
-			0);
+
+		// Loop through drawing progressively bigger versions of the model
+		// As the stencil buffer is enabled, we only draw the new band around the previous
+		for (unsigned int i = 0; i < 20; i++)
+		{
+			// Update current intensity to draw
+			glm::vec4 intensityVals(1.0f - (i * 0.05f), 0.0f, 0.0f, 0.0f);
+			currProg->setULValue(intensityUName, &intensityVals);
+
+			// Update position of model we're passing in
+			matModel = matModelParent;
+			float finalZoomAmp = (i * 1.1f) * zoomAmp * ZOOMMAX * objToCamDist;
+			glm::mat4 incrementMatTranslate = glm::translate(glm::mat4(1.0f), // TODO have this scale off of your distance to it
+				glm::vec3(pCurrentMesh->drawPosition.x + objToCam.x * (finalZoomAmp),
+					pCurrentMesh->drawPosition.y + objToCam.y * (finalZoomAmp),
+					pCurrentMesh->drawPosition.z + objToCam.z * (finalZoomAmp)));
+
+			matModel = matModel * incrementMatTranslate;
+
+			matModel = matModel * matRotation;
+
+			matModel = matModel * matScale;
+
+
+			currProg->setULValue(matModelUName, &matModel);
+
+			glDrawElements(GL_TRIANGLES,
+				modelInfo.numberOfIndices,
+				GL_UNSIGNED_INT,
+				0);
+		}
 		glBindVertexArray(0); 			            // disable VAO (and everything else)
 
 	}
@@ -1506,7 +1622,7 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 }
 
 // For generating the heatmap for cool object effects
-void cGraphicsMain::DrawPass_HM(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec4 sceneEye, glm::vec3 sceneTarget)
+void cGraphicsMain::DrawPass_HM(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec4 sceneEye, glm::vec3 sceneTarget, double& dt)
 {
 	float ratio = screenWidth / (float)screenHeight;
 	m_pShaderThing->useShaderProgram("HMShader");
@@ -1523,6 +1639,15 @@ void cGraphicsMain::DrawPass_HM(GLuint shaderProgramID, int screenWidth, int scr
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 
+	/// Stencil Setup ///
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, // Test fails? Keep stored stencil value
+				GL_KEEP, //
+				GL_REPLACE); // Depth and Stencil pass? Then stencil value with reference value (stored below in Func)
+
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF); // All drawn fragments auto-pass the test, setting to 1
+	glStencilMask(0xFF); // Enable writing to the stencil buffer?
+
 
 	for (unsigned int index = 0; index != m_vec_pAllMeshes.size(); index++) // Go through ALL meshes
 	{
@@ -1537,8 +1662,7 @@ void cGraphicsMain::DrawPass_HM(GLuint shaderProgramID, int screenWidth, int scr
 			if (pCurrentMesh->isDoubleSided)
 				glDisable(GL_CULL_FACE);
 
-
-			DrawHMObject(pCurrentMesh, matModel, currProg->ID);
+			DrawHMObject(pCurrentMesh, matModel, currProg->ID, dt);
 
 			if (pCurrentMesh->isDoubleSided)
 				glEnable(GL_CULL_FACE);
@@ -1546,6 +1670,8 @@ void cGraphicsMain::DrawPass_HM(GLuint shaderProgramID, int screenWidth, int scr
 		}//if (pCurrentMesh->bIsVisible)
 
 	}//for ( unsigned int index
+
+	glDisable(GL_STENCIL_TEST);
 }
 
 void cGraphicsMain::DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int screenHeight)

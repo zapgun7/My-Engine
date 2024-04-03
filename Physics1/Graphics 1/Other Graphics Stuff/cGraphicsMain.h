@@ -79,14 +79,14 @@ private:
 
 	cMesh* m_pFindMeshByFriendlyName(std::string friendlyNameToFind);
 	void DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GLuint shaderProgramID);
-	void DrawHMObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GLuint shaderProgramID);
+	void DrawHMObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GLuint shaderProgramID, double& dt);
 	bool LoadModels(void);
 	bool LoadTextures(void);
 	bool LoadParticles(void);
 
 	// Draw Passes
 	void DrawPass_1(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec4 cameraEye, glm::vec3 cameraTarget);
-	void DrawPass_HM(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec4 cameraEye, glm::vec3 cameraTarget);
+	void DrawPass_HM(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec4 cameraEye, glm::vec3 cameraTarget, double& dt);
 	void DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int screeneight);
 
 
@@ -150,7 +150,8 @@ private:
 	cFBO* m_pFBO_7 = nullptr;
 
 	unsigned int computeTexOutput = 0;
-
+	unsigned int computeCommunicationBuffer = 0; // ID of buffer (for now small, one vec4) to communicate somewhat with the cpu
+	bool isShadedObjVisible = false;
 
 
 	///////// UBO Variables //////////

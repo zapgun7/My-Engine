@@ -11,23 +11,34 @@ layout(rgba32f, binding = 2) uniform image2D heatMap;
 
 layout(binding = 3) uniform sampler2D noise;
 
+layout ( std140, binding = 4 ) buffer Bl
+{
+	vec4 Bool;
+};
+
 uniform vec4 currTime; // x = time 			 y = mouseX  z = mouseY (overall)
 
 
 void SpikyEffect(float noiseSum, ivec2 textelCoords, vec4 value); // Creates unique spikes coming out of the model
-void CurlingSpikes(float noiseSum, ivec2 textelCoords, vec4 value, vec3 time_mouse);
+void CurlingSpikes(float noiseSum, ivec2 textelCoords, vec4 value, vec3 time_mouse, float effectIntensity, vec4 originalPixel);
 
 
 void main() {
 	vec4 value = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	//ivec2 textelCoord = ivec2(gl_WorkGroupID.xy);
 	ivec2 textelCoord = ivec2(gl_GlobalInvocationID.xy);
+	
+	// /////// ////
+	
+	
+	
+	
 	vec2 stCoord = vec2(gl_GlobalInvocationID.x / 1920.0f, gl_GlobalInvocationID.y / 1080.0f);
-	//vec2 smallestSTDelta = vec2(1.0f / 1920.0f, 1.0f / 1080.0f);
 	
 	
 	float mouseXInfluence = currTime.y / 1920; // Half resolution
 	float mouseYInfluence = currTime.z / 1080; // 
+	ivec2 mouseInflVec = ivec2(mouseXInfluence, mouseYInfluence);
 	
 	// Gradual scroll of the texture
 	vec2 noiseOffset = vec2(
@@ -46,19 +57,31 @@ void main() {
 	
 	vec4 noiseVal = texture(noise, stCoord * noiseZoom + noiseOffset); // Add this for perlin texture scrolling
 	vec4 heatVal = imageLoad(heatMap, textelCoord);
+	vec4 inputVal = imageLoad(imgInput, textelCoord); // What the current pixel is without effects
+	
+	if (heatVal.x > 0.0f) Bool.x = 1.0f;
+	
+	// Testing Zone
+	//value = vec4((imageLoad(imgInput, textelCoord).rgb + imageLoad(heatMap, textelCoord).rgb), 1.0f);
+	///imageStore (imgOutput, textelCoord, value);
+	//return;
+	// End of Testing Zone
+	
+	
 	//currentVal += imageLoad(noise, textelCoord);
 	//value.xyz = imageLoad(imgInput, textelCoord).rgb;
 	//vec3 currentVal = texture(imgInput, textelCoord).rgb;
 	float noiseSum = (noiseVal.x + noiseVal.y + noiseVal.z) - 1.5f; // "half" its max potential
 	vec4 currentVal;
-	if (heatVal.x == 1.0f)
+	if (heatVal.x > 0.0f)
 	{
-		noiseSum = sin(tan(tan(noiseSum))) * 10;
-		currentVal = imageLoad(imgInput, textelCoord + ivec2(noiseSum * 30));
+		noiseSum = sin(tan(tan(noiseSum))) * 10 * heatVal.x;
+		currentVal = imageLoad(imgInput, textelCoord  + mouseInflVec + ivec2(noiseSum * 30 * heatVal.x)) * (heatVal.x) // The warped pixel * heatmap intensity
+					 + inputVal * (1.0f - heatVal.x); // Remainder of heatmap intensity given to original pixel
 	}
 	else
 	{
-		currentVal = imageLoad(imgInput, textelCoord);
+		currentVal = inputVal;//imageLoad(imgInput, textelCoord); // No change
 	}
 	
 	//value.xyz = currentVal.xyz;
@@ -75,8 +98,8 @@ void main() {
 	//		imageStore(imgOutput, textelCoord + ivec2(noiseSum * 35, -noiseSum * 35), value);
 	//	}
 	//}
-	if (heatVal.x == 1.0f)
-		CurlingSpikes(noiseSum, textelCoord, value, currTime.xyz);
+	if (heatVal.x > 0.0f)
+		CurlingSpikes(noiseSum, textelCoord + mouseInflVec, value, currTime.xyz, heatVal.x, inputVal);
 		//SpikyEffect(noiseSum, textelCoord, value);
 
 }
@@ -91,7 +114,7 @@ void SpikyEffect(float noiseSum, ivec2 textelCoords, vec4 value)
 
 	imageStore(imgOutput, textelCoords + ivec2(noiseSum * 35, -noiseSum * 20), value);
 }
-void CurlingSpikes(float noiseSum, ivec2 textelCoords, vec4 value, vec3 time_mouse)
+void CurlingSpikes(float noiseSum, ivec2 textelCoords, vec4 value, vec3 time_mouse, float effectIntensity, vec4 originalPixel)
 {	
 	// Slow amp of 2
 	float slowAmp = sin(currTime.x / 20) * 2; 
@@ -108,7 +131,7 @@ void CurlingSpikes(float noiseSum, ivec2 textelCoords, vec4 value, vec3 time_mou
 	
 	for (int i = 0; i < 2; i++) // Make it denser
 	{
-		imageStore(imgOutput, textelCoords + ivec2(-noiseSum * (35 + i), (-noiseSum * (20 + i)) + spikeCurve), value);
-		imageStore(imgOutput, textelCoords + ivec2(noiseSum * (35 + i), (-noiseSum * (20 + i)) + spikeCurve), value);
+		imageStore(imgOutput, textelCoords + ivec2(-noiseSum * (35 + i), (-noiseSum * (20 + i)) + spikeCurve), value * effectIntensity + originalPixel * (1.0f - effectIntensity));
+		imageStore(imgOutput, textelCoords + ivec2(noiseSum * (35 + i), (-noiseSum * (20 + i)) + spikeCurve), value * effectIntensity + originalPixel * (1.0f - effectIntensity));
 	}
 }

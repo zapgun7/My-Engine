@@ -83,6 +83,9 @@
     <Filter Include="Graphics Engine\Shader Manager\ShaderFiles">
       <UniqueIdentifier>{e3a654e5-cb2b-4d5b-a5d1-1682674c8c79}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics Engine\SSBO">
+      <UniqueIdentifier>{126413b1-f281-4503-acfa-a6b785d376b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Basic Shader Manager\cShaderManager.cpp">
@@ -259,6 +262,9 @@
     <ClCompile Include="..\include\sqlite\sqlite3.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cSSBO.cpp">
+      <Filter>Graphics Engine\SSBO</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basic Shader Manager\cShaderManager.h">
@@ -434,6 +440,9 @@
     </ClInclude>
     <ClInclude Include="cDatabaseManager.h">
       <Filter>Engine Controller\Persistence</Filter>
+    </ClInclude>
+    <ClInclude Include="cSSBO.h">
+      <Filter>Graphics Engine\SSBO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
