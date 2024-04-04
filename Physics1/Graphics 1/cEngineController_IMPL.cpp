@@ -132,7 +132,7 @@ bool cEngineController_IMPL::Initialize(void)
 		cMesh* playerMesh = new cMesh();
 		playerMesh->meshName = "Sphere_1_unit_Radius.ply";
 		playerMesh->friendlyName = "Player";
-		playerMesh->textureName[0] = "metal_s01.bmp";
+		//playerMesh->textureName[0] = "metal_s01.bmp";
 		playerMesh->scale = glm::vec3(2.0f);
 		playerMesh->uniqueID = playerObj->getUniqueID();
 
@@ -186,7 +186,7 @@ bool cEngineController_IMPL::Initialize(void)
 		cMesh* ground = new cMesh();
 		ground->friendlyName = "metalGround";
 		ground->meshName = "Big_Flat_Mesh.ply";
-		ground->textureName[0] = "metal_s01.bmp";
+		//ground->textureName[0] = "metal_s01.bmp";
 		ground->drawPosition.y = -0.1f;
 
 		m_pTheGraphics->addNewMesh(ground);
@@ -232,11 +232,11 @@ void cEngineController_IMPL::getAvailableSaves(std::vector<std::string>* SaveVec
 	return;
 }
 
-void cEngineController_IMPL::setMeshData(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor)
-{
-	m_pTheGraphics->updateMesh(meshID, newFriendlyName, newTextureIdx, newRatios, isVisible, isWireframe, doNotLight, useDebugColor, debugColor);
-	return;
-}
+// void cEngineController_IMPL::setMeshData(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor)
+// {
+// 	m_pTheGraphics->updateMesh(meshID, newFriendlyName, newTextureIdx, newRatios, isVisible, isWireframe, doNotLight, useDebugColor, debugColor);
+// 	return;
+// }
 
 void cEngineController_IMPL::setPhysData(int objID, glm::vec3 newPos, glm::vec3 newOri)
 {

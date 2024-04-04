@@ -260,11 +260,8 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 					cMesh* newDupe = new cMesh();
 
 					/// MESH COPYING ///
-					for (unsigned int i = 0; i < cMesh::NUM_TEXTURES; i++)
-					{
-						newDupe->textureName[i] = meshToCopy->textureName[i];
-						newDupe->textureRatios[i] = meshToCopy->textureRatios[i];
-					}
+					
+					// TODO duplicate material info
 					newDupe->meshName = meshToCopy->meshName;
 					newDupe->bIsVisible = meshToCopy->bIsVisible;
 					newDupe->bUseCustomColors = meshToCopy->bUseCustomColors;
@@ -383,7 +380,6 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 			std::string friendlyName = "";
 			std::string* textureNames = nullptr;
 			float* textureRatios = nullptr; 
-			int textureIdx[cMesh::NUM_TEXTURES] = { 0 };
 			bool isVisible = false;
 			bool isWireframe = false;
 			bool useDiscardMask = false;
@@ -445,8 +441,6 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 
 				
 				friendlyName = selectedMesh->friendlyName;
-				textureNames = selectedMesh->textureName;
-				textureRatios = selectedMesh->textureRatios;
 				isVisible = selectedMesh->bIsVisible;
 				isWireframe = selectedMesh->bIsWireframe;
 
@@ -467,28 +461,6 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 // 						}
 // 					}
 // 				}
-				// Quickly initialize the int array representing textures
-				for (unsigned int i = 0; i < 8; i++)
-				{
-					if (selectedMesh->textureName[i] == "")
-					{
-						textureIdx[i] = 0;
-						continue;
-					}
-					// Assuming it has some actual texture
-					int texNum = 0;
-					for (std::vector<std::string>::iterator itTexName = m_AvailableTextures.begin();
-						itTexName != m_AvailableTextures.end();
-						itTexName++)
-					{
-						if (selectedMesh->textureName[i] == *itTexName)
-						{
-							textureIdx[i] = texNum;
-							break;
-						}
-						texNum++;
-					}
-				}
 	 		}
 			// Position
 	 		ImGui::SeparatorText("Position");
@@ -543,41 +515,8 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 					}
 				}
 
-				for (unsigned int i = 0; i < cMesh::NUM_TEXTURES; i++)
-				{
-					ImGui::Text("Tex%d: ", i);
-					ImGui::SameLine();
-					// Texture combo box here
-
-					textype_current_idx[i] = textureIdx[i]; // Set id of texture in the vector
-					const char* combo_preview_value = m_AvailableTextures[textype_current_idx[i]].c_str();
-					ImGui::PushItemWidth(-ImGui::GetContentRegionAvail().x * 0.5f); //ImGui::PushItemWidth(300);
-					if (ImGui::BeginCombo(("##", std::to_string(i).c_str()), combo_preview_value))
-					{
-						for (int n = 0; n < textureCount; n++)
-						{
-							const bool is_selected = (textype_current_idx[i] == n);
-							if (ImGui::Selectable(m_AvailableTextures[n].c_str(), is_selected))
-								textype_current_idx[i] = n;
-
-							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-							if (is_selected)
-								ImGui::SetItemDefaultFocus();
-						}
-						ImGui::EndCombo();
-					}
-					ImGui::PopItemWidth();
-					ImGui::SameLine();
-					//Texture ratio here 0-1.0f slider   textureRatios
-					std::string sliderLabel = "Ratio" + std::to_string(i);
-					ImGui::PushItemWidth(100);
-					ImGui::DragFloat(sliderLabel.c_str(), &textureRatios[i], 0.01f, 0.0f, 1.0f, "%.2f");
-					ImGui::PopItemWidth();
-					
-
-				}
-				//textureIdx = textype_current_idx; // Update new values to pass to update
-
+				
+				// TODO move this to materials editor, maybe remove the spd
 				// UV-Offset Speed
 				ImGui::PushItemWidth(100);
 				ImGui::DragFloat("uvX_Spd", &uvXSpeed, 0.001f, -10.0f, 10.0f, "%.3f");
@@ -620,13 +559,7 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 				selectedMesh->scale = glm::vec3(scale);
 
 				selectedMesh->friendlyName = friendlyName;
-				for (unsigned int i = 0; i < selectedMesh->NUM_TEXTURES; i++)
-				{
-					//selectedMesh->textureName[i] = m_AvailableTextures[textureIdx[i]];
-					selectedMesh->textureName[i] = m_AvailableTextures[textype_current_idx[i]];
-					selectedMesh->textureRatios[i] = textureRatios[i];
-					//selectedMesh->textureIdx[i] = textureIdx[i];
-				}
+			
 				selectedMesh->bIsVisible = isVisible;
 				selectedMesh->bIsWireframe = isWireframe;
 				selectedMesh->bDoNotLight = doNotLight;

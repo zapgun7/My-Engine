@@ -33,7 +33,7 @@ public:
 	void getAvailableSaves(std::vector<std::string>* SaveVec);
 
 	/// Data Setting ///
-	void setMeshData(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor);
+	//void setMeshData(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor);
 	void setPhysData(int objID, glm::vec3 newPos, glm::vec3 newOri);
 	void setLightData(int lightIdx, std::string friendlyName, glm::vec4 newPos, glm::vec4 newDiff, glm::vec4 newSpec, glm::vec4 newAtten, glm::vec4 newDir, glm::vec4 newParam1, glm::vec4 newParam2);
 	void setPhysicsRunning(bool isRunning);

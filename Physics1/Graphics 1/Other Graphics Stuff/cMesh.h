@@ -26,15 +26,7 @@ public:
 	cMesh();		// Called on creation   c'tor
 	~cMesh();		// Called on deletion   d'tor
 
-	// Texture Stuff
 
-	static const int NUM_TEXTURES = 8;
-	std::string textureName[NUM_TEXTURES];
-	int textureIdx[NUM_TEXTURES];
-	float textureRatios[NUM_TEXTURES];
-
-
-	///////////////////
 	std::string meshName;
 
 	std::string friendlyName;

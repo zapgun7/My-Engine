@@ -54,7 +54,6 @@ public:
 	void getActiveLights(cLightManager* TheLights);
 
 	// Level Editor Setting
-	void updateMesh(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor);  // Updates and existing object by reference to its friendly name (also from the gui)
 	void updateSelectedLight(int lightIdx, std::string friendlyName, glm::vec4 newPos, glm::vec4 newDiff, glm::vec4 newSpec, glm::vec4 newAtten, glm::vec4 newDir, glm::vec4 newParam1, glm::vec4 newParam2);
 	void updateDebugStates(bool useDebug, int selectedMesh, int selectedLight);
 

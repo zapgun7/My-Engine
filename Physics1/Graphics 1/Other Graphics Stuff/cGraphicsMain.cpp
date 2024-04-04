@@ -1757,48 +1757,6 @@ void cGraphicsMain::UpdateCamera(glm::vec3 position, glm::quat qRotation)
 	m_cameraTarget = glm::vec3(0, 0, 1) * m_qCameraRotation;
 }
 
-void cGraphicsMain::updateMesh(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor)
-{
-	// Start by finding mesh with corresponding ID
-	// Should have this in a map, I'll do it later
-	cMesh* meshToUpdate = nullptr;
-	for (unsigned int i = 0; i < m_vec_pMeshesToDraw.size(); i++)
-	{
-		if (m_vec_pMeshesToDraw[i]->uniqueID == meshID)
-		{
-			meshToUpdate = m_vec_pMeshesToDraw[i];
-			break;
-		}
-	}
-	for (unsigned int i = 0; i < m_vec_pTransMeshesToDraw.size(); i++)
-	{
-		if (m_vec_pTransMeshesToDraw[i]->uniqueID == meshID)
-		{
-			meshToUpdate = m_vec_pTransMeshesToDraw[i];
-			break;
-		}
-	}
-	if (meshToUpdate == nullptr)
-		return;
-
-
-	meshToUpdate->friendlyName = newFriendlyName;
-	for (unsigned int i = 0; i < meshToUpdate->NUM_TEXTURES; i++)
-	{
-		meshToUpdate->textureName[i] = m_AvailableTextures[newTextureIdx[i]];
-		meshToUpdate->textureRatios[i] = newRatios[i];
-		meshToUpdate->textureIdx[i] = newTextureIdx[i];
-	}
-	meshToUpdate->bIsVisible = isVisible;
-	meshToUpdate->bIsWireframe = isWireframe;
-	meshToUpdate->bDoNotLight = doNotLight;
-	meshToUpdate->bUseCustomColors = useDebugColor;
-	meshToUpdate->customColorRGBA = debugColor;
-
-
-	return;
-}
-
 
 void cGraphicsMain::addNewLight(char* friendlyName)
 {
@@ -1972,54 +1930,54 @@ void cGraphicsMain::SetUpTextures(cMesh* pCurrentMesh, GLuint shaderProgramID)
 
 
 
-	{
-		GLint textureUnitNumber = 0;
-		GLuint Texture00 = m_pTextureManager->getTextureIDFromName(pCurrentMesh->textureName[textureUnitNumber]);
-		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
-		glBindTexture(GL_TEXTURE_2D, Texture00);
-		GLint texture_00_UL = glGetUniformLocation(shaderProgramID, "texture_00");
-		glUniform1i(texture_00_UL, textureUnitNumber);
-	}
-
-	{
-		GLint textureUnitNumber = 1;
-		GLuint Texture01 = m_pTextureManager->getTextureIDFromName(pCurrentMesh->textureName[textureUnitNumber]);
-		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
-		glBindTexture(GL_TEXTURE_2D, Texture01);
-		GLint texture_01_UL = glGetUniformLocation(shaderProgramID, "texture_01");
-		glUniform1i(texture_01_UL, textureUnitNumber);
-	}
-
-	{
-		GLint textureUnitNumber = 2;
-		GLuint Texture02 = m_pTextureManager->getTextureIDFromName(pCurrentMesh->textureName[textureUnitNumber]);
-		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
-		glBindTexture(GL_TEXTURE_2D, Texture02);
-		GLint texture_02_UL = glGetUniformLocation(shaderProgramID, "texture_02");
-		glUniform1i(texture_02_UL, textureUnitNumber);
-	}
-
-	{
-		GLint textureUnitNumber = 3;
-		GLuint Texture03 = m_pTextureManager->getTextureIDFromName(pCurrentMesh->textureName[textureUnitNumber]);
-		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
-		glBindTexture(GL_TEXTURE_2D, Texture03);
-		GLint texture_03_UL = glGetUniformLocation(shaderProgramID, "texture_03");
-		glUniform1i(texture_03_UL, textureUnitNumber);
-	}
+// 	{
+// 		GLint textureUnitNumber = 0;
+// 		GLuint Texture00 = m_pTextureManager->getTextureIDFromName(pCurrentMesh->textureName[textureUnitNumber]);
+// 		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
+// 		glBindTexture(GL_TEXTURE_2D, Texture00);
+// 		GLint texture_00_UL = glGetUniformLocation(shaderProgramID, "texture_00");
+// 		glUniform1i(texture_00_UL, textureUnitNumber);
+// 	}
+// 
+// 	{
+// 		GLint textureUnitNumber = 1;
+// 		GLuint Texture01 = m_pTextureManager->getTextureIDFromName(pCurrentMesh->textureName[textureUnitNumber]);
+// 		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
+// 		glBindTexture(GL_TEXTURE_2D, Texture01);
+// 		GLint texture_01_UL = glGetUniformLocation(shaderProgramID, "texture_01");
+// 		glUniform1i(texture_01_UL, textureUnitNumber);
+// 	}
+// 
+// 	{
+// 		GLint textureUnitNumber = 2;
+// 		GLuint Texture02 = m_pTextureManager->getTextureIDFromName(pCurrentMesh->textureName[textureUnitNumber]);
+// 		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
+// 		glBindTexture(GL_TEXTURE_2D, Texture02);
+// 		GLint texture_02_UL = glGetUniformLocation(shaderProgramID, "texture_02");
+// 		glUniform1i(texture_02_UL, textureUnitNumber);
+// 	}
+// 
+// 	{
+// 		GLint textureUnitNumber = 3;
+// 		GLuint Texture03 = m_pTextureManager->getTextureIDFromName(pCurrentMesh->textureName[textureUnitNumber]);
+// 		glActiveTexture(GL_TEXTURE0 + textureUnitNumber);
+// 		glBindTexture(GL_TEXTURE_2D, Texture03);
+// 		GLint texture_03_UL = glGetUniformLocation(shaderProgramID, "texture_03");
+// 		glUniform1i(texture_03_UL, textureUnitNumber);
+// 	}
 	// and so on to however many texture you are using
 
 //    uniform vec4 textureMixRatio_0_3;
 //    uniform vec4 textureMixRatio_4_7;
 
-	GLint textureMixRatio_0_3_UL = glGetUniformLocation(shaderProgramID, "textureMixRatio_0_3");
+	//GLint textureMixRatio_0_3_UL = glGetUniformLocation(shaderProgramID, "textureMixRatio_0_3");
 	//    GLint textureMixRatio_4_7_UL = glGetUniformLocation(shaderProgramID, "textureMixRatio_4_7");
 
-	glUniform4f(textureMixRatio_0_3_UL,
-		pCurrentMesh->textureRatios[0],
-		pCurrentMesh->textureRatios[1],
-		pCurrentMesh->textureRatios[2],
-		pCurrentMesh->textureRatios[3]);
+// 	glUniform4f(textureMixRatio_0_3_UL,
+// 		pCurrentMesh->textureRatios[0],
+// 		pCurrentMesh->textureRatios[1],
+// 		pCurrentMesh->textureRatios[2],
+// 		pCurrentMesh->textureRatios[3]);
 	//    glUniform4f(textureMixRatio_4_7_UL,
 	//                pCurrentMesh->textureRatios[4],
 	//                pCurrentMesh->textureRatios[5],

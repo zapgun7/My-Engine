@@ -75,11 +75,11 @@ void cEngineController::getAvailableSaves(std::vector<std::string>* SaveVec)
 
 /*********************************| DATA SETTING |**************************************/
 
-void cEngineController::setMeshData(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor)
-{
-	m_pTheEngineController->setMeshData(meshID, newFriendlyName, newTextureIdx, newRatios, isVisible, isWireframe, doNotLight, useDebugColor, debugColor);
-	return;
-}
+// void cEngineController::setMeshData(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor)
+// {
+// 	m_pTheEngineController->setMeshData(meshID, newFriendlyName, newTextureIdx, newRatios, isVisible, isWireframe, doNotLight, useDebugColor, debugColor);
+// 	return;
+//}
 
 void cEngineController::setPhysData(int objID, glm::vec3 newPos, glm::vec3 newOri)
 {

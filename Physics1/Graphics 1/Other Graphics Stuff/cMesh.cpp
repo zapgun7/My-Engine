@@ -32,26 +32,6 @@ cMesh::cMesh()
 
 	this->uv_Offset_Scale = glm::vec3(0.0f, 0.0f, 1.0f);
 	this->uvOffsetSpeed = glm::vec2(0);
-
-	
-
-	
-	// These all add up to 1.0f
-	textureRatios[0] = 1.0f;
-	textureRatios[1] = 0.0f;
-	textureRatios[2] = 0.0f;
-	textureRatios[3] = 0.0f;
-	textureRatios[4] = 0.0f;
-	textureRatios[5] = 0.0f;
-	textureRatios[6] = 0.0f;
-	textureRatios[7] = 0.0f;
-
-	for (unsigned int i = 0; i < cMesh::NUM_TEXTURES; i++)
-	{
-		textureIdx[i] = 0;
-	}
-
-
 }
 
 // Destructor: Called on deletion   d'tor
