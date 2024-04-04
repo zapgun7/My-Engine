@@ -137,7 +137,7 @@ bool LoadDataFromMember(const Value& obj, std::string memberName, void* data, cS
 		itr = obj.FindMember(memName);
 		if (itr == obj.MemberEnd()) return false;
 
-		*intData = itr->value.GetInt();
+		*intData = itr->value.GetInt64();
 	}
 	else if (type == cSceneManagement::VEC2)
 	{
@@ -192,16 +192,8 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 
 	for (unsigned int i = 0; i < MeshVec.size(); i++) //Iterate through all meshes
 	{
-		// Object filename and friendlyname
-// 		str = MeshVec[i]->meshName; // filename
-// 		string.SetString(str.c_str(), static_cast<rapidjson::SizeType>(str.length()), output.GetAllocator());
-// 		meshobj.AddMember("meshName", string, output.GetAllocator()); // Add meshname
 		AddMemberToObject(meshobj, "meshName", &MeshVec[i]->meshName, STRING, output);
 		
-
-// 		str = MeshVec[i]->friendlyName; // friendlyname
-// 		string.SetString(str.c_str(), static_cast<rapidjson::SizeType>(str.length()), output.GetAllocator());
-// 		meshobj.AddMember("friendlyName", string, output.GetAllocator()); // Add friendlyname
 		AddMemberToObject(meshobj, "friendlyName", &MeshVec[i]->friendlyName, STRING, output);
 
 		// Texture Info: name array, ratio array
@@ -218,114 +210,33 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 // 		meshobj.AddMember("texRatios", vec, output.GetAllocator()); // Add texture names
 // 		vec.SetArray();
 
-		// Pos, orientation(euler)
-// 		vec3 = MeshVec[i]->drawPosition; // Draw position
-// 		vec.PushBack(vec3.x, output.GetAllocator());
-// 		vec.PushBack(vec3.y, output.GetAllocator());
-// 		vec.PushBack(vec3.z, output.GetAllocator());
-// 		meshobj.AddMember("drawPosition", vec, output.GetAllocator()); // Add drawPosition
-// 		vec.SetArray(); // Clear the vec
-// 		vec3 = MeshVec[i]->eulerOrientation; // Draw orientation
-// 		vec.PushBack(vec3.x, output.GetAllocator());
-// 		vec.PushBack(vec3.y, output.GetAllocator());
-// 		vec.PushBack(vec3.z, output.GetAllocator());
-// 		meshobj.AddMember("eulerOrientation", vec, output.GetAllocator()); // Add eulerOrientation
-// 		vec.SetArray(); // Clear the vec
 
-		///// MATERIAL SETTING /////
-		// Power
-// 		vec4 = MeshVec[i]->material.power;
-// 		vec.PushBack(vec4.x, output.GetAllocator());
-// 		vec.PushBack(vec4.y, output.GetAllocator());
-// 		vec.PushBack(vec4.z, output.GetAllocator());
-// 		vec.PushBack(vec4.w, output.GetAllocator());
-// 		meshobj.AddMember("mat_pow", vec, output.GetAllocator()); // Material settings
-// 		vec.SetArray();
-// 
-// 		// Diffuse Texture
-// 		str = MeshVec[i]->material.diffuseTex;
-// 		string.SetString(str.c_str(), static_cast<rapidjson::SizeType>(str.length()), output.GetAllocator());
-// 		meshobj.AddMember("mat_difftex", string, output.GetAllocator());
+		/// MATERIAL ///
 		AddMemberToObject(meshobj, "mat_difftex", &MeshVec[i]->material.diffuseTex, STRING, output);
-		// Specular Texture
-// 		str = MeshVec[i]->material.specularTex;
-// 		string.SetString(str.c_str(), static_cast<rapidjson::SizeType>(str.length()), output.GetAllocator());
-// 		meshobj.AddMember("mat_spectex", string, output.GetAllocator());
 		AddMemberToObject(meshobj, "mat_spectex", &MeshVec[i]->material.specularTex, STRING, output);
-
-		// Diffuse Mirror
-// 		state = MeshVec[i]->material.isDiffMirrored;
-// 		meshobj.AddMember("mat_diffmirr", state, output.GetAllocator());
 		AddMemberToObject(meshobj, "mat_diffmirr", &MeshVec[i]->material.isDiffMirrored, BOOL, output);
-		// Specular Mirror
-// 		state = MeshVec[i]->material.isSpecMirrored;
-// 		meshobj.AddMember("mat_specmirr", state, output.GetAllocator());
 		AddMemberToObject(meshobj, "mat_specmirr", &MeshVec[i]->material.isSpecMirrored, BOOL, output);
 
 		///// //////// /////// /////
 
-		// Custom Color
-// 		vec3 = MeshVec[i]->customColorRGBA; // Custom Color
-// 		vec.PushBack(vec3.x, output.GetAllocator());
-// 		vec.PushBack(vec3.y, output.GetAllocator());
-// 		vec.PushBack(vec3.z, output.GetAllocator());
-// 		meshobj.AddMember("customColor", vec, output.GetAllocator()); // Add custom color
-// 		vec.SetArray();
 		AddMemberToObject(meshobj, "customColor", &MeshVec[i]->customColorRGBA, VEC3, output);
-
-		// UV Offset and scale
-// 		vec3 = MeshVec[i]->uv_Offset_Scale;
-// 		vec.PushBack(vec3.x, output.GetAllocator());
-// 		vec.PushBack(vec3.y, output.GetAllocator());
-// 		vec.PushBack(vec3.z, output.GetAllocator());
-// 		meshobj.AddMember("uv_OS", vec, output.GetAllocator());
-// 		vec.SetArray();
 		AddMemberToObject(meshobj, "uv_OS", &MeshVec[i]->uv_Offset_Scale, VEC3, output);
-		
-		// UV Offset speed
-// 		vec2 = MeshVec[i]->uvOffsetSpeed;
-// 		vec.PushBack(vec2.x, output.GetAllocator());
-// 		vec.PushBack(vec2.y, output.GetAllocator());
-// 		meshobj.AddMember("uv_Spd", vec, output.GetAllocator());
-// 		vec.SetArray();
 		AddMemberToObject(meshobj, "uv_Spd", &MeshVec[i]->uv_Offset_Scale, VEC2, output);
-
-		// Scale and bools
-// 		flt = MeshVec[i]->scale.x; // scale
-// 		meshobj.AddMember("scale", flt, output.GetAllocator()); // Add scale
-		AddMemberToObject(meshobj, "scale", &MeshVec[i]->scale.x, FLOAT, output);
-// 		state = MeshVec[i]->bIsVisible;
-// 		meshobj.AddMember("isVisible", state, output.GetAllocator()); // Add isVisible
+		AddMemberToObject(meshobj, "scale", &MeshVec[i]->scale, VEC3, output);
 		AddMemberToObject(meshobj, "isVisible", &MeshVec[i]->bIsVisible, BOOL, output);
-// 		state = MeshVec[i]->bIsWireframe;
-// 		meshobj.AddMember("isWireframe", state, output.GetAllocator()); // Add isWireframe
 		AddMemberToObject(meshobj, "isWireframe", &MeshVec[i]->bIsWireframe, BOOL, output);
-// 		state = MeshVec[i]->bDoNotLight;
-// 		meshobj.AddMember("doNotLight", state, output.GetAllocator()); // Add doNotLight
 		AddMemberToObject(meshobj, "doNotLight", &MeshVec[i]->bDoNotLight, BOOL, output);
-// 		state = MeshVec[i]->bUseCustomColors;
-// 		meshobj.AddMember("useCustomColor", state, output.GetAllocator()); // Add useCustomColor
 		AddMemberToObject(meshobj, "useCustomColor", &MeshVec[i]->bUseCustomColors, BOOL, output);
 
 		// Transparency Alpha
-// 		flt = MeshVec[i]->transparencyAlpha;
-// 		meshobj.AddMember("tAlph", flt, output.GetAllocator());
 		AddMemberToObject(meshobj, "tAlph", &MeshVec[i]->transparencyAlpha, FLOAT, output);
 		// Discard Mask
-// 		state = MeshVec[i]->bUseDiscardMaskTex;
-// 		meshobj.AddMember("dMask", state, output.GetAllocator());
 		AddMemberToObject(meshobj, "dMask", &MeshVec[i]->bUseDiscardMaskTex, BOOL, output);
 		// Reflect/Refract
-// 		state = MeshVec[i]->bUseReflect;
-// 		meshobj.AddMember("reflect", state, output.GetAllocator());
 		AddMemberToObject(meshobj, "reflect", &MeshVec[i]->bUseReflect, BOOL, output);
-// 		state = MeshVec[i]->bUseRefract;
-// 		meshobj.AddMember("refract", state, output.GetAllocator());
 		AddMemberToObject(meshobj, "refract", &MeshVec[i]->bUseRefract, BOOL, output);
 
 		// The id that will bind it to the physics obj
-// 		num = MeshVec[i]->uniqueID;
-// 		meshobj.AddMember("ID", num, output.GetAllocator());
 		AddMemberToObject(meshobj, "ID", &MeshVec[i]->uniqueID, INT, output);
 
 
@@ -342,50 +253,30 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 	for (unsigned int i = 0; i < PhysVec.size(); i++)
 	{
 		// Friendly Name
-// 		str = PhysVec[i]->friendlyName; // friendlyname
-// 		string.SetString(str.c_str(), static_cast<rapidjson::SizeType>(str.length()), output.GetAllocator());
-// 		physobj.AddMember("friendlyName", string, output.GetAllocator()); // Add friendlyname
 		AddMemberToObject(physobj, "friendlyName", &PhysVec[i]->friendlyName, STRING, output);
 
 		// Shape Type
-// 		num = PhysVec[i]->shapeType;
-// 		physobj.AddMember("shape_t", num, output.GetAllocator());
 		AddMemberToObject(physobj, "shape_t", &PhysVec[i]->shapeType, INT, output);
 
 		// Position
-// 		vec3 = PhysVec[i]->position;
-// 		vec.PushBack(vec3.x, output.GetAllocator());
-// 		vec.PushBack(vec3.y, output.GetAllocator());
-// 		vec.PushBack(vec3.z, output.GetAllocator());
-// 		physobj.AddMember("pos", vec, output.GetAllocator());
-// 		vec.SetArray();
 		AddMemberToObject(physobj, "pos", &PhysVec[i]->position, VEC3, output);
 
 
 		// Euler Orientation
  		vec3 = PhysVec[i]->get_eOrientation();
-// 		vec.PushBack(vec3.x, output.GetAllocator());
-// 		vec.PushBack(vec3.y, output.GetAllocator());
-// 		vec.PushBack(vec3.z, output.GetAllocator());
-// 		physobj.AddMember("ori", vec, output.GetAllocator());
-// 		vec.SetArray();
 		AddMemberToObject(physobj, "ori", &vec3, VEC3, output);
 
 		// Unique ID
 		num = PhysVec[i]->getUniqueID();
-		//physobj.AddMember("ID", num, output.GetAllocator());
-		AddMemberToObject(physobj, "ID", &num, VEC3, output);
+		AddMemberToObject(physobj, "ID", &num, INT, output);
 
 		// Inverse Mass
-// 		flt = PhysVec[i]->inverse_mass;
-// 		physobj.AddMember("inv_mass", flt, output.GetAllocator());
 		AddMemberToObject(physobj, "inv_mass", &PhysVec[i]->inverse_mass, FLOAT, output);
 
+
+		// Add this physics object to the file
 		phys.PushBack(physobj, output.GetAllocator());
 		physobj.SetObject();
-
-		
-
 	}
 	output.AddMember("phys", phys, output.GetAllocator());
 
@@ -401,72 +292,21 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 
 	for (unsigned int i = 0; i < Lights->NUMBER_OF_LIGHTS_IM_USING; i++) // Iterate through all lights (yes even the ones we're not using)
 	{
-// 		str = Lights->theLights[i].friendlyName; // friendlyname
-// 		string.SetString(str.c_str(), static_cast<rapidjson::SizeType>(str.length()), output.GetAllocator());
-// 		lightobj.AddMember("friendlyname", string, output.GetAllocator()); // Add friendlyname
 		AddMemberToObject(lightobj, "friendlyname", &Lights->theLights[i].friendlyName, STRING, output);
+
 		// Position
-// 		vec4 = Lights->theLights[i].position;
-// 		vec.PushBack(vec4.x, output.GetAllocator());
-// 		vec.PushBack(vec4.y, output.GetAllocator());
-// 		vec.PushBack(vec4.z, output.GetAllocator());
-// 		vec.PushBack(vec4.w, output.GetAllocator());
-// 		lightobj.AddMember("position", vec, output.GetAllocator());
-// 		vec.SetArray(); // Clear 
 		AddMemberToObject(lightobj, "position", &Lights->theLights[i].position, VEC4, output);
 		// Diffuse
-// 		vec4 = Lights->theLights[i].diffuse;
-// 		vec.PushBack(vec4.x, output.GetAllocator());
-// 		vec.PushBack(vec4.y, output.GetAllocator());
-// 		vec.PushBack(vec4.z, output.GetAllocator());
-// 		vec.PushBack(vec4.w, output.GetAllocator());
-// 		lightobj.AddMember("diffuse", vec, output.GetAllocator());
-// 		vec.SetArray(); // Clear 
 		AddMemberToObject(lightobj, "diffuse", &Lights->theLights[i].diffuse, VEC4, output);
 		// Specular
-// 		vec4 = Lights->theLights[i].specular;
-// 		vec.PushBack(vec4.x, output.GetAllocator());
-// 		vec.PushBack(vec4.y, output.GetAllocator());
-// 		vec.PushBack(vec4.z, output.GetAllocator());
-// 		vec.PushBack(vec4.w, output.GetAllocator());
-// 		lightobj.AddMember("specular", vec, output.GetAllocator());
-// 		vec.SetArray(); // Clear 
 		AddMemberToObject(lightobj, "specular", &Lights->theLights[i].specular, VEC4, output);
 		// Attenuation
-// 		vec4 = Lights->theLights[i].atten;
-// 		vec.PushBack(vec4.x, output.GetAllocator());
-// 		vec.PushBack(vec4.y, output.GetAllocator());
-// 		vec.PushBack(vec4.z, output.GetAllocator());
-// 		vec.PushBack(vec4.w, output.GetAllocator());
-// 		lightobj.AddMember("atten", vec, output.GetAllocator());
-// 		vec.SetArray(); // Clear 
 		AddMemberToObject(lightobj, "atten", &Lights->theLights[i].atten, VEC4, output);
 		// Direction
-// 		vec4 = Lights->theLights[i].direction;
-// 		vec.PushBack(vec4.x, output.GetAllocator());
-// 		vec.PushBack(vec4.y, output.GetAllocator());
-// 		vec.PushBack(vec4.z, output.GetAllocator());
-// 		vec.PushBack(vec4.w, output.GetAllocator());
-// 		lightobj.AddMember("direction", vec, output.GetAllocator());
-// 		vec.SetArray(); // Clear 
 		AddMemberToObject(lightobj, "direction", &Lights->theLights[i].direction, VEC4, output);
 		// Param1
-// 		vec4 = Lights->theLights[i].param1;
-// 		vec.PushBack(vec4.x, output.GetAllocator());
-// 		vec.PushBack(vec4.y, output.GetAllocator());
-// 		vec.PushBack(vec4.z, output.GetAllocator());
-// 		vec.PushBack(vec4.w, output.GetAllocator());
-// 		lightobj.AddMember("param1", vec, output.GetAllocator());
-// 		vec.SetArray(); // Clear 
 		AddMemberToObject(lightobj, "param1", &Lights->theLights[i].param1, VEC4, output);
 		// Param2
-// 		vec4 = Lights->theLights[i].param2;
-// 		vec.PushBack(vec4.x, output.GetAllocator());
-// 		vec.PushBack(vec4.y, output.GetAllocator());
-// 		vec.PushBack(vec4.z, output.GetAllocator());
-// 		vec.PushBack(vec4.w, output.GetAllocator());
-// 		lightobj.AddMember("param2", vec, output.GetAllocator());
-// 		vec.SetArray(); // Clear 
 		AddMemberToObject(lightobj, "param2", &Lights->theLights[i].param2, VEC4, output);
 
 
@@ -515,12 +355,8 @@ void cSceneManagement::loadScene(std::string fileName)
 	for (unsigned int i = 0; i < meshes.Size(); i++)
 	{
 		cMesh* newMesh = new cMesh(); // Add to this before pushing into the vector
-// 		itr = meshes[i].FindMember("meshName");
-//  		newMesh->meshName = itr->value.GetString(); // Set meshname
-		LoadDataFromMember(meshes[i], "meshName", &newMesh->meshName, STRING, input);
 
-// 		itr = meshes[i].FindMember("friendlyName");
-// 		newMesh->friendlyName = itr->value.GetString(); // Set friendlyName
+		LoadDataFromMember(meshes[i], "meshName", &newMesh->meshName, STRING, input);
 		LoadDataFromMember(meshes[i], "friendlyName", &newMesh->friendlyName, STRING, input);
 
 		// Texture Names
@@ -537,120 +373,51 @@ void cSceneManagement::loadScene(std::string fileName)
 // 		}
 
 
-// 		// Position and Orientation
-// 		itr = meshes[i].FindMember("drawPosition");
-// 		newMesh->drawPosition.x = itr->value[0].GetFloat();
-// 		newMesh->drawPosition.y = itr->value[1].GetFloat();
-// 		newMesh->drawPosition.z = itr->value[2].GetFloat();
-// 		itr = meshes[i].FindMember("eulerOrientation");
-// 		newMesh->eulerOrientation.x = itr->value[0].GetFloat();
-// 		newMesh->eulerOrientation.y = itr->value[1].GetFloat();
-// 		newMesh->eulerOrientation.z = itr->value[2].GetFloat();
-
-
-		///// MATERIALS INFO /////
-// 		itr = meshes[i].FindMember("mat_power");
-// 		if (itr != meshes[i].MemberEnd()) // Does this work like this?
-// 		{
-// 			newMesh->material.power.x = itr->value[0].GetFloat();
-// 			newMesh->material.power.y = itr->value[1].GetFloat();
-// 			newMesh->material.power.z = itr->value[2].GetFloat();
-// 			newMesh->material.power.w = itr->value[3].GetFloat();
-// 		}
 		LoadDataFromMember(meshes[i], "mat_power", &newMesh->material.power, VEC4, input);
 		
 		// Diffuse/Specular Texture Names
-// 		itr = meshes[i].FindMember("mat_difftex");
-// 		if (itr != meshes[i].MemberEnd())
-// 		{
-// 			newMesh->material.diffuseTex = itr->value.GetString();
-// 		}
 		if (!LoadDataFromMember(meshes[i], "mat_difftex", &newMesh->material.diffuseTex, STRING, input))
 		{
-			LoadDataFromMember(meshes[i], "mat_difftex", &newMesh->material.diffuseTex, STRING, input)
+			//LoadDataFromMember(meshes[i], "mat_difftex", &newMesh->material.diffuseTex, STRING, input); // Load from the old texture array
 		}
-// 		itr = meshes[i].FindMember("mat_spectex");
-// 		if (itr != meshes[i].MemberEnd())
-// 		{
-// 			newMesh->material.specularTex = itr->value.GetString();
-// 		}
+
 		LoadDataFromMember(meshes[i], "mat_spectex", &newMesh->material.specularTex, STRING, input);
 
 		// Is Mirrored
-// 		itr = meshes[i].FindMember("mat_diffmirr");
-// 		if (itr != meshes[i].MemberEnd())
-// 		{
-// 			newMesh->material.isDiffMirrored = itr->value.GetBool();
-// 		}
 		LoadDataFromMember(meshes[i], "mat_diffmirr", &newMesh->material.isDiffMirrored, BOOL, input);
-// 		itr = meshes[i].FindMember("mat_specmirr");
-// 		if (itr != meshes[i].MemberEnd())
-// 		{
-// 			newMesh->material.isSpecMirrored = itr->value.GetBool();
-// 		}
 		LoadDataFromMember(meshes[i], "mat_specmirr", &newMesh->material.isSpecMirrored, BOOL, input);
 
 		///// ///////// //// /////
 
 
-// 		itr = meshes[i].FindMember("customColor");
-// 		newMesh->customColorRGBA.x = itr->value[0].GetFloat();
-// 		newMesh->customColorRGBA.y = itr->value[1].GetFloat();
-// 		newMesh->customColorRGBA.z = itr->value[2].GetFloat();
+
 		LoadDataFromMember(meshes[i], "customColor", &newMesh->customColorRGBA, VEC3, input);
 
 		// UV offset and scale
-// 		itr = meshes[i].FindMember("uv_OS");
-// 		newMesh->uv_Offset_Scale.x = itr->value[0].GetFloat();
-// 		newMesh->uv_Offset_Scale.y = itr->value[1].GetFloat();
-// 		newMesh->uv_Offset_Scale.z = itr->value[2].GetFloat();
 		LoadDataFromMember(meshes[i], "uv_OS", &newMesh->uv_Offset_Scale, VEC3, input);
 
 		// UV Offset speed
-// 		itr = meshes[i].FindMember("uv_Spd");
-// 		newMesh->uvOffsetSpeed.x = itr->value[0].GetFloat();
-// 		newMesh->uvOffsetSpeed.y = itr->value[1].GetFloat();
 		LoadDataFromMember(meshes[i], "uv_Spd", &newMesh->uvOffsetSpeed, VEC2, input);
 
 
 		// Scale and bools
-// 		itr = meshes[i].FindMember("scale");
-// 		newMesh->scale = glm::vec3(itr->value.GetFloat());
-		LoadDataFromMember(meshes[i], "scale", &newMesh->scale.x, FLOAT, input);
-// 		itr = meshes[i].FindMember("isVisible");
-// 		newMesh->bIsVisible = itr->value.GetBool();
+		LoadDataFromMember(meshes[i], "scale", &newMesh->scale, VEC3, input);
 		LoadDataFromMember(meshes[i], "isVisible", &newMesh->bIsVisible, BOOL, input);
-// 		itr = meshes[i].FindMember("isWireframe");
-// 		newMesh->bIsWireframe = itr->value.GetBool();
 		LoadDataFromMember(meshes[i], "isWireframe", &newMesh->bIsWireframe, BOOL, input);
-// 		itr = meshes[i].FindMember("doNotLight");
-// 		newMesh->bDoNotLight = itr->value.GetBool();
 		LoadDataFromMember(meshes[i], "doNotLight", &newMesh->bDoNotLight, BOOL, input);
-// 		itr = meshes[i].FindMember("useCustomColor");
-// 		newMesh->bUseCustomColors = itr->value.GetBool();
 		LoadDataFromMember(meshes[i], "useCustomColor", &newMesh->bUseCustomColors, BOOL, input);
 
 		// Transparency Alpha
-// 		itr = meshes[i].FindMember("tAlph");
-// 		newMesh->transparencyAlpha = itr->value.GetFloat();
 		LoadDataFromMember(meshes[i], "tAlph", &newMesh->transparencyAlpha, FLOAT, input);
 
 		// Discard Mask
-// 		itr = meshes[i].FindMember("dMask");
-// 		newMesh->bUseDiscardMaskTex = itr->value.GetBool();
 		LoadDataFromMember(meshes[i], "dMask", &newMesh->transparencyAlpha, BOOL, input);
 
 		// Reflect/Refract
-// 		itr = meshes[i].FindMember("reflect");
-// 		newMesh->bUseReflect = itr->value.GetBool();
 		LoadDataFromMember(meshes[i], "reflect", &newMesh->bUseReflect, BOOL, input);
-// 		itr = meshes[i].FindMember("refract");
-// 		newMesh->bUseRefract = itr->value.GetBool();
 		LoadDataFromMember(meshes[i], "refract", &newMesh->bUseRefract, BOOL, input);
 
 		// Unique ID from last instance
-// 		itr = meshes[i].FindMember("ID");
-// 		newMesh->uniqueID = itr->value.GetInt();
 		LoadDataFromMember(meshes[i], "ID", &newMesh->uniqueID, INT, input);
 
 
@@ -670,39 +437,28 @@ void cSceneManagement::loadScene(std::string fileName)
 		newPhys->inverse_mass = -1.0f; // !!! JUST A TEMP BANDAID
 
 		// Friendly Name
-// 		itr = phys[i].FindMember("friendlyName");
-// 		newPhys->friendlyName = itr->value.GetString();
 		LoadDataFromMember(phys[i], "friendlyName", &newPhys->friendlyName, STRING, input);
 
 		// Shape Type
 		int temp;
-// 		itr = phys[i].FindMember("shape_t");
-// 		newPhys->shapeType = (sPhysicsProperties::eShape)itr->value.GetInt();
 		if (LoadDataFromMember(phys[i], "shape_t", &temp, INT, input))
 			newPhys->shapeType = (sPhysicsProperties::eShape)temp;
 
 		// Position
-// 		itr = phys[i].FindMember("pos");
-// 		newPhys->position.x = itr->value[0].GetFloat();
-// 		newPhys->position.y = itr->value[1].GetFloat();
-// 		newPhys->position.z = itr->value[2].GetFloat();
 		LoadDataFromMember(phys[i], "pos", &newPhys->position, VEC3, input);
 
 		// Orientation
 		glm::vec3 tempVec;
-// 		itr = phys[i].FindMember("ori");
-// 		newPhys->setRotationFromEuler(glm::vec3(itr->value[0].GetFloat(), itr->value[1].GetFloat(), itr->value[2].GetFloat()));
 		if (LoadDataFromMember(phys[i], "ori", &tempVec, VEC3, input))
 		{
 			newPhys->setRotationFromEuler(tempVec);
 		}
 
-
 		LoadDataFromMember(phys[i], "inv_mass", &newPhys->inverse_mass, FLOAT, input);
 
 
 		//itr = phys[i].FindMember("ID");
-		int num = itr->value.GetInt();
+		int num;// = itr->value.GetInt();
 		LoadDataFromMember(phys[i], "ID", &num, INT, input);
 
 		for (unsigned int e = 0; e < newMeshVec.size(); e++) // Bind related mesh to physics object: ID and set associated mesh
@@ -731,14 +487,7 @@ void cSceneManagement::loadScene(std::string fileName)
 			}
 		}
 
-// 		if (phys[i].HasMember("inv_mass"))
-// 		{
-// 			itr = phys[i].FindMember("inv_mass");
-// 			float flt = itr->value.GetFloat();
-// 			newPhys->inverse_mass = flt;
-// 			
-// 		}
-
+		// Add completed physics object to the array
 		newPhysVec.push_back(newPhys);
 	}
 
@@ -750,46 +499,26 @@ void cSceneManagement::loadScene(std::string fileName)
 	for (unsigned int i = 0; i < lights.Size(); i++)
 	{
 		cLight newLight;
-		itr = lights[i].FindMember("friendlyname");
-		newLight.friendlyName = itr->value.GetString(); // Set friendlyname
-		// vec4 values
-		itr = lights[i].FindMember("position");
-		newLight.position.x = itr->value[0].GetFloat();
-		newLight.position.y = itr->value[1].GetFloat();
-		newLight.position.z = itr->value[2].GetFloat();
-		newLight.position.w = itr->value[3].GetFloat();
-		itr = lights[i].FindMember("diffuse");
-		newLight.diffuse.x = itr->value[0].GetFloat();
-		newLight.diffuse.y = itr->value[1].GetFloat();
-		newLight.diffuse.z = itr->value[2].GetFloat();
-		newLight.diffuse.w = itr->value[3].GetFloat();
-		itr = lights[i].FindMember("specular");
-		newLight.specular.x = itr->value[0].GetFloat();
-		newLight.specular.y = itr->value[1].GetFloat();
-		newLight.specular.z = itr->value[2].GetFloat();
-		newLight.specular.w = itr->value[3].GetFloat();
-		itr = lights[i].FindMember("atten");
-		newLight.atten.x = itr->value[0].GetFloat();
-		newLight.atten.y = itr->value[1].GetFloat();
-		newLight.atten.z = itr->value[2].GetFloat();
-		newLight.atten.w = itr->value[3].GetFloat();
-		itr = lights[i].FindMember("direction");
-		newLight.direction.x = itr->value[0].GetFloat();
-		newLight.direction.y = itr->value[1].GetFloat();
-		newLight.direction.z = itr->value[2].GetFloat();
-		newLight.direction.w = itr->value[3].GetFloat();
-		itr = lights[i].FindMember("param1");
-		newLight.param1.x = itr->value[0].GetFloat();
-		newLight.param1.y = itr->value[1].GetFloat();
-		newLight.param1.z = itr->value[2].GetFloat();
-		newLight.param1.w = itr->value[3].GetFloat();
-		itr = lights[i].FindMember("param2");
-		newLight.param2.x = itr->value[0].GetFloat();
-		newLight.param2.y = itr->value[1].GetFloat();
-		newLight.param2.z = itr->value[2].GetFloat();
-		newLight.param2.w = itr->value[3].GetFloat();
+// 		itr = lights[i].FindMember("friendlyname");
+// 		newLight.friendlyName = itr->value.GetString(); // Set friendlyname
+		LoadDataFromMember(lights[i], "friendlyname", &newLight.friendlyName, STRING, input);
+		// Position
+		LoadDataFromMember(lights[i], "position", &newLight.position, VEC4, input);
+		// Diffuse
+		LoadDataFromMember(lights[i], "diffuse", &newLight.diffuse, VEC4, input);
+		// Specular
+		LoadDataFromMember(lights[i], "specular", &newLight.specular, VEC4, input);
+		// Attenuation
+		LoadDataFromMember(lights[i], "atten", &newLight.atten, VEC4, input);
+		// Direction
+		LoadDataFromMember(lights[i], "direction", &newLight.direction, VEC4, input);
+		// Param 1
+		LoadDataFromMember(lights[i], "param1", &newLight.param1, VEC4, input);
+		// Param 2
+		LoadDataFromMember(lights[i], "param2", &newLight.param2, VEC4, input);
 
-		newLights.push_back(newLight); // Add completed light object to array
+		// Add completed light to the array
+		newLights.push_back(newLight); 
 	}
 	fclose(fp);
 
@@ -808,7 +537,7 @@ void cSceneManagement::updateAvailableSaves()
 	std::ifstream savelistFile(m_saveFilePath + "savelist.txt");
 	if (!savelistFile.is_open())
 	{
-		std::cout << "ERROR: Save file not found" << std::endl;
+		std::cerr << "ERROR: Save file not found" << std::endl;
 		return;
 	}
 	std::string line = ""; // Variable to parse each line

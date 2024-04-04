@@ -72,6 +72,7 @@ bool cGraphicsMain::Initialize()
 	m_pSceneManager = new cSceneManagement();
 	m_pSceneManager->Initialize();
 
+	SetUpCycleArray();
 
 	glfwSetErrorCallback(error_callback);
 
@@ -232,7 +233,7 @@ bool cGraphicsMain::Initialize()
 	}
 
 	m_pFBO_2 = new cFBO();
-	if (!m_pFBO_2->init(1920, 1080, FBOError))
+	if (!m_pFBO_2->init(240, 135, FBOError)) // Creating this at 1/2 resolution for blurring effect
 	{
 		std::cout << "Error creating FBO_2: " << FBOError << std::endl;
 	}
@@ -336,8 +337,53 @@ bool cGraphicsMain::Initialize()
 }
 
 
+void cGraphicsMain::SetUpCycleArray(void)
+{
+	const int CELLCOUNT = 44;
+	
+	m_iBlurOffsetIndices_pulse = new int[CELLCOUNT]; // Closest cells -> farthest
+	
+
+	// TODO!!! Make these below
+
+	//m_iBlurOffsetIndices_wave = new int[CELLCOUNT]; // Travels in a circle around the target pixel
+	m_iBlurOffsetIndices_dispersed = new int[4]; // Dispersed noisy distribution
 
 
+	
+	for (unsigned int cellIDX = 0; cellIDX < CELLCOUNT; cellIDX++)
+	{
+		// Designed this way (closest to farthest)
+		m_iBlurOffsetIndices_pulse[cellIDX] = cellIDX;
+	}
+
+	m_iBlurOffsetIndices_dispersed[0] = 1;
+	m_iBlurOffsetIndices_dispersed[1] = 3;
+	m_iBlurOffsetIndices_dispersed[2] = 2;
+	m_iBlurOffsetIndices_dispersed[3] = 4;
+
+
+// 	m_iBlurOffsetIndices_dispersed[0] = 1;
+// 	m_iBlurOffsetIndices_dispersed[1] = 16;
+// 	m_iBlurOffsetIndices_dispersed[2] = 14;
+// 	m_iBlurOffsetIndices_dispersed[3] = 5;
+// 	m_iBlurOffsetIndices_dispersed[4] = 15;
+// 	m_iBlurOffsetIndices_dispersed[5] = 10;
+// 	m_iBlurOffsetIndices_dispersed[6] = 7;
+// 	m_iBlurOffsetIndices_dispersed[7] = 4;
+// 	m_iBlurOffsetIndices_dispersed[8] = 13;
+// 	m_iBlurOffsetIndices_dispersed[9] = 17;
+// 	m_iBlurOffsetIndices_dispersed[10] = 2;
+// 	m_iBlurOffsetIndices_dispersed[11] = 19;
+// 	m_iBlurOffsetIndices_dispersed[12] = 9;
+// 	m_iBlurOffsetIndices_dispersed[13] = 11;
+// 	m_iBlurOffsetIndices_dispersed[14] = 8;
+// 	m_iBlurOffsetIndices_dispersed[15] = 6;
+// 	m_iBlurOffsetIndices_dispersed[16] = 18;
+// 	m_iBlurOffsetIndices_dispersed[17] = 12;
+	
+
+}
 
 
 int cGraphicsMain::GenerateUBOs(void)
@@ -728,9 +774,17 @@ bool cGraphicsMain::Update(double deltaTime)
 		glUniform1i(inputVals_UL, m_pFBO_1->colourTexture_0_ID);
 
 		// Heatmap FBO
-		glBindImageTexture(2, m_pFBO_2->colourTexture_0_ID, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
-		GLint heatMap_UL = glGetUniformLocation(computeProg->ID, "heatMap");
-		glUniform1i(heatMap_UL, m_pFBO_2->colourTexture_0_ID);
+// 		GLint hmUnitNumber = 51;
+// 		glBindImageTexture(2, m_pFBO_2->colourTexture_0_ID, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+// 		GLint heatMap_UL = glGetUniformLocation(computeProg->ID, "heatMap");
+// 		glUniform1i(heatMap_UL, m_pFBO_2->colourTexture_0_ID);
+		GLint hmUnitNumber = 51;
+		glActiveTexture(GL_TEXTURE0 + hmUnitNumber);
+		//glBindTexture(GL_TEXTURE_2D, m_pFBO_1->colourTexture_0_ID);//m_pFBO_1->colourTexture_0_ID);
+		glBindTexture(GL_TEXTURE_2D, m_pFBO_2->colourTexture_0_ID);
+
+		GLint hmTex_UL = glGetUniformLocation(computeProg->ID, "heatMap");
+		glUniform1i(hmTex_UL, hmUnitNumber);
 
 
 
@@ -772,8 +826,47 @@ bool cGraphicsMain::Update(double deltaTime)
 		mouseY += (actualMouseY - mouseY) * static_cast<float>(deltaTime) * 0.2f;
 
 
+
+
+		////////// BLUR CYCLE //////////
+ 		const int CYCLECOUNT = 44;
+		//const float CYCLECOUNTHALF = CYCLECOUNT / 2.0f;
+
+ 		static int cycle = 0;
+		// Setup delay time for pulse use
+// 		const float CYCLEINTERVAL = 0.05f;
+// 		const float EXTREMETYTIMEBOOST = 0.1f;
+// 		static float timeTillCycleUpdate = CYCLEINTERVAL;
+// 		timeTillCycleUpdate -= static_cast<float>(deltaTime);
+// 		if (timeTillCycleUpdate <= 0)
+// 		{
+// 			float temp = cycle % CYCLECOUNT - CYCLECOUNTHALF; // [-x, x]
+// 			temp = abs(abs(temp) - CYCLECOUNTHALF) / CYCLECOUNTHALF; // temp is now a 0.0f - 1.0f
+// 
+// 			//std::cout << temp << std::endl;
+// 
+// 			timeTillCycleUpdate += CYCLEINTERVAL + EXTREMETYTIMEBOOST * temp;
+// 			cycle = (cycle + 1) % (CYCLECOUNT * 2);
+// 			cycle = cycle == 0 ? 1 : cycle;
+// 			//std::cout << cycle << std::endl;
+// 			int tempInt = abs(CYCLECOUNT - cycle) % CYCLECOUNT; // 44 - 0: 44      44 - 87: -43 
+// 			//std::cout << tempInt << std::endl;
+// // 			if (tempInt == 0)
+// // 				std::cout << "tempInt" << std::endl;
+// 		}
+		
+		
+		
+		//int tempInt = abs(CYCLECOUNT - cycle - 1);
+		//std::cout << cycle << std::endl;
+		//int actualCycle =  m_iBlurOffsetIndices_pulse[abs(CYCLECOUNT - cycle) % CYCLECOUNT];
+		////////// //// ///// //////////
+
+		cycle = (++cycle) % 4;
+		int actualCycle = m_iBlurOffsetIndices_dispersed[cycle];
+
 		// Set Current Time and mouse info
-		glm::vec4 currTime = glm::vec4(glfwGetTime(), static_cast<float>(mouseX), static_cast<float>(mouseY), 0.0f);
+		glm::vec4 currTime = glm::vec4(glfwGetTime(), static_cast<float>(mouseX), static_cast<float>(mouseY), actualCycle);
 		static std::string timeVarName = "currTime";
 		computeProg->setULValue(timeVarName, &currTime);
 

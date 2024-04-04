@@ -32,7 +32,7 @@ void cEngineController_IMPL::Run(void)
 	{
 		double deltaTime = m_pTheTimer->getFrameTime();
 		this->m_pInputHandler->Update();
-		if (this->m_pInputHandler->IsPressedEvent(GLFW_KEY_T)) m_pThePhysics->ToggleThreading();
+		//if (this->m_pInputHandler->IsPressedEvent(GLFW_KEY_T)) m_pThePhysics->ToggleThreading();
 // 		if (this->m_pInputHandler->IsPressedEvent(GLFW_KEY_R))
 // 		{
 // 			std::string soundName = "demoman_laugh";

@@ -2,11 +2,10 @@
     "meshes": [
         {
             "meshName": "rusty_ship.ply",
-            "friendlyName": "ss",
+            "friendlyName": "ship",
             "mat_difftex": "colorfulnoise.bmp",
-            "mat_spectex": "paths.bmp",
+            "mat_spectex": "defSpec.bmp",
             "mat_diffmirr": true,
-            "mat_specmirr": false,
             "mat_specmirr": false,
             "customColor": [
                 1.0,
@@ -16,13 +15,17 @@
             "uv_OS": [
                 0.0,
                 0.0,
-                3.4000000953674316
+                3.869999885559082
             ],
             "uv_Spd": [
                 0.0,
                 0.0
             ],
-            "scale": 13.550000190734863,
+            "scale": [
+                30.0,
+                30.0,
+                30.0
+            ],
             "isVisible": true,
             "isWireframe": false,
             "doNotLight": false,
@@ -36,7 +39,7 @@
     ],
     "phys": [
         {
-            "friendlyName": "ss",
+            "friendlyName": "ship",
             "shape_t": 0,
             "pos": [
                 0.0,
@@ -44,9 +47,9 @@
                 0.0
             ],
             "ori": [
-                0.0,
-                -0.0,
-                0.0
+                -18.65001106262207,
+                12.900006294250488,
+                -15.24999713897705
             ],
             "ID": 3,
             "inv_mass": -1.0

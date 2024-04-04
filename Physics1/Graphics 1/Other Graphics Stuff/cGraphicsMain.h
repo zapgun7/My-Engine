@@ -73,6 +73,7 @@ public:
 private:
 	cGraphicsMain();
 	bool Initialize();
+	void SetUpCycleArray(void);
 
 	int GenerateUBOs(void);
 
@@ -151,6 +152,10 @@ private:
 	unsigned int computeTexOutput = 0;
 	unsigned int computeCommunicationBuffer = 0; // ID of buffer (for now small, one vec4) to communicate somewhat with the cpu
 	bool isShadedObjVisible = false;
+	
+	int* m_iBlurOffsetIndices_dispersed = nullptr; // Dispersed noisy distribution
+	int* m_iBlurOffsetIndices_wave = nullptr; // Travels in a circle around the target pixel
+	int* m_iBlurOffsetIndices_pulse = nullptr; // Closest cells -> farthest
 
 
 	///////// UBO Variables //////////
