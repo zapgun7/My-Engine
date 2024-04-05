@@ -4,6 +4,7 @@
 
 //#include <glm/gtc/constants.hpp>
 #include "Physics/cPhysics.h" // For tests
+#include "cTimer.h"
 
 
 cPlayer::cPlayer(GLFWwindow* window)
@@ -16,9 +17,21 @@ cPlayer::cPlayer(GLFWwindow* window)
 
 	m_KICKREACH = 15.0f;
 	m_MAXKICKFORCE = 60.0f;
-	m_LOOKDIRKICKINFLUENCE = 0.1f;
+	m_LOOKDIRKICKINFLUENCE = 0.1f; // Scale of how much player's look vec influences the overall norm that is kicked off of
 	m_YVELRED = 20.0f;
 	m_AIR_SPD_RED = 0.2f;
+
+
+
+	m_BuildingKickPower = 0.0f; // Builds as player holds left-click
+	m_KICKCHARGESPEED = 4.0f; // Scales off delta time (of course) i.e. how long to fully charge?
+	
+
+	m_MAX_GROUNDED_SPD = 10.0f; // Max horizontal speed achieved on foot
+	m_SPRINT_H_SPD_INCR = 10.0f; // Additional max horizontal speed achieved on foot while sprinting
+	m_PLAYERSPEED = 35.0f; // Player acceleration
+	m_PLAYERJUMPFORCE = 10.0f; // Regular jump (SPACE) force
+
 
 	m_pLuaSoundCall = cSoundLuaBrain::GetInstance();
 	//m_pDatabaseManager = cDatabaseManager::GetInstance();
@@ -33,7 +46,7 @@ cPlayer::~cPlayer()
 void cPlayer::setPlayerObject(sPhysicsProperties* theObj)
 {
 	m_pPlayerObject = theObj;
-	m_pPlayerObject->playerInfo->maxHSpeed = m_MAX_H_SPD;
+	m_pPlayerObject->playerInfo->maxGroundedSpeed = m_MAX_GROUNDED_SPD;
 	m_pPlayerObject->playerInfo->sprintSpeedIncrease = m_SPRINT_H_SPD_INCR;
 
 	return;
@@ -200,7 +213,7 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 				if (deltaDistSinceStep > 5.0f + actualSpd / 20.0f)
 				{
 					deltaDistSinceStep = 0.0f;
-					StepSound();
+					//StepSound();
 				}
 			}
 		}
@@ -267,7 +280,7 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 
 		//glfwSetCursorPos(m_window, width / 2, height / 2);
 
-		bool isInputMove = false;
+	
 
 		float modifiedPlayerSpeed;
 		if (m_pPlayerObject->playerInfo->isGrounded) // Is Grounded
@@ -294,73 +307,142 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 			m_pPlayerObject->playerInfo->isSprinting = false;
 		}
 
-
+		unsigned __int8 isInputMove = 0;
 		glm::vec3 deltaMove = glm::vec3(0);
 		if (m_pInput->IsPressed(GLFW_KEY_W)) // Move forward
 		{
 			glm::vec3 moveAmt = glm::normalize(XZForwardVec) * m_PLAYERSPEED * static_cast<float>(deltaTime);
 			deltaMove += moveAmt;
-			m_pPlayerObject->velocity += moveAmt;
-			isInputMove = true;
+			isInputMove ^= 1;
 		}
 
 		if (m_pInput->IsPressed(GLFW_KEY_S)) // Move backwards
 		{
 			glm::vec3 moveAmt = glm::normalize(XZForwardVec) * m_PLAYERSPEED * static_cast<float>(deltaTime);
 			deltaMove -= moveAmt;
-			m_pPlayerObject->velocity -= moveAmt;
-			isInputMove = true;
+			isInputMove ^= 1;
 		}
 
 		if (m_pInput->IsPressed(GLFW_KEY_A)) // Move left
 		{
 			glm::vec3 moveAmt = glm::normalize(glm::cross(glm::vec3(0, 1, 0), XZForwardVec)) * m_PLAYERSPEED * static_cast<float>(deltaTime);
 			deltaMove += moveAmt;
-			m_pPlayerObject->velocity += moveAmt;
-			isInputMove = true;
+			isInputMove ^= 2;
 		}
 
 		if (m_pInput->IsPressed(GLFW_KEY_D)) // Move right
 		{
 			glm::vec3 moveAmt = glm::normalize(glm::cross(glm::vec3(0, 1, 0), XZForwardVec)) * m_PLAYERSPEED * static_cast<float>(deltaTime);
 			deltaMove -= moveAmt;
-			m_pPlayerObject->velocity -= moveAmt;
-			isInputMove = true;
+			isInputMove ^= 2;
 		}
 		m_pPlayerObject->playerInfo->isInputting = isInputMove; // Let physics know if we're moving the player
 
-		if (m_pInput->IsMousePressed(GLFW_MOUSE_BUTTON_RIGHT))
+		if (isInputMove)
 		{
-			
-			if (m_pPlayerObject->velocity.y > 0)
+			if (m_pPlayerObject->playerInfo->isGrounded)
 			{
-				float redSpd = m_pPlayerObject->velocity.y * 0.5f * static_cast<float>(deltaTime);
-				m_pPlayerObject->velocity.y -= redSpd;
+				// Move player along the plane they're standing on
+				glm::vec3 projSubVec = glm::dot(deltaMove, m_pPlayerObject->playerInfo->groundNorm) * m_pPlayerObject->playerInfo->groundNorm;
+				deltaMove = (deltaMove - projSubVec);
+
+				// Transfer some of the ond velocity to the new direction
+				float transferScale = (glm::length(m_pPlayerObject->velocity)) * static_cast<float>(deltaTime);
+				glm::vec3 amtToTransfer = transferScale * m_pPlayerObject->velocity;
+				m_pPlayerObject->velocity -= amtToTransfer;
+				transferScale = glm::length(amtToTransfer);
+				deltaMove += transferScale * normalize(deltaMove);
 			}
-			m_pPlayerObject->velocity.y -= m_YVELRED * static_cast<float>(deltaTime);
+			else
+			{
+// 				glm::vec3 playerVelXZ = glm::vec3(m_pPlayerObject->velocity.x, 0.0f, m_pPlayerObject->velocity.z);
+// 				float transferScale = (glm::length(playerVelXZ)) * static_cast<float>(deltaTime);
+// 				//glm::vec3 amtToTransfer = transferScale * deltaMove;
+// 				m_pPlayerObject->velocity -= playerVelXZ * transferScale * m_AIR_SPD_RED;
+// 				glm::vec3 mvmtToTransfer = transferScale * deltaMove;
+
+				deltaMove *= m_AIR_SPD_RED;
+				//deltaMove += mvmtToTransfer;
+			}
+
+			// 		glm::vec3 projSubVec = glm::dot(deltaMove, m_pPlayerObject->playerInfo->groundNorm) * m_pPlayerObject->playerInfo->groundNorm;
+			// 		deltaMove = (deltaMove - projSubVec);
+
+			m_pPlayerObject->velocity += deltaMove;
 		}
 
 
-		glm::vec3 XZVel = glm::vec3(m_pPlayerObject->velocity.x, 0, m_pPlayerObject->velocity.z);
-		float hVel = glm::length(XZVel);
-		if (hVel > m_MAX_H_SPD + sprintSpdIncr)
+
+// 		if (m_pPlayerObject->playerInfo->isGrounded)
+// 		{
+// 			// Move player along the plane they're standing on
+// 			glm::vec3 projSubVec = glm::dot(deltaMove, m_pPlayerObject->playerInfo->groundNorm) * m_pPlayerObject->playerInfo->groundNorm;
+// 			deltaMove = (deltaMove - projSubVec);
+// 
+// 			// Transfer some of the onld velocity to the new direction
+// 			glm::vec3 playerVelXZ = glm::vec3(m_pPlayerObject->velocity.x, 0.0f, m_pPlayerObject->velocity.z);
+// 			float transferScale = (glm::length(playerVelXZ)) * static_cast<float>(deltaTime);
+// 			//glm::vec3 amtToTransfer = transferScale * deltaMove;
+// 			m_pPlayerObject->velocity -= playerVelXZ * transferScale;
+// 			deltaMove += transferScale * deltaMove;
+// 		}
+		
+// 		if (m_pInput->IsMousePressed(GLFW_MOUSE_BUTTON_RIGHT))
+// 		{
+// 			
+// 			if (m_pPlayerObject->velocity.y > 0)
+// 			{
+// 				float redSpd = m_pPlayerObject->velocity.y * 0.5f * static_cast<float>(deltaTime);
+// 				m_pPlayerObject->velocity.y -= redSpd;
+// 			}
+// 			m_pPlayerObject->velocity.y -= m_YVELRED * static_cast<float>(deltaTime);
+// 		}
+
+		float plyrSpd = glm::length(m_pPlayerObject->velocity);
+		if (m_pPlayerObject->playerInfo->isGrounded)
 		{
-			//m_pPlayerObject->velocity -= deltaMove; // Remove any velocity that was gained
-			if (hVel > preVelLen) // Only if the player tries to go faster
+			if (plyrSpd > m_MAX_GROUNDED_SPD + sprintSpdIncr) // Simple speed limit TODO smooth this
 			{
-				XZVel = glm::normalize(XZVel) * preVelLen;
-				m_pPlayerObject->velocity.x = XZVel.x;
-				m_pPlayerObject->velocity.z = XZVel.z;
-				//m_pPlayerObject->velocity = glm::normalize(m_pPlayerObject->velocity) * preVelLen; // This keeps what direction the player was trying to change to
+				m_pPlayerObject->velocity = glm::normalize(m_pPlayerObject->velocity) * (m_MAX_GROUNDED_SPD + sprintSpdIncr);
 			}
 		}
 
+		
+// 		if (plyrSpd > m_MAX_GROUNDED_SPD + sprintSpdIncr)
+// 		{
+// 			m_pPlayerObject->velocity = glm::normalize(m_pPlayerObject->velocity) * (m_MAX_GROUNDED_SPD + sprintSpdIncr);
+// 		}
 
-		if ((m_pInput->IsPressed(GLFW_KEY_SPACE)) && (m_pPlayerObject->playerInfo->jumpNormThisFrame)) // Jump    TODO should use isGrounded but breaks when it does
+// 		glm::vec3 XZVel = glm::vec3(m_pPlayerObject->velocity.x, 0, m_pPlayerObject->velocity.z);
+// 		float hVel = glm::length(XZVel);
+// 		if (hVel > m_MAX_H_SPD + sprintSpdIncr)
+// 		{
+// 			//m_pPlayerObject->velocity -= deltaMove; // Remove any velocity that was gained
+// 			if (hVel > preVelLen) // Only if the player tries to go faster
+// 			{
+// 				XZVel = glm::normalize(XZVel) * preVelLen;
+// 				m_pPlayerObject->velocity.x = XZVel.x;
+// 				m_pPlayerObject->velocity.z = XZVel.z;
+// 				//m_pPlayerObject->velocity = glm::normalize(m_pPlayerObject->velocity) * preVelLen; // This keeps what direction the player was trying to change to
+// 			}
+// 		}
+
+
+		if ((m_pInput->IsPressed(GLFW_KEY_SPACE)) && (m_pPlayerObject->playerInfo->isGrounded)) // Jump    TODO should use isGrounded but breaks when it does
 		{
 			m_pPlayerObject->velocity += m_pPlayerObject->playerInfo->groundNorm * m_PLAYERJUMPFORCE;// glm::vec3(0, m_PLAYERJUMPFORCE, 0);
 		}
 
+		static sTimer* testTimer = cTimer::MakeNewTimer(0.5f, sTimer::REPEAT);
+		static int airborne = 0;
+		if (!m_pPlayerObject->playerInfo->isGrounded)
+			airborne++;
+		if (testTimer->CheckInterval())
+		{
+			float pspd = glm::length(m_pPlayerObject->velocity);
+			printf("//////////////////////////////\nVelocity: %.3f\nisAirborne: %d\n", pspd, airborne);
+			airborne = 0;
+		}
 
 		// KICK HANDLING
 

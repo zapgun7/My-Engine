@@ -72,6 +72,8 @@ void cPhysics::m_Sphere_Collision(sPhysicsProperties* pSphere, sPossibleCollisio
 void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollision& collision, double dt)
 {
 	float degDiff = acos(glm::dot(collision.hitNorm, glm::vec3(0, 1, 0)));
+	if (glm::length(pCapsule->velocity) > 9.98f)
+ 		std::cout << "break" << std::endl;
 
 	if (collision.q == 0) // In or already touching triangle at start of update
 	{
@@ -79,11 +81,11 @@ void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollis
 
 
 		glm::vec3 projSubVec = glm::dot(oldDeltaMove, collision.hitNorm) * collision.hitNorm;
-		pCapsule->position = pCapsule->oldPosition + (oldDeltaMove - projSubVec);
+		pCapsule->position = pCapsule->oldPosition + (oldDeltaMove - projSubVec) +(collision.hitNorm * 1.0e-8f);
+		//pCapsule->oldPosition = pCapsule->position;
 
-
-		projSubVec = glm::dot(pCapsule->velocity - std::numeric_limits<float>::epsilon() * collision.hitNorm, collision.hitNorm) * collision.hitNorm;
-		pCapsule->velocity -= projSubVec;
+		projSubVec = glm::dot(pCapsule->velocity, collision.hitNorm) * collision.hitNorm; // Had a epsilon hitnorm added to velocity
+		pCapsule->velocity -= projSubVec;// +collision.hitNorm * 0.01f;
 
 
 // 		if (degDiff < 40) // TODO need dt on this one, not the lower one though
@@ -104,17 +106,21 @@ void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollis
 		//glm::vec3 reflectionVec = glm::reflect(sphereDirection, collision.hitNorm);
 
 		// Lets make the reflection vec just the sphereDir projected onto plane made by hitNorm
-		
+		float sphereSpeed = glm::length(pCapsule->velocity);
+
 		glm::vec3 projSubVec = glm::dot(sphereDirection, collision.hitNorm) * collision.hitNorm;
-		glm::vec3 reflectionVec = (sphereDirection - projSubVec);
+		glm::vec3 reflectionVec = sphereDirection - projSubVec;
+		if (glm::length(reflectionVec) != 0.0f)
+			reflectionVec = glm::normalize(reflectionVec);
+		//reflectionVec = glm::normalize(reflectionVec) * sphereSpeed;
 
 		// Get the angle of the current velocity to the hitNorm
-		float velToSurface = glm::dot(-collision.hitNorm, sphereDirection); // The closer to 0, the more it should take speed away [0, 1/2pi] 
+		//float velToSurface = glm::dot(-collision.hitNorm, sphereDirection); // The closer to 0, the more it should take speed away [0, 1/2pi] 
 		// Make it so the more the velocity is going right for the plane, the more speed it loses
-		velToSurface = velToSurface / glm::half_pi<float>();
+		//velToSurface = glm::clamp(velToSurface / glm::half_pi<float>() * 2.5f, 0.0f, 1.0f);
 
-		float sphereSpeed = glm::length(pCapsule->velocity);
-		sphereSpeed *= velToSurface; // This does make the player slow a little when landing, but whatever for now
+		
+		//sphereSpeed *= velToSurface; // This does make the player slow a little when landing, but whatever for now
 		pCapsule->velocity = reflectionVec * sphereSpeed;
 
 		// TODO change this to radians 

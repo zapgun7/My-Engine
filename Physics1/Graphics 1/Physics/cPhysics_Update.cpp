@@ -8,8 +8,8 @@ void g_DrawDebugSphere(glm::vec3 position, float scale, glm::vec4 colourRGBA);
 
 void cPhysics::UpdatePlayerObj(double deltaTime)
 {
-	sPhysicsProperties tempPlyr = *m_pThePlayerObj;
-	m_pThePlayerObj->velocity = tempPlyr.velocity; m_pThePlayerObj->position = tempPlyr.position; m_pThePlayerObj->oldPosition = tempPlyr.oldPosition;
+// 	sPhysicsProperties tempPlyr = *m_pThePlayerObj;
+// 	m_pThePlayerObj->velocity = tempPlyr.velocity; m_pThePlayerObj->position = tempPlyr.position; m_pThePlayerObj->oldPosition = tempPlyr.oldPosition;
 	///////// GROUNDED DETECTION //////////
 	if (!m_pThePlayerObj->playerInfo->jumpNormThisFrame)
 	{
@@ -25,12 +25,14 @@ void cPhysics::UpdatePlayerObj(double deltaTime)
 	//////////// END OF GROUNDED DETECTION /////////////
 
 
-	if ((!m_pThePlayerObj->playerInfo->isInputting) && (!m_pThePlayerObj->playerInfo->isSprinting))// If not pressing WASD
+	if /*(*/(!m_pThePlayerObj->playerInfo->isInputting)// && (!m_pThePlayerObj->playerInfo->isSprinting))// If not pressing WASD
 	{
 		if (m_pThePlayerObj->playerInfo->isGrounded) // Touching "valid" ground
 		{
-			glm::vec3 velReduction = (glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z)) * m_pThePlayerObj->playerInfo->friction;
-			velReduction = (velReduction - glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z)) * static_cast<float>(deltaTime) * 10.0f;
+			//glm::vec3 velReduction = (glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z)) * m_pThePlayerObj->playerInfo->friction;
+			//velReduction = (velReduction - glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z)) * static_cast<float>(deltaTime) * 10.0f;
+			glm::vec3 velReduction = m_pThePlayerObj->velocity * m_pThePlayerObj->playerInfo->friction;
+			velReduction = (velReduction - m_pThePlayerObj->velocity) * static_cast<float>(deltaTime) * 10.0f;
 			m_pThePlayerObj->velocity += velReduction;
 		}
 		else // Midair
@@ -45,14 +47,17 @@ void cPhysics::UpdatePlayerObj(double deltaTime)
 		// Reduce speed if touching the ground
 		if (m_pThePlayerObj->playerInfo->isGrounded)
 		{
-			float currHSpd = glm::length(glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z));
+			//float currHSpd = glm::length(glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z));
+			float currHSpd = glm::length(m_pThePlayerObj->velocity);
 			float addSprntSpd = 0.0f;
 			if (m_pThePlayerObj->playerInfo->isSprinting) addSprntSpd = m_pThePlayerObj->playerInfo->sprintSpeedIncrease;
 
-			if (currHSpd > m_pThePlayerObj->playerInfo->maxHSpeed + addSprntSpd)
+			if (currHSpd > m_pThePlayerObj->playerInfo->maxGroundedSpeed + addSprntSpd)
 			{
-				glm::vec3 velReduction = (glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z)) * m_pThePlayerObj->playerInfo->friction;
-				velReduction = (velReduction - glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z)) * static_cast<float>(deltaTime) * 10.0f;
+// 				glm::vec3 velReduction = (glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z)) * m_pThePlayerObj->playerInfo->friction;
+// 				velReduction = (velReduction - glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z)) * static_cast<float>(deltaTime) * 10.0f;
+				glm::vec3 velReduction = m_pThePlayerObj->velocity * m_pThePlayerObj->playerInfo->friction;
+				velReduction = m_pThePlayerObj->velocity * static_cast<float>(deltaTime) * 10.0f;
 				m_pThePlayerObj->velocity += velReduction;
 			}
 
@@ -83,11 +88,6 @@ void cPhysics::UpdatePlayerObj(double deltaTime)
 	m_pThePlayerObj->position.x += deltaPosition.x;
 	m_pThePlayerObj->position.y += deltaPosition.y;
 	m_pThePlayerObj->position.z += deltaPosition.z;
-	//std::cout << m_pThePlayerObj->playerInfo->framesAirborne << std::endl;
-
-
-	if (m_pThePlayerObj->velocity.z < -100.0f)
-		std::cout << "break" << std::endl;
 
 	return;
 } // UpdatePlayerObj()
@@ -216,13 +216,13 @@ void cPhysics::Update(double deltaTime)
 // 			pObject->playerInfo->jumpNormThisFrame = 0;
 // 	}
 	m_pThePlayerObj->playerInfo->jumpNormThisFrame = 0;
-
-	
-
+	m_pThePlayerObj->playerInfo->groundNorm = glm::vec3(0.0f);
+	int eh = 0;
+	if (!m_pThePlayerObj->playerInfo->isGrounded)
+		eh = 1;
 	for (sPhysicsProperties* pObjectA : m_vec_pPhysicalProps)
 	{
 		bool isStillColliding = true;
-
 		while (isStillColliding) // TODO add an escape condition when object gets stuck in geometry; have loop counter, when reaching a certain number, "teleport" to surface of colliding object surface
 		{						 // Will have to add additional info to collision event, like pd so we can get a spot to put the object right off the surface
 			//std::vector<sPossibleCollision> possibleCollisions;
@@ -299,7 +299,7 @@ void cPhysics::Update(double deltaTime)
 						if (acos(glm::dot(glm::normalize(theCollision.hitNorm), glm::vec3(0, 1, 0))) < 45)
 						{
 							pObjectA->playerInfo->jumpNormThisFrame = 1;
-							pObjectA->playerInfo->groundNorm = theCollision.hitNorm; // This will cause inconsistencies when on multiple different surfaces !!! TODO
+							pObjectA->playerInfo->groundNorm += theCollision.hitNorm; 
 						}
 					}
 
@@ -310,6 +310,8 @@ void cPhysics::Update(double deltaTime)
 			}
 		}
 	}
+	if (m_pThePlayerObj->playerInfo->jumpNormThisFrame) // This normalizes the norms of all triangles the player is standing on
+		m_pThePlayerObj->playerInfo->groundNorm = glm::normalize(m_pThePlayerObj->playerInfo->groundNorm); 
 
 	// Update the draw locations (and orientations) for all associated meshes
 	for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)

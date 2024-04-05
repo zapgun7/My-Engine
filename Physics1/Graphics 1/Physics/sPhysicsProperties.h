@@ -24,7 +24,7 @@ struct sPlayerPhysics
 	bool isSprinting = false; // This removes ground friction and increases horizontal speed cap on regular WASD movement
 
 	// These get set in the cPlayer
-	float maxHSpeed = 0.0f;
+	float maxGroundedSpeed = 0.0f;
 	float sprintSpeedIncrease = 0.0f;
 };
 

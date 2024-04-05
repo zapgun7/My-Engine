@@ -62,15 +62,15 @@ private:
 
 	float m_KICKREACH;
 	float m_MAXKICKFORCE;
-	float m_BuildingKickPower = 0.0f; // Builds as player holds left-click
-	float m_KICKCHARGESPEED = 4.0f; // Scales off delta time (of course) i.e. how long to fully charge?
+	float m_BuildingKickPower; // Builds as player holds left-click
+	float m_KICKCHARGESPEED; // Scales off delta time (of course) i.e. how long to fully charge?
 	float m_LOOKDIRKICKINFLUENCE; // Scale of how much player's look vec influences the overall norm that is kicked off of
 
-	float m_MAX_H_SPD = 15.0f; // Max horizontal speed achieved on foot
-	float m_SPRINT_H_SPD_INCR = 20.0f; // Max horizontal speed achieved on foot while sprinting
-	float m_PLAYERSPEED = 10.0f; // Player acceleration
-	float m_AIR_SPD_RED = 0.05f; // 
-	float m_PLAYERJUMPFORCE = 10.0f; // Regular jump (SPACE) force
+	float m_MAX_GROUNDED_SPD; // Max horizontal speed achieved on foot
+	float m_SPRINT_H_SPD_INCR; // Max horizontal speed achieved on foot while sprinting
+	float m_PLAYERSPEED; // Player acceleration
+	float m_AIR_SPD_RED; // 
+	float m_PLAYERJUMPFORCE; // Regular jump (SPACE) force
 
 	float m_YVELRED = 10.0f;
 };
