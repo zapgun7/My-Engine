@@ -6,6 +6,91 @@
 // HACK:
 void g_DrawDebugSphere(glm::vec3 position, float scale, glm::vec4 colourRGBA);
 
+void cPhysics::UpdatePlayerObj(double deltaTime)
+{
+	sPhysicsProperties tempPlyr = *m_pThePlayerObj;
+	m_pThePlayerObj->velocity = tempPlyr.velocity; m_pThePlayerObj->position = tempPlyr.position; m_pThePlayerObj->oldPosition = tempPlyr.oldPosition;
+	///////// GROUNDED DETECTION //////////
+	if (!m_pThePlayerObj->playerInfo->jumpNormThisFrame)
+	{
+		m_pThePlayerObj->playerInfo->framesAirborne++;
+	}
+	else
+	{
+		m_pThePlayerObj->playerInfo->framesAirborne = 0;
+	}
+	// If more than 3 frames of not touching valid ground, considered airborne
+	if (m_pThePlayerObj->playerInfo->framesAirborne > 3) m_pThePlayerObj->playerInfo->isGrounded = false;
+	else m_pThePlayerObj->playerInfo->isGrounded = true;
+	//////////// END OF GROUNDED DETECTION /////////////
+
+
+	if ((!m_pThePlayerObj->playerInfo->isInputting) && (!m_pThePlayerObj->playerInfo->isSprinting))// If not pressing WASD
+	{
+		if (m_pThePlayerObj->playerInfo->isGrounded) // Touching "valid" ground
+		{
+			glm::vec3 velReduction = (glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z)) * m_pThePlayerObj->playerInfo->friction;
+			velReduction = (velReduction - glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z)) * static_cast<float>(deltaTime) * 10.0f;
+			m_pThePlayerObj->velocity += velReduction;
+		}
+		else // Midair
+		{
+			glm::vec3 velReduction = (glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z)) * m_pThePlayerObj->playerInfo->airDrag;
+			velReduction = (velReduction - glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z)) * static_cast<float>(deltaTime) * 10.0f;
+			m_pThePlayerObj->velocity += velReduction;
+		}
+	}
+	else if (false) // Still inputting and/or sprinting
+	{
+		// Reduce speed if touching the ground
+		if (m_pThePlayerObj->playerInfo->isGrounded)
+		{
+			float currHSpd = glm::length(glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z));
+			float addSprntSpd = 0.0f;
+			if (m_pThePlayerObj->playerInfo->isSprinting) addSprntSpd = m_pThePlayerObj->playerInfo->sprintSpeedIncrease;
+
+			if (currHSpd > m_pThePlayerObj->playerInfo->maxHSpeed + addSprntSpd)
+			{
+				glm::vec3 velReduction = (glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z)) * m_pThePlayerObj->playerInfo->friction;
+				velReduction = (velReduction - glm::vec3(m_pThePlayerObj->velocity.x, 0, m_pThePlayerObj->velocity.z)) * static_cast<float>(deltaTime) * 10.0f;
+				m_pThePlayerObj->velocity += velReduction;
+			}
+
+		}
+	}
+
+	glm::vec3 deltaVelocityThisFrame;
+	if (m_pThePlayerObj->playerInfo->isGrounded)
+		deltaVelocityThisFrame = (m_pThePlayerObj->acceleration - m_pThePlayerObj->playerInfo->groundNorm * 1.0f) * static_cast<float>(deltaTime);
+	else
+		deltaVelocityThisFrame = (m_pThePlayerObj->acceleration + m_WorldGravity) * static_cast<float>(deltaTime);
+
+	m_pThePlayerObj->oldPosition = m_pThePlayerObj->position;
+
+
+	// Update the velocity based on this delta velocity
+	// Then this part: NewVelocity = LastVel + ...
+	m_pThePlayerObj->velocity += deltaVelocityThisFrame;
+
+
+	// Position change is based on the velocity over this time frame
+	// This part: (Vel * DeltaTime)	
+	glm::vec3 deltaPosition = m_pThePlayerObj->velocity * static_cast<float>(deltaTime);
+
+	// ...then this part: NewPosition = LastPos + ...
+	// Upatate the position based on this delta position
+//		pCurrentMesh->pPhysProps->position += deltaPosition;
+	m_pThePlayerObj->position.x += deltaPosition.x;
+	m_pThePlayerObj->position.y += deltaPosition.y;
+	m_pThePlayerObj->position.z += deltaPosition.z;
+	//std::cout << m_pThePlayerObj->playerInfo->framesAirborne << std::endl;
+
+
+	if (m_pThePlayerObj->velocity.z < -100.0f)
+		std::cout << "break" << std::endl;
+
+	return;
+} // UpdatePlayerObj()
 
 void cPhysics::Update(double deltaTime)
 {
@@ -73,79 +158,27 @@ void cPhysics::Update(double deltaTime)
 		return;
 	}
 	
-
+	
+	// Update the player first
+	UpdatePlayerObj(deltaTime);
 
 	// Perform the iteration loop
 	for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)
 	{
 		// Infinite mass? 
-		if (pObject->inverse_mass >= 0.0f)
+		if ((pObject->inverse_mass >= 0.0f) && (!pObject->isPlayer))
 		{
 
 			// Velocity change is based on the acceleration over this time frame 
 			// This part: (Accel * DeltaTime)
 			glm::vec3 deltaVelocityThisFrame;
-
-
-
-			////////////////////// PLAYER CHARACTER UPDATES ///////////////////
-			if (pObject->isPlayer)
-			{
-				///////// GROUNDED DETECTION //////////
-				if (!pObject->playerInfo->jumpNormThisFrame)
-				{
-					pObject->playerInfo->framesAirborne++;
-				}
-				else
-				{
-					pObject->playerInfo->framesAirborne = 0;
-				}
-				// If more than 3 frames of not touching valid ground, considered airborne
-				if (pObject->playerInfo->framesAirborne > 3) pObject->playerInfo->isGrounded = false;
-				else pObject->playerInfo->isGrounded = true;
-				//////////// END OF GROUNDED DETECTION /////////////
-
 				
-				if ((!pObject->playerInfo->isInputting) && (!pObject->playerInfo->isSprinting))// If not pressing WASD
-				{
-					if (pObject->playerInfo->isGrounded) // Touching "valid" ground
-					{
-						glm::vec3 velReduction = (glm::vec3(pObject->velocity.x, 0, pObject->velocity.z)) * pObject->playerInfo->friction;
-						velReduction = (velReduction - glm::vec3(pObject->velocity.x, 0, pObject->velocity.z)) * static_cast<float>(deltaTime) * 10.0f;
-						pObject->velocity += velReduction;
-					}
-					else // Midair
-					{
-						glm::vec3 velReduction = (glm::vec3(pObject->velocity.x, 0, pObject->velocity.z)) * pObject->playerInfo->airDrag;
-						velReduction = (velReduction - glm::vec3(pObject->velocity.x, 0, pObject->velocity.z)) * static_cast<float>(deltaTime) * 10.0f;
-						pObject->velocity += velReduction;
-					}
-				}
-				else if (false) // Still inputting and/or sprinting
-				{
-					// Reduce speed if touching the ground
-					if (pObject->playerInfo->isGrounded)
-					{
-						float currHSpd = glm::length(glm::vec3(pObject->velocity.x, 0, pObject->velocity.z));
-						float addSprntSpd = 0.0f;
-						if (pObject->playerInfo->isSprinting) addSprntSpd = pObject->playerInfo->sprintSpeedIncrease;
-
-						if (currHSpd > pObject->playerInfo->maxHSpeed + addSprntSpd)
-						{
-							glm::vec3 velReduction = (glm::vec3(pObject->velocity.x, 0, pObject->velocity.z)) * pObject->playerInfo->friction;
-							velReduction = (velReduction - glm::vec3(pObject->velocity.x, 0, pObject->velocity.z)) * static_cast<float>(deltaTime) * 10.0f;
-							pObject->velocity += velReduction;
-						}
-						
-					}
-				}
-			}
 			
 			///////////////////// END OF PLAYER CHARACTER UPDATES /////////////////
 
-			if ((pObject->isPlayer) && (pObject->playerInfo->jumpNormThisFrame)) // If touching the ground
-				deltaVelocityThisFrame = (pObject->acceleration) * static_cast<float>(deltaTime);
-			else
+// 			if ((pObject->isPlayer) && (pObject->playerInfo->jumpNormThisFrame)) // If touching the ground
+// 				deltaVelocityThisFrame = (pObject->acceleration) * static_cast<float>(deltaTime);
+// 			else
 				deltaVelocityThisFrame = (pObject->acceleration + m_WorldGravity) * static_cast<float>(deltaTime);
 
 			// Explicit forward Euler "integration step"
@@ -177,12 +210,14 @@ void cPhysics::Update(double deltaTime)
 	}//for (sPhsyicsProperties* pObject
 
 
-	for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)
-	{
-		if (pObject->shapeType == sPhysicsProperties::CAPSULE)
-			pObject->playerInfo->jumpNormThisFrame = 0;
-	}
+// 	for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)
+// 	{
+// 		if (pObject->shapeType == sPhysicsProperties::CAPSULE)
+// 			pObject->playerInfo->jumpNormThisFrame = 0;
+// 	}
+	m_pThePlayerObj->playerInfo->jumpNormThisFrame = 0;
 
+	
 
 	for (sPhysicsProperties* pObjectA : m_vec_pPhysicalProps)
 	{
@@ -255,8 +290,9 @@ void cPhysics::Update(double deltaTime)
 					m_Sphere_Collision(pObjectA, theCollision);
 					break;
 				case sPhysicsProperties::CAPSULE:
-					m_Capsule_Collision(pObjectA, theCollision, deltaTime);
 					
+					m_Capsule_Collision(pObjectA, theCollision, deltaTime);
+
 					// Set if the player can jump
 					if (theCollision.hitNorm.y > 0)
 					{
@@ -274,7 +310,6 @@ void cPhysics::Update(double deltaTime)
 			}
 		}
 	}
-
 
 	// Update the draw locations (and orientations) for all associated meshes
 	for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)

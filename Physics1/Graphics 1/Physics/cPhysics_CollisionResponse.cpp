@@ -82,7 +82,7 @@ void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollis
 		pCapsule->position = pCapsule->oldPosition + (oldDeltaMove - projSubVec);
 
 
-		projSubVec = glm::dot(pCapsule->velocity, collision.hitNorm) * collision.hitNorm;
+		projSubVec = glm::dot(pCapsule->velocity - std::numeric_limits<float>::epsilon() * collision.hitNorm, collision.hitNorm) * collision.hitNorm;
 		pCapsule->velocity -= projSubVec;
 
 
@@ -101,9 +101,20 @@ void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollis
 		glm::vec3 sphereStep = pCapsule->position - pCapsule->oldPosition;
 
 
-		glm::vec3 reflectionVec = glm::reflect(sphereDirection, collision.hitNorm);
+		//glm::vec3 reflectionVec = glm::reflect(sphereDirection, collision.hitNorm);
+
+		// Lets make the reflection vec just the sphereDir projected onto plane made by hitNorm
+		
+		glm::vec3 projSubVec = glm::dot(sphereDirection, collision.hitNorm) * collision.hitNorm;
+		glm::vec3 reflectionVec = (sphereDirection - projSubVec);
+
+		// Get the angle of the current velocity to the hitNorm
+		float velToSurface = glm::dot(-collision.hitNorm, sphereDirection); // The closer to 0, the more it should take speed away [0, 1/2pi] 
+		// Make it so the more the velocity is going right for the plane, the more speed it loses
+		velToSurface = velToSurface / glm::half_pi<float>();
 
 		float sphereSpeed = glm::length(pCapsule->velocity);
+		sphereSpeed *= velToSurface; // This does make the player slow a little when landing, but whatever for now
 		pCapsule->velocity = reflectionVec * sphereSpeed;
 
 		// TODO change this to radians 
@@ -134,6 +145,7 @@ void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollis
 
 		// Done... I think
 	}
+	
 
 	return;
 }

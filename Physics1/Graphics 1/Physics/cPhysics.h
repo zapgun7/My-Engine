@@ -101,9 +101,11 @@ public:
 	void AddShape(sPhysicsProperties* pNewShape);
 	void DeleteShape(int shapeID); // Deletes the physics shape
 	std::vector< sPhysicsProperties* > getPhysicsVec(void);
-	//void setGraphics(void); // Lazy
+	
+	void SetPlayerObj(sPhysicsProperties* plyrObj);
 
 	void Update(double deltaTime);
+	void UpdatePlayerObj(double deltaTime);
 
 
 
@@ -145,6 +147,7 @@ public:
 
 private:
 	std::vector< sPhysicsProperties* > m_vec_pPhysicalProps;
+	sPhysicsProperties* m_pThePlayerObj;
 	
 	bool m_Sphere_Sphere_IntersectionTest(sPhysicsProperties* pSphereA, sPhysicsProperties* pShpereB);
 	bool m_Sphere_Plane_IntersectionTest(sPhysicsProperties* pSphere, sPhysicsProperties* pPlane);

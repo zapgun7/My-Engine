@@ -30,8 +30,8 @@ cMesh::cMesh()
 	this->bUseReflect = false;
 	this->bUseRefract = false;
 
-	this->uv_Offset_Scale = glm::vec3(0.0f, 0.0f, 1.0f);
-	this->uvOffsetSpeed = glm::vec2(0);
+// 	this->uv_Offset_Scale = glm::vec3(0.0f, 0.0f, 1.0f);
+// 	this->uvOffsetSpeed = glm::vec2(0);
 }
 
 // Destructor: Called on deletion   d'tor

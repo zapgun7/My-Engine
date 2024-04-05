@@ -478,23 +478,6 @@ bool cGraphicsMain::UpdateOLD(double deltaTime) // Main "loop" of the window. No
 	GLint matView_UL = glGetUniformLocation(m_shaderProgramID, "matView");
 	glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(matView));
 
-	/////////// OFFSET UPDATE /////////////
-	for (unsigned int i = 0; i < m_vec_pAllMeshes.size(); i++)
-	{
-		m_vec_pAllMeshes[i]->uv_Offset_Scale.x += m_vec_pAllMeshes[i]->uvOffsetSpeed.x * static_cast<float>(deltaTime);
-		m_vec_pAllMeshes[i]->uv_Offset_Scale.y += m_vec_pAllMeshes[i]->uvOffsetSpeed.y * static_cast<float>(deltaTime);
-
-		// Keeps values within proper range (good for longevity)
-// 		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.x > 1.0f)
-// 			m_vec_pAllMeshes[i]->uv_Offset_Scale.x -= floor(m_vec_pAllMeshes[i]->uv_Offset_Scale.x);
-// 		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.x < 0.0f)
-// 			m_vec_pAllMeshes[i]->uv_Offset_Scale.x += ceil(m_vec_pAllMeshes[i]->uv_Offset_Scale.x);
-// 
-// 		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.y > 1.0f)
-// 			m_vec_pAllMeshes[i]->uv_Offset_Scale.y -= floor(m_vec_pAllMeshes[i]->uv_Offset_Scale.y);
-// 		if (m_vec_pAllMeshes[i]->uv_Offset_Scale.y < 0.0f)
-// 			m_vec_pAllMeshes[i]->uv_Offset_Scale.y += ceil(m_vec_pAllMeshes[i]->uv_Offset_Scale.y);
-	}
 
 
 
@@ -1198,13 +1181,19 @@ void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GL
 
 
 	/// UV-OFFSET & SCALE ///
-	static std::string uvOffset_scale("uv_Offset_Scale_NONE");
+	static std::string diffUVOffset_scale("diffUV_Offset_Scale_NONE");
+	static std::string specUVOffset_scale("specUV_Offset_Scale_NONE");
 	static glm::vec4 uvOffset_scaleVal(0.0f);
-	uvOffset_scaleVal.x = pCurrentMesh->uv_Offset_Scale.x;
-	uvOffset_scaleVal.y = pCurrentMesh->uv_Offset_Scale.y;
-	uvOffset_scaleVal.z = pCurrentMesh->uv_Offset_Scale.z;
 
-	currProg->setULValue(uvOffset_scale, &uvOffset_scaleVal);
+	uvOffset_scaleVal.x = pCurrentMesh->material.diffuv_Offset_Scale.x;
+	uvOffset_scaleVal.y = pCurrentMesh->material.diffuv_Offset_Scale.y;
+	uvOffset_scaleVal.z = pCurrentMesh->material.diffuv_Offset_Scale.z;
+	currProg->setULValue(diffUVOffset_scale, &uvOffset_scaleVal); // Set diffuse uv data
+
+	uvOffset_scaleVal.x = pCurrentMesh->material.specuv_Offset_Scale.x;
+	uvOffset_scaleVal.y = pCurrentMesh->material.specuv_Offset_Scale.y;
+	uvOffset_scaleVal.z = pCurrentMesh->material.specuv_Offset_Scale.z;
+	currProg->setULValue(specUVOffset_scale, &uvOffset_scaleVal);// Set specular uv data
 
 	/////////////////////////////////////////////////////////////
 

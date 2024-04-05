@@ -32,12 +32,8 @@ void cEngineController_IMPL::Run(void)
 	{
 		double deltaTime = m_pTheTimer->getFrameTime();
 		this->m_pInputHandler->Update();
+		this->m_pTimerManager->Update(deltaTime);
 		//if (this->m_pInputHandler->IsPressedEvent(GLFW_KEY_T)) m_pThePhysics->ToggleThreading();
-// 		if (this->m_pInputHandler->IsPressedEvent(GLFW_KEY_R))
-// 		{
-// 			std::string soundName = "demoman_laugh";
-// 			m_pTheSound->StartSound(soundName);
-// 		}
 		//double deltaTime = m_pTheTimer->getFrameTimeUncapped();
 
 		// Messy, but will do this here
@@ -85,7 +81,7 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
 	std::vector<std::string> tempModelVec;
 	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
-	//this->m_pThePhysics->generateAABBs(tempModelVec);
+	this->m_pThePhysics->generateAABBs(tempModelVec);
 	
 	//this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
@@ -94,6 +90,8 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pAnimationsManager->SetVAOManager(m_pTheGraphics->getVAOManager());
 
 	//this->m_pDatabaseManager = cDatabaseManager::GetInstance();
+
+	this->m_pTimerManager->GetInstance();
 	
 	//cSoftBodyVerlet* theBlob = m_pThePhysics->CreateVerlet();
 
@@ -109,14 +107,15 @@ bool cEngineController_IMPL::Initialize(void)
 	//m_ThePlayer->setPlayerVerlet(theBlob);
 
 
-	if (false) // First person player setup
+	if (true) // First person player setup
 	{
+		m_pTheSceneManager->loadScene("rampTest");
 		sPhysicsProperties* playerObj = new sPhysicsProperties();
 		playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 0.5f));
 		playerObj->shapeType = sPhysicsProperties::CAPSULE;
 		playerObj->friendlyName = "plyr";
 
-		playerObj->position = glm::vec3(50, 15, 50);
+		playerObj->position = glm::vec3(0, 15, 0);
 		playerObj->restitution = 0.0f;
 		playerObj->inverse_mass = 1.0f;
 		// Add PlayerInfo Struct
@@ -140,7 +139,7 @@ bool cEngineController_IMPL::Initialize(void)
 
 		// Load test scene
 		//m_pTheSceneManager->loadScene("MovementPGCorners+");
-		m_pTheSceneManager->loadScene("TestCapCollision3");
+		//m_pTheSceneManager->loadScene("rampTest");
 		//m_pTheSceneManager->loadScene("test4");
 		//m_pThePhysics->AddShape(playerObj);
 		addCustomObject(playerMesh, playerObj);
@@ -316,7 +315,10 @@ void cEngineController_IMPL::addNewObject(std::string meshName, char* friendlyNa
 void cEngineController_IMPL::addCustomObject(cMesh* newMesh, sPhysicsProperties* newObj)
 {
 	m_pTheGraphics->addNewMesh(newMesh);
-	m_pThePhysics->AddShape(newObj);
+	if (newObj->isPlayer)
+		m_pThePhysics->SetPlayerObj(newObj);
+	else
+		m_pThePhysics->AddShape(newObj);
 
 	return;
 }

@@ -86,6 +86,9 @@
     <Filter Include="Graphics Engine\SSBO">
       <UniqueIdentifier>{126413b1-f281-4503-acfa-a6b785d376b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine Controller\Timers">
+      <UniqueIdentifier>{4a685052-63c2-46a2-903a-1ad8eb7b1e1c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Basic Shader Manager\cShaderManager.cpp">
@@ -170,9 +173,6 @@
       <Filter>Engine Controller</Filter>
     </ClCompile>
     <ClCompile Include="cEngineController_IMPL.cpp">
-      <Filter>Engine Controller</Filter>
-    </ClCompile>
-    <ClCompile Include="cHiResTimer.cpp">
       <Filter>Engine Controller</Filter>
     </ClCompile>
     <ClCompile Include="cLevelEditor.cpp">
@@ -265,6 +265,12 @@
     <ClCompile Include="cSSBO.cpp">
       <Filter>Graphics Engine\SSBO</Filter>
     </ClCompile>
+    <ClCompile Include="cHiResTimer.cpp">
+      <Filter>Engine Controller\Timers</Filter>
+    </ClCompile>
+    <ClCompile Include="cTimer.cpp">
+      <Filter>Engine Controller\Timers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basic Shader Manager\cShaderManager.h">
@@ -349,9 +355,6 @@
       <Filter>Engine Controller</Filter>
     </ClInclude>
     <ClInclude Include="cEngineController_IMPL.h">
-      <Filter>Engine Controller</Filter>
-    </ClInclude>
-    <ClInclude Include="cHiResTimer.h">
       <Filter>Engine Controller</Filter>
     </ClInclude>
     <ClInclude Include="cLevelEditor.h">
@@ -443,6 +446,12 @@
     </ClInclude>
     <ClInclude Include="cSSBO.h">
       <Filter>Graphics Engine\SSBO</Filter>
+    </ClInclude>
+    <ClInclude Include="cHiResTimer.h">
+      <Filter>Engine Controller\Timers</Filter>
+    </ClInclude>
+    <ClInclude Include="cTimer.h">
+      <Filter>Engine Controller\Timers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

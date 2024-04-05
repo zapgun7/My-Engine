@@ -62,11 +62,11 @@ struct sTimer
 class cTimer
 {
 public:
-	static cTimer* GetInstance(void);
-	void Initialize(void); 
+	static cTimer* GetInstance(void); // DO NOT CALL THIS; NOT ALLOWED >:(
+	void Initialize(void); // DONT CALL THIS EITHER
 	void Update(double dt);
 
-	sTimer* MakeNewTimer(float interval, sTimer::eTimerType type);
+	static sTimer* MakeNewTimer(float interval, sTimer::eTimerType type);
 
 
 
@@ -74,6 +74,6 @@ private:
 	static cTimer* m_pTheController; // Created and updated by the engineController
 	static unsigned int m_NextID;
 	//std::vector<sTimer*> m_vecTimers;
-	std::unordered_map<unsigned int, sTimer*> m_mapIDtoTimer;
+	static std::unordered_map<unsigned int, sTimer*> m_mapIDtoTimer;
 
 };

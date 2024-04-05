@@ -77,7 +77,8 @@ uniform vec4 textureMixRatio_4_7;
 
 // uv-offset
 //uniform vec3 uv_Offset_Scale;
-uniform vec4 uv_Offset_Scale_NONE;
+uniform vec4 diffUV_Offset_Scale_NONE;
+uniform vec4 specUV_Offset_Scale_NONE;
 
 struct sLight
 {
@@ -190,7 +191,7 @@ void main()
 	// Discard
 	if ( bUseHeightmap_IsSkyBox_UseDiscard_NONE.z == 1.0f )
 	{
-		vec3 maskValues = texture( maskSamplerTexture01, (textureCoords.st + uv_Offset_Scale_NONE.xy) * uv_Offset_Scale_NONE.z ).rgb;
+		vec3 maskValues = texture( maskSamplerTexture01, (textureCoords.st + diffUV_Offset_Scale_NONE.xy) * diffUV_Offset_Scale_NONE.z ).rgb;
 		float maskValue = maskValues.r + maskValues.g + maskValues.b; // Ensure it is pure black that gets removed
 		// If "black" then discard
 		if ( maskValue < 0.1f )
@@ -221,12 +222,12 @@ void main()
 		//outputColour.rgb = skyBoxSampleColour.rgb;
 		//outputColour.a = bReflect_Refract_fAlpha_NONE.z;
 		//return;
-		vec4 textureColour = texture( texture_00, (textureCoords.st + uv_Offset_Scale_NONE.xy) * uv_Offset_Scale_NONE.z ).rgba * textureMixRatio_0_3.x ;
+		vec4 textureColour = texture( texture_00, (textureCoords.st + diffUV_Offset_Scale_NONE.xy) * diffUV_Offset_Scale_NONE.z ).rgba * textureMixRatio_0_3.x ;
 		float reflectRatio = 1 - textureMixRatio_0_3.x;
 		vec3 eyeVector = normalize(eyeLocation.xyz - vertexWorldPos.xyz);
 		vec3 reflectAngle = reflect( eyeVector, vertexWorldNormal.xyz);
 		vec4 skyBoxSampleColour = texture( skyBoxTexture, reflectAngle.xyz ).rgba * reflectRatio;
-		outputColour.rgb = skyBoxSampleColour.rgb + textureColour.rgb;
+		outputColour.rgb = skyBoxSampleColour.rgb + textureColour.rgb; // Should we /2?
 		outputColour.a = bReflect_Refract_fAlpha_NONE.z;
 		return;
 	}
@@ -258,14 +259,14 @@ void main()
 	
 
 	vec4 textureColour = 
-		  texture( texture_00, (textureCoords.st + uv_Offset_Scale_NONE.xy) * uv_Offset_Scale_NONE.z ).rgba * textureMixRatio_0_3.x 	
+		  texture( texture_00, (textureCoords.st + diffUV_Offset_Scale_NONE.xy) * diffUV_Offset_Scale_NONE.z ).rgba * textureMixRatio_0_3.x 	
 		//+ texture( texture_01, textureCoords.st ).rgba * textureMixRatio_0_3.y
 		+ texture( texture_02, textureCoords.st ).rgba * textureMixRatio_0_3.z;
 		//+ texture( texture_03, textureCoords.st ).rgba * textureMixRatio_0_3.w;
 
 	// Make the 'vertex colour' the texture colour we sampled...
 	
-	vec4 diffuseColor = texture(material.diffuse, textureCoords.st * uv_Offset_Scale_NONE.z).rgba;
+	vec4 diffuseColor = texture(material.diffuse, textureCoords.st * diffUV_Offset_Scale_NONE.z).rgba;
 	
 	//vec4 vertexRGBA = textureColour;	
 	vec4 vertexRGBA = diffuseColor;
@@ -290,14 +291,6 @@ void main()
 	// xyzw or rgba or stuw
 	// RGB is the specular highglight colour (usually white or the colour of the light)
 	// 4th value is the specular POWER (STARTS at 1, and goes to 1000000s)
-	
-	//vec3 bumpMap = normalize(texture( texture_01, textureCoords.st ).rgb * 2.0f - vec3(1.0f)); // Should only have to add this to vertexWorldNormal in a way
-	//bumpMap -= (bumpMap/2);
-	
-	//bumpMap.xyz = normalize(bumpMap.xyz);
-	//bumpMap *= textureMixRatio_0_3.y;
-	//bumpMap.xyz += vertexWorldNormal.xyz;
-	//bumpMap.xyz = normalize(bumpMap.xyz);
 	
 	//vec4 vertexColourLit = calculateLightContrib( vertexRGBA.rgb, bumpMap, 
 	//                                              vertexWorldPos.xyz, vertexSpecular );
@@ -356,7 +349,7 @@ vec4 calulateLightContribNEW ( vec3 vertexMaterialColor, vec3 vertexNormal,
 		// Specular variables
 		float spec = 0.0f;
 		vec3 specular = vec3(0.0f, 0.0f, 0.0f);
-		vec3 specMapPower = texture(material.specular, textureCoords.st * uv_Offset_Scale_NONE.z).rgb;
+		vec3 specMapPower = texture(material.specular, textureCoords.st * specUV_Offset_Scale_NONE.z).rgb;
 		vec3 viewDir = normalize(eyeLocation.xyz - vertexWorldPos);
 		vec3 halfwayDir = vec3(0.0f, 0.0f, 0.0f);
 		

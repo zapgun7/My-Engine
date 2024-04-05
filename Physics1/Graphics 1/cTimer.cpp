@@ -3,7 +3,8 @@
 
 
 cTimer* cTimer::m_pTheController = nullptr;
-unsigned int cTimer::m_NextID = 0;
+unsigned int cTimer::m_NextID;
+std::unordered_map<unsigned int, sTimer*> cTimer::m_mapIDtoTimer;
 
 
 
@@ -18,10 +19,11 @@ cTimer* cTimer::GetInstance(void)
 	return cTimer::m_pTheController;
 }
 
-void cTimer::Initialize(void)
+void cTimer::Initialize(void) // This should only be called one per instance of program!!!
 {
 	sTimer* newtimer = new sTimer();
-	newtimer->Update();
+	cTimer::m_NextID = 0;
+
 }
 
 void cTimer::Update(double dt)

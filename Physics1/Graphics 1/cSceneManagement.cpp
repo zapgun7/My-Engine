@@ -220,8 +220,11 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 		///// //////// /////// /////
 
 		AddMemberToObject(meshobj, "customColor", &MeshVec[i]->customColorRGBA, VEC3, output);
-		AddMemberToObject(meshobj, "uv_OS", &MeshVec[i]->uv_Offset_Scale, VEC3, output);
-		AddMemberToObject(meshobj, "uv_Spd", &MeshVec[i]->uv_Offset_Scale, VEC2, output);
+		//AddMemberToObject(meshobj, "uv_OS", &MeshVec[i]->uv_Offset_Scale, VEC3, output);
+		//AddMemberToObject(meshobj, "uv_Spd", &MeshVec[i]->uv_Offset_Scale, VEC2, output);
+		AddMemberToObject(meshobj, "diffUV_data", &MeshVec[i]->material.diffuv_Offset_Scale, VEC3, output);
+		AddMemberToObject(meshobj, "specUV_data", &MeshVec[i]->material.specuv_Offset_Scale, VEC3, output);
+
 		AddMemberToObject(meshobj, "scale", &MeshVec[i]->scale, VEC3, output);
 		AddMemberToObject(meshobj, "isVisible", &MeshVec[i]->bIsVisible, BOOL, output);
 		AddMemberToObject(meshobj, "isWireframe", &MeshVec[i]->bIsWireframe, BOOL, output);
@@ -394,10 +397,14 @@ void cSceneManagement::loadScene(std::string fileName)
 		LoadDataFromMember(meshes[i], "customColor", &newMesh->customColorRGBA, VEC3, input);
 
 		// UV offset and scale
-		LoadDataFromMember(meshes[i], "uv_OS", &newMesh->uv_Offset_Scale, VEC3, input);
+		//LoadDataFromMember(meshes[i], "uv_OS", &newMesh->uv_Offset_Scale, VEC3, input);
+		LoadDataFromMember(meshes[i], "diffUV_data", &newMesh->material.diffuv_Offset_Scale, VEC3, input);
+		LoadDataFromMember(meshes[i], "specUV_data", &newMesh->material.specuv_Offset_Scale, VEC3, input);
+// 		AddMemberToObject(meshobj, "diffUV_data", &MeshVec[i]->material.diffuv_Offset_Scale, VEC3, output);
+// 		AddMemberToObject(meshobj, "specUV_data", &MeshVec[i]->material.specuv_Offset_Scale, VEC3, output);
 
 		// UV Offset speed
-		LoadDataFromMember(meshes[i], "uv_Spd", &newMesh->uvOffsetSpeed, VEC2, input);
+		//LoadDataFromMember(meshes[i], "uv_Spd", &newMesh->uvOffsetSpeed, VEC2, input);
 
 
 		// Scale and bools

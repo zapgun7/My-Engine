@@ -15,8 +15,11 @@ struct sMaterial
 	sMaterial() : power(1.0f, 1.0f, 1.0f, 32.0f), diffuseTex(""), specularTex("defSpec.bmp") {};
 	std::string diffuseTex;
 	bool isDiffMirrored = false;
+	glm::vec3 diffuv_Offset_Scale = glm::vec3(0.0f, 0.0f, 1.0f);
+
 	std::string specularTex;
 	bool isSpecMirrored = false;
+	glm::vec3 specuv_Offset_Scale = glm::vec3(0.0f, 0.0f, 1.0f);
 	glm::vec4 power;
 };
 
@@ -50,8 +53,6 @@ public:
 	bool isSpooky = false; // Spooky shader effect
 
 	// These two will update at the draw call based off deltaTime
-	glm::vec3 uv_Offset_Scale; // The actual offset value      // Scale portion can effectively enable tiling :)
-	glm::vec2 uvOffsetSpeed; // per second speed of the uvoffset
 	 
 	//glm::vec4 diffusePow_specularPow; // TODO: Something to add to the shader
 	sMaterial material;

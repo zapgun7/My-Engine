@@ -272,8 +272,8 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 					newDupe->bDoNotLight = meshToCopy->bDoNotLight;
 					newDupe->bUseReflect = meshToCopy->bUseReflect;
 					newDupe->bUseRefract = meshToCopy->bUseRefract;
-					newDupe->uv_Offset_Scale = meshToCopy->uv_Offset_Scale;
-					newDupe->uvOffsetSpeed = meshToCopy->uvOffsetSpeed;
+					//newDupe->uv_Offset_Scale = meshToCopy->uv_Offset_Scale;
+					//newDupe->uvOffsetSpeed = meshToCopy->uvOffsetSpeed;
 					newDupe->scale = meshToCopy->scale;
 					newDupe->uniqueID = meshToCopy->uniqueID; // For copying the physics
 					newDupe->material = meshToCopy->material;
@@ -433,10 +433,10 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 				transparencyAlpha = selectedMesh->transparencyAlpha;
 				useDiscardMask = selectedMesh->bUseDiscardMaskTex;
 
-				uvOffsetSpeed = selectedMesh->uvOffsetSpeed;
+				//uvOffsetSpeed = selectedMesh->uvOffsetSpeed;
 				uvXSpeed = uvOffsetSpeed.x;
 				uvYSpeed = uvOffsetSpeed.y;
-				uvScale = selectedMesh->uv_Offset_Scale.z;
+				//uvScale = selectedMesh->uv_Offset_Scale.z;
 				
 
 				
@@ -518,13 +518,13 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 				
 				// TODO move this to materials editor, maybe remove the spd
 				// UV-Offset Speed
-				ImGui::PushItemWidth(100);
-				ImGui::DragFloat("uvX_Spd", &uvXSpeed, 0.001f, -10.0f, 10.0f, "%.3f");
-				ImGui::SameLine();
-				ImGui::DragFloat("uvY_Spd", &uvYSpeed, 0.001f, -10.0f, 10.0f, "%.3f");
-				ImGui::SameLine();
-				ImGui::DragFloat("uv_Scale", &uvScale, 0.001f, 0.01f, 40.0f, "%.3f");
-				ImGui::PopItemWidth();
+// 				ImGui::PushItemWidth(100);
+// 				ImGui::DragFloat("uvX_Spd", &uvXSpeed, 0.001f, -10.0f, 10.0f, "%.3f");
+// 				ImGui::SameLine();
+// 				ImGui::DragFloat("uvY_Spd", &uvYSpeed, 0.001f, -10.0f, 10.0f, "%.3f");
+// 				ImGui::SameLine();
+// 				ImGui::DragFloat("uv_Scale", &uvScale, 0.001f, 0.01f, 40.0f, "%.3f");
+// 				ImGui::PopItemWidth();
 			}
 			
 
@@ -566,8 +566,8 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 				selectedMesh->bUseCustomColors = useCustomColor;
 				selectedMesh->customColorRGBA = glm::vec4(customColor, 1);
 
-				selectedMesh->uvOffsetSpeed = glm::vec2(uvXSpeed, uvYSpeed);
-				selectedMesh->uv_Offset_Scale.z = uvScale;
+				//selectedMesh->uvOffsetSpeed = glm::vec2(uvXSpeed, uvYSpeed);
+				//selectedMesh->uv_Offset_Scale.z = uvScale;
 				selectedMesh->isSpooky = isSpooky;
 				
 				// This will call 2 functions: graphics and physics
@@ -591,8 +591,11 @@ void cLevelEditor::MaterialEditor(cMesh* SelectedMesh)
 	int difftex_current_idx = 0;
 	int spectex_current_idx = 0;
 	int diffTextureIdx = 0;
+	glm::vec3 diffUVdata = glm::vec3(0.0f);
 	bool isDiffMirrored = false;
+
 	int specTextureIdx = 0;
+	glm::vec3 specUVdata = glm::vec3(0.0f);
 	bool isSpecMirrored = false;
 	int textureCount = m_AvailableTextures.size();
 
@@ -600,10 +603,13 @@ void cLevelEditor::MaterialEditor(cMesh* SelectedMesh)
 	{
 		power = SelectedMesh->material.power;
 		diffTex = SelectedMesh->material.diffuseTex;
+		diffUVdata = SelectedMesh->material.diffuv_Offset_Scale;
+
 		specTex = SelectedMesh->material.specularTex;
 
 		isDiffMirrored = SelectedMesh->material.isDiffMirrored;
 		isSpecMirrored = SelectedMesh->material.isSpecMirrored;
+		specUVdata = SelectedMesh->material.specuv_Offset_Scale;
 
 		// Find selected texture for diffuse (if any)
 
@@ -647,6 +653,15 @@ void cLevelEditor::MaterialEditor(cMesh* SelectedMesh)
 		// Mirrored Tex Toggle
 		ImGui::SameLine();
 		ImGui::Checkbox("DiffMirror", &isDiffMirrored);
+
+		// UV Data Setting
+		ImGui::PushItemWidth(100);
+		ImGui::DragFloat("diff_uvX", &diffUVdata.x, 0.001f, -1.0f, 1.0f, "%.3f");
+		ImGui::SameLine();
+		ImGui::DragFloat("diff_uvY", &diffUVdata.y, 0.001f, -1.0f, 1.0f, "%.3f");
+		ImGui::SameLine();
+		ImGui::DragFloat("diff_uv_Scale", &diffUVdata.z, 0.001f, FLT_MIN, FLT_MAX, "%.3f");
+		ImGui::PopItemWidth();
 	}
 
 	// SPECULAR COMBO //
@@ -672,6 +687,15 @@ void cLevelEditor::MaterialEditor(cMesh* SelectedMesh)
 		// Mirrored Tex Toggle
 		ImGui::SameLine();
 		ImGui::Checkbox("SpecMirror", &isSpecMirrored);
+
+		// UV Data Setting
+		ImGui::PushItemWidth(100);
+		ImGui::DragFloat("spec_uvX", &specUVdata.x, 0.001f, -1.0f, 1.0f, "%.3f");
+		ImGui::SameLine();
+		ImGui::DragFloat("spec_uvY", &specUVdata.y, 0.001f, -1.0f, 1.0f, "%.3f");
+		ImGui::SameLine();
+		ImGui::DragFloat("spec_uv_Scale", &specUVdata.z, 0.001f, FLT_MIN, FLT_MAX, "%.3f");
+		ImGui::PopItemWidth();
 	}
 
 
@@ -691,6 +715,8 @@ void cLevelEditor::MaterialEditor(cMesh* SelectedMesh)
 		SelectedMesh->material.specularTex = m_AvailableTextures[spectex_current_idx];
 		SelectedMesh->material.isDiffMirrored = isDiffMirrored;
 		SelectedMesh->material.isSpecMirrored = isSpecMirrored;
+		SelectedMesh->material.diffuv_Offset_Scale = diffUVdata;
+		SelectedMesh->material.specuv_Offset_Scale = specUVdata;
 	}
 
 

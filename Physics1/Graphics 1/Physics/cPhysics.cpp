@@ -70,6 +70,7 @@ cPhysics::cPhysics()
 
 int cPhysics::Initialize(void)
 {
+	this->m_pThePlayerObj = nullptr;
 	this->m_pTheSoonestCollision = new sPossibleCollision();
 	this->m_pReversedObject = new sPhysicsProperties();
 	InitializeCriticalSection(&(this->m_CollisionUpdate));
@@ -342,6 +343,12 @@ void cPhysics::DeleteShape(int shapeID)
 std::vector< sPhysicsProperties* > cPhysics::getPhysicsVec(void)
 {
 	return m_vec_pPhysicalProps;
+}
+
+void cPhysics::SetPlayerObj(sPhysicsProperties* plyrObj)
+{
+	m_pThePlayerObj = plyrObj; // Now we can immediately reference it whenever
+	m_vec_pPhysicalProps.push_back(plyrObj); // Add to general vec for regular collision updates
 }
 
 bool cPhysics::GetKickNorm(glm::vec3 pos, glm::vec3 lookDir, float length, glm::vec3& retNorm)

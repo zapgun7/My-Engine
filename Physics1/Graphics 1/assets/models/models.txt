@@ -2,7 +2,6 @@ Big_Flat_Mesh.ply
 Flat_1x1_plane.ply
 Sphere_1_unit_Radius.ply
 rusty_ship.ply
-Terrain.ply
 Icosahedron.ply
 Quad_1_sided_aligned_on_XY_plane.ply
 box.ply
