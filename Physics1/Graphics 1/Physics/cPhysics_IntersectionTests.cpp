@@ -556,6 +556,7 @@ bool cPhysics::m_TestMovingCapsuleTriangle(sPhysicsProperties* pCapsule, sTriang
 
 	bool raycastLower = false;
 	bool raycastUpper = false;
+
 	
 	glm::vec3 closestTriPointLower;
 	if (t1 > 1.0f)
@@ -661,6 +662,7 @@ bool cPhysics::m_TestMovingCapsuleTriangle(sPhysicsProperties* pCapsule, sTriang
 			else if (t1 == 0.0f)
 			{
 				hitNorm = triNorm; // Works for the sphere algorithm, might not for this capsule
+				//hitNorm = glm::normalize(lowerCap.oldPosition - rayHitOnSphere1);
 				t = t1;
 				return 1;
 			}
@@ -840,7 +842,6 @@ bool cPhysics::m_Capsule_TriMeshIndirect_IntersectionTest(sPhysicsProperties* pC
 	//reverseTransformedCapsule.velocity = (matRevModelR * glm::vec4(reverseTransformedCapsule.velocity, 1.0f)); // Don't need
 
 
-	// TODO
 	std::vector<sTriangle_A> trisToCheck = TriMeshAABB->sweepingCapsuleCollision(&reverseTransformedCapsule);
 
 	// And then check each tri in the vec, same as the sphere stuff. gl future me <3

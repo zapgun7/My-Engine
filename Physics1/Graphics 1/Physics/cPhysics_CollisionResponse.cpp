@@ -73,7 +73,7 @@ void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollis
 {
 	float degDiff = acos(glm::dot(collision.hitNorm, glm::vec3(0, 1, 0)));
 	if (glm::length(pCapsule->velocity) > 9.98f)
- 		std::cout << "break" << std::endl;
+  		std::cout << "break" << std::endl;
 
 	if (collision.q == 0) // In or already touching triangle at start of update
 	{
@@ -132,7 +132,7 @@ void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollis
 
 		glm::vec3 restitutionVelLoss = -collision.hitNorm * glm::vec3(abs(pCapsule->velocity.x), abs(pCapsule->velocity.y), abs(pCapsule->velocity.z)); // Calculate vector we want to reduce velocity on (negative normal of surface it's bouncing on)
 		//pCapsule->velocity += (restitutionVelLoss * (1.0f - pCapsule->restitution)) * restAppDegree; // Subtract said vector from newVelocity, scaled with its restitution (0 restitution = no bounce, 1 = full bounce)
-		pCapsule->velocity += restitutionVelLoss * (1.0f - pCapsule->restitution);
+		pCapsule->velocity += restitutionVelLoss * (/*1.0f - */pCapsule->restitution);
 
 		// Friction??
 // 		if (degDiff < 50)
@@ -145,8 +145,8 @@ void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollis
 		float remainingLength = glm::length(sphereStep * (1.0f - collision.q));
 		pCapsule->position = pCapsule->oldPosition
 			+ reflectionVec			// Direction it bounces (unit vec)
-			* remainingLength		// Length of remaining distance it had to cover past the collision point
-			* pCapsule->restitution; // Throttles distance by its restitution
+			* remainingLength;		// Length of remaining distance it had to cover past the collision point
+			//* pCapsule->restitution; // Throttles distance by its restitution
 		//// TODO^ this restitution doesn't make sense, should vary based on angle bouncing 
 
 		// Done... I think

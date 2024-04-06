@@ -124,6 +124,7 @@ glm::vec3 cPhysics::m_ClosestPtTriPlanePointTriangle(glm::vec3 p, glm::vec3 a, g
 	glm::vec3 ac = c - a;
 	glm::vec3 bc = c - b;
 
+
 	// Compute parametric position s for projection P' of P on AB,
 	// P' = A + s*AB, s = snom/(snom+sdenom)
 	float snom = glm::dot(p - a, ab), sdenom = glm::dot(p - b, a - b);
@@ -163,7 +164,6 @@ glm::vec3 cPhysics::m_ClosestPtTriPlanePointTriangle(glm::vec3 p, glm::vec3 a, g
 	// return projection of P onto CA
 	if (vb <= 0.0f && tnom >= 0.0f && tdenom >= 0.0f)
 		return a + tnom / (tnom + tdenom) * ac;
-
 
 	// P must be in face region, so return the provided point!
 	return p;

@@ -11,6 +11,8 @@ void cPhysics::UpdatePlayerObj(double deltaTime)
 // 	sPhysicsProperties tempPlyr = *m_pThePlayerObj;
 // 	m_pThePlayerObj->velocity = tempPlyr.velocity; m_pThePlayerObj->position = tempPlyr.position; m_pThePlayerObj->oldPosition = tempPlyr.oldPosition;
 	///////// GROUNDED DETECTION //////////
+	if (m_pThePlayerObj == nullptr) return;
+
 	if (!m_pThePlayerObj->playerInfo->jumpNormThisFrame)
 	{
 		m_pThePlayerObj->playerInfo->framesAirborne++;
@@ -60,7 +62,6 @@ void cPhysics::UpdatePlayerObj(double deltaTime)
 				velReduction = m_pThePlayerObj->velocity * static_cast<float>(deltaTime) * 10.0f;
 				m_pThePlayerObj->velocity += velReduction;
 			}
-
 		}
 	}
 
@@ -215,11 +216,12 @@ void cPhysics::Update(double deltaTime)
 // 		if (pObject->shapeType == sPhysicsProperties::CAPSULE)
 // 			pObject->playerInfo->jumpNormThisFrame = 0;
 // 	}
-	m_pThePlayerObj->playerInfo->jumpNormThisFrame = 0;
-	m_pThePlayerObj->playerInfo->groundNorm = glm::vec3(0.0f);
-	int eh = 0;
-	if (!m_pThePlayerObj->playerInfo->isGrounded)
-		eh = 1;
+	if (m_pThePlayerObj != nullptr)
+	{
+		m_pThePlayerObj->playerInfo->jumpNormThisFrame = 0;
+		m_pThePlayerObj->playerInfo->groundNorm = glm::vec3(0.0f);
+	}
+
 	for (sPhysicsProperties* pObjectA : m_vec_pPhysicalProps)
 	{
 		bool isStillColliding = true;
@@ -310,7 +312,7 @@ void cPhysics::Update(double deltaTime)
 			}
 		}
 	}
-	if (m_pThePlayerObj->playerInfo->jumpNormThisFrame) // This normalizes the norms of all triangles the player is standing on
+	if ((m_pThePlayerObj != nullptr ) && (m_pThePlayerObj->playerInfo->jumpNormThisFrame)) // This normalizes the norms of all triangles the player is standing on
 		m_pThePlayerObj->playerInfo->groundNorm = glm::normalize(m_pThePlayerObj->playerInfo->groundNorm); 
 
 	// Update the draw locations (and orientations) for all associated meshes
