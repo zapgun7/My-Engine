@@ -23,7 +23,6 @@ uniform mat4 BoneMatrices[50];
 
 //in vec4 vCol;		// was vec3
 in vec4 vPos;		// was vec3
-
 in vec4 vNormal;	// NEW for 2023!
 in vec4 vTextureCoords; // Keeping this vec2 for now
 in ivec4 vBoneIds;
@@ -53,15 +52,18 @@ void main()
 			boneTransform += BoneMatrices[vBoneIds.y] * vBoneWeights.y;
 			boneTransform += BoneMatrices[vBoneIds.z] * vBoneWeights.z;
 			boneTransform += BoneMatrices[vBoneIds.w] * vBoneWeights.w;
-		position = boneTransform * vPos;
+		position = boneTransform * position;
 	}
 	
 	
 //	gl_Position = MVP * vec4(finalPos, 1.0);
 //	gl_Position = MVP * vertModelPosition;
-	mat4 matMVP = matProjection * matView * matModel;
+	//mat4 matMVP = matProjection * matView * matModel;
+	mat4 matMVP = matView * matModel;
 	//gl_Position = matMVP * vec4(vPos.xyz, 1.0);
-	gl_Position = matMVP * vec4(position.xyz, 1.0);
+	//gl_Position = matMVP * vec4(position.xyz, 1.0);
+	gl_Position = matProjection * matMVP * position;
+	
 	//gl_Position = vec4(vPos.xyz, 1.0f);
 	// Rotate the normal by the inverse transpose of the model matrix
 	// (so that it only is impacted by the rotation, not translation or scale)

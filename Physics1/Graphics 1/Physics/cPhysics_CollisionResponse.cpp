@@ -72,8 +72,8 @@ void cPhysics::m_Sphere_Collision(sPhysicsProperties* pSphere, sPossibleCollisio
 void cPhysics::m_Capsule_Collision(sPhysicsProperties* pCapsule, sPossibleCollision& collision, double dt)
 {
 	float degDiff = acos(glm::dot(collision.hitNorm, glm::vec3(0, 1, 0)));
-	if (glm::length(pCapsule->velocity) > 9.98f)
-  		std::cout << "break" << std::endl;
+// 	if (glm::length(pCapsule->velocity) > 9.98f)
+//   		std::cout << "break" << std::endl;
 
 	if (collision.q == 0) // In or already touching triangle at start of update
 	{

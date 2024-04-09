@@ -41,7 +41,9 @@ struct sVertex_p4t4n4b4w4
 	sInt4 BoneIds;
 };
 
-struct sBoneInfo
+/////////////// OLD BONE STUFF ///////////////////
+
+struct sOldBoneInfo
 {
 	glm::mat4 BoneOffset;// = glm::mat4(1.0f);				// Offset from the parent bone/node
 	glm::mat4 FinalTransformation = glm::mat4(1.0f);		// Calculated transformation used for rendering
@@ -76,8 +78,46 @@ struct sNode
 // 	std::vector<NodeAnim*> Channels;
 // };
 
+/////////////// /// //// ///// ///////////////////
+
+
+// New Bone
+struct sBoneInfo
+{
+	int id;
+	glm::mat4 offset;
+};
+
+
+
+
+
+ 
 struct sModelDrawInfo
 {
+	// New Bone Stuff
+	std::map<std::string, sBoneInfo> m_BoneInfoMap;
+	int m_BoneCounter = 0;
+
+	std::map<std::string, sBoneInfo>& GetBoneInfoMap(void) { return m_BoneInfoMap; }
+	int& GetBoneCount(void) { return m_BoneCounter; }
+
+	void SetVertexBoneDataToDefault(sVertex_p4t4n4b4w4& vertex)
+	{
+		vertex.BoneIds.x = -1;
+		vertex.BoneIds.y = -1;
+		vertex.BoneIds.z = -1;
+		vertex.BoneIds.w = -1;
+		vertex.BoneWeights.x = 0.0f;
+		vertex.BoneWeights.y = 0.0f;
+		vertex.BoneWeights.z = 0.0f;
+		vertex.BoneWeights.w = 0.0f;
+	}
+
+
+
+
+
 	sModelDrawInfo();
 
 	std::string meshName;
@@ -113,7 +153,7 @@ struct sModelDrawInfo
 	std::vector<glm::mat4> NodeHierarchyTransformations;
 	std::map<std::string, int> NodeNameToIdMap;
 
-	std::vector<sBoneInfo> BoneInfoVec;
+	std::vector<sOldBoneInfo> BoneInfoVec;
 	std::map<std::string, int> BoneNameToIdMap;
 	sNode* RootNode;
 

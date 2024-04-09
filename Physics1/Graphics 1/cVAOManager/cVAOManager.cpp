@@ -44,7 +44,7 @@ sModelDrawInfo::sModelDrawInfo()
 	return;
 }
 
-void AssimpToGLM(const aiMatrix4x4& a, glm::mat4& g)
+void AssimpToGLMMat(const aiMatrix4x4& a, glm::mat4& g)
 {
 	g[0][0] = a.a1; g[0][1] = a.b1; g[0][2] = a.c1; g[0][3] = a.d1;
 	g[1][0] = a.a2; g[1][1] = a.b2; g[1][2] = a.c2; g[1][3] = a.d2;
@@ -56,10 +56,22 @@ void AssimpToGLM(const aiMatrix4x4& a, glm::mat4& g)
 // 	g[3][0] = a.d1; g[3][1] = a.d2; g[3][2] = a.d3; g[3][3] = a.d4;
 }
 
+void AssimpToGLMVec(const aiVector3D& a, glm::vec3& vec)
+{
+	vec.x = a.x;
+	vec.y = a.y;
+	vec.z = a.z;
+}
+
+void AssimpToGLMQuat(aiQuaternion& a, glm::quat& quat)
+{
+	quat = glm::quat(a.w, a.x, a.y, a.z);
+}
+
 sNode* CreateAnimNode(aiNode* node)
 {
 	sNode* newNode = new sNode(node->mName.C_Str());
-	AssimpToGLM(node->mTransformation, newNode->Transformation);
+	AssimpToGLMMat(node->mTransformation, newNode->Transformation);
 	return newNode;
 }
 
@@ -75,7 +87,7 @@ sNode* sModelDrawInfo::GenerateBoneHierarchy(aiNode* assimpNode, const int depth
 	transformation.Decompose(scaling, rotation, position);
 
 	glm::mat4 glmMatrix;
-	AssimpToGLM(transformation, glmMatrix);
+	AssimpToGLMMat(transformation, glmMatrix);
 
 	glm::mat4 TranslationMatrix = glm::translate(glm::mat4(1.f), glm::vec3(position.x, position.y, position.z));
 
@@ -88,7 +100,7 @@ sNode* sModelDrawInfo::GenerateBoneHierarchy(aiNode* assimpNode, const int depth
 	//ModelMatrix = glm::mat4(1.0f);
 
 	NodeNameToIdMap.insert(std::pair<std::string, int>((std::string)(assimpNode->mName.C_Str()), NodeHierarchyTransformations.size()));
-	NodeHierarchyTransformations.emplace_back(ModelMatrix/*glmMatrix*/);
+	NodeHierarchyTransformations.emplace_back(/*ModelMatrix*/glmMatrix);
 
 	for (unsigned int i = 0; i < assimpNode->mNumChildren; i++)
 	{
@@ -132,13 +144,13 @@ bool cVAOManager::LoadModelIntoVAO(
 
     std::string fileAndPath = this->m_basePathWithoutSlash + "/" + fileName;
 
-	if (fileName == "Adventurer Aland@Idle.FBX")
+	if (fileName == "Padoru_v1-4.dae")//"Adventurer Aland@Idle.FBX")
 	{
 		if (!this->m_LoadTheFileAnimModel(fileAndPath, drawInfo, shaderProgramID))
 		{
 			return false;
 		};
-		m_pAnimationManager;
+		//m_pAnimationManager;
 		return true;
 	}
 
@@ -417,8 +429,6 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 	Assimp::Importer m_AssimpImporter;
 	drawInfo.scene = (aiScene*)m_AssimpImporter.ReadFile(theFileName, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs);//aiProcess_GenNormals);
 
-	aiMesh* mesh = drawInfo.scene->mMeshes[0];
-
 	// Load animations (when I get my animation system to intermingle with bones n' stuff)
 	sBonedAnimation* characterAnimation = new sBonedAnimation();
 	if (drawInfo.scene->mNumAnimations > 0)
@@ -439,20 +449,41 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 
 			for (unsigned int e = 0; e < assimpNodeAnim->mNumPositionKeys; e++)
 			{
-				aiVectorKey& p = assimpNodeAnim->mPositionKeys[e];
-				animInfo->mveKeyFrames.emplace_back(sAnimInfo::sAnimNode(glm::vec3(p.mValue.x, p.mValue.y, p.mValue.z), p.mTime));
+// 				aiVectorKey& p = assimpNodeAnim->mPositionKeys[e];
+// 				animInfo->mveKeyFrames.emplace_back(sAnimInfo::sAnimNode(glm::vec3(p.mValue.x, p.mValue.y, p.mValue.z), p.mTime));
+				aiVector3D aiPosition = assimpNodeAnim->mPositionKeys[e].mValue;
+				float timeStamp = assimpNodeAnim->mPositionKeys[e].mTime;
+				sAnimInfo::sKeyPosition data;
+				AssimpToGLMVec(aiPosition, data.position);
+				data.timeStamp = timeStamp;
+				animInfo->m_Positions.push_back(data);
 			}
 			for (unsigned int e = 0; e < assimpNodeAnim->mNumScalingKeys; e++)
 			{
-				aiVectorKey& s = assimpNodeAnim->mScalingKeys[e];
-				animInfo->sclKeyFrames.emplace_back(sAnimInfo::sAnimNode(glm::vec3(s.mValue.x, s.mValue.y, s.mValue.z), s.mTime));
+// 				aiVectorKey& s = assimpNodeAnim->mScalingKeys[e];
+// 				animInfo->sclKeyFrames.emplace_back(sAnimInfo::sAnimNode(glm::vec3(s.mValue.x, s.mValue.y, s.mValue.z), s.mTime));
+				aiVector3D aiScale = assimpNodeAnim->mScalingKeys[e].mValue;
+				float timeStamp = assimpNodeAnim->mPositionKeys[e].mTime;
+				sAnimInfo::sKeyScale data;
+				AssimpToGLMVec(aiScale, data.scale);
+				data.timeStamp = timeStamp;
+				animInfo->m_Scales.push_back(data);
 			}
 			for (unsigned int e = 0; e < assimpNodeAnim->mNumRotationKeys; e++)
 			{
-				aiQuatKey& q = assimpNodeAnim->mRotationKeys[e];
-				glm::quat tempQuat = glm::quat(q.mValue.w, q.mValue.x, q.mValue.y, q.mValue.z);
-				animInfo->oriKeyFrames.emplace_back(sAnimInfo::sAnimNode(glm::eulerAngles(tempQuat), q.mTime)); // !!!  For now use euler (Until confirmed it works)
+// 				aiQuatKey& q = assimpNodeAnim->mRotationKeys[e];
+// 				glm::quat tempQuat = glm::quat(q.mValue.w, q.mValue.x, q.mValue.y, q.mValue.z);
+// 				animInfo->oriKeyFrames.emplace_back(sAnimInfo::sAnimNode(glm::eulerAngles(tempQuat), q.mTime)); // !!!  For now use euler (Until confirmed it works)
+				aiQuaternion aiOrientation = assimpNodeAnim->mRotationKeys[e].mValue;
+				float timeStamp = assimpNodeAnim->mRotationKeys[e].mTime;
+				sAnimInfo::sKeyRotation data;
+				data.timeStamp = timeStamp;
+				AssimpToGLMQuat(aiOrientation, data.orientation);
+				animInfo->m_Orientations.push_back(data);
 			}
+			animInfo->posSize = assimpNodeAnim->mNumPositionKeys;
+			animInfo->oriSize = assimpNodeAnim->mNumRotationKeys;
+			animInfo->sclSize = assimpNodeAnim->mNumScalingKeys;
 			characterAnimation->BoneAnimations.emplace_back(animInfo);
 		}
 		
@@ -467,61 +498,91 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 	characterAnimation->rootNode = drawInfo.RootNode;
 	drawInfo.GlobalInverseTransformation = glm::inverse(drawInfo.RootNode->Transformation);
 
-	std::vector<sBoneWeightInfo> boneWeights;
-
-	if (mesh->HasBones())
+	drawInfo.numberOfVertices = 0;
+	drawInfo.numberOfTriangles = 0;
+	for (int meshidx = 0; meshidx < drawInfo.scene->mNumMeshes; meshidx++)
 	{
-		boneWeights.resize(mesh->mNumVertices);
-		unsigned int numBones = mesh->mNumBones;
-		for (unsigned int boneIdx = 0; boneIdx < numBones; boneIdx++)
+		aiMesh* mesh = drawInfo.scene->mMeshes[meshidx];
+		drawInfo.numberOfVertices += mesh->mNumVertices;
+		drawInfo.numberOfTriangles += mesh->mNumFaces;
+	}
+
+	std::vector<sBoneWeightInfo> boneWeights;
+	boneWeights.resize(drawInfo.numberOfVertices);
+	int boneCounter = 0;
+
+	//aiMesh* mesh = drawInfo.scene->mMeshes[0];
+
+	for (int meshidx = 0; meshidx < drawInfo.scene->mNumMeshes; meshidx++)
+	{
+		aiMesh* mesh = drawInfo.scene->mMeshes[meshidx];
+		if (mesh->HasBones())
 		{
-			aiBone* bone = mesh->mBones[boneIdx];
-
-			std::string name(bone->mName.C_Str(), bone->mName.length);
-			drawInfo.BoneNameToIdMap.insert(std::pair<std::string, int>(name, drawInfo.BoneInfoVec.size()));
-
-			// Store offset matrices
-			sBoneInfo info;
-			AssimpToGLM(bone->mOffsetMatrix, info.BoneOffset);
-			drawInfo.BoneInfoVec.emplace_back(info);
-
-
-			printf("\n-----------\n");
-			printf("Bone: %s\n", name.c_str());
-			printf("Number of weights: %d\n", bone->mNumWeights);
-
-			for (unsigned int weightIdx = 0; weightIdx < bone->mNumWeights; weightIdx++)
+			//boneWeights.resize(mesh->mNumVertices);
+			unsigned int numBones = mesh->mNumBones;
+			for (unsigned int boneIdx = 0; boneIdx < numBones; boneIdx++)
 			{
-				aiVertexWeight& vertexWeight = bone->mWeights[weightIdx];
-				// BoneId		:	boneIdx
-				// Vertexid		:	vertexWeight.mVertexId
-				// Weight		:	vertexWeight.mWeight
+				unsigned int BoneIndex = 0;
+				aiBone* bone = mesh->mBones[boneIdx];
 
-				sBoneWeightInfo& boneInfo = boneWeights[vertexWeight.mVertexId];
-				for (int infoIdx = 0; infoIdx < 4; infoIdx++)
+				std::string name(bone->mName.C_Str(), bone->mName.length);
+				// drawInfo.BoneNameToIdMap.insert(std::pair<std::string, int>(name, drawInfo.BoneInfoVec.size()));
+
+				if (drawInfo.BoneNameToIdMap.find(name) == drawInfo.BoneNameToIdMap.end())
 				{
-					if (boneInfo.m_Weight[infoIdx] == 0.0f)
+					BoneIndex = boneCounter;
+					boneCounter++;
+					sOldBoneInfo info;
+					drawInfo.BoneInfoVec.push_back(info);
+				}
+				else
+				{
+					BoneIndex = drawInfo.BoneNameToIdMap[name];
+				}
+
+				drawInfo.BoneNameToIdMap[name] = BoneIndex;
+				
+				AssimpToGLMMat(bone->mOffsetMatrix, drawInfo.BoneInfoVec[BoneIndex].BoneOffset);
+
+
+				// Store offset matrices
+				//sOldBoneInfo info;
+				//AssimpToGLM(bone->mOffsetMatrix, info.BoneOffset);
+				//info.BoneOffset = glm::mat4(1.0f);
+				//drawInfo.BoneInfoVec.emplace_back(info);
+
+
+				printf("\n-----------\n");
+				printf("Bone: %s\n", name.c_str());
+				printf("Number of weights: %d\n", bone->mNumWeights);
+
+				for (unsigned int weightIdx = 0; weightIdx < bone->mNumWeights; weightIdx++)
+				{
+					aiVertexWeight& vertexWeight = bone->mWeights[weightIdx];
+					// BoneId		:	boneIdx
+					// Vertexid		:	vertexWeight.mVertexId
+					// Weight		:	vertexWeight.mWeight
+
+					sBoneWeightInfo& boneInfo = boneWeights[vertexWeight.mVertexId];
+					for (int infoIdx = 0; infoIdx < 4; infoIdx++)
 					{
-						boneInfo.m_BoneId[infoIdx] = boneIdx;
-						boneInfo.m_Weight[infoIdx] = vertexWeight.mWeight;
-						break;
+						if (boneInfo.m_Weight[infoIdx] == 0.0f)
+						{
+							boneInfo.m_BoneId[infoIdx] = boneIdx;
+							boneInfo.m_Weight[infoIdx] = vertexWeight.mWeight;
+							break;
+						}
 					}
 				}
 			}
 		}
-// 		for (unsigned int i = 0; i < drawInfo.BoneInfoVec.size(); i++)
-// 		{
-// 			drawInfo.BoneInfoVec[i].
-// 		}
 	}
 	characterAnimation->theModel = drawInfo;
 	m_pAnimationManager->AddBonedAnimation(characterAnimation, characterAnimation->name);
 
 	// Now the regular model loading stuff
-	drawInfo.numberOfVertices = mesh->mNumVertices;
-	drawInfo.numberOfTriangles = mesh->mNumFaces;
-	drawInfo.numberOfIndices = drawInfo.numberOfTriangles * 3;
 
+	drawInfo.numberOfIndices = drawInfo.numberOfTriangles * 3;
 	drawInfo.pIndices = new unsigned int[drawInfo.numberOfIndices];
 
 	sVertex_p4t4n4b4w4* pTempVertArray = new sVertex_p4t4n4b4w4[drawInfo.numberOfIndices * 2];
@@ -532,68 +593,73 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 	int indexIdx = 0;
 
 	unsigned int vertArrayIndex = 0;
-	for (unsigned int faceIdx = 0; faceIdx != mesh->mNumFaces; faceIdx++)
+	for (int meshidx = 0; meshidx < drawInfo.scene->mNumMeshes; meshidx++)
 	{
-		aiFace face = mesh->mFaces[faceIdx];
-
-		for (int idx = 0; idx != 3; idx++)
+		aiMesh* mesh = drawInfo.scene->mMeshes[meshidx];
+		for (unsigned int faceIdx = 0; faceIdx != mesh->mNumFaces; faceIdx++)
 		{
-			unsigned int index = face.mIndices[idx];
+			aiFace face = mesh->mFaces[faceIdx];
 
-			drawInfo.pIndices[indexIdx++] = index;
-
-			aiVector3D position = mesh->mVertices[index];
-			pTempVertArray[vertArrayIndex].Pos.x = position.x;
-			pTempVertArray[vertArrayIndex].Pos.y = position.y;
-			pTempVertArray[vertArrayIndex].Pos.z = position.z;
-			pTempVertArray[vertArrayIndex].Pos.w = 1.0f;
-
-			if (mesh->HasTextureCoords(0))
+			for (int idx = 0; idx != 3; idx++)
 			{
-				aiVector3D textureCoord = mesh->mTextureCoords[0][index];
-				pTempVertArray[vertArrayIndex].TexUVx2.x = textureCoord.x;
-				pTempVertArray[vertArrayIndex].TexUVx2.y = textureCoord.y;
-				pTempVertArray[vertArrayIndex].TexUVx2.z = textureCoord.z;
-				pTempVertArray[vertArrayIndex].TexUVx2.w = 1.0f;
-			}
-			else
-			{
-				pTempVertArray[vertArrayIndex].TexUVx2.x = 0.0f;
-				pTempVertArray[vertArrayIndex].TexUVx2.y = 0.0f;
-				pTempVertArray[vertArrayIndex].TexUVx2.z = 0.0f;
-				pTempVertArray[vertArrayIndex].TexUVx2.w = 0.0f;
-			}
+				unsigned int index = face.mIndices[idx];
 
-			aiVector3D normal = mesh->mNormals[index];
-			pTempVertArray[vertArrayIndex].Normal.x = normal.x;
-			pTempVertArray[vertArrayIndex].Normal.y = normal.y;
-			pTempVertArray[vertArrayIndex].Normal.z = normal.z;
-			pTempVertArray[vertArrayIndex].Normal.w = 1.0f;
+				drawInfo.pIndices[indexIdx++] = index;
 
-			if (mesh->HasBones())
-			{
-				sBoneWeightInfo& boneInfo = boneWeights[index];
+				aiVector3D position = mesh->mVertices[index];
+				pTempVertArray[vertArrayIndex].Pos.x = position.x;
+				pTempVertArray[vertArrayIndex].Pos.y = position.y;
+				pTempVertArray[vertArrayIndex].Pos.z = position.z;
+				pTempVertArray[vertArrayIndex].Pos.w = 1.0f;
 
-				pTempVertArray[vertArrayIndex].BoneIds.x = boneInfo.m_BoneId[0];
-				pTempVertArray[vertArrayIndex].BoneIds.y = boneInfo.m_BoneId[1];
-				pTempVertArray[vertArrayIndex].BoneIds.z = boneInfo.m_BoneId[2];
-				pTempVertArray[vertArrayIndex].BoneIds.w = boneInfo.m_BoneId[3];
+				aiVector3D normal = mesh->mNormals[index];
+				pTempVertArray[vertArrayIndex].Normal.x = normal.x;
+				pTempVertArray[vertArrayIndex].Normal.y = normal.y;
+				pTempVertArray[vertArrayIndex].Normal.z = normal.z;
+				pTempVertArray[vertArrayIndex].Normal.w = 1.0f;
 
-				pTempVertArray[vertArrayIndex].BoneWeights.x = boneInfo.m_Weight[0];
-				pTempVertArray[vertArrayIndex].BoneWeights.y = boneInfo.m_Weight[1];
-				pTempVertArray[vertArrayIndex].BoneWeights.z = boneInfo.m_Weight[2];
-				pTempVertArray[vertArrayIndex].BoneWeights.w = boneInfo.m_Weight[3];
 
-				float weight = boneInfo.m_Weight[0] + boneInfo.m_Weight[1] + boneInfo.m_Weight[2] + boneInfo.m_Weight[3];
-				if (weight != 1.0f)
+				if (mesh->HasTextureCoords(0))
 				{
-					int breakhere = 0;
+					aiVector3D textureCoord = mesh->mTextureCoords[0][index];
+					pTempVertArray[vertArrayIndex].TexUVx2.x = textureCoord.x;
+					pTempVertArray[vertArrayIndex].TexUVx2.y = textureCoord.y;
+					pTempVertArray[vertArrayIndex].TexUVx2.z = textureCoord.z;
+					pTempVertArray[vertArrayIndex].TexUVx2.w = 1.0f;
 				}
+				else
+				{
+					pTempVertArray[vertArrayIndex].TexUVx2.x = 0.0f;
+					pTempVertArray[vertArrayIndex].TexUVx2.y = 0.0f;
+					pTempVertArray[vertArrayIndex].TexUVx2.z = 0.0f;
+					pTempVertArray[vertArrayIndex].TexUVx2.w = 0.0f;
+				}
+
+				if (mesh->HasBones())
+				{
+					sBoneWeightInfo& boneInfo = boneWeights[index];
+
+					pTempVertArray[vertArrayIndex].BoneIds.x = boneInfo.m_BoneId[0];
+					pTempVertArray[vertArrayIndex].BoneIds.y = boneInfo.m_BoneId[1];
+					pTempVertArray[vertArrayIndex].BoneIds.z = boneInfo.m_BoneId[2];
+					pTempVertArray[vertArrayIndex].BoneIds.w = boneInfo.m_BoneId[3];
+
+					pTempVertArray[vertArrayIndex].BoneWeights.x = boneInfo.m_Weight[0];
+					pTempVertArray[vertArrayIndex].BoneWeights.y = boneInfo.m_Weight[1];
+					pTempVertArray[vertArrayIndex].BoneWeights.z = boneInfo.m_Weight[2];
+					pTempVertArray[vertArrayIndex].BoneWeights.w = boneInfo.m_Weight[3];
+
+					float weight = boneInfo.m_Weight[0] + boneInfo.m_Weight[1] + boneInfo.m_Weight[2] + boneInfo.m_Weight[3];
+					if (weight != 1.0f)
+					{
+						int breakhere = 0;
+					}
+				}
+
+				pIndexArrayLocal[vertArrayIndex] = vertArrayIndex;
+
+				vertArrayIndex++;
 			}
-
-			pIndexArrayLocal[vertArrayIndex] = vertArrayIndex;
-
-			vertArrayIndex++;
 		}
 	}
 
@@ -670,6 +736,19 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 	this->m_map_ModelName_to_VAOID[drawInfo.meshName] = drawInfo;
 
 	
+	return true;
+}
+
+bool cVAOManager::m_LoadTheBonedModel(std::string theFileName, sModelDrawInfo& drawInfo, unsigned int shaderID)
+{
+	Assimp::Importer assimpImporter;
+	drawInfo.scene = (aiScene*)assimpImporter.ReadFile(theFileName, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs);
+
+	aiMesh* mesh = drawInfo.scene->mMeshes[0];
+
+
+
+
 	return true;
 }
 

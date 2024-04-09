@@ -57,6 +57,7 @@ private:
 
 	bool m_LoadTheFile(std::string theFileName, sModelDrawInfo& drawInfo);
 	bool m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo& drawInfo, unsigned int shaderID);
+	bool m_LoadTheBonedModel(std::string theFilenName, sModelDrawInfo& drawInfo, unsigned int shaderID);
 
 	std::map< std::string /*model name*/,
 		      sModelDrawInfo /* info needed to draw*/ >

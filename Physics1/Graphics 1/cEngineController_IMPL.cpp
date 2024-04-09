@@ -81,7 +81,7 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
 	std::vector<std::string> tempModelVec;
 	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
-	this->m_pThePhysics->generateAABBs(tempModelVec);
+	//this->m_pThePhysics->generateAABBs(tempModelVec);
 	
 	//this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
@@ -107,7 +107,7 @@ bool cEngineController_IMPL::Initialize(void)
 	//m_ThePlayer->setPlayerVerlet(theBlob);
 
 
-	if (true) // First person player setup
+	if (false) // First person player setup
 	{
 		m_pTheSceneManager->loadScene("rampTest");
 		sPhysicsProperties* playerObj = new sPhysicsProperties();
@@ -145,11 +145,11 @@ bool cEngineController_IMPL::Initialize(void)
 		addCustomObject(playerMesh, playerObj);
 	}
 
-	if (false) // Boned animation characer test
+	if (true) // Boned animation characer test
 	{
 		// Make boned character
 		cMesh* bonedBoy = new cMesh();
-		bonedBoy->meshName = "Adventurer Aland@Idle.FBX";
+		bonedBoy->meshName = "Padoru_v1-4.dae";
 		bonedBoy->friendlyName = "a";
 
 		//m_pTheGraphics->addNewMesh(bonedBoy);
