@@ -19,4 +19,4 @@ wall corner1.ply
 sphere.ply
 sphere2.ply
 plat.ply
-Padoru_v1-4.dae
+bass.dae

@@ -146,6 +146,7 @@ struct sModelDrawInfo
 	void calcExtents(void);
 
 	sNode* GenerateBoneHierarchy(aiNode* node, const int depth = 0);
+	void addMeshesFromNode(aiNode* asmpNde);
 
 
 	// Animation Stuff
@@ -160,6 +161,8 @@ struct sModelDrawInfo
 	//std::vector<sCharacterAnimation*> CharacterAnimations;
 
 	glm::mat4 GlobalInverseTransformation;
+
+	std::vector<unsigned int> testVec;
 
 
 	// 

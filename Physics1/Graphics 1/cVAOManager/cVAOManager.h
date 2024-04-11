@@ -11,7 +11,7 @@
 #include "sModelDrawInfo.h"
 #include "../cAnimationManager.h"
 
-struct aiNode;
+//struct aiNode;
 
 
 
@@ -52,8 +52,9 @@ public:
 		sModelDrawInfo& updatedDrawInfo,
 		unsigned int shaderProgramID);
 
-
 private:
+
+	
 
 	bool m_LoadTheFile(std::string theFileName, sModelDrawInfo& drawInfo);
 	bool m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo& drawInfo, unsigned int shaderID);
