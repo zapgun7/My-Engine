@@ -145,7 +145,7 @@ bool cEngineController_IMPL::Initialize(void)
 		addCustomObject(playerMesh, playerObj);
 	}
 
-	if (true) // Boned animation characer test
+	if (true) // Boned animation character test
 	{
 		// Make boned character
 		cMesh* bonedBoy = new cMesh();

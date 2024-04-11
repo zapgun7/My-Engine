@@ -146,7 +146,7 @@ struct sModelDrawInfo
 	void calcExtents(void);
 
 	sNode* GenerateBoneHierarchy(aiNode* node, const int depth = 0);
-	void addMeshesFromNode(aiNode* asmpNde);
+	void addMeshesFromNode(aiNode* asmpNde, sNode* node);
 
 
 	// Animation Stuff
@@ -163,6 +163,16 @@ struct sModelDrawInfo
 	glm::mat4 GlobalInverseTransformation;
 
 	std::vector<unsigned int> testVec;
+
+
+	// Stuff to Pass into the VAO (temporary)
+// 	sVertex_p4t4n4b4w4* pTempVertexArray = nullptr;
+// 	int currVert = 0;
+// 	GLint* pTempIndexArray = nullptr;
+// 	int currInd = 0;
+// 	/*std::vector<sBoneWeightInfo> boneWeights;*/
+// 	sBoneWeightInfo* pTempBoneWeightArray = nullptr;
+// 	int currBone = 0;
 
 
 	// 
