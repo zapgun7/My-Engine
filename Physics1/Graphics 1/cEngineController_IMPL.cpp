@@ -55,6 +55,22 @@ void cEngineController_IMPL::Run(void)
 		m_pThePhysics->Update(deltaTime);
 		shouldClose = m_pTheGraphics->Update(deltaTime);
 		m_pTheSound->Update(deltaTime);
+
+
+
+		// NAV MESH GENERATION TEST
+		if (m_pInputHandler->IsPressedEvent(GLFW_KEY_L))
+		{
+			std::vector<cMesh*> meshVec;
+			std::vector<cMesh*> trimmedMeshVec;
+			m_pTheGraphics->getActiveMeshes(&meshVec);
+			for (cMesh* currMesh : meshVec)
+			{
+				if (currMesh->meshName == "Flat_1x1_plane.ply")
+					trimmedMeshVec.push_back(currMesh);
+			}
+			testNav->Initialize(trimmedMeshVec);
+		}
 	}
 }
 
@@ -107,6 +123,13 @@ bool cEngineController_IMPL::Initialize(void)
 	//m_ThePlayer->setPlayerVerlet(theBlob);
 
 
+
+
+
+	// TESTING NAV MESH GENERATION
+	this->testNav = new cNavMesh();
+
+
 	if (false) // First person player setup
 	{
 		m_pTheSceneManager->loadScene("rampTest");
@@ -145,7 +168,7 @@ bool cEngineController_IMPL::Initialize(void)
 		addCustomObject(playerMesh, playerObj);
 	}
 
-	if (true) // Boned animation character test
+	if (false) // Boned animation character test
 	{
 		// Make boned character
 		cMesh* bonedBoy = new cMesh();

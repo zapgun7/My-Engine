@@ -87,7 +87,7 @@ void cAnimationManager::Update(double dt)
 {
 // 	if (!m_bIsRunning) return;
 // 	dt *= m_TimeScale;
-	//return;
+	return;
 	glm::mat4 tempMat = glm::mat4(1.0f);
 	m_BonedAnimations[0]->TimeSoFar += dt * m_BonedAnimations[0]->TicksPerSecond;
 	if (m_BonedAnimations[0]->TimeSoFar >= m_BonedAnimations[0]->Duration)

@@ -162,8 +162,6 @@ struct sModelDrawInfo
 
 	glm::mat4 GlobalInverseTransformation;
 
-	std::vector<unsigned int> testVec;
-
 
 	// Stuff to Pass into the VAO (temporary)
 // 	sVertex_p4t4n4b4w4* pTempVertexArray = nullptr;

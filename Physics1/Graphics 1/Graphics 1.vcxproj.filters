@@ -89,6 +89,9 @@
     <Filter Include="Engine Controller\Timers">
       <UniqueIdentifier>{4a685052-63c2-46a2-903a-1ad8eb7b1e1c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Entity\NavMesh">
+      <UniqueIdentifier>{e6703169-da32-438f-8f0a-cfff10964fc9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Basic Shader Manager\cShaderManager.cpp">
@@ -271,6 +274,9 @@
     <ClCompile Include="cTimer.cpp">
       <Filter>Engine Controller\Timers</Filter>
     </ClCompile>
+    <ClCompile Include="cNavMesh.cpp">
+      <Filter>Entity\NavMesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basic Shader Manager\cShaderManager.h">
@@ -452,6 +458,9 @@
     </ClInclude>
     <ClInclude Include="cTimer.h">
       <Filter>Engine Controller\Timers</Filter>
+    </ClInclude>
+    <ClInclude Include="cNavMesh.h">
+      <Filter>Entity\NavMesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

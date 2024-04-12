@@ -16,6 +16,9 @@
 #include "cDatabaseManager.h"
 #include "cTimer.h"
 
+
+#include "cNavMesh.h" // For testing here
+
 class cEngineController_IMPL
 {
 public:
@@ -75,4 +78,8 @@ private:
 
 	sPhysicsProperties* m_TheCamera; // Just gonna put this here for now
 	cPlayer* m_ThePlayer;
+
+
+
+	cNavMesh* testNav;
 };
