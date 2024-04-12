@@ -66,6 +66,7 @@ cNavMesh::sNavTri* cNavMesh::getClosestTri(glm::vec3 pos)
 		// Then call a get closest point on tri
 
 	}
+	return nullptr;
 }
 // Helper function for above
 bool cNavMesh::isAboveTri(sNavTri* tri, float yPos)
@@ -79,7 +80,7 @@ bool cNavMesh::isAboveTri(sNavTri* tri, float yPos)
 
 cNavMesh::sNavTri* cNavMesh::getClosestTri(sNavTri currTri, glm::vec3 pos)
 {
-
+	return nullptr;
 }
 
 

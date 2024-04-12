@@ -236,6 +236,11 @@ public:
 
 	void CalculateMatrices(/*sModelDrawInfo* model, */sBonedAnimation* animation, sNode* node, const glm::mat4& parentTransformationMatrix, double keyFrameTime);
 
+	void SetActiveAnimation(unsigned int newIDX)
+	{
+		m_BonedAnimations[animIDX]->TimeSoFar = 0;
+		animIDX = newIDX;
+	}
 
 private:
 	std::vector<sAnimInfo*> m_Animations; // The animations to update
@@ -251,6 +256,8 @@ private:
 
 	bool m_bIsRunning = true;
 	float m_TimeScale = 1.0f;
+
+	unsigned int animIDX = 0; // FOR THE ANIMATION PROJECT
 
 	cVAOManager* m_pVAOManager;
 

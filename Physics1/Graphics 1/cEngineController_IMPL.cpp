@@ -71,6 +71,36 @@ void cEngineController_IMPL::Run(void)
 			}
 			testNav->Initialize(trimmedMeshVec);
 		}
+
+		// Input For Animation Project
+		if (m_pInputHandler->IsPressedEvent(GLFW_KEY_1))
+		{
+			m_pAnimationsManager->SetActiveAnimation(0);
+		}
+		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_2))
+		{
+			m_pAnimationsManager->SetActiveAnimation(1);
+		}
+		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_3))
+		{
+			m_pAnimationsManager->SetActiveAnimation(2);
+		}
+		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_4))
+		{
+			m_pAnimationsManager->SetActiveAnimation(3);
+		}
+		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_5))
+		{
+			m_pAnimationsManager->SetActiveAnimation(4);
+		}
+		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_6))
+		{
+			m_pAnimationsManager->SetActiveAnimation(5);
+		}
+		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_7))
+		{
+			m_pAnimationsManager->SetActiveAnimation(6);
+		}
 	}
 }
 
@@ -172,11 +202,12 @@ bool cEngineController_IMPL::Initialize(void)
 	{
 		// Make boned character
 		cMesh* bonedBoy = new cMesh();
-		bonedBoy->meshName = "Padoru_v1-4.dae";
+		bonedBoy->meshName = "AnimatedHuman.fbx";
 		bonedBoy->friendlyName = "a";
 
 		//m_pTheGraphics->addNewMesh(bonedBoy);
 		sPhysicsProperties* bonedBoyPhys = new sPhysicsProperties();
+		//bonedBoyPhys->setRotationFromEuler(glm::vec3(-90, 0, 0));
 		bonedBoyPhys->pTheAssociatedMesh = bonedBoy;
 		addCustomObject(bonedBoy, bonedBoyPhys);
 	}

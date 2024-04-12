@@ -89,12 +89,14 @@ void cAnimationManager::Update(double dt)
 // 	dt *= m_TimeScale;
 	return;
 	glm::mat4 tempMat = glm::mat4(1.0f);
-	m_BonedAnimations[0]->TimeSoFar += dt * m_BonedAnimations[0]->TicksPerSecond;
-	if (m_BonedAnimations[0]->TimeSoFar >= m_BonedAnimations[0]->Duration)
-		m_BonedAnimations[0]->TimeSoFar = 0.0f;
-	CalculateMatrices(m_BonedAnimations[0], m_BonedAnimations[0]->rootNode, tempMat, m_BonedAnimations[0]->TimeSoFar);
+	sBonedAnimation* currAnimation = m_BonedAnimations[animIDX];
 
-	sModelDrawInfo* model = &(m_BonedAnimations[0]->theModel);
+	currAnimation->TimeSoFar += dt * currAnimation->TicksPerSecond;
+	if (currAnimation->TimeSoFar >= currAnimation->Duration)
+		currAnimation->TimeSoFar = 0.0f;
+	CalculateMatrices(currAnimation, currAnimation->rootNode, tempMat, currAnimation->TimeSoFar);
+
+	sModelDrawInfo* model = &(currAnimation->theModel);
 	//m_pVAOManager->UpdateVAOBuffers(model->meshName, *model, 0);
 	m_pVAOManager->UpdateBoneShit(model->meshName, *model, 0);
 

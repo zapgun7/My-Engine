@@ -320,7 +320,7 @@ bool cVAOManager::LoadModelIntoVAO(
 
     std::string fileAndPath = this->m_basePathWithoutSlash + "/" + fileName;
 
-	if (fileName == "Padoru_v1-4.dae")//"Adventurer Aland@Idle.FBX")
+	if (fileName == "AnimatedHuman.fbx")//"Adventurer Aland@Idle.FBX")
 	{
 		if (!this->m_LoadTheFileAnimModel(fileAndPath, drawInfo, shaderProgramID))
 		{
@@ -591,11 +591,14 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 	drawInfo.scene = (aiScene*)m_AssimpImporter.ReadFile(theFileName, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs);//aiProcess_GenNormals);
 
 	// Load animations (when I get my animation system to intermingle with bones n' stuff)
-	sBonedAnimation* characterAnimation = new sBonedAnimation();
-	if (drawInfo.scene->mNumAnimations > 0)
+	std::vector<sBonedAnimation*> characterAnimations;
+	//sBonedAnimation* characterAnimation = new sBonedAnimation();
+	//if (drawInfo.scene->mNumAnimations > 0)
+	for (unsigned int animIDX = 0; animIDX < drawInfo.scene->mNumAnimations; animIDX++)
 	{
 		//sBonedAnimation* characterAnimation = new sBonedAnimation();
-		aiAnimation* animation = drawInfo.scene->mAnimations[0];
+		sBonedAnimation* characterAnimation = new sBonedAnimation();
+		aiAnimation* animation = drawInfo.scene->mAnimations[animIDX];
 
 		characterAnimation->name = animation->mName.C_Str();
 		characterAnimation->Duration = animation->mDuration;
@@ -647,7 +650,7 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 			animInfo->sclSize = assimpNodeAnim->mNumScalingKeys;
 			characterAnimation->BoneAnimations.emplace_back(animInfo);
 		}
-		
+		characterAnimations.push_back(characterAnimation);
 	}
 
 
@@ -677,7 +680,7 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 
 	// Generate bones
 	drawInfo.RootNode = drawInfo.GenerateBoneHierarchy(drawInfo.scene->mRootNode);
-	characterAnimation->rootNode = drawInfo.RootNode;
+	
 	drawInfo.GlobalInverseTransformation = glm::inverse(drawInfo.RootNode->Transformation);
 
 // 	drawInfo.numberOfVertices = 0;
@@ -762,8 +765,14 @@ bool cVAOManager::m_LoadTheFileAnimModel(std::string theFileName, sModelDrawInfo
 // 			}
 // 		}
 	}
-	characterAnimation->theModel = drawInfo;
-	m_pAnimationManager->AddBonedAnimation(characterAnimation, characterAnimation->name);
+	for (unsigned int animIDX = 0; animIDX < characterAnimations.size(); animIDX++)
+	{
+// 		characterAnimation->theModel = drawInfo;
+// 		m_pAnimationManager->AddBonedAnimation(characterAnimation, characterAnimation->name);
+		characterAnimations[animIDX]->theModel = drawInfo;
+		characterAnimations[animIDX]->rootNode = drawInfo.RootNode;
+		m_pAnimationManager->AddBonedAnimation(characterAnimations[animIDX], characterAnimations[animIDX]->name);
+	}
 
 	// Now the regular model loading stuff
 
