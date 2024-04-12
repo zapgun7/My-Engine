@@ -390,7 +390,7 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 		float xOri = 0;
 	 		float yOri = 0;
 	 		float zOri = 0;
-	 		float scale = 0;
+	 		glm::vec3 scale = glm::vec3(0.0f);
 	 		glm::vec3 customColor(0.0f, 0.0f, 0.0f);
 			glm::vec2 uvOffsetSpeed = glm::vec2(0);
 			float uvXSpeed = 0;
@@ -427,7 +427,7 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 			
 
 				// GRAPHICS DATA
-				scale = selectedMesh->scale.x;
+				scale = selectedMesh->scale;
 	 			customColor = glm::vec3(selectedMesh->customColorRGBA);
 	 			useCustomColor = selectedMesh->bUseCustomColors;
 				transparencyAlpha = selectedMesh->transparencyAlpha;
@@ -476,7 +476,9 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 			
 			// Scale TODO separate into x y z
 	 		ImGui::SeparatorText("Scale");
-	 		ImGui::DragFloat("Scale", &scale, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+	 		ImGui::DragFloat("ScaleX", &scale.x, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+			ImGui::DragFloat("ScaleY", &scale.y, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
+			ImGui::DragFloat("ScaleZ", &scale.z, 0.005f, -FLT_MAX, +FLT_MAX, "%.3f");
 	 
 			// Custom Color
 	 		ImGui::SeparatorText("Custom Colors");
@@ -556,7 +558,7 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 			glm::vec3 newPos = glm::vec3(xPos, yPos, zPos);
 	 			glm::vec3 newOri = glm::vec3(xOri, yOri, zOri);
 				selectedMesh->transparencyAlpha = transparencyAlpha;
-				selectedMesh->scale = glm::vec3(scale);
+				selectedMesh->scale = scale;
 
 				selectedMesh->friendlyName = friendlyName;
 			

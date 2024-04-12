@@ -38,9 +38,8 @@ bool cNavMesh::CompareVerts(glm::vec3 v1, glm::vec3 v2)
 // builds the mesh from the transformations provided by the cMesh vector
 void cNavMesh::Initialize(std::vector<cMesh*> meshes) // These should all be Flat_1x1_plane.ply's
 {
-	m_vecFullNavMesh.reserve(meshes.size());
+	m_vecFullNavMesh.reserve(meshes.size() * 2);
 
-	glm::vec3* vertArray = new glm::vec3[4];
 	for (cMesh* currMesh : meshes)
 	{
 		sNavTri* newTri1 = new sNavTri();
@@ -54,16 +53,50 @@ void cNavMesh::Initialize(std::vector<cMesh*> meshes) // These should all be Fla
 	}
 }
 
+cNavMesh::sNavTri* cNavMesh::getClosestTri(glm::vec3 pos)
+{
+	for (sNavTri* currTri : m_vecFullNavMesh)
+	{
+		if (!isAboveTri(currTri, pos.y)) // Check if position is above at least one vertex
+			continue;
+
+		// Project pos onto tri-plane
+
+
+		// Then call a get closest point on tri
+
+	}
+}
+// Helper function for above
+bool cNavMesh::isAboveTri(sNavTri* tri, float yPos)
+{
+	for (int i = 0; i < 3; i++)
+	{
+		if (tri->vertices[i].y < yPos) return true;
+	}
+	return false;
+}
+
+cNavMesh::sNavTri* cNavMesh::getClosestTri(sNavTri currTri, glm::vec3 pos)
+{
+
+}
+
+
+
 void cNavMesh::MakeTransformedMesh(cMesh* mesh, sNavTri* newTri1, sNavTri* newTri2)
 {
 	glm::mat4 matModel(1.0f);
+	glm::mat4 matScale = glm::scale(glm::mat4(1.0f),
+									mesh->scale);
 	glm::mat4 matRotation = glm::mat4(mesh->get_qOrientation());
 	glm::mat4 matTranslate = glm::translate(glm::mat4(1.0f),
-		glm::vec3(mesh->drawPosition.x,
-			mesh->drawPosition.y,
-			mesh->drawPosition.z));
+											glm::vec3(mesh->drawPosition.x,
+											mesh->drawPosition.y,
+											mesh->drawPosition.z));
 	matModel *= matTranslate;
 	matModel *= matRotation;// matModel is what we convert out vertices with
+	matModel *= matScale;
 
 	// Generate the transformed vertices
 	for (unsigned int i = 0; i < 3; i++) // Tri #1
