@@ -2,3 +2,6 @@ testsave
 rampTest
 testNav
 testNav2
+testNav3
+testNav4
+AIProj4

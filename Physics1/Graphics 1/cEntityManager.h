@@ -3,6 +3,8 @@
 #include "iEntity.h"
 #include "cEntityBuilder.h"
 
+#include "cNavMesh.h"
+
 #include <vector>
 
 class cEntityManager
@@ -17,7 +19,7 @@ public:
 
 
 	void SetPlayer(sPhysicsProperties* playerObj);
-
+	void SetNavMesh(cNavMesh* mesh);
 
 private:
 	std::vector<iEntity*> m_vecEntities;
@@ -25,4 +27,5 @@ private:
 	cEntityBuilder* m_pEntityBuilder;
 
 	sPhysicsProperties* m_pPlayerObj;
+	cNavMesh* m_pTheNavMesh;
 };

@@ -5,11 +5,14 @@
 #include "iEntity.h"
 
 
+class cNavMesh;
+
 enum eEntityType
 {
 	AIPROJ,
 	AIPROJ2,
-	AIPROJ3
+	AIPROJ3,
+	AIPROJ4
 };
 
 
@@ -21,7 +24,7 @@ public:
 	~cEntityBuilder();
 
 
-	iEntity* MakeEntity(eEntityType type, glm::vec3& pos);
+	iEntity* MakeEntity(eEntityType type, glm::vec3& pos, sPhysicsProperties* plyrObj, cNavMesh* navMesh);
 
 
 

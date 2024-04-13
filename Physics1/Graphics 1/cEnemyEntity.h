@@ -3,6 +3,8 @@
 #include "Other Graphics Stuff/OpenGLCommon.h"
 #include <glm/vec3.hpp>
 
+#include "cNavMesh.h" // Where can I go??
+
 #include "iEntity.h"
 
 struct sPhysicsProperties;
@@ -20,7 +22,10 @@ enum eAIType
 	WANDER1,
 	WANDER2,
 	WANDER3,
-	FLOCK
+	FLOCK,
+	NAVWANDER,
+	NAVWATCH,
+	NAVCHASE
 };
 
 
@@ -37,12 +42,26 @@ public:
 	virtual glm::quat getOrientation(void);
 
 
+	void setNavMesh(cNavMesh* theNavMesh);
 	void setTargetObject(sPhysicsProperties* goalObj);
 	void setFlockTarget(glm::vec3* target);
 
 private:
 	sPhysicsProperties* m_pEntityObject = nullptr;
 	sPhysicsProperties* m_pPlayerEntity = nullptr; // Do it this way, or pass target object every update
+
+	// NavMesh
+	cNavMesh* m_pNavMesh = nullptr;
+	cNavMesh::sNavTri* m_pPrevNavTri = nullptr;
+	cNavMesh::sNavTri* m_pCurrNavTri = nullptr;
+	cNavMesh::sNavTri* m_pTargetNavTri = nullptr;
+
+
+	// Basic nav waypoints
+	unsigned int currGoalIDX;
+	std::vector<glm::vec3> waypoints;
+	
+
 
 	// Flocking Vars
 	glm::vec3* flockTarget;

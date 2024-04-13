@@ -1,7 +1,7 @@
 #include "cEntityBuilder.h"
 #include "cEnemyEntity.h"
 #include "Other Graphics Stuff/cMesh.h"
-
+#include "cNavMesh.h"
 
 #include "Physics/sPhysicsProperties.h"
 
@@ -47,7 +47,7 @@ glm::vec4 GetRandomColor(void)
 	return glm::vec4(retVec, 1.0f);
 }
 
-iEntity* cEntityBuilder::MakeEntity(eEntityType type, glm::vec3& pos)
+iEntity* cEntityBuilder::MakeEntity(eEntityType type, glm::vec3& pos, sPhysicsProperties* plyrObj, cNavMesh* navMesh)
 {
 	iEntity* newEntity = nullptr;
 
@@ -136,6 +136,11 @@ iEntity* cEntityBuilder::MakeEntity(eEntityType type, glm::vec3& pos)
 	case AIPROJ3:
 		newEntity = new cEnemyEntity(newEntPhys, FLOCK);
 		((cEnemyEntity*)newEntity)->setFlockTarget(flockTarget);
+		break;
+	case AIPROJ4:
+		newEntity = new cEnemyEntity(newEntPhys, NAVWANDER);
+		((cEnemyEntity*)newEntity)->setTargetObject(plyrObj);
+		((cEnemyEntity*)newEntity)->setNavMesh(navMesh);
 	}
 
 

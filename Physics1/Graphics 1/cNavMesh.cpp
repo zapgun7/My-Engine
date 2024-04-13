@@ -1,5 +1,6 @@
 #include "cNavMesh.h"
 
+#include "Physics/cPhysics.h" // For static functions
 
 cNavMesh::cNavMesh()
 {
@@ -20,7 +21,8 @@ cNavMesh::cNavMesh()
 
 
 	// Max dist for tris to connect
-	m_distTolerance = 3.0f;
+	m_distTolerance = 0.5f;
+	m_LocalSearchDepth = 2; // Searches max 2 triangles away
 
 	m_NextID = 0;
 }
@@ -51,39 +53,73 @@ void cNavMesh::Initialize(std::vector<cMesh*> meshes) // These should all be Fla
 		MakeConnections(newTri2);
 		m_vecFullNavMesh.push_back(newTri2);
 	}
+	printf("Done generating NavMesh\n");
 }
 
 cNavMesh::sNavTri* cNavMesh::getClosestTri(glm::vec3 pos)
 {
+	float nearestTriDist = FLT_MAX;
+	sNavTri* nearestTri = nullptr;
+
 	for (sNavTri* currTri : m_vecFullNavMesh)
 	{
-		if (!isAboveTri(currTri, pos.y)) // Check if position is above at least one vertex
-			continue;
+		// Start by making sure the position is on the correct (above) side of the plane, only want to check tris below the pos
+		float planeSide = glm::dot(pos, currTri->normal) + currTri->pd; // Will be positive if on side normal is pointing to
 
-		// Project pos onto tri-plane
+		// Skip tri if under 
+		if (planeSide < 0) continue;
+		
+		// Get closest point on triangle, and get distance to it
+		glm::vec3 closestPoint = cPhysics::m_ClosestPtPointTriangle(pos, currTri->vertices[0], currTri->vertices[1], currTri->vertices[2]);
 
+		float currTriDist = glm::distance(closestPoint, pos);
 
-		// Then call a get closest point on tri
-
+		if (currTriDist < nearestTriDist)
+		{
+			nearestTriDist = currTriDist;
+			nearestTri = currTri;
+		}
 	}
-	return nullptr;
+
+
+	return nearestTri;
 }
-// Helper function for above
-bool cNavMesh::isAboveTri(sNavTri* tri, float yPos)
+
+// Grabs closest tri with reference of a tri (usually the one the entity was last confirmed on)
+// Way quicker than above, as it only searches a certain depth from the provided tri
+cNavMesh::sNavTri* cNavMesh::getClosestTri(sNavTri* prevTri, glm::vec3 pos)
 {
-	for (int i = 0; i < 3; i++)
+	// Start by adding base "currTri" as a statistic
+	sNavTri* nearestTri = prevTri;
+	float nearestTriDist = glm::distance(pos, cPhysics::m_ClosestPtPointTriangle(pos, prevTri->vertices[0], prevTri->vertices[1], prevTri->vertices[2]));
+
+	// TODO project pos onto combined normals of two neighboring tris and then call a dist to each from that
+	for (sNavTri* currTri : prevTri->adjacentTris)
 	{
-		if (tri->vertices[i].y < yPos) return true;
+		float planeSide = glm::dot(pos, currTri->normal) + currTri->pd; // Will be positive if on side normal is pointing to
+
+		// Skip tri if under 
+		if (planeSide < 0) continue;
+
+		// Get closest point on triangle, and get distance to it
+		glm::vec3 closestPoint = cPhysics::m_ClosestPtPointTriangle(pos, currTri->vertices[0], currTri->vertices[1], currTri->vertices[2]);
+		float tridist = glm::distance(closestPoint, pos);
+		if (tridist < nearestTriDist)
+		{
+			nearestTriDist = tridist;
+			nearestTri = currTri;
+		}
 	}
-	return false;
+
+	return nearestTri;
 }
 
-cNavMesh::sNavTri* cNavMesh::getClosestTri(sNavTri currTri, glm::vec3 pos)
+
+
+cNavMesh::sNavTri* cNavMesh::getClosestTriToTri(sNavTri* currTri, sNavTri* targetTri)
 {
 	return nullptr;
 }
-
-
 
 void cNavMesh::MakeTransformedMesh(cMesh* mesh, sNavTri* newTri1, sNavTri* newTri2)
 {
@@ -125,8 +161,13 @@ void cNavMesh::MakeTransformedMesh(cMesh* mesh, sNavTri* newTri1, sNavTri* newTr
 	newTri2->normal = glm::normalize(glm::cross(ab, ac));
 
 	// Calculate centres for both
-	newTri1->centreTri = (newTri1->vertices[0] + newTri1->vertices[1] + newTri1->vertices[2]) / 2.0f;
-	newTri2->centreTri = (newTri2->vertices[0] + newTri2->vertices[1] + newTri2->vertices[2]) / 2.0f;
+	newTri1->centreTri = (newTri1->vertices[0] + newTri1->vertices[1] + newTri1->vertices[2]) / 3.0f;
+	newTri2->centreTri = (newTri2->vertices[0] + newTri2->vertices[1] + newTri2->vertices[2]) / 3.0f;
+
+
+	// Calculate pd's for both
+	newTri1->pd = glm::dot(newTri1->normal, newTri1->vertices[0]);
+	newTri2->pd = glm::dot(newTri2->normal, newTri2->vertices[0]);
 
 	return;
 }

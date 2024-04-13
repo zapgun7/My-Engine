@@ -26,7 +26,8 @@ cEnemyEntity::cEnemyEntity(sPhysicsProperties* entityObj, eAIType type)
 
 	m_eType = type;
 
-	currGoalDir = GetRandomDirection();
+	//currGoalDir = GetRandomDirection();
+
 }
 
 cEnemyEntity::~cEnemyEntity()
@@ -47,6 +48,260 @@ cEnemyEntity::~cEnemyEntity()
 // FLOCK
 void cEnemyEntity::Update(double dt)
 {
+	const float WATCHDIST = 50.0f;
+	const float CHASEDIST = 30.0f;
+
+
+// 	float playerDst = glm::distance(m_pEntityObject->position, m_pPlayerEntity->position);
+// 
+// 	if (playerDst <= CHASEDIST)
+// 	{
+// 		// Turn and chase player
+// 		glm::vec3 vecToGoal = m_pPlayerEntity->position - m_pEntityObject->position;
+// 		vecToGoal.y = 0;
+// 		glm::vec3 crossResult = glm::cross(getLookVector(), glm::normalize(vecToGoal));
+// 		float radDiff = asin(glm::length(crossResult));
+// 
+// 		if (crossResult.y > 0) // Turn left
+// 		{
+// 			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
+// 			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+// 		}
+// 		else // Turn right
+// 		{
+// 			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
+// 			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+// 		}
+// 		if (radDiff < 0.3f)
+// 		{
+// 			m_pEntityObject->position += getLookVector() * MOVESPEED * static_cast<float>(dt);
+// 		}
+// 	}
+// 	else if (playerDst <= WATCHDIST)
+// 	{
+// 		// Turn and watch player
+// 		glm::vec3 vecToGoal = m_pPlayerEntity->position - m_pEntityObject->position;
+// 		vecToGoal.y = 0;
+// 		glm::vec3 crossResult = glm::cross(getLookVector(), glm::normalize(vecToGoal));
+// 		float radDiff = asin(glm::length(crossResult));
+// 
+// 		if (crossResult.y > 0) // Turn left
+// 		{
+// 			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
+// 			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+// 		}
+// 		else // Turn right
+// 		{
+// 			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
+// 			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+// 		}
+// 	}
+// 	else
+// 	{
+// 		// Continue on with waypoints
+// 		glm::vec3 vecToGoal = waypoints[currGoalIDX] - m_pEntityObject->position;
+// 		vecToGoal.y = 0;
+// 		glm::vec3 crossResult = glm::cross(getLookVector(), glm::normalize(vecToGoal));
+// 		float radDiff = asin(glm::length(crossResult));
+// 
+// 		if (crossResult.y > 0) // Turn left
+// 		{
+// 			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
+// 			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+// 		}
+// 		else // Turn right
+// 		{
+// 			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
+// 			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+// 		}
+// 		if (radDiff < 0.3f)
+// 		{
+// 			m_pEntityObject->position += getLookVector() * MOVESPEED * static_cast<float>(dt);
+// 		}
+// 
+// 		if (glm::distance(waypoints[currGoalIDX], m_pEntityObject->position) < 5.0f)
+// 		{
+// 			currGoalIDX = (currGoalIDX + 1) % 4;
+// 		}
+// 	}
+
+	// Start by getting the current triangle they're on
+	cNavMesh::sNavTri* currtri = m_pNavMesh->getClosestTri(m_pCurrNavTri, m_pEntityObject->position);
+	if (m_pCurrNavTri->id != currtri->id)
+	{
+		m_pPrevNavTri = m_pCurrNavTri;
+		m_pCurrNavTri = currtri;
+		//m_pCurrNavTri = currtri;
+
+		// Find new goal
+		if ((m_eType == NAVWANDER) || (m_eType == NAVWATCH))
+		{
+			for (unsigned int neighborIDX = 0; neighborIDX < m_pCurrNavTri->adjacentTris.size(); neighborIDX++)
+			{
+				if ((m_pCurrNavTri->adjacentTris[neighborIDX]->id != m_pPrevNavTri->id)  // Is new tri (not backtracking)
+					&& (m_pCurrNavTri->adjacentTris[neighborIDX]->adjacentTris.size() > 1)) // Not a dead end
+				{
+					
+					m_pTargetNavTri = m_pCurrNavTri->adjacentTris[neighborIDX];
+					break;
+				}
+			}
+		}
+		else  // Find next closest triangle to player triangle
+		{
+
+		}
+		
+	}
+
+
+
+	// Now where do we want to move?
+	// For now, just go to a new triangle, unless following or watching the player
+
+	// Get player distance
+	float plyrDist = glm::distance(m_pEntityObject->position, m_pPlayerEntity->position);
+	
+	static bool isNewChase = false;
+
+	if (plyrDist <= CHASEDIST)
+	{
+		if (!isNewChase)
+		{
+			isNewChase = true;
+			// Get closest triangle to the player
+		}
+		m_eType = NAVCHASE;
+	}
+	else if (plyrDist <= WATCHDIST)
+	{
+		isNewChase = false;
+		m_eType = NAVWATCH;
+	}
+	else
+	{
+		isNewChase = false;
+		m_eType = NAVWANDER;
+	}
+
+	
+
+	if (m_eType == NAVWATCH) // Turn to look at player
+	{
+		glm::vec3 vecToGoal = m_pPlayerEntity->position - m_pEntityObject->position;
+		glm::vec3 crossResult = glm::cross(getLookVector(), glm::normalize(vecToGoal));
+		if (crossResult.y > 0) // Turn left
+		{
+			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
+			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+		}
+		else // Turn right
+		{
+			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
+			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+		}
+	}
+	else // Navigate to the next triangle
+	{
+		glm::vec3 deltaMove(0.0f);
+		glm::vec3 vecToGoal = glm::vec3(m_pTargetNavTri->centreTri.x, m_pTargetNavTri->centreTri.y + 10.0f, m_pTargetNavTri->centreTri.z) - m_pEntityObject->position;
+		//vecToGoal.y = 0;
+		glm::vec3 crossResult = glm::cross(getLookVector(), glm::normalize(glm::vec3(vecToGoal.x, 0.0f, vecToGoal.z)));
+		float radDiff = asin(glm::length(crossResult));
+
+		if (crossResult.y > 0) // Turn left
+		{
+			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
+			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+		}
+		else // Turn right
+		{
+			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
+			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+		}
+		if (radDiff < 0.1f)
+		{
+			//m_pEntityObject->velocity += getLookVector() * MOVESPEED * static_cast<float>(dt); // CAREFUL, CAN WALK OFF TRI AREA
+			//deltaMove += getLookVector() * MOVESPEED * static_cast<float>(dt);
+			deltaMove = glm::normalize(vecToGoal) * MOVESPEED * static_cast<float>(dt);
+			//velToAdd += getLookVector() * MOVESPEED * static_cast<float>(dt);
+		}
+
+		// Project velocity to plane defined by triangle it's currently on
+// 		glm::vec3 projSubVec = glm::dot(deltaMove, m_pCurrNavTri->normal) * m_pCurrNavTri->normal;
+// 		deltaMove -= projSubVec;
+		m_pEntityObject->position += deltaMove;
+	}
+
+
+// 	if ((glm::length(m_pEntityObject->velocity) != 0) && (glm::length(m_pEntityObject->velocity) > VELOCITYLIMIT))
+// 	{
+// 		glm::vec3 normVel = glm::normalize(m_pEntityObject->velocity);
+// 		m_pEntityObject->velocity = normVel * VELOCITYLIMIT;
+// 	}
+
+	return;
+	if (plyrDist <= WATCHDIST) 
+	{
+		//Data for both conditions below
+		glm::vec3 vecToGoal = /*m_pPlayerEntity->position*/m_pTargetNavTri->centreTri - m_pEntityObject->position;
+		glm::vec3 crossResult = glm::cross(getLookVector(), glm::normalize(vecToGoal));
+		float radDiff = asin(glm::length(crossResult));
+
+		if (plyrDist <= CHASEDIST) // Chase player
+		{
+			m_eType = NAVCHASE;
+			if (crossResult.y > 0) // Turn left
+			{
+				glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
+				m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+			}
+			else // Turn right
+			{
+				glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
+				m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+			}
+			if ((radDiff < 0.3f)
+				&& (glm::distance(m_pEntityObject->position, m_pPlayerEntity->position) > (glm::distance(m_pEntityObject->position + getLookVector(), m_pPlayerEntity->position))))
+			{
+				m_pEntityObject->velocity += getLookVector() * MOVESPEED * static_cast<float>(dt); // CAREFUL, CAN WALK OFF TRI AREA
+				//velToAdd += getLookVector() * MOVESPEED * static_cast<float>(dt);
+			}
+
+			// Project velocity to plane defined by triangle it's currently on
+			glm::vec3 projSubVec = glm::dot(m_pEntityObject->velocity, m_pCurrNavTri->normal) * m_pCurrNavTri->normal;
+			m_pEntityObject->velocity -= projSubVec;
+
+		}
+		else // Watch player
+		{
+			m_eType = NAVWATCH;
+			if (crossResult.y > 0) // Turn left
+			{
+				glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
+				m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+			}
+			else // Turn right
+			{
+				glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
+				m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+			}
+		}
+	}
+	else // Wander to new tris
+	{
+
+	}
+
+
+
+	// Update position based on the current triangle
+
+
+	return;
+	// Everything below are just unused behaviors
+
+
 	if ((m_eType == WANDER1) || (m_eType == WANDER2) || (m_eType == WANDER3))
 	{
 		if (remainingDist <= 0)
@@ -292,6 +547,17 @@ glm::vec3 cEnemyEntity::getPosition(void)
 glm::quat cEnemyEntity::getOrientation(void)
 {
 	return m_pEntityObject->get_qOrientation();
+}
+
+void cEnemyEntity::setNavMesh(cNavMesh* theNavMesh)
+{
+	m_pNavMesh = theNavMesh;
+	m_pCurrNavTri = m_pNavMesh->getClosestTri(m_pEntityObject->position); // Initialize triangle they "spawn" on
+	m_pPrevNavTri = m_pCurrNavTri;
+
+	// Set target tri to start
+	m_pTargetNavTri = m_pCurrNavTri->adjacentTris[0];
+	return;
 }
 
 void cEnemyEntity::setTargetObject(sPhysicsProperties* goalObj)

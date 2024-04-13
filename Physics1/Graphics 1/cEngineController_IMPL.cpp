@@ -49,7 +49,7 @@ void cEngineController_IMPL::Run(void)
 
 		m_pAnimationsManager->Update(deltaTime);
 
-		//m_pEntityManager->Update(deltaTime);
+		m_pEntityManager->Update(deltaTime);
 
 		m_pTheEditor->Update(deltaTime); //m_pTheEditor->Update(uncappedDT); 
 		m_pThePhysics->Update(deltaTime);
@@ -59,7 +59,7 @@ void cEngineController_IMPL::Run(void)
 
 
 		// NAV MESH GENERATION TEST
-		if (m_pInputHandler->IsPressedEvent(GLFW_KEY_L))
+		if (false)//(m_pInputHandler->IsPressedEvent(GLFW_KEY_L))
 		{
 			std::vector<cMesh*> meshVec;
 			std::vector<cMesh*> trimmedMeshVec;
@@ -70,37 +70,39 @@ void cEngineController_IMPL::Run(void)
 					trimmedMeshVec.push_back(currMesh);
 			}
 			testNav->Initialize(trimmedMeshVec);
+
+			testNav->getClosestTri(glm::vec3(0, -2, 0));
 		}
 
 		// Input For Animation Project
-		if (m_pInputHandler->IsPressedEvent(GLFW_KEY_1))
-		{
-			m_pAnimationsManager->SetActiveAnimation(0);
-		}
-		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_2))
-		{
-			m_pAnimationsManager->SetActiveAnimation(1);
-		}
-		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_3))
-		{
-			m_pAnimationsManager->SetActiveAnimation(2);
-		}
-		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_4))
-		{
-			m_pAnimationsManager->SetActiveAnimation(3);
-		}
-		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_5))
-		{
-			m_pAnimationsManager->SetActiveAnimation(4);
-		}
-		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_6))
-		{
-			m_pAnimationsManager->SetActiveAnimation(5);
-		}
-		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_7))
-		{
-			m_pAnimationsManager->SetActiveAnimation(6);
-		}
+// 		if (m_pInputHandler->IsPressedEvent(GLFW_KEY_1))
+// 		{
+// 			m_pAnimationsManager->SetActiveAnimation(0);
+// 		}
+// 		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_2))
+// 		{
+// 			m_pAnimationsManager->SetActiveAnimation(1);
+// 		}
+// 		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_3))
+// 		{
+// 			m_pAnimationsManager->SetActiveAnimation(2);
+// 		}
+// 		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_4))
+// 		{
+// 			m_pAnimationsManager->SetActiveAnimation(3);
+// 		}
+// 		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_5))
+// 		{
+// 			m_pAnimationsManager->SetActiveAnimation(4);
+// 		}
+// 		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_6))
+// 		{
+// 			m_pAnimationsManager->SetActiveAnimation(5);
+// 		}
+// 		else if (m_pInputHandler->IsPressedEvent(GLFW_KEY_7))
+// 		{
+// 			m_pAnimationsManager->SetActiveAnimation(6);
+// 		}
 	}
 }
 
@@ -120,14 +122,11 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pTheSceneManager = new cSceneManagement();
 	this->m_pTheSceneManager->Initialize();
 
-// 	this->m_pEntityManager = new cEntityManager();
-// 	this->m_pEntityManager->Initialize();
-
 
 	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
 	std::vector<std::string> tempModelVec;
 	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
-	//this->m_pThePhysics->generateAABBs(tempModelVec);
+	this->m_pThePhysics->generateAABBs(tempModelVec);
 	
 	//this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
@@ -162,13 +161,14 @@ bool cEngineController_IMPL::Initialize(void)
 
 	if (false) // First person player setup
 	{
-		m_pTheSceneManager->loadScene("rampTest");
+		m_pTheSceneManager->loadScene("testNav4");
+		
 		sPhysicsProperties* playerObj = new sPhysicsProperties();
 		playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 0.5f));
 		playerObj->shapeType = sPhysicsProperties::CAPSULE;
 		playerObj->friendlyName = "plyr";
 
-		playerObj->position = glm::vec3(0, 15, 0);
+		playerObj->position = glm::vec3(20, 50, 20);
 		playerObj->restitution = 0.0f;
 		playerObj->inverse_mass = 1.0f;
 		// Add PlayerInfo Struct
@@ -197,6 +197,31 @@ bool cEngineController_IMPL::Initialize(void)
 		//m_pThePhysics->AddShape(playerObj);
 		addCustomObject(playerMesh, playerObj);
 	}
+
+	// Generate Enemies
+	if (true) // EnemyEntity
+	{
+		m_pTheSceneManager->loadScene("testNav4");
+		m_pThePhysics->Update(0.0f);
+
+
+		std::vector<cMesh*> meshVec;
+		std::vector<cMesh*> trimmedMeshVec;
+		m_pTheGraphics->getActiveMeshes(&meshVec);
+		for (cMesh* currMesh : meshVec)
+		{
+			if (currMesh->meshName == "Flat_1x1_plane.ply")
+				trimmedMeshVec.push_back(currMesh);
+		}
+		testNav->Initialize(trimmedMeshVec);
+
+		this->m_pEntityManager = new cEntityManager();
+		this->m_pEntityManager->SetPlayer(m_TheCamera);
+		this->m_pEntityManager->SetNavMesh(testNav);
+		this->m_pEntityManager->Initialize();
+	}
+
+
 
 	if (false) // Boned animation character test
 	{

@@ -40,14 +40,17 @@ void cEntityManager::Initialize(void)
 // 	aiPoss.push_back(glm::vec3(0, 0, 50));
 // 	aiPoss.push_back(glm::vec3(-50, 0, 0));
 
-	for (unsigned int i = 0; i < 100; i++)
-	{
-		//m_vecEntities.push_back(m_pEntityBuilder->MakeEntity(AIPROJ2, aiPoss[i]));
-		glm::vec3 newPos = getRandomVec3(0.0f, 100.0f);
-		m_vecEntities.push_back(m_pEntityBuilder->MakeEntity(AIPROJ3, newPos));
+// 	for (unsigned int i = 0; i < 100; i++)
+// 	{
+// 		//m_vecEntities.push_back(m_pEntityBuilder->MakeEntity(AIPROJ2, aiPoss[i]));
+// 		glm::vec3 newPos = getRandomVec3(0.0f, 100.0f);
+// 		m_vecEntities.push_back(m_pEntityBuilder->MakeEntity(AIPROJ3, newPos));
+// 
+// 		//(static_cast<cEnemyEntity*>(m_vecEntities[i]))->setTargetObject(m_pPlayerObj);
+// 	}
 
-		//(static_cast<cEnemyEntity*>(m_vecEntities[i]))->setTargetObject(m_pPlayerObj);
-	}
+	glm::vec3 newPos = glm::vec3(0, 5, 0);
+	m_vecEntities.push_back(m_pEntityBuilder->MakeEntity(AIPROJ4, newPos, m_pPlayerObj, m_pTheNavMesh));
 }
 
 void cEntityManager::Update(double dt)
@@ -62,6 +65,12 @@ void cEntityManager::Update(double dt)
 void cEntityManager::SetPlayer(sPhysicsProperties* playerObj)
 {
 	m_pPlayerObj = playerObj;
+	return;
+}
+
+void cEntityManager::SetNavMesh(cNavMesh* mesh)
+{
+	m_pTheNavMesh = mesh;
 	return;
 }
 

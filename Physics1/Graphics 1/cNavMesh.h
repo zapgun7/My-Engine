@@ -19,6 +19,7 @@ public:
 		glm::vec3 centreTri;
 		glm::vec3* vertices;
 		glm::vec3 normal;
+		float pd;
 		std::vector<sNavTri*> adjacentTris;
 
 		unsigned int id;
@@ -28,10 +29,10 @@ public:
 
 
 	sNavTri* getClosestTri(glm::vec3 pos); // Costly, scans through all tris to find the on the entity's closest to
-	bool isAboveTri(sNavTri* tri, float yPos);
 
-	sNavTri* getClosestTri(sNavTri currTri, glm::vec3 pos); // Checks if pos is on the provided tri, then checks adjacent (out a certain depth)
+	sNavTri* getClosestTri(sNavTri* currTri, glm::vec3 pos); // Checks if pos is on the provided tri, then checks adjacent (out a certain depth)
 
+	sNavTri* getClosestTriToTri(sNavTri* currTri, sNavTri* targetTri);
 
 
 
@@ -57,5 +58,6 @@ private:
 	std::vector<unsigned int> m_vecIndices;
 
 	float m_distTolerance;
+	unsigned int m_LocalSearchDepth;
 	unsigned int m_NextID;
 };
