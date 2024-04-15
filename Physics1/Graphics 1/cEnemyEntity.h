@@ -58,6 +58,15 @@ private:
 
 	cNavMesh::sNavTri* m_pPlayerTri = nullptr;
 
+	cNavMesh::sNavTri* chooseNewDir(void);
+	int distInMemory(unsigned int triID);
+	void AddToMemory(int newID);
+
+
+	const unsigned int MEMORY_SIZE = 20;
+	int* m_IntersectionMemory; // paths it tool where there were >2 choices
+	unsigned int nextMemIDX;
+
 
 	// Basic nav waypoints
 	unsigned int currGoalIDX;
@@ -82,8 +91,8 @@ private:
 	glm::vec3 getLookVector(void); // Look vector in XZ
 
 
-	const float MOVESPEED = 20.0f;
-	const float ROTATIONSPEED = 100.0f;
+	const float MOVESPEED = 40.0f;
+	const float ROTATIONSPEED = 200.0f;
 	const float VELOCITYLIMIT = 15.0f;
 	const float SPEEDREDUCTION = 0.99f;
 

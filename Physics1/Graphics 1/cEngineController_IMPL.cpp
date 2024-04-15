@@ -60,24 +60,6 @@ void cEngineController_IMPL::Run(void)
 		shouldClose = m_pTheGraphics->Update(deltaTime);
 		m_pTheSound->Update(deltaTime);
 
-
-
-		// NAV MESH GENERATION TEST
-		if (false)//(m_pInputHandler->IsPressedEvent(GLFW_KEY_L))
-		{
-			std::vector<cMesh*> meshVec;
-			std::vector<cMesh*> trimmedMeshVec;
-			m_pTheGraphics->getActiveMeshes(&meshVec);
-			for (cMesh* currMesh : meshVec)
-			{
-				if (currMesh->meshName == "Flat_1x1_plane.ply")
-					trimmedMeshVec.push_back(currMesh);
-			}
-			testNav->Initialize(trimmedMeshVec);
-
-			testNav->getClosestTri(glm::vec3(0, -2, 0));
-		}
-
 		// Input For Animation Project
 // 		if (m_pInputHandler->IsPressedEvent(GLFW_KEY_1))
 // 		{
@@ -163,7 +145,7 @@ bool cEngineController_IMPL::Initialize(void)
 	this->testNav = new cNavMesh();
 
 	// First person player setup
-	if (false) 
+	if (true) 
 	{
 		m_pTheSceneManager->loadScene("navPathsPhys");//("testNav4");
 		
@@ -203,7 +185,7 @@ bool cEngineController_IMPL::Initialize(void)
 	}
 
 	// Generate Enemies
-	if (false) // EnemyEntity
+	if (true) // EnemyEntity
 	{
 		//m_pTheSceneManager->loadScene("complexNav");
 		m_pThePhysics->Update(0.0f);
