@@ -21,6 +21,7 @@ public:
 
 	void SetPlayer(sPhysicsProperties* playerObj);
 	void SetNavMesh(cNavMesh* mesh);
+	void SetPlayerNavTri(void* playerTri);
 
 private:
 	std::vector<iEntity*> m_vecEntities;

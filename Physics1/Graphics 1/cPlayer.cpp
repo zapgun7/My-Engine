@@ -57,6 +57,13 @@ void cPlayer::setPlayerVerlet(cSoftBodyVerlet* theObj)
 	m_pPlayerVerlet = theObj;
 }
 
+void cPlayer::setPlayerNavMesh(cNavMesh* navmesh)
+{
+	m_pNavMesh = navmesh;
+	m_pCurrTri = m_pNavMesh->getClosestTri(m_pPlayerObject->position);
+	return;
+}
+
 void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cameraRotation)
 {
 
@@ -193,6 +200,14 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 // 			std::cout << "Successfully wiped stored speed record" << std::endl;
 // 		}
 
+
+		static sTimer* triUpdateTimer = cTimer::MakeNewTimer(0.1f, sTimer::eTimerType::REPEAT);
+
+		if (triUpdateTimer->CheckInterval())
+		{
+			m_pCurrTri = m_pNavMesh->getClosestTri(m_pCurrTri, m_pPlayerObject->position);
+			printf("%d\n", m_pCurrTri->id);
+		}
 
 
 		// Setup Area for Lua sound calls
@@ -433,16 +448,16 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 			m_pPlayerObject->velocity += m_pPlayerObject->playerInfo->groundNorm * m_PLAYERJUMPFORCE;// glm::vec3(0, m_PLAYERJUMPFORCE, 0);
 		}
 
-		static sTimer* testTimer = cTimer::MakeNewTimer(0.5f, sTimer::REPEAT);
-		static int airborne = 0;
-		if (!m_pPlayerObject->playerInfo->isGrounded)
-			airborne++;
-		if (testTimer->CheckInterval())
-		{
-			float pspd = glm::length(m_pPlayerObject->velocity);
-			printf("//////////////////////////////\nVelocity: %.3f\nisAirborne: %d\n", pspd, airborne);
-			airborne = 0;
-		}
+// 		static sTimer* testTimer = cTimer::MakeNewTimer(0.5f, sTimer::REPEAT);
+// 		static int airborne = 0;
+// 		if (!m_pPlayerObject->playerInfo->isGrounded)
+// 			airborne++;
+// 		if (testTimer->CheckInterval())
+// 		{
+// 			float pspd = glm::length(m_pPlayerObject->velocity);
+// 			printf("//////////////////////////////\nVelocity: %.3f\nisAirborne: %d\n", pspd, airborne);
+// 			airborne = 0;
+// 		}
 
 		// KICK HANDLING
 
@@ -559,6 +574,11 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 		
 
 	return;
+}
+
+void* cPlayer::GetCurrTri(void)
+{
+	return (void*)m_pCurrTri;
 }
 
 void cPlayer::Kick(glm::vec3& hitNorm, glm::vec3& lookVec)

@@ -75,3 +75,9 @@ void cEntityManager::SetNavMesh(cNavMesh* mesh)
 	return;
 }
 
+void cEntityManager::SetPlayerNavTri(void* playerTri)
+{
+	m_vecEntities[0]->updatePlayerTri(playerTri);
+	return;
+}
+

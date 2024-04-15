@@ -7,3 +7,6 @@ testNav4
 AIProj4
 simpleNav
 complexNav
+complexNavPhys
+simpleNavPhys
+navPathsPhys

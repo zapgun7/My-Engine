@@ -25,6 +25,8 @@ cNavMesh::cNavMesh()
 	m_LocalSearchDepth = 2; // Searches max 2 triangles away
 
 	m_NextID = 0;
+
+	m_MapDepth = 5;
 }
 
 
@@ -34,6 +36,36 @@ bool cNavMesh::CompareVerts(glm::vec3 v1, glm::vec3 v2)
 	if (glm::distance(v1, v2) <= m_distTolerance)
 		return true;
 	return false;
+}
+
+
+
+// Fills out the map stored in each triangle
+void cNavMesh::GenerateNearMap(void)
+{
+	for (sNavTri* currTri : m_vecFullNavMesh)
+	{
+		for (sNavTri* currTri2 : currTri->adjacentTris)
+		{
+			MapGenRecursion(currTri, currTri2, currTri2, 1);
+		}
+	}
+}
+
+void cNavMesh::MapGenRecursion(sNavTri* originTri, sNavTri* originDirTri, sNavTri* nextTri, int depth)
+{
+	// Return if this triangle is already in the map or we've reached max depth
+	if ((originTri->map_targetIDtoNearestTri.find(nextTri->id) != originTri->map_targetIDtoNearestTri.end())
+		|| (depth > m_MapDepth)
+		|| (originTri->id == nextTri->id)) return;
+
+	// Confirmed not in map, so add tri and generate out more
+	originTri->map_targetIDtoNearestTri[nextTri->id] = originDirTri;
+
+	for (sNavTri* currTri : nextTri->adjacentTris)
+	{
+		MapGenRecursion(originTri, originDirTri, currTri, depth + 1);
+	}
 }
 
 
@@ -53,6 +85,8 @@ void cNavMesh::Initialize(std::vector<cMesh*> meshes) // These should all be Fla
 		MakeConnections(newTri2);
 		m_vecFullNavMesh.push_back(newTri2);
 	}
+	GenerateNearMap();
+
 	printf("Done generating NavMesh\n");
 }
 
@@ -104,7 +138,7 @@ cNavMesh::sNavTri* cNavMesh::getClosestTri(sNavTri* prevTri, glm::vec3 pos)
 		// Get closest point on triangle, and get distance to it
 		glm::vec3 closestPoint = cPhysics::m_ClosestPtPointTriangle(pos, currTri->vertices[0], currTri->vertices[1], currTri->vertices[2]);
 		float tridist = glm::distance(closestPoint, pos);
-		if (tridist < nearestTriDist)
+		if (tridist <= nearestTriDist)
 		{
 			nearestTriDist = tridist;
 			nearestTri = currTri;
@@ -116,10 +150,15 @@ cNavMesh::sNavTri* cNavMesh::getClosestTri(sNavTri* prevTri, glm::vec3 pos)
 
 
 
-cNavMesh::sNavTri* cNavMesh::getClosestTriToTri(sNavTri* currTri, sNavTri* targetTri)
+cNavMesh::sNavTri* cNavMesh::findPathToTargetTri(sNavTri* currTri, sNavTri* targetTri)
 {
-	return nullptr;
+	std::unordered_map<unsigned int, sNavTri*>::iterator map_IT = currTri->map_targetIDtoNearestTri.find(targetTri->id);
+
+	if (map_IT == currTri->map_targetIDtoNearestTri.end()) return nullptr;
+
+	return map_IT->second;
 }
+
 
 void cNavMesh::MakeTransformedMesh(cMesh* mesh, sNavTri* newTri1, sNavTri* newTri2)
 {

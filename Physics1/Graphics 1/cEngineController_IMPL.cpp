@@ -50,7 +50,10 @@ void cEngineController_IMPL::Run(void)
 		m_pAnimationsManager->Update(deltaTime);
 
 		if (isUsingEntityManager)
+		{
 			m_pEntityManager->Update(deltaTime);
+			m_pEntityManager->SetPlayerNavTri(m_ThePlayer->GetCurrTri());
+		}
 
 		m_pTheEditor->Update(deltaTime); //m_pTheEditor->Update(uncappedDT); 
 		m_pThePhysics->Update(deltaTime);
@@ -127,7 +130,7 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
 	std::vector<std::string> tempModelVec;
 	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
-	//this->m_pThePhysics->generateAABBs(tempModelVec);
+	this->m_pThePhysics->generateAABBs(tempModelVec);
 	
 	//this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
@@ -160,16 +163,16 @@ bool cEngineController_IMPL::Initialize(void)
 	this->testNav = new cNavMesh();
 
 	// First person player setup
-	if (false) 
+	if (true) 
 	{
-		//m_pTheSceneManager->loadScene("simpleNav");//("testNav4");
+		m_pTheSceneManager->loadScene("navPathsPhys");//("testNav4");
 		
 		sPhysicsProperties* playerObj = new sPhysicsProperties();
 		playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 0.5f));
 		playerObj->shapeType = sPhysicsProperties::CAPSULE;
 		playerObj->friendlyName = "plyr";
 
-		playerObj->position = glm::vec3(20, 50, 20);
+		playerObj->position = glm::vec3(0, 10, 0);
 		playerObj->restitution = 0.0f;
 		playerObj->inverse_mass = 1.0f;
 		// Add PlayerInfo Struct
@@ -202,7 +205,7 @@ bool cEngineController_IMPL::Initialize(void)
 	// Generate Enemies
 	if (true) // EnemyEntity
 	{
-		m_pTheSceneManager->loadScene("complexNav");
+		//m_pTheSceneManager->loadScene("complexNav");
 		m_pThePhysics->Update(0.0f);
 		isUsingEntityManager = true;
 
@@ -222,6 +225,10 @@ bool cEngineController_IMPL::Initialize(void)
 		this->m_pEntityManager->SetPlayer(m_TheCamera);
 		this->m_pEntityManager->SetNavMesh(testNav);
 		this->m_pEntityManager->Initialize();
+
+		// So the player can keep track of their position, letting the AI know where it is
+		this->m_ThePlayer->setPlayerNavMesh(testNav);
+		this->m_pEntityManager->SetPlayerNavTri(this->m_ThePlayer->GetCurrTri());
 	}
 
 

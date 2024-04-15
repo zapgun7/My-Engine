@@ -13,6 +13,8 @@
 #include "cSoundLuaBrain.h"
 #include "cDatabaseManager.h"
 
+#include "cNavMesh.h"
+
 #include "cEngineController.h"
 
 class cPhysics;
@@ -32,15 +34,19 @@ public:
 
 	void setPlayerObject(sPhysicsProperties* theObj);
 	void setPlayerVerlet(cSoftBodyVerlet* theObj);
+	void setPlayerNavMesh(cNavMesh* navmesh);
 
 	void Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cameraRotation); // Updates these based on inputs in the last frame
 
+	void* GetCurrTri(void);
 	
 
 private:
 	void Kick(glm::vec3& hitNorm, glm::vec3& lookVec);
 	void StepSound(void);
 
+	cNavMesh* m_pNavMesh; // So the AI knows, ya know?
+	cNavMesh::sNavTri* m_pCurrTri;
 
 	eCameraType m_CameraType = FLYCAM;
 

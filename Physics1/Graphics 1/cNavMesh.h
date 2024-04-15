@@ -3,6 +3,7 @@
 #include <glm/vec3.hpp>
 #include <vector>
 #include "Other Graphics Stuff/cMesh.h"
+#include <unordered_map>
 
 
 class cNavMesh
@@ -22,6 +23,8 @@ public:
 		float pd;
 		std::vector<sNavTri*> adjacentTris;
 
+		std::unordered_map<unsigned int, sNavTri*> map_targetIDtoNearestTri; // Given a target ID, will return the closest triangle (within predetermined distance)
+
 		unsigned int id;
 	};
 
@@ -32,7 +35,10 @@ public:
 
 	sNavTri* getClosestTri(sNavTri* currTri, glm::vec3 pos); // Checks if pos is on the provided tri, then checks adjacent (out a certain depth)
 
-	sNavTri* getClosestTriToTri(sNavTri* currTri, sNavTri* targetTri);
+	sNavTri* findPathToTargetTri(sNavTri* currTri, sNavTri* targetTri);
+
+	
+
 
 
 
@@ -47,6 +53,8 @@ private:
 	// Returns true of both points are within distance tolerance
 	bool CompareVerts(glm::vec3 v1, glm::vec3 v2);
 
+	void GenerateNearMap(void); // Generates a lookup table for each triangle to get to other ones (only within a certain distance)
+	void MapGenRecursion(sNavTri* originTri, sNavTri* originDirTri, sNavTri* nextTri, int depth);
 
 
 
@@ -60,4 +68,6 @@ private:
 	float m_distTolerance;
 	unsigned int m_LocalSearchDepth;
 	unsigned int m_NextID;
+
+	unsigned int m_MapDepth;
 };

@@ -36,7 +36,7 @@ public:
 	~cEnemyEntity();
 
 	virtual void Update(double dt);
-
+	virtual void updatePlayerTri(void* tri);
 
 	virtual glm::vec3 getPosition(void);
 	virtual glm::quat getOrientation(void);
@@ -55,6 +55,8 @@ private:
 	cNavMesh::sNavTri* m_pPrevNavTri = nullptr;
 	cNavMesh::sNavTri* m_pCurrNavTri = nullptr;
 	cNavMesh::sNavTri* m_pTargetNavTri = nullptr;
+
+	cNavMesh::sNavTri* m_pPlayerTri = nullptr;
 
 
 	// Basic nav waypoints

@@ -67,7 +67,7 @@ void main() {
 									  int(currTime.w)); // Cycle count
 	vec4 inputVal = imageLoad(imgInput, textelCoord); // What the current pixel is without effects
 	
-	if (heatVal > 0.0f) Bool.x = 1.0f;
+	if (heatVal > 0.95f) Bool.x = 1.0f;
 	
 	// Testing Zone
 	//value = vec4(  (imageLoad(imgInput, textelCoord).rgb + texture(heatMap, stCoord).rgb), 1.0f  );

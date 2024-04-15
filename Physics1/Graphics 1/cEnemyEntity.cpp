@@ -3,6 +3,8 @@
 #include "Physics/sPhysicsProperties.h"
 #include "Physics/cPhysics.h"
 
+#include "cTimer.h"
+
 
 
 glm::vec3 GetRandomDirection(void)
@@ -135,7 +137,7 @@ void cEnemyEntity::Update(double dt)
 		//m_pCurrNavTri = currtri;
 
 		// Find new goal
-		if ((m_eType == NAVWANDER) || (m_eType == NAVWATCH))
+		if (m_eType == NAVWANDER)
 		{
 			for (unsigned int neighborIDX = 0; neighborIDX < m_pCurrNavTri->adjacentTris.size(); neighborIDX++)
 			{
@@ -150,7 +152,22 @@ void cEnemyEntity::Update(double dt)
 		}
 		else  // Find next closest triangle to player triangle
 		{
+			cNavMesh::sNavTri* targetTri = m_pNavMesh->findPathToTargetTri(m_pCurrNavTri, m_pPlayerTri);
+			if (targetTri == nullptr)
+			{
+				// Lost player, go back to wandering
+				m_eType = NAVWANDER;
+				for (unsigned int neighborIDX = 0; neighborIDX < m_pCurrNavTri->adjacentTris.size(); neighborIDX++)
+				{
+					if ((m_pCurrNavTri->adjacentTris[neighborIDX]->id != m_pPrevNavTri->id)  // Is new tri (not backtracking)
+						&& (m_pCurrNavTri->adjacentTris[neighborIDX]->adjacentTris.size() > 1)) // Not a dead end
+					{
 
+						m_pTargetNavTri = m_pCurrNavTri->adjacentTris[neighborIDX];
+						break;
+					}
+				}
+			}
 		}
 		
 	}
@@ -163,51 +180,52 @@ void cEnemyEntity::Update(double dt)
 	// Get player distance
 	float plyrDist = glm::distance(m_pEntityObject->position, m_pPlayerEntity->position);
 	
-	static bool isNewChase = false;
 
-	if (plyrDist <= CHASEDIST)
+	cNavMesh::sNavTri* targetTri = nullptr;
+	if (m_eType != NAVCHASE)
+		targetTri = m_pNavMesh->findPathToTargetTri(m_pCurrNavTri, m_pPlayerTri);
+
+// 	if (plyrDist <= CHASEDIST)
+// 	{
+// 		m_eType = NAVCHASE;
+// 	}
+// 	else if (plyrDist <= WATCHDIST)
+// 	{
+// 		m_eType = NAVWATCH;
+// 	}
+	if (targetTri != nullptr)
 	{
-		if (!isNewChase)
-		{
-			isNewChase = true;
-			// Get closest triangle to the player
-		}
+		// Close enough to player to start chasing
+		m_pTargetNavTri = targetTri;
 		m_eType = NAVCHASE;
-	}
-	else if (plyrDist <= WATCHDIST)
-	{
-		isNewChase = false;
-		m_eType = NAVWATCH;
 	}
 	else
 	{
-		isNewChase = false;
 		m_eType = NAVWANDER;
 	}
 
 
 	// For now, testing wander these will stay these values
-	isNewChase = false;
 	m_eType = NAVWANDER;
 
 	
 
-	if (m_eType == NAVWATCH) // Turn to look at player
-	{
-		glm::vec3 vecToGoal = m_pPlayerEntity->position - m_pEntityObject->position;
-		glm::vec3 crossResult = glm::cross(getLookVector(), glm::normalize(vecToGoal));
-		if (crossResult.y > 0) // Turn left
-		{
-			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
-			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
-		}
-		else // Turn right
-		{
-			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
-			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
-		}
-	}
-	else // Navigate to the next triangle
+// 	if (m_eType == NAVWATCH) // Turn to look at player
+// 	{
+// 		glm::vec3 vecToGoal = m_pPlayerEntity->position - m_pEntityObject->position;
+// 		glm::vec3 crossResult = glm::cross(getLookVector(), glm::normalize(vecToGoal));
+// 		if (crossResult.y > 0) // Turn left
+// 		{
+// 			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
+// 			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+// 		}
+// 		else // Turn right
+// 		{
+// 			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
+// 			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
+// 		}
+// 	}
+// 	else // Navigate to the next triangle
 	{
 		glm::vec3 deltaMove(0.0f);
 		glm::vec3 vecToGoal = glm::vec3(m_pTargetNavTri->centreTri.x, 0.0f, m_pTargetNavTri->centreTri.z) 
@@ -554,6 +572,11 @@ void cEnemyEntity::Update(double dt)
 
 
 	return;
+}
+
+void cEnemyEntity::updatePlayerTri(void* tri)
+{
+	m_pPlayerTri = (cNavMesh::sNavTri*)tri;
 }
 
 glm::vec3 cEnemyEntity::getPosition(void)

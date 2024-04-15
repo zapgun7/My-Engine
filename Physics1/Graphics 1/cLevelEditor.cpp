@@ -1019,8 +1019,10 @@ void cLevelEditor::DuplicateObj(cMesh* mesh, char* name, std::vector<sPhysicsPro
 	newMesh->friendlyName = name;
 
 
+
 	sPhysicsProperties* newPhys = new sPhysicsProperties();
 	newPhys->friendlyName = name;
+	newPhys->pTheAssociatedMesh = newMesh;
 
 	for (sPhysicsProperties* currPhys : physVec)
 	{
@@ -1028,11 +1030,17 @@ void cLevelEditor::DuplicateObj(cMesh* mesh, char* name, std::vector<sPhysicsPro
 		{
 			newPhys->position = currPhys->position;
 			newPhys->setRotationFromQuat(currPhys->get_qOrientation());
+			
+			if (currPhys->shapeType == sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT)
+			{
+				newPhys->setShape(new sPhysicsProperties::sMeshOfTriangles_Indirect(newPhys->pTheAssociatedMesh->getMeshName()));
+				newPhys->shapeType = sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT;
+			}
 			break;
 		}
 	}
 	
-	newPhys->pTheAssociatedMesh = newMesh;
+	
 	newMesh->uniqueID = newPhys->getUniqueID();
 
 	m_pEngineController->addCustomObject(newMesh, newPhys);
