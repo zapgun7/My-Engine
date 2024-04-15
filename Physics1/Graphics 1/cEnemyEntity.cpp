@@ -1,6 +1,7 @@
 #include "cEnemyEntity.h"
 
 #include "Physics/sPhysicsProperties.h"
+#include "Physics/cPhysics.h"
 
 
 
@@ -126,7 +127,7 @@ void cEnemyEntity::Update(double dt)
 // 	}
 
 	// Start by getting the current triangle they're on
-	cNavMesh::sNavTri* currtri = m_pNavMesh->getClosestTri(m_pCurrNavTri, m_pEntityObject->position);
+	cNavMesh::sNavTri* currtri = m_pNavMesh->getClosestTri(m_pCurrNavTri, m_pEntityObject->position - glm::vec3(0.0f, 0.0f, 0.0f));
 	if (m_pCurrNavTri->id != currtri->id)
 	{
 		m_pPrevNavTri = m_pCurrNavTri;
@@ -209,7 +210,8 @@ void cEnemyEntity::Update(double dt)
 	else // Navigate to the next triangle
 	{
 		glm::vec3 deltaMove(0.0f);
-		glm::vec3 vecToGoal = glm::vec3(m_pTargetNavTri->centreTri.x, m_pTargetNavTri->centreTri.y + 10.0f, m_pTargetNavTri->centreTri.z) - m_pEntityObject->position;
+		glm::vec3 vecToGoal = glm::vec3(m_pTargetNavTri->centreTri.x, 0.0f, m_pTargetNavTri->centreTri.z) 
+							 - glm::vec3(m_pEntityObject->position.x, 0.0f, m_pEntityObject->position.z);
 		//vecToGoal.y = 0;
 		glm::vec3 crossResult = glm::cross(getLookVector(), glm::normalize(glm::vec3(vecToGoal.x, 0.0f, vecToGoal.z)));
 		float radDiff = asin(glm::length(crossResult));
@@ -224,7 +226,7 @@ void cEnemyEntity::Update(double dt)
 			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
 			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
 		}
-		if (radDiff < 0.1f)
+		if (radDiff < 0.2f)
 		{
 			//m_pEntityObject->velocity += getLookVector() * MOVESPEED * static_cast<float>(dt); // CAREFUL, CAN WALK OFF TRI AREA
 			//deltaMove += getLookVector() * MOVESPEED * static_cast<float>(dt);
@@ -233,9 +235,19 @@ void cEnemyEntity::Update(double dt)
 		}
 
 		// Project velocity to plane defined by triangle it's currently on
-// 		glm::vec3 projSubVec = glm::dot(deltaMove, m_pCurrNavTri->normal) * m_pCurrNavTri->normal;
-// 		deltaMove -= projSubVec;
+ 		glm::vec3 projSubVec = glm::dot(deltaMove, m_pCurrNavTri->normal) * m_pCurrNavTri->normal;
+ 		deltaMove -= projSubVec;
 		m_pEntityObject->position += deltaMove;
+
+
+		// Update position above the triangle
+// 		glm::vec3 currSpotOnTri(0.0f);
+// 		cPhysics::m_IntersectSegmentPlane(m_pEntityObject->position, 
+// 										  m_pEntityObject->position - glm::vec3(0.0f, 20.0f, 0.0f),
+// 										  m_pCurrNavTri->normal,
+// 										  m_pCurrNavTri->pd,
+// 										  currSpotOnTri);
+// 		m_pEntityObject->position = currSpotOnTri + glm::vec3(0.0f, 10.0f, 0.0f);
 	}
 
 

@@ -598,3 +598,19 @@ int cPhysics::m_IntersectSegmentTriangle(glm::vec3 p, glm::vec3 q, sTriangle_A* 
 
 	return 1;
 }
+
+
+int cPhysics::m_IntersectSegmentPlane(glm::vec3 a, glm::vec3 b, glm::vec3 pn, float pd, glm::vec3& q)
+{
+	glm::vec3 ab = b - a;
+	float t = (pd - glm::dot(pn, a)) / glm::dot(pn, ab);
+
+	// Don't care if within t [0, 1]
+	//if (t >= 0.0f && t <= 1.0f)
+	//{
+	q = a + t * ab;
+	return 1;
+	//}
+
+	return 0;
+}

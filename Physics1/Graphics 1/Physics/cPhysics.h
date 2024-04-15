@@ -190,6 +190,7 @@ public:
 	static int m_IntersectMovingCapsuleAABB(sPhysicsProperties* pCapsule, cAABB* b); // TODO !!!INCOMPLETE!!! misses corners of boxes swiping the capsule mid-section
 	static int m_IntersectSegmentAABB(glm::vec3& p0, glm::vec3& p1, cAABB& b);
 	static int m_IntersectSegmentTriangle(glm::vec3 p, glm::vec3 q, sTriangle_A* pTri/*glm::vec3 a, glm::vec3 b, glm::vec3 c*/, float& u, float& v, float& w, glm::vec3& norm, float& t); // Slightly modified to just give t and trinorm
+	static int m_IntersectSegmentPlane(glm::vec3 a, glm::vec3 b, glm::vec3 pn, float pd, glm::vec3& q);
 
 	// Less Basic Tests
 	static bool m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle_A* pTri, float &t, glm::vec3 &hitNorm);

@@ -86,7 +86,7 @@ bool cGraphicsMain::Initialize()
 
 	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // This causes cubemap creation to crash on my laptop
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 
 
 	m_window = glfwCreateWindow(640, 480, "Ausgine Render", NULL, NULL);
@@ -241,6 +241,7 @@ bool cGraphicsMain::Initialize()
 	{
 		std::cout << "FBO_2 created OK" << std::endl;
 	}
+	//m_pFBO_2->setDepthID(m_pFBO_1->depthTexture_ID);
 
 	m_pFBO_3 = new cFBO();
 	if (!m_pFBO_3->init(1920, 1080, FBOError))
@@ -722,11 +723,20 @@ bool cGraphicsMain::Update(double deltaTime)
 	{
 		float ratio;
 		ratio = m_pFBO_2->width / (float)m_pFBO_2->height;
+
+		
 		glBindFramebuffer(GL_FRAMEBUFFER, m_pFBO_2->ID);
+
+		
+		
+
 
 		glViewport(0, 0, m_pFBO_2->width, m_pFBO_2->height);
 
 		m_pFBO_2->clearBuffers(true, true);
+
+		// 240, 135
+		glBlitNamedFramebuffer(m_pFBO_1->ID, m_pFBO_2->ID, 0, 0, 1920, 1080, 0, 0, 240, 135, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
 		unsigned int HMID = m_pShaderThing->getIDFromFriendlyName("HMShader");
 		
@@ -1053,6 +1063,9 @@ cMesh* cGraphicsMain::m_pFindMeshByFriendlyName(std::string friendlyNameToFind)
 
 void cGraphicsMain::DrawObject(cMesh* pCurrentMesh, glm::mat4 matModelParent, GLuint shaderProgramID)
 {
+	if ((pCurrentMesh->isNavMesh) && (!renderDebug))
+		return;
+
 	cShaderManager::cShaderProgram* currProg = m_pShaderThing->getActiveShader();
 
 
@@ -1511,6 +1524,8 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 	for (unsigned int index = 0; index != m_vec_pMeshesToDraw.size(); index++) // Prob black or smthn
 	{
 		cMesh* pCurrentMesh = m_vec_pMeshesToDraw[index];
+		if (pCurrentMesh->isSpooky) continue; // Draw cool shader obj last
+
 		if (pCurrentMesh->transparencyAlpha < 0.99f)
 		{
 			m_vec_pTransMeshesToDraw.push_back(pCurrentMesh);
@@ -1537,6 +1552,17 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 
 	}//for ( unsigned int index
 
+	glDepthMask(GL_FALSE); // Disable writing to the depth buffer, but we still wanna read it
+
+	for (cMesh* currMesh : m_vec_pMeshesToDraw)
+	{
+		if (currMesh->isSpooky)
+		{
+			glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
+			DrawObject(currMesh, matModel, m_shaderProgramID);
+		}
+	}
+	glDepthMask(GL_TRUE);
 	// Draw verlet object
 	//glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
 
@@ -1710,6 +1736,7 @@ void cGraphicsMain::DrawPass_HM(GLuint shaderProgramID, int screenWidth, int scr
 	m_pShaderThing->useShaderProgram("HMShader");
 	cShaderManager::cShaderProgram* currProg = m_pShaderThing->GetShaderProgramFromFriendlyName("HMShader");
 
+	glEnable(GL_DEPTH_TEST);
 	glCullFace(GL_BACK);
 
 	// Set Camera Matrices

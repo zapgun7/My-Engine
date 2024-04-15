@@ -165,6 +165,21 @@ void cFBO::clearBuffers(bool bClearColour, bool bClearDepth)
 }
 
 
+void cFBO::setDepthID(unsigned int newID)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, this->ID);
+
+
+	glFramebufferTexture(GL_FRAMEBUFFER,
+		GL_DEPTH_STENCIL_ATTACHMENT,
+		newID, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	depthTexture_ID = newID;
+
+}
+
 int cFBO::getMaxColourAttachments(void)
 {
 	//  void glGetIntegerv(GLenum pname,

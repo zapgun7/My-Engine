@@ -35,6 +35,8 @@ public:
 	
 	void clearBuffers(bool bClearColour = true, bool bClearDepth = true);
 
+	void setDepthID(unsigned int newID);
+
 	void clearColourBuffer(int bufferindex);
 	void clearAllColourBuffers(void);
 	void clearDepthBuffer(void);
