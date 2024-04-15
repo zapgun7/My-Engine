@@ -163,7 +163,7 @@ bool cEngineController_IMPL::Initialize(void)
 	this->testNav = new cNavMesh();
 
 	// First person player setup
-	if (true) 
+	if (false) 
 	{
 		m_pTheSceneManager->loadScene("navPathsPhys");//("testNav4");
 		
@@ -203,7 +203,7 @@ bool cEngineController_IMPL::Initialize(void)
 	}
 
 	// Generate Enemies
-	if (true) // EnemyEntity
+	if (false) // EnemyEntity
 	{
 		//m_pTheSceneManager->loadScene("complexNav");
 		m_pThePhysics->Update(0.0f);

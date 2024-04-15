@@ -17,7 +17,7 @@ public:
     glm::vec4 specular;	// rgb = highlight colour, w = power
     glm::vec4 atten;		// x = constant, y = linear, z = quadratic, w = DistanceCutOff
     glm::vec4 direction;	// Spot, directional lights
-    glm::vec4 param1;	// x = lightType, y = inner angle, z = outer angle, w = TBD
+    glm::vec4 param1;	// x = lightType, y = inner angle, z = outer angle, w = Light cutoff Fade dist
                     // 0 = pointlight
                     // 1 = spot light
                     // 2 = directional light

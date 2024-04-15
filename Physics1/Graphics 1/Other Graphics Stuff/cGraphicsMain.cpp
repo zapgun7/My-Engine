@@ -1693,13 +1693,28 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 			if (m_pTheLights->theLights[i].param2.x == 1) // If light is on
 			{
 				if (selectedLight == i) // Have different color for selected light
+				{
 					basicSphere.customColorRGBA = glm::vec4(1, 0, 0, 1);
+				}
 
 				basicSphere.drawPosition = m_pTheLights->theLights[i].position;
 				DrawObject(&basicSphere, matModel, m_shaderProgramID);
 				basicSphere.customColorRGBA = glm::vec4(0, 1, 0, 1);
 			}
 		}
+
+		// Draw the atten ranges of the selected light
+		basicSphere.scale = glm::vec3(m_pTheLights->theLights[selectedLight].atten.w);
+		basicSphere.drawPosition = m_pTheLights->theLights[selectedLight].position;
+		basicSphere.customColorRGBA = glm::vec4(1, 0, 0, 1); // Red for now
+		DrawObject(&basicSphere, matModel, m_shaderProgramID);
+
+
+
+		// Back to defaults
+		basicSphere.scale = glm::vec3(1.0f);
+
+
 
 		// Draw a Cyan sphere at the selected mesh position
 		if (selectedMesh > -1)

@@ -903,7 +903,7 @@ void cLevelEditor::LightEditor(cLightManager* TheLights)
  	ImGui::DragFloat("Constant", &lightAtten.x, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
  	ImGui::DragFloat("Linear", &lightAtten.y, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
  	ImGui::DragFloat("Quadratic", &lightAtten.z, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
- 	ImGui::DragFloat("Distance Cutoff", &lightAtten.w, 0.00001f, -FLT_MAX, +FLT_MAX, "%.5f");
+ 	ImGui::DragFloat("Distance Cutoff", &lightAtten.w, 0.1f, -FLT_MAX, +FLT_MAX, "%.5f");
  
  	ImGui::SeparatorText("Other Light Options");
  	const char* lightTypes[] = { "Point Light", "Spot Light", "Directional Light", "Ambient Light"};
@@ -924,6 +924,11 @@ void cLevelEditor::LightEditor(cLightManager* TheLights)
  		}
  		ImGui::EndCombo();
  	}
+
+	ImGui::SeparatorText("Other Options");
+	ImGui::DragFloat("DistCutoff Fade", &lightParam1.w, 0.01f, -FLT_MAX, +FLT_MAX, "%.5f");
+
+
  	lightParam1.x = ltype_current_idx; // Set light type
  	ImGui::SameLine();
  	static bool lightOn = true;

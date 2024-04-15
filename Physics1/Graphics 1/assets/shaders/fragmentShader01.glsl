@@ -87,7 +87,7 @@ struct sLight
 	vec4 specular;	// rgb = highlight colour, w = power
 	vec4 atten;		// x = constant, y = linear, z = quadratic, w = DistanceCutOff
 	vec4 direction;	// Spot, directional lights
-	vec4 param1;	// x = lightType, y = inner angle, z = outer angle, w = TBD
+	vec4 param1;	// x = lightType, y = inner angle, z = outer angle, w = Light Cutoff dist fade (Max dist to start fading out)
 	                // 0 = pointlight
 					// 1 = spot light
 					// 2 = directional light
@@ -335,6 +335,17 @@ vec4 calulateLightContribNEW ( vec3 vertexMaterialColor, vec3 vertexNormal,
 			continue;
 		}
 		
+		float distToFrag = theLights[index].atten.w - length(theLights[index].position.xyz - vertexWorldPos.xyz); // Distance to the edge; -ve is outside
+		if ((lightType != DIRECTIONAL_LIGHT_TYPE) && (distToFrag <= 0))
+		{
+			continue;
+		}
+		
+		float diffspecPowMod = 1.0f;
+		if ((lightType != DIRECTIONAL_LIGHT_TYPE) && (distToFrag < theLights[index].param1.w))
+		{
+			diffspecPowMod = distToFrag / theLights[index].param1.w;
+		}
 		
 		// Vars needed below
 		float diffPower = 0.0f;
@@ -390,11 +401,11 @@ vec4 calulateLightContribNEW ( vec3 vertexMaterialColor, vec3 vertexNormal,
 		}
 		
 		
-		diffPower = max(dot(norm, -lightDir), 0.0f);
+		diffPower = max(dot(norm, -lightDir), 0.0f) * diffspecPowMod;
 		diffuse = theLights[index].diffuse.xyz * (diffPower) * theLights[index].diffuse.w;
 		
 		halfwayDir = normalize(lightDir + viewDir);
-		spec = pow(max(dot(viewDir, halfwayDir), 0.0f), material.power.w); // material.power.w is shininess
+		spec = pow(max(dot(viewDir, halfwayDir), 0.0f), material.power.w) * diffspecPowMod; // material.power.w is shininess
 		specular = (spec * specMapPower) * theLights[index].specular.xyz * theLights[index].specular.w;
 		
 		//vec3 lightDir = vertexWorldPos.xyz - theLights[index].position.xyz;
