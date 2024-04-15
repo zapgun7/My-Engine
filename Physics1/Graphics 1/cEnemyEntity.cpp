@@ -184,6 +184,11 @@ void cEnemyEntity::Update(double dt)
 		m_eType = NAVWANDER;
 	}
 
+
+	// For now, testing wander these will stay these values
+	isNewChase = false;
+	m_eType = NAVWANDER;
+
 	
 
 	if (m_eType == NAVWATCH) // Turn to look at player

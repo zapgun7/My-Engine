@@ -196,6 +196,8 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 		
 		AddMemberToObject(meshobj, "friendlyName", &MeshVec[i]->friendlyName, STRING, output);
 
+		AddMemberToObject(meshobj, "isNav", &MeshVec[i]->isNavMesh, BOOL, output);
+
 		// Texture Info: name array, ratio array
 // 		for (unsigned int e = 0; e < cMesh::NUM_TEXTURES; e++)
 // 		{
@@ -361,6 +363,8 @@ void cSceneManagement::loadScene(std::string fileName)
 
 		LoadDataFromMember(meshes[i], "meshName", &newMesh->meshName, STRING, input);
 		LoadDataFromMember(meshes[i], "friendlyName", &newMesh->friendlyName, STRING, input);
+
+		LoadDataFromMember(meshes[i], "isNav", &newMesh->isNavMesh, BOOL, input);
 
 		// Texture Names
 // 		itr = meshes[i].FindMember("texNames");

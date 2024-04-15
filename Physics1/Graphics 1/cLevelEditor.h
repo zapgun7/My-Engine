@@ -32,6 +32,7 @@ public:
 
 private:
 	
+	void DuplicateObj(cMesh* mesh, char* name, std::vector<sPhysicsProperties*> physVec);
 
 	// Window States
 	bool m_ShowMeshEditor;    // 

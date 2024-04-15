@@ -18,6 +18,7 @@ public:
 	void Update(double dt);
 
 
+
 	void SetPlayer(sPhysicsProperties* playerObj);
 	void SetNavMesh(cNavMesh* mesh);
 

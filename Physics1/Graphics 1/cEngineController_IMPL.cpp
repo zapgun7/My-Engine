@@ -49,7 +49,8 @@ void cEngineController_IMPL::Run(void)
 
 		m_pAnimationsManager->Update(deltaTime);
 
-		m_pEntityManager->Update(deltaTime);
+		if (isUsingEntityManager)
+			m_pEntityManager->Update(deltaTime);
 
 		m_pTheEditor->Update(deltaTime); //m_pTheEditor->Update(uncappedDT); 
 		m_pThePhysics->Update(deltaTime);
@@ -126,7 +127,7 @@ bool cEngineController_IMPL::Initialize(void)
 	this->m_pThePhysics->setVAOManager(m_pTheGraphics->getVAOManager());
 	std::vector<std::string> tempModelVec;
 	this->m_pTheGraphics->getAvailableModels(&tempModelVec);
-	this->m_pThePhysics->generateAABBs(tempModelVec);
+	//this->m_pThePhysics->generateAABBs(tempModelVec);
 	
 	//this->m_pLuaBrain = new cLuaBrain();
 	//this->m_pLuaBrain->RunScriptImmediately("TestThing()");
@@ -158,10 +159,10 @@ bool cEngineController_IMPL::Initialize(void)
 	// TESTING NAV MESH GENERATION
 	this->testNav = new cNavMesh();
 
-
-	if (false) // First person player setup
+	// First person player setup
+	if (false) 
 	{
-		m_pTheSceneManager->loadScene("testNav4");
+		//m_pTheSceneManager->loadScene("simpleNav");//("testNav4");
 		
 		sPhysicsProperties* playerObj = new sPhysicsProperties();
 		playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 0.5f));
@@ -201,16 +202,18 @@ bool cEngineController_IMPL::Initialize(void)
 	// Generate Enemies
 	if (true) // EnemyEntity
 	{
-		m_pTheSceneManager->loadScene("testNav4");
+		m_pTheSceneManager->loadScene("complexNav");
 		m_pThePhysics->Update(0.0f);
-
+		isUsingEntityManager = true;
 
 		std::vector<cMesh*> meshVec;
 		std::vector<cMesh*> trimmedMeshVec;
 		m_pTheGraphics->getActiveMeshes(&meshVec);
 		for (cMesh* currMesh : meshVec)
 		{
-			if (currMesh->meshName == "Flat_1x1_plane.ply")
+// 			if (currMesh->meshName == "Flat_1x1_plane.ply")
+// 				trimmedMeshVec.push_back(currMesh);
+			if (currMesh->isNavMesh)
 				trimmedMeshVec.push_back(currMesh);
 		}
 		testNav->Initialize(trimmedMeshVec);

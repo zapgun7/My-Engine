@@ -80,6 +80,8 @@ private:
 	cPlayer* m_ThePlayer;
 
 
+	bool isUsingEntityManager = false; // For quickly swapping using entities
+
 
 	cNavMesh* testNav;
 };

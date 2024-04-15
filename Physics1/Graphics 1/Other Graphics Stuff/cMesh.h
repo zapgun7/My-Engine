@@ -61,6 +61,8 @@ public:
 	int uniqueID; // This should match the physics object id; so create physics first then take that ID and set this one to it
 
 
+
+	bool isNavMesh = false;
 	 
 
 	// Draw loop uses this: 

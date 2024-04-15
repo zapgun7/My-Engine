@@ -257,51 +257,9 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 			{
 					//duplicateMesh(m_mesh_obj_idx, dupeName);
 					cMesh* meshToCopy = ActiveMeshVec[m_mesh_obj_idx];
-					cMesh* newDupe = new cMesh();
+					//cMesh* newDupe = new cMesh();
 
-					/// MESH COPYING ///
-					
-					// TODO duplicate material info
-					newDupe->meshName = meshToCopy->meshName;
-					newDupe->bIsVisible = meshToCopy->bIsVisible;
-					newDupe->bUseCustomColors = meshToCopy->bUseCustomColors;
-					newDupe->customColorRGBA = meshToCopy->customColorRGBA;
-					newDupe->transparencyAlpha = meshToCopy->transparencyAlpha;
-					newDupe->bUseDiscardMaskTex = meshToCopy->bUseDiscardMaskTex;
-					newDupe->bIsWireframe = meshToCopy->bIsWireframe;
-					newDupe->bDoNotLight = meshToCopy->bDoNotLight;
-					newDupe->bUseReflect = meshToCopy->bUseReflect;
-					newDupe->bUseRefract = meshToCopy->bUseRefract;
-					//newDupe->uv_Offset_Scale = meshToCopy->uv_Offset_Scale;
-					//newDupe->uvOffsetSpeed = meshToCopy->uvOffsetSpeed;
-					newDupe->scale = meshToCopy->scale;
-					newDupe->uniqueID = meshToCopy->uniqueID; // For copying the physics
-					newDupe->material = meshToCopy->material;
-
-
-					//memcpy(newDupe, ActiveMeshVec[m_mesh_obj_idx], sizeof(cMesh));
-					newDupe->friendlyName = dupeName;
-
-
-					sPhysicsProperties* newDupePhys = new sPhysicsProperties();
-					//int newID = newDupePhys->getUniqueID();
-					for (std::vector<sPhysicsProperties*>::iterator itPhys = PhysVec.begin();
-						itPhys != PhysVec.end();
-						itPhys++)
-					{
-						if (newDupe->uniqueID == (*itPhys)->getUniqueID())
-						{
-							//memcpy(newDupePhys, *itPhys, sizeof(sPhysicsProperties));
-							newDupePhys->friendlyName = dupeName;
-							newDupePhys->position = (*itPhys)->position;
-							newDupePhys->setRotationFromQuat((*itPhys)->get_qOrientation());
-							break;
-						}
-					}
-					newDupePhys->pTheAssociatedMesh = newDupe;
-					newDupe->uniqueID = newDupePhys->getUniqueID();
-
-					m_pEngineController->addCustomObject(newDupe, newDupePhys);
+					DuplicateObj(meshToCopy, dupeName, PhysVec);
 
 
 					m_mesh_obj_idx = ActiveMeshVec.size(); // Have new duplicate selected
@@ -383,6 +341,7 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 			bool isVisible = false;
 			bool isWireframe = false;
 			bool useDiscardMask = false;
+			bool isNavMesh = false;
 
 	 		float xPos = 0;
 	 		float yPos = 0;
@@ -439,6 +398,8 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 				//uvScale = selectedMesh->uv_Offset_Scale.z;
 				
 
+				isNavMesh = selectedMesh->isNavMesh;
+
 				
 				friendlyName = selectedMesh->friendlyName;
 				isVisible = selectedMesh->bIsVisible;
@@ -462,6 +423,10 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 // 					}
 // 				}
 	 		}
+
+			// Nav mesh
+			ImGui::Checkbox("Is Nav Mesh", &isNavMesh);
+
 			// Position
 	 		ImGui::SeparatorText("Position");
 	 		ImGui::DragFloat("X", &xPos, 0.05f, -FLT_MAX, +FLT_MAX, "%.3f");
@@ -567,6 +532,8 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 				selectedMesh->bDoNotLight = doNotLight;
 				selectedMesh->bUseCustomColors = useCustomColor;
 				selectedMesh->customColorRGBA = glm::vec4(customColor, 1);
+
+				selectedMesh->isNavMesh = isNavMesh;
 
 				//selectedMesh->uvOffsetSpeed = glm::vec2(uvXSpeed, uvYSpeed);
 				//selectedMesh->uv_Offset_Scale.z = uvScale;
@@ -1025,6 +992,50 @@ void cLevelEditor::SceneManager(std::vector<std::string> AvailableSaves)
 	}
 	 
 	ImGui::End();
+}
+
+void cLevelEditor::DuplicateObj(cMesh* mesh, char* name, std::vector<sPhysicsProperties*> physVec)
+{
+	cMesh* newMesh = new cMesh();
+
+	newMesh->meshName = mesh->meshName;
+	newMesh->bIsVisible = mesh->bIsVisible;
+
+	newMesh->bUseCustomColors = mesh->bUseCustomColors;
+	newMesh->customColorRGBA = mesh->customColorRGBA;
+
+	newMesh->transparencyAlpha = mesh->transparencyAlpha;
+	newMesh->bUseDiscardMaskTex = mesh->bUseDiscardMaskTex;
+
+	newMesh->bIsWireframe = mesh->bIsWireframe;
+	newMesh->bDoNotLight = mesh->bDoNotLight;
+	newMesh->bUseReflect = mesh->bUseReflect;
+	newMesh->bUseRefract = mesh->bUseRefract;
+
+	newMesh->scale = mesh->scale;
+	newMesh->material = mesh->material;
+	newMesh->isNavMesh = mesh->isNavMesh;
+
+	newMesh->friendlyName = name;
+
+
+	sPhysicsProperties* newPhys = new sPhysicsProperties();
+	newPhys->friendlyName = name;
+
+	for (sPhysicsProperties* currPhys : physVec)
+	{
+		if (mesh->uniqueID == currPhys->getUniqueID())
+		{
+			newPhys->position = currPhys->position;
+			newPhys->setRotationFromQuat(currPhys->get_qOrientation());
+			break;
+		}
+	}
+	
+	newPhys->pTheAssociatedMesh = newMesh;
+	newMesh->uniqueID = newPhys->getUniqueID();
+
+	m_pEngineController->addCustomObject(newMesh, newPhys);
 }
 
 cLevelEditor::cLevelEditor(GLFWwindow* window)

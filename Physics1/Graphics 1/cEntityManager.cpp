@@ -32,6 +32,7 @@ glm::vec3 getRandomVec3(float y, int radius)
 void cEntityManager::Initialize(void)
 {
 	m_pEntityBuilder = new cEntityBuilder();
+
 	
 	// Make AI entity for the AI project
 	//glm::vec3 aiPos = glm::vec3(20, 0, 20);

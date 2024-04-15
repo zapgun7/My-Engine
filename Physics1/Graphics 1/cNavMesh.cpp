@@ -21,7 +21,7 @@ cNavMesh::cNavMesh()
 
 
 	// Max dist for tris to connect
-	m_distTolerance = 0.5f;
+	m_distTolerance = 3.0f;
 	m_LocalSearchDepth = 2; // Searches max 2 triangles away
 
 	m_NextID = 0;

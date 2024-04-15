@@ -5,3 +5,5 @@ testNav2
 testNav3
 testNav4
 AIProj4
+simpleNav
+complexNav

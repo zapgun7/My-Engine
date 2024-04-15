@@ -1803,6 +1803,8 @@ void cGraphicsMain::DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int sc
 
 	//DrawObject(&fullScreenQuad, glm::mat4(1.0f), shaderProgramID);
 
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 	sModelDrawInfo modelInfo;
 	if (m_pMeshManager->FindDrawInfoByModelName("Quad_1_sided_aligned_on_XY_plane.ply", modelInfo))
 	{
