@@ -199,11 +199,11 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 // 			m_pDatabaseManager->ResetData();
 // 			std::cout << "Successfully wiped stored speed record" << std::endl;
 // 		}
-
+		static bool isNaved = false;
 
 		static sTimer* triUpdateTimer = cTimer::MakeNewTimer(0.1f, sTimer::eTimerType::REPEAT);
 
-		if (triUpdateTimer->CheckInterval())
+		if ((triUpdateTimer->CheckInterval()) && (isNaved))
 		{
 			m_pCurrTri = m_pNavMesh->getClosestTri(m_pCurrTri, m_pPlayerObject->position);
 			printf("%d\n", m_pCurrTri->id);

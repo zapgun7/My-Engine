@@ -34,6 +34,7 @@ public:
 	void getAvailableModels(std::vector<std::string>* ModelVec, std::vector<std::string>* TexVec); // Sets the provided variable with a vector of available models
 	void getActiveMeshNLights(std::vector<cMesh*>* MeshVec, cLightManager* TheLights, std::vector<sPhysicsProperties*>* ThePhys); // Sets provided vector with pointers to all active meshes
 	void getAvailableSaves(std::vector<std::string>* SaveVec);
+	void getActivePhysVec(std::vector<sPhysicsProperties*>* physVec);
 
 	/// Data Setting ///
 	//void setMeshData(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor);
@@ -52,6 +53,7 @@ public:
 	/// Data Creation ///
 	void addNewObject(std::string meshName, char* friendlyName);
 	void addCustomObject(cMesh* newMesh, sPhysicsProperties* newObj);
+	void addPhysObj(sPhysicsProperties* newObj);
 	void saveScene(char* fileName);
 	void loadScene(std::string fileName);
 	void resetScene(std::vector<cMesh*> newMeshVec, std::vector<cLight> newLights, std::vector<sPhysicsProperties*> newPhysVec);

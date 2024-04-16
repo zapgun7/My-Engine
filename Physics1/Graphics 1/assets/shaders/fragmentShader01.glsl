@@ -174,6 +174,7 @@ void main()
 		
 	}
 	vec4 lossRatioVec = vec4(lossRatio * 0.9f, lossRatio, lossRatio, 0.0f);
+	lossRatioVec = vec4(0.0f, 0.0f, 0.0f, 0.0f); // Disabling the fog 
 
 //	gl_FragColor = vec4(color, 1.0);
 

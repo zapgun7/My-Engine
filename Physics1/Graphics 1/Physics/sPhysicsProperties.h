@@ -45,7 +45,8 @@ struct sPhysicsProperties
 		AABB,
 		CAPSULE,
 		MESH_OF_TRIANGLES_INDIRECT,			// By meshID (vertices stored elsewhere)
-		MESH_OF_TRIANGLES_LOCAL_VERTICES	// Vertices stored in local structure
+		MESH_OF_TRIANGLES_LOCAL_VERTICES,	// Vertices stored in local structure
+		HITBOX // For triggering certain events
 	};
 
 
@@ -177,6 +178,19 @@ struct sPhysicsProperties
 		std::vector< sTriangle > vecTriangles;
 	};
 
+	// For seamless teleporting
+	struct sHitBox // Contains 2x boxes, each for source and location of the teleport
+	{
+		glm::vec3 srcCentre = glm::vec3(0.0f);
+		glm::vec3 dstCentre = glm::vec3(0.0f);
+		glm::vec3 halfLengths = glm::vec3(1.0f);
+		float scale = 1.0f;
+
+		
+// 		glm::vec3 dstHalfLengths = glm::vec3(1.0f);
+// 		float dstScale = 1.0f;
+	};
+
 #pragma endregion Shape_Type_Structures
 	// ENDOF: Shape type structures
 
@@ -186,6 +200,7 @@ struct sPhysicsProperties
 	void setShape(sCapsule* pCapsuleProps);
 	void setShape(sMeshOfTriangles_Indirect* pTriangleMeshProps);
 	void setShape(sMeshOfTriangles_LocalVertices* pTriangleMeshProps);
+	void setShape(sHitBox* pHitboxProps);
 
 	eShape shapeType;
 	void* pShape = NULL;

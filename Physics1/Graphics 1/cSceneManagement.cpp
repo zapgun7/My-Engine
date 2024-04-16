@@ -279,6 +279,14 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 		AddMemberToObject(physobj, "inv_mass", &PhysVec[i]->inverse_mass, FLOAT, output);
 
 
+		if (PhysVec[i]->shapeType == sPhysicsProperties::HITBOX)
+		{
+			sPhysicsProperties::sHitBox* hb = (sPhysicsProperties::sHitBox*)PhysVec[i]->pShape;
+			AddMemberToObject(physobj, "srcPos", &hb->srcCentre, VEC3, output);
+			AddMemberToObject(physobj, "dstPos", &hb->dstCentre, VEC3, output);
+			AddMemberToObject(physobj, "boxscle", &hb->scale, FLOAT, output);
+		}
+
 		// Add this physics object to the file
 		phys.PushBack(physobj, output.GetAllocator());
 		physobj.SetObject();
@@ -472,31 +480,47 @@ void cSceneManagement::loadScene(std::string fileName)
 		int num;// = itr->value.GetInt();
 		LoadDataFromMember(phys[i], "ID", &num, INT, input);
 
-		for (unsigned int e = 0; e < newMeshVec.size(); e++) // Bind related mesh to physics object: ID and set associated mesh
+		if (newPhys->shapeType != sPhysicsProperties::HITBOX)
 		{
-			if (newMeshVec[e]->uniqueID == num)
+			for (unsigned int e = 0; e < newMeshVec.size(); e++) // Bind related mesh to physics object: ID and set associated mesh
 			{
-				newMeshVec[e]->uniqueID = newPhys->getUniqueID();
-				newPhys->pTheAssociatedMesh = newMeshVec[e];
+				if (newMeshVec[e]->uniqueID == num)
+				{
+					newMeshVec[e]->uniqueID = newPhys->getUniqueID();
+					newPhys->pTheAssociatedMesh = newMeshVec[e];
 
-				// We also properly set the shape here
-				switch (newPhys->shapeType)
-				{
-				case(sPhysicsProperties::SPHERE):
-				{
-					newPhys->setShape(new sPhysicsProperties::sSphere(1.0f)); // TODO set this to proper radius
+					// We also properly set the shape here
+					switch (newPhys->shapeType)
+					{
+					case(sPhysicsProperties::SPHERE):
+					{
+						newPhys->setShape(new sPhysicsProperties::sSphere(1.0f)); // TODO set this to proper radius
+						break;
+					}
+					case(sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT):
+					{
+						newPhys->setShape(new sPhysicsProperties::sMeshOfTriangles_Indirect(newPhys->pTheAssociatedMesh->getMeshName()));
+						break;
+					}
+					}
+
 					break;
 				}
-				case(sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT):
-				{
-					newPhys->setShape(new sPhysicsProperties::sMeshOfTriangles_Indirect(newPhys->pTheAssociatedMesh->getMeshName()));
-					break;
-				}
-				}
-
-				break;
 			}
 		}
+
+
+		if (newPhys->shapeType == sPhysicsProperties::HITBOX)
+		{
+
+			sPhysicsProperties::sHitBox* hb = new sPhysicsProperties::sHitBox();
+			newPhys->setShape(hb);
+			LoadDataFromMember(phys[i], "srcPos", &hb->srcCentre, VEC3, input);
+			LoadDataFromMember(phys[i], "dstPos", &hb->dstCentre, VEC3, input);
+			LoadDataFromMember(phys[i], "boxscle", &hb->scale, FLOAT, input);
+		}
+
+
 
 		// Add completed physics object to the array
 		newPhysVec.push_back(newPhys);

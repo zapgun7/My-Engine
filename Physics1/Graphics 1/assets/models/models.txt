@@ -19,3 +19,5 @@ wall corner1.ply
 sphere.ply
 sphere2.ply
 plat.ply
+debugCube.ply
+hole.ply

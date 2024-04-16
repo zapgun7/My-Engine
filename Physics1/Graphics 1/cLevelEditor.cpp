@@ -721,6 +721,10 @@ void cLevelEditor::PhysEditor(std::vector<sPhysicsProperties*> PhysVec)
 	glm::vec3 objAccel = glm::vec3(0);
 	sPhysicsProperties* currObj = nullptr;
 
+
+
+
+
 	if (isExistingObj)
 	{
 		currObj = PhysVec[m_phys_obj_idx];
@@ -729,12 +733,28 @@ void cLevelEditor::PhysEditor(std::vector<sPhysicsProperties*> PhysVec)
 		shapeType = (unsigned int)PhysVec[m_phys_obj_idx]->shapeType;
 		objAccel = currObj->acceleration;
 		inv_mass = currObj->inverse_mass;
+
+	}
+
+
+
+	// BUTTON TO ADD HITBOX
+	static char teleName[32] = ""; ImGui::InputText("name", teleName, 32);
+
+	if ((ImGui::Button("Add TeleBoxes")) && (std::strlen(teleName) > 0))
+	{
+		sPhysicsProperties* newteleboxes = new sPhysicsProperties();
+		newteleboxes->shapeType = sPhysicsProperties::HITBOX;
+		newteleboxes->setShape(new sPhysicsProperties::sHitBox());
+		newteleboxes->friendlyName = teleName;
+
+		m_pEngineController->addPhysObj(newteleboxes);
 	}
 
 
 
 
-	const char* shapeTypes[] = { "UNKNOWN_OR_UNDEFINED", "SPHERE", "PLANE", "TRIANGLE", "AABB", "CAPSULE", "MESH_OF_TRIANGLES_INDIRECT", "MESH_OF_TRIANGLES_LOCAL_VERTICES"};
+	const char* shapeTypes[] = { "UNKNOWN_OR_UNDEFINED", "SPHERE", "PLANE", "TRIANGLE", "AABB", "CAPSULE", "MESH_OF_TRIANGLES_INDIRECT", "MESH_OF_TRIANGLES_LOCAL_VERTICES", "HITBOX"};
 	static int stype_current_idx = 0;
 	stype_current_idx = shapeType; // Set selected light type to one stored in the light
 	const char* combo_preview_value = shapeTypes[stype_current_idx];
@@ -780,6 +800,33 @@ void cLevelEditor::PhysEditor(std::vector<sPhysicsProperties*> PhysVec)
 			// Halflength
 			// Upvec?
 		}
+		else if (currObj->shapeType == sPhysicsProperties::HITBOX)
+		{
+			sPhysicsProperties::sHitBox* hitbox = (sPhysicsProperties::sHitBox*)currObj->pShape;
+			glm::vec3 srcPos = hitbox->srcCentre;
+			glm::vec3 dstPos = hitbox->dstCentre;
+			float boxScale = hitbox->scale;
+
+			ImGui::SeparatorText("TeleBox Options");
+			// Source Pos
+			ImGui::DragFloat("srcX", &srcPos.x, 0.1f, -FLT_MAX, FLT_MAX, "%.3f");
+			ImGui::DragFloat("srcY", &srcPos.y, 0.1f, -FLT_MAX, FLT_MAX, "%.3f");
+			ImGui::DragFloat("srcZ", &srcPos.z, 0.1f, -FLT_MAX, FLT_MAX, "%.3f");
+			// Destination Pos
+			ImGui::Separator();
+			ImGui::DragFloat("dstX", &dstPos.x, 0.1f, -FLT_MAX, FLT_MAX, "%.3f");
+			ImGui::DragFloat("dstY", &dstPos.y, 0.1f, -FLT_MAX, FLT_MAX, "%.3f");
+			ImGui::DragFloat("dstZ", &dstPos.z, 0.1f, -FLT_MAX, FLT_MAX, "%.3f");
+			// Scale
+			ImGui::Separator();
+			ImGui::DragFloat("bxScle", &boxScale, 0.1f, 0.0f, FLT_MAX, "%.3f");
+			ImGui::Separator();
+
+			hitbox->srcCentre = srcPos;
+			hitbox->dstCentre = dstPos;
+			hitbox->scale = boxScale;
+
+		}
 	}
 
 	ImGui::SeparatorText("----General Options----");
@@ -812,6 +859,10 @@ void cLevelEditor::PhysEditor(std::vector<sPhysicsProperties*> PhysVec)
 				break;
 			case(sPhysicsProperties::CAPSULE):
 				currObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 1.0f));
+				break;
+			case(sPhysicsProperties::HITBOX):
+				currObj->setShape(new sPhysicsProperties::sHitBox());
+				break;
 			}
 			
 		}

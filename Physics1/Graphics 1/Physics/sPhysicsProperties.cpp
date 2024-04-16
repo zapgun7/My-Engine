@@ -98,5 +98,10 @@ void sPhysicsProperties::setShape(sMeshOfTriangles_LocalVertices* pTriangleMeshP
 	return;
 }
 
+void sPhysicsProperties::setShape(sHitBox* pHitboxProps)
+{
+	this->pShape = (void*)pHitboxProps;
+	return;
+}
 
 

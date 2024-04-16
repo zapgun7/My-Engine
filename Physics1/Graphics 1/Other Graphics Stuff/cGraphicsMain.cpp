@@ -21,6 +21,8 @@
 
 #include "../cInputHandler.h"
 
+#include "../cEngineController.h"
+
 
 
 
@@ -1685,8 +1687,13 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 	// Now draw debug stuff
 	glDisable(GL_DEPTH_TEST);
 
+	static cEngineController* engineRef = cEngineController::GetEngineController();
+
 	if (renderDebug)
 	{
+		std::vector<sPhysicsProperties*> physVec;
+		engineRef->getActivePhysVec(&physVec);
+
 		glm::mat4 matModel = glm::mat4(1.0f);   // Identity matrix
 		cMesh basicSphere;
 		basicSphere.meshName = "Sphere_1_unit_Radius.ply";
@@ -1733,10 +1740,43 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 		}
 
 
+		// Now draw the tele boxes
+		glDisable(GL_CULL_FACE);
+
+
+		basicSphere.meshName = "debugCube.ply";
+
+		for (sPhysicsProperties* currPhys : physVec)
+		{
+			if (currPhys->shapeType != sPhysicsProperties::HITBOX) continue;
+
+			sPhysicsProperties::sHitBox* currBoxes = (sPhysicsProperties::sHitBox*)currPhys->pShape;
+
+			basicSphere.customColorRGBA = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f); // Cyan for entrance
+
+			basicSphere.scale = glm::vec3(currBoxes->scale);
+			basicSphere.drawPosition = currBoxes->srcCentre;
+			
+			DrawObject(&basicSphere, matModel, m_shaderProgramID);
+
+
+
+			basicSphere.customColorRGBA = glm::vec4(0.0f, 0.4f, 1.0f, 1.0f); // Bluer for entrance
+
+			//basicSphere.scale = glm::vec3(currBoxes->scale);
+			basicSphere.drawPosition = currBoxes->dstCentre;
+
+			DrawObject(&basicSphere, matModel, m_shaderProgramID);
+
+
+		}
+		
+
+
 	}
 
 	glEnable(GL_DEPTH_TEST);
-
+	glEnable(GL_CULL_FACE);
 
 	return;
 

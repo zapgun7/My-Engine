@@ -614,3 +614,16 @@ int cPhysics::m_IntersectSegmentPlane(glm::vec3 a, glm::vec3 b, glm::vec3 pn, fl
 
 	return 0;
 }
+
+int cPhysics::m_TestPointInBox(glm::vec3 p, glm::vec3 boxCtr, glm::vec3 boxExtnts)
+{
+	if (p.x < boxCtr.x - boxExtnts.x) return 0;
+	if (p.y < boxCtr.y - boxExtnts.y) return 0;
+	if (p.z < boxCtr.z - boxExtnts.z) return 0;
+
+	if (p.x > boxCtr.x + boxExtnts.x) return 0;
+	if (p.y > boxCtr.y + boxExtnts.y) return 0;
+	if (p.z > boxCtr.z + boxExtnts.z) return 0;
+
+	return 1;
+}

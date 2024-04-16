@@ -73,6 +73,12 @@ void cEngineController::getAvailableSaves(std::vector<std::string>* SaveVec)
 
 
 
+void cEngineController::getActivePhysVec(std::vector<sPhysicsProperties*>* physVec)
+{
+	m_pTheEngineController->getActivePhysVec(physVec);
+	return;
+}
+
 /*********************************| DATA SETTING |**************************************/
 
 // void cEngineController::setMeshData(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor)
@@ -130,6 +136,12 @@ void cEngineController::addNewObject(std::string meshName, char* friendlyName)
 void cEngineController::addCustomObject(cMesh* newMesh, sPhysicsProperties* newObj)
 {
 	m_pTheEngineController->addCustomObject(newMesh, newObj);
+	return;
+}
+
+void cEngineController::addPhysObj(sPhysicsProperties* newObj)
+{
+	m_pTheEngineController->addPhysObj(newObj);
 	return;
 }
 

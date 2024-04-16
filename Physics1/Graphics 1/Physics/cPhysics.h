@@ -192,6 +192,9 @@ public:
 	static int m_IntersectSegmentTriangle(glm::vec3 p, glm::vec3 q, sTriangle_A* pTri/*glm::vec3 a, glm::vec3 b, glm::vec3 c*/, float& u, float& v, float& w, glm::vec3& norm, float& t); // Slightly modified to just give t and trinorm
 	static int m_IntersectSegmentPlane(glm::vec3 a, glm::vec3 b, glm::vec3 pn, float pd, glm::vec3& q);
 
+	// Basic is point in box
+	static int m_TestPointInBox(glm::vec3 p, glm::vec3 boxCtr, glm::vec3 boxExtnts);
+
 	// Less Basic Tests
 	static bool m_TestMovingSphereTriangle(sPhysicsProperties* pSphere, sTriangle_A* pTri, float &t, glm::vec3 &hitNorm);
 	static bool m_TestMovingCapsuleTriangle(sPhysicsProperties* pCapsule, sTriangle_A* pTri, float& t, glm::vec3& hitNorm);

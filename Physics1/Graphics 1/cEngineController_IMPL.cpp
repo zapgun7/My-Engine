@@ -160,7 +160,7 @@ bool cEngineController_IMPL::Initialize(void)
 	// First person player setup
 	if (true) 
 	{
-		m_pTheSceneManager->loadScene("navPathsPhys");//("testNav4");
+		m_pTheSceneManager->loadScene("testBoxSave");//("testNav4");
 		
 		sPhysicsProperties* playerObj = new sPhysicsProperties();
 		playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 0.5f));
@@ -198,7 +198,7 @@ bool cEngineController_IMPL::Initialize(void)
 	}
 
 	// Generate Enemies
-	if (true) // EnemyEntity
+	if (false) // EnemyEntity
 	{
 		//m_pTheSceneManager->loadScene("complexNav");
 		m_pThePhysics->Update(0.0f);
@@ -315,6 +315,12 @@ void cEngineController_IMPL::getAvailableSaves(std::vector<std::string>* SaveVec
 	return;
 }
 
+void cEngineController_IMPL::getActivePhysVec(std::vector<sPhysicsProperties*>* physVec)
+{
+	*physVec = m_pThePhysics->getPhysicsVec();
+	return;
+}
+
 // void cEngineController_IMPL::setMeshData(int meshID, std::string newFriendlyName, int newTextureIdx[], float newRatios[], bool isVisible, bool isWireframe, bool doNotLight, bool useDebugColor, glm::vec4 debugColor)
 // {
 // 	m_pTheGraphics->updateMesh(meshID, newFriendlyName, newTextureIdx, newRatios, isVisible, isWireframe, doNotLight, useDebugColor, debugColor);
@@ -404,6 +410,12 @@ void cEngineController_IMPL::addCustomObject(cMesh* newMesh, sPhysicsProperties*
 	else
 		m_pThePhysics->AddShape(newObj);
 
+	return;
+}
+
+void cEngineController_IMPL::addPhysObj(sPhysicsProperties* newObj)
+{
+	m_pThePhysics->AddShape(newObj);
 	return;
 }
 

@@ -315,6 +315,28 @@ void cPhysics::Update(double deltaTime)
 	if ((m_pThePlayerObj != nullptr ) && (m_pThePlayerObj->playerInfo->jumpNormThisFrame)) // This normalizes the norms of all triangles the player is standing on
 		m_pThePlayerObj->playerInfo->groundNorm = glm::normalize(m_pThePlayerObj->playerInfo->groundNorm); 
 
+
+	// Has player hit any hitbox (only for teleporting for now)
+
+	for (sPhysicsProperties* currPhys : m_vec_pPhysicalProps)
+	{
+		if (currPhys->shapeType != sPhysicsProperties::HITBOX) continue;
+
+		sPhysicsProperties::sHitBox* currBoxes = (sPhysicsProperties::sHitBox*)currPhys->pShape;
+
+		glm::vec3 boxExtents(currBoxes->scale / 2);
+		if (m_TestPointInBox(m_pThePlayerObj->position, currBoxes->srcCentre, boxExtents))
+		{
+			glm::vec3 teleOffset = m_pThePlayerObj->position - currBoxes->srcCentre; // Box center to player pos
+			glm::vec3 teleOffsetOLD = m_pThePlayerObj->oldPosition - currBoxes->srcCentre;
+
+			m_pThePlayerObj->position = currBoxes->dstCentre + teleOffset;
+			m_pThePlayerObj->oldPosition = currBoxes->dstCentre + teleOffsetOLD;
+		}
+	}
+
+
+
 	// Update the draw locations (and orientations) for all associated meshes
 	for (sPhysicsProperties* pObject : this->m_vec_pPhysicalProps)
 	{
