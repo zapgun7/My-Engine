@@ -1,0 +1,5468 @@
+{
+    "meshes": [
+        {
+            "meshName": "Flat_1x1_plane.ply",
+            "friendlyName": "StartPlane",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "defSpec.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": false,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                7.840000152587891
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                32.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 3
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x40.ply",
+            "friendlyName": "StartRamp",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "defSpec.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": false,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                4.460000038146973
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                32.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 4
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x80.ply",
+            "friendlyName": "EntrancePlane",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "defSpec.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": false,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                6.590000152587891
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                32.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 5
+        },
+        {
+            "meshName": "door.ply",
+            "friendlyName": "Entrance",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "defSpec.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": false,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                4.313000202178955
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                32.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 6
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x100.ply",
+            "friendlyName": "FrontFrontWall",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "defSpec.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": false,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                6.920000076293945
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                32.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 7
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x100.ply",
+            "friendlyName": "FrontFrontWall2",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "defSpec.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": false,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                6.920000076293945
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                32.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 8
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x100.ply",
+            "friendlyName": "FrontFrontWall3",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "defSpec.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": false,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                6.920000076293945
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                32.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 9
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x100.ply",
+            "friendlyName": "FrontBackWall",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                6.920000076293945
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 10
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x100.ply",
+            "friendlyName": "FrontBackWall2",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                6.920000076293945
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 11
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x100.ply",
+            "friendlyName": "FrontBackWall3",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                6.920000076293945
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 12
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x80.ply",
+            "friendlyName": "FrontHallFloor",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                7.199999809265137
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 13
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x80.ply",
+            "friendlyName": "FrontHallFloor2",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                7.199999809265137
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 14
+        },
+        {
+            "meshName": "door.ply",
+            "friendlyName": "FrontHallDoor1",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                4.313000202178955
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 15
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x20.ply",
+            "friendlyName": "FrontHallDoorFloor1",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                2.119999885559082
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 16
+        },
+        {
+            "meshName": "door.ply",
+            "friendlyName": "FrontHallDoor1_2",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                4.313000202178955
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 17
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x60.ply",
+            "friendlyName": "Room1Floor1",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                3.5
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 18
+        },
+        {
+            "meshName": "hole.ply",
+            "friendlyName": "Room1Hole1",
+            "isNav": false,
+            "mat_difftex": "colorfulnoise.bmp",
+            "mat_spectex": "defSpec.bmp",
+            "mat_diffmirr": true,
+            "mat_specmirr": false,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                32.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 19
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x40.ply",
+            "friendlyName": "Room1Floor2",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                3.5
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 21
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x40.ply",
+            "friendlyName": "Room1Floor3",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                3.5
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 22
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x40.ply",
+            "friendlyName": "Room1Floor4",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                3.5
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 23
+        },
+        {
+            "meshName": "door.ply",
+            "friendlyName": "Room1Door1",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                4.313000202178955
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 24
+        },
+        {
+            "meshName": "door.ply",
+            "friendlyName": "Room1Door2",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                4.313000202178955
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 25
+        },
+        {
+            "meshName": "hole.ply",
+            "friendlyName": "Room2Hole1",
+            "isNav": false,
+            "mat_difftex": "colorfulnoise.bmp",
+            "mat_spectex": "defSpec.bmp",
+            "mat_diffmirr": true,
+            "mat_specmirr": false,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                32.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 26
+        },
+        {
+            "meshName": "hole.ply",
+            "friendlyName": "Room2Hole2",
+            "isNav": false,
+            "mat_difftex": "colorfulnoise.bmp",
+            "mat_spectex": "defSpec.bmp",
+            "mat_diffmirr": true,
+            "mat_specmirr": false,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                32.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 27
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x40.ply",
+            "friendlyName": "Room2Floor1",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                3.5
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 28
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x40.ply",
+            "friendlyName": "Room2Floor2",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                3.5
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 29
+        },
+        {
+            "meshName": "Flat_1x1_plane_20x40.ply",
+            "friendlyName": "Room2Ramp1",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                3.5
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 30
+        },
+        {
+            "meshName": "hole.ply",
+            "friendlyName": "Room2Hole3",
+            "isNav": false,
+            "mat_difftex": "colorfulnoise.bmp",
+            "mat_spectex": "defSpec.bmp",
+            "mat_diffmirr": true,
+            "mat_specmirr": false,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                32.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 31
+        },
+        {
+            "meshName": "door.ply",
+            "friendlyName": "Room3Door1",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                4.313000202178955
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 32
+        },
+        {
+            "meshName": "door.ply",
+            "friendlyName": "Room3Door2",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                4.313000202178955
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 33
+        },
+        {
+            "meshName": "door.ply",
+            "friendlyName": "Room3Door3",
+            "isNav": false,
+            "mat_difftex": "wall_texture.bmp",
+            "mat_spectex": "dreadpaths.bmp",
+            "mat_diffmirr": false,
+            "mat_specmirr": true,
+            "diffUV_data": [
+                0.0,
+                0.0,
+                4.313000202178955
+            ],
+            "specUV_data": [
+                0.0,
+                0.0,
+                4.0
+            ],
+            "mat_power": [
+                1.0,
+                1.0,
+                1.0,
+                15.0
+            ],
+            "customColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "isVisible": true,
+            "isWireframe": false,
+            "doNotLight": false,
+            "useCustomColor": false,
+            "tAlph": 1.0,
+            "dMask": false,
+            "reflect": false,
+            "refract": false,
+            "ID": 34
+        }
+    ],
+    "phys": [
+        {
+            "friendlyName": "StartPlane",
+            "shape_t": 6,
+            "pos": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 3,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "StartRamp",
+            "shape_t": 6,
+            "pos": [
+                0.0,
+                6.099999904632568,
+                -69.0
+            ],
+            "ori": [
+                17.599998474121094,
+                -0.0,
+                0.0
+            ],
+            "ID": 4,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "EntrancePlane",
+            "shape_t": 6,
+            "pos": [
+                0.0,
+                12.0,
+                -98.05000305175781
+            ],
+            "ori": [
+                0.0,
+                89.98021697998047,
+                0.0
+            ],
+            "ID": 5,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Entrance",
+            "shape_t": 6,
+            "pos": [
+                0.0,
+                18.75,
+                -107.30000305175781
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 6,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "FrontFrontWall",
+            "shape_t": 6,
+            "pos": [
+                -59.900001525878906,
+                18.75,
+                -103.19999694824219
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 7,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "FrontFrontWall2",
+            "shape_t": 6,
+            "pos": [
+                59.95000076293945,
+                18.75,
+                -103.19999694824219
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 8,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "FrontFrontWall3",
+            "shape_t": 6,
+            "pos": [
+                0.0,
+                38.75,
+                -103.19999694824219
+            ],
+            "ori": [
+                90.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 9,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "FrontBackWall",
+            "shape_t": 6,
+            "pos": [
+                -59.900001525878906,
+                18.75,
+                -109.94999694824219
+            ],
+            "ori": [
+                -90.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 10,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "FrontBackWall2",
+            "shape_t": 6,
+            "pos": [
+                59.95000076293945,
+                18.75,
+                -109.94999694824219
+            ],
+            "ori": [
+                -90.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 11,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "FrontBackWall3",
+            "shape_t": 6,
+            "pos": [
+                0.0,
+                38.75,
+                -109.94999694824219
+            ],
+            "ori": [
+                -90.0,
+                -0.0,
+                90.0
+            ],
+            "ID": 12,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "FrontHallFloor",
+            "shape_t": 6,
+            "pos": [
+                0.0,
+                12.0,
+                -148.0
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 13,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "FrontHallFloor2",
+            "shape_t": 6,
+            "pos": [
+                0.0,
+                12.0,
+                -228.0
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 14,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "FrontHallDoor1",
+            "shape_t": 6,
+            "pos": [
+                -15.0,
+                19.450000762939453,
+                -139.5
+            ],
+            "ori": [
+                0.0,
+                89.98021697998047,
+                0.0
+            ],
+            "ID": 15,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "FrontHallDoorFloor1",
+            "shape_t": 6,
+            "pos": [
+                -20.0049991607666,
+                12.0,
+                -138.9499969482422
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 16,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "FrontHallDoor1_2",
+            "shape_t": 6,
+            "pos": [
+                -24.950000762939453,
+                19.450000762939453,
+                -139.5
+            ],
+            "ori": [
+                0.0,
+                89.98021697998047,
+                0.0
+            ],
+            "ID": 17,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Room1Floor1",
+            "shape_t": 6,
+            "pos": [
+                -39.5,
+                12.0,
+                -140.0
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 18,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Room1Hole1",
+            "shape_t": 6,
+            "pos": [
+                -59.5,
+                -18.0,
+                -138.89999389648438
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 19,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Room1Floor2",
+            "shape_t": 6,
+            "pos": [
+                -69.5,
+                12.0,
+                -118.9000015258789
+            ],
+            "ori": [
+                0.0,
+                89.98021697998047,
+                0.0
+            ],
+            "ID": 21,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Room1Floor3",
+            "shape_t": 6,
+            "pos": [
+                -69.5,
+                12.0,
+                -158.89999389648438
+            ],
+            "ori": [
+                0.0,
+                89.98021697998047,
+                0.0
+            ],
+            "ID": 22,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Room1Floor4",
+            "shape_t": 6,
+            "pos": [
+                -89.5,
+                12.0,
+                -138.89999389648438
+            ],
+            "ori": [
+                0.0,
+                89.98021697998047,
+                0.0
+            ],
+            "ID": 23,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Room1Door1",
+            "shape_t": 6,
+            "pos": [
+                -92.19999694824219,
+                19.450000762939453,
+                -139.5
+            ],
+            "ori": [
+                0.0,
+                89.98021697998047,
+                0.0
+            ],
+            "ID": 24,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Room1Door2",
+            "shape_t": 6,
+            "pos": [
+                -104.55000305175781,
+                19.450000762939453,
+                -139.5
+            ],
+            "ori": [
+                0.0,
+                89.98021697998047,
+                0.0
+            ],
+            "ID": 25,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Room2Hole1",
+            "shape_t": 6,
+            "pos": [
+                -119.4000015258789,
+                -18.0,
+                -118.9000015258789
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 26,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Room2Hole2",
+            "shape_t": 6,
+            "pos": [
+                -119.4000015258789,
+                -18.0,
+                -158.89999389648438
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 27,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Room2Floor1",
+            "shape_t": 6,
+            "pos": [
+                -129.5,
+                12.0,
+                -138.89999389648438
+            ],
+            "ori": [
+                0.0,
+                89.98021697998047,
+                0.0
+            ],
+            "ID": 28,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Room2Floor2",
+            "shape_t": 6,
+            "pos": [
+                -139.39999389648438,
+                12.0,
+                -168.89999389648438
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 29,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Room2Ramp1",
+            "shape_t": 6,
+            "pos": [
+                -168.10000610351563,
+                18.799999237060547,
+                -168.89999389648438
+            ],
+            "ori": [
+                19.995729446411133,
+                90.0,
+                0.0
+            ],
+            "ID": 30,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Room2Hole3",
+            "shape_t": 6,
+            "pos": [
+                -196.8939971923828,
+                -4.361000061035156,
+                -168.89999389648438
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 31,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Room3Door1",
+            "shape_t": 6,
+            "pos": [
+                -139.1999969482422,
+                19.450000762939453,
+                -192.10000610351563
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 32,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Room3Door2",
+            "shape_t": 6,
+            "pos": [
+                -139.1999969482422,
+                19.450000762939453,
+                -202.10000610351563
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 33,
+            "inv_mass": -1.0
+        },
+        {
+            "friendlyName": "Room3Door3",
+            "shape_t": 6,
+            "pos": [
+                -139.1999969482422,
+                19.450000762939453,
+                -212.10000610351563
+            ],
+            "ori": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "ID": 34,
+            "inv_mass": -1.0
+        }
+    ],
+    "lights": [
+        {
+            "friendlyname": "ambient",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                0.4000000059604645
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                3.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "GenDir",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                -0.05000000074505806,
+                -0.30000001192092896,
+                -0.05000000074505806,
+                0.0
+            ],
+            "param1": [
+                2.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        {
+            "friendlyname": "---",
+            "position": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "atten": [
+                0.5,
+                0.5,
+                0.5,
+                1.0
+            ],
+            "direction": [
+                0.0,
+                -1.0,
+                0.0,
+                1.0
+            ],
+            "param1": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "param2": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        }
+    ]
+}

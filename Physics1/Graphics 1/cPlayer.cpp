@@ -576,6 +576,15 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 	return;
 }
 
+void cPlayer::setCamSpeed(int val)
+{
+// 	m_CameraSpeed += val;
+// 	if (m_CameraSpeed < 0.1f) m_CameraSpeed = 0.1f;
+	m_CameraSpeed = val;
+	
+	return;
+}
+
 void* cPlayer::GetCurrTri(void)
 {
 	return (void*)m_pCurrTri;

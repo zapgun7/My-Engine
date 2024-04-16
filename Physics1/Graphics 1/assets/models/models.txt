@@ -1,5 +1,13 @@
 Big_Flat_Mesh.ply
 Flat_1x1_plane.ply
+Flat_1x1_plane_80x80.ply
+Flat_1x1_plane_60x60.ply
+Flat_1x1_plane_40x40.ply
+Flat_1x1_plane_20x20.ply
+Flat_1x1_plane_20x40.ply
+Flat_1x1_plane_20x60.ply
+Flat_1x1_plane_20x80.ply
+Flat_1x1_plane_20x100.ply
 Sphere_1_unit_Radius.ply
 rusty_ship.ply
 Icosahedron.ply

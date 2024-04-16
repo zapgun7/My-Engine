@@ -158,7 +158,7 @@ bool cEngineController_IMPL::Initialize(void)
 	this->testNav = new cNavMesh();
 
 	// First person player setup
-	if (true) 
+	if (false) 
 	{
 		m_pTheSceneManager->loadScene("testBoxSave");//("testNav4");
 		
@@ -361,6 +361,11 @@ void cEngineController_IMPL::toggleRunningState(void)
 {
 	m_pAnimationsManager->toggleRunning();
 	return;
+}
+
+void cEngineController_IMPL::adjustCamSpeed(int val)
+{
+	m_ThePlayer->setCamSpeed(val);
 }
 
 // void cEngineController_IMPL::UpdateVAO(std::string meshName, sModelDrawInfo modelInfo)

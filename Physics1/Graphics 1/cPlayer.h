@@ -38,6 +38,8 @@ public:
 
 	void Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cameraRotation); // Updates these based on inputs in the last frame
 
+	void setCamSpeed(int val);
+
 	void* GetCurrTri(void);
 	
 

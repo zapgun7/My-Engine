@@ -48,6 +48,8 @@ public:
 	// Verlet Objects
 	//void UpdateVAO(std::string meshName, sModelDrawInfo modelInfo);
 
+	void setCamSpeed(int val);
+
 
 
 	/// Data Creation ///

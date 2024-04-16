@@ -122,6 +122,12 @@ void cEngineController::toggleRunningState(void)
 	return;
 }
 
+void cEngineController::setCamSpeed(int val)
+{
+	m_pTheEngineController->adjustCamSpeed(val);
+	return;
+}
+
 // void cEngineController::UpdateVAO(std::string meshName, sModelDrawInfo modelInfo)
 // {
 // 	m_pTheEngineController->UpdateVAO(meshName, modelInfo);

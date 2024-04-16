@@ -219,13 +219,16 @@ bool cSceneManagement::saveScene(char* fileName, std::vector< cMesh* > MeshVec, 
 		AddMemberToObject(meshobj, "mat_diffmirr", &MeshVec[i]->material.isDiffMirrored, BOOL, output);
 		AddMemberToObject(meshobj, "mat_specmirr", &MeshVec[i]->material.isSpecMirrored, BOOL, output);
 
+		AddMemberToObject(meshobj, "diffUV_data", &MeshVec[i]->material.diffuv_Offset_Scale, VEC3, output);
+		AddMemberToObject(meshobj, "specUV_data", &MeshVec[i]->material.specuv_Offset_Scale, VEC3, output);
+
+		AddMemberToObject(meshobj, "mat_power", &MeshVec[i]->material.power, VEC4, output);
 		///// //////// /////// /////
 
 		AddMemberToObject(meshobj, "customColor", &MeshVec[i]->customColorRGBA, VEC3, output);
 		//AddMemberToObject(meshobj, "uv_OS", &MeshVec[i]->uv_Offset_Scale, VEC3, output);
 		//AddMemberToObject(meshobj, "uv_Spd", &MeshVec[i]->uv_Offset_Scale, VEC2, output);
-		AddMemberToObject(meshobj, "diffUV_data", &MeshVec[i]->material.diffuv_Offset_Scale, VEC3, output);
-		AddMemberToObject(meshobj, "specUV_data", &MeshVec[i]->material.specuv_Offset_Scale, VEC3, output);
+		
 
 		AddMemberToObject(meshobj, "scale", &MeshVec[i]->scale, VEC3, output);
 		AddMemberToObject(meshobj, "isVisible", &MeshVec[i]->bIsVisible, BOOL, output);
@@ -401,6 +404,9 @@ void cSceneManagement::loadScene(std::string fileName)
 		// Is Mirrored
 		LoadDataFromMember(meshes[i], "mat_diffmirr", &newMesh->material.isDiffMirrored, BOOL, input);
 		LoadDataFromMember(meshes[i], "mat_specmirr", &newMesh->material.isSpecMirrored, BOOL, input);
+
+		//AddMemberToObject(meshobj, "mat_power", &MeshVec[i]->material.power, VEC4, output);
+		LoadDataFromMember(meshes[i], "mat_power", &newMesh->material.power, VEC4, input);
 
 		///// ///////// //// /////
 

@@ -200,17 +200,20 @@ if (ImGui::Button("Debug Render"))
 			m_ShowSceneManager = true;
 	}
 	ImGui::Separator();
-	if (ImGui::Button("Faster"))
-	{
-		//m_FlyCamSpeed += 0.1f;
-	}
-	//ImGui::Text(std::to_string(m_FlyCamSpeed).c_str());
-	ImGui::Text("TODO");
-	if (ImGui::Button("Slower"))
-	{
-// 		if (m_FlyCamSpeed > 0.1f)
-// 			m_FlyCamSpeed -= 0.1f;
-	}
+
+	static float camSpd = 20.0f;
+
+	ImGui::DragFloat("CamSpd: ", &camSpd, 0.001f, FLT_MIN, FLT_MAX, "%.5f");
+	m_pEngineController->setCamSpeed(camSpd);
+// 	if (ImGui::Button("Faster"))
+// 	{
+// 		m_pEngineController->setCamSpeed(0.1f);
+// 	}
+// 	//ImGui::Text(std::to_string(m_FlyCamSpeed).c_str());
+// 	if (ImGui::Button("Slower"))
+// 	{
+// 		m_pEngineController->setCamSpeed(-0.1f);
+// 	}
 
 
 	

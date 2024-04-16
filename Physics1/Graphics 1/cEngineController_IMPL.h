@@ -46,6 +46,8 @@ public:
 	// Animation Manager Settings Setting
 	void setTimescale(float newTS);
 	void toggleRunningState(void);
+
+	void adjustCamSpeed(int val);
 	// Verlet Objects
 	//void UpdateVAO(std::string meshName, sModelDrawInfo modelInfo);
 
