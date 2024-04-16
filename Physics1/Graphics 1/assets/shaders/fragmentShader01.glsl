@@ -35,9 +35,7 @@ in vec4 ex_BoneId;
 
 
 
-// If true, then passes the colour without calculating lighting
-
-uniform vec4 eyeLocation;
+uniform vec4 eyeLocation; // w is view distance
 
 
 uniform vec4 customColorRGBA;		
@@ -163,9 +161,19 @@ void main()
 	}
 
 
-
-
-
+	float fragDist = length(eyeLocation.xyz - vertexWorldPos.xyz);
+	float lossRatio = 0.0f; // No loss default
+	
+	if (fragDist > eyeLocation.w / 2.0f) // If distance is beyond the halfway point to the "border"
+	{
+		fragDist -= eyeLocation.w / 2.0f;
+		lossRatio = fragDist / eyeLocation.w / 2.0f;
+		
+		lossRatio = clamp(lossRatio, 0.0f, 0.98f);
+		
+		
+	}
+	vec4 lossRatioVec = vec4(lossRatio * 0.9f, lossRatio, lossRatio, 0.0f);
 
 //	gl_FragColor = vec4(color, 1.0);
 
@@ -210,6 +218,8 @@ void main()
 		outputColour.rgb = skyBoxSampleColour.rgb;
 		outputColour.a = 1.0f;
 		//gl_FragDepth = 0.999f;
+		//outputColour *= (1.0f - lossRatio);
+		outputColour *= (vec4(1.0f, 1.0f, 1.0f, 1.0f) - lossRatioVec);
 		return;
 	}
 	
@@ -299,6 +309,8 @@ void main()
 	//                                              vertexWorldPos.xyz, vertexSpecular );
 	vec4 vertexColorLit = calulateLightContribNEW( vertexRGBA.rgb, vertexWorldNormal.xyz, 
 	                                               vertexWorldPos.xyz, vertexSpecular );
+   //vertexColorLit *= (1.0f - lossRatio);
+   vertexColorLit *= (vec4(1.0f, 1.0f, 1.0f, 1.0f) - lossRatioVec);
 	// *************************************
 			
 	outputColour.rgb = vertexColorLit.rgb;

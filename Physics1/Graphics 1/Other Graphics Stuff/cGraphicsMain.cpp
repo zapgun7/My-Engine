@@ -716,7 +716,15 @@ bool cGraphicsMain::Update(double deltaTime)
 		glm::vec3 scene_1_CameraEye = m_cameraEye;
 		glm::vec3 scene_1_CameraTarget = m_cameraTarget;
 
-		DrawPass_1(m_shaderProgramID, m_pFBO_1->width, m_pFBO_1->height, glm::vec4(scene_1_CameraEye, 1.0f), scene_1_CameraTarget);
+
+		static float viewDist = 30;
+
+		static float timePassed = 0.0f;
+		timePassed += static_cast<float>(deltaTime);
+
+		viewDist = sin(timePassed / 2.0f) * 3.0f + 20.0f;
+
+		DrawPass_1(m_shaderProgramID, m_pFBO_1->width, m_pFBO_1->height, glm::vec4(scene_1_CameraEye, viewDist), scene_1_CameraTarget);
 	}
 
 	// Draw HeatMap
@@ -1903,6 +1911,11 @@ void cGraphicsMain::updateSelectedLight(int lightIdx, std::string friendlyName, 
 	m_pTheLights->theLights[lightIdx].param2 = newParam2;
 
 	return;
+}
+
+void cGraphicsMain::setLightPos(int lightIdx, glm::vec4 pos)
+{
+	m_pTheLights->theLights[lightIdx].position = pos;
 }
 
 void cGraphicsMain::updateDebugStates(bool useDebug, int selMesh, int selLight)

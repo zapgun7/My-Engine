@@ -81,3 +81,8 @@ void cEntityManager::SetPlayerNavTri(void* playerTri)
 	return;
 }
 
+glm::vec3 cEntityManager::getEntityPos(void)
+{
+	return m_vecEntities[0]->getPosition();
+}
+

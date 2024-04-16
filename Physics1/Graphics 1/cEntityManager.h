@@ -22,6 +22,7 @@ public:
 	void SetPlayer(sPhysicsProperties* playerObj);
 	void SetNavMesh(cNavMesh* mesh);
 	void SetPlayerNavTri(void* playerTri);
+	glm::vec3 getEntityPos(void);
 
 private:
 	std::vector<iEntity*> m_vecEntities;

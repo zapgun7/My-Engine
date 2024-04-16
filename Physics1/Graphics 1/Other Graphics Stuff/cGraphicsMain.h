@@ -55,6 +55,7 @@ public:
 
 	// Level Editor Setting
 	void updateSelectedLight(int lightIdx, std::string friendlyName, glm::vec4 newPos, glm::vec4 newDiff, glm::vec4 newSpec, glm::vec4 newAtten, glm::vec4 newDir, glm::vec4 newParam1, glm::vec4 newParam2);
+	void setLightPos(int lightIdx, glm::vec4 pos);
 	void updateDebugStates(bool useDebug, int selectedMesh, int selectedLight);
 
 	// Level Editor Adding

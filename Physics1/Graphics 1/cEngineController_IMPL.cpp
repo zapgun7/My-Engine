@@ -53,6 +53,19 @@ void cEngineController_IMPL::Run(void)
 		{
 			m_pEntityManager->Update(deltaTime);
 			m_pEntityManager->SetPlayerNavTri(m_ThePlayer->GetCurrTri());
+
+			glm::vec4 entityPos = glm::vec4(m_pEntityManager->getEntityPos(), 1.0f);
+// 			glm::vec4 diff(1.0f, 1.0f, 1.0f, 0.0f); // No diffuse light yet
+// 			glm::vec4 spec(0.5, 0.0f, 0.0f, 1.5f);
+// 			glm::vec4 atten(1.0f, 0.1f, 0.01f, 20.0f);
+// 			glm::vec4 dir(1.0f); // Doesn't matter
+// 			glm::vec4 param1(0.0f, 0.0f, 0.0f, 10.0f);
+// 			glm::vec4 param2(1.0f);
+
+
+
+			//m_pTheGraphics->updateSelectedLight(79, "monsterLight", entityPos, diff, spec, atten, dir, param1, param2);
+			m_pTheGraphics->setLightPos(2, entityPos);
 		}
 
 		m_pTheEditor->Update(deltaTime); //m_pTheEditor->Update(uncappedDT); 
