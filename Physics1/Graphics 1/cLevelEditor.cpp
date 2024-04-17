@@ -434,15 +434,31 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 		ImGui::SeparatorText("Position");
 	 		ImGui::DragFloat("X", &xPos, 0.05f, -FLT_MAX, +FLT_MAX, "%.3f");
 			ImGui::SameLine();
-			if (ImGui::Button("+x")) xPos += 20;
+			if (ImGui::Button("+20x")) xPos += 20;
 			ImGui::SameLine();
-			if (ImGui::Button("-x")) xPos -= 20;
+			if (ImGui::Button("-20x")) xPos -= 20;
+			ImGui::SameLine();
+			if (ImGui::Button("+10x")) xPos += 10;
+			ImGui::SameLine();
+			if (ImGui::Button("-10x")) xPos -= 10;
 	 		ImGui::DragFloat("Y", &yPos, 0.05f, -FLT_MAX, +FLT_MAX, "%.3f");
+			ImGui::SameLine();
+			if (ImGui::Button("+20y")) yPos += 20;
+			ImGui::SameLine();
+			if (ImGui::Button("-20y")) yPos -= 20;
+			ImGui::SameLine();
+			if (ImGui::Button("+10y")) yPos += 10;
+			ImGui::SameLine();
+			if (ImGui::Button("-10y")) yPos -= 10;
 	 		ImGui::DragFloat("Z", &zPos, 0.05f, -FLT_MAX, +FLT_MAX, "%.3f");
 			ImGui::SameLine();
-			if (ImGui::Button("+z")) zPos += 20;
+			if (ImGui::Button("+20z")) zPos += 20;
 			ImGui::SameLine();
-			if (ImGui::Button("-z")) zPos -= 20;
+			if (ImGui::Button("-20z")) zPos -= 20;
+			ImGui::SameLine();
+			if (ImGui::Button("+10z")) zPos += 10;
+			ImGui::SameLine();
+			if (ImGui::Button("-10z")) zPos -= 10;
 			
 			// Orientation
 	 		ImGui::SeparatorText("Orientation");

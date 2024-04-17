@@ -1544,6 +1544,8 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 			continue;
 		}
 
+		if (glm::distance(m_pPlayer->position, pCurrentMesh->drawPosition) > 200) continue;
+
 		if (pCurrentMesh->bIsVisible)
 		{
 
@@ -1911,6 +1913,11 @@ void cGraphicsMain::DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int sc
 
 
 	return;
+}
+
+void cGraphicsMain::SetPlayer(sPhysicsProperties* plyrObj)
+{
+	m_pPlayer = plyrObj;
 }
 
 // Adds new object to the meshestodraw

@@ -71,6 +71,8 @@ public:
 	int selectedLight; //
 	
 
+	void SetPlayer(sPhysicsProperties* plyrObj);
+
 private:
 	cGraphicsMain();
 	bool Initialize();
@@ -89,6 +91,9 @@ private:
 	void DrawPass_1(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec4 cameraEye, glm::vec3 cameraTarget);
 	void DrawPass_HM(GLuint shaderProgramID, int screenWidth, int screenHeight, glm::vec4 cameraEye, glm::vec3 cameraTarget, double& dt);
 	void DrawPass_FSQ(GLuint shaderProgramID, int screenWidth, int screeneight);
+
+	
+	sPhysicsProperties* m_pPlayer = nullptr;
 
 
 	//void updateSelectedMesh(int meshIdx, std::string friendlyName, glm::vec3 newPos, glm::vec3 newOri, glm::vec3 customColor, float newScale, bool doNotLight, bool useCustomColor);  // Updates and existing object by reference to its friendly name (also from the gui)

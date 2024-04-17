@@ -148,6 +148,8 @@ bool cEngineController_IMPL::Initialize(void)
 	m_TheCamera->position = glm::vec3(0, 20, -40);
 	m_ThePlayer = new cPlayer(m_pTheGraphics->getWindow());
 
+	m_pTheGraphics->SetPlayer(m_TheCamera);
+
 	//m_ThePlayer->setPlayerVerlet(theBlob);
 
 
