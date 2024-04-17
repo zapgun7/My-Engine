@@ -160,7 +160,7 @@ bool cEngineController_IMPL::Initialize(void)
 	// First person player setup
 	if (false) 
 	{
-		m_pTheSceneManager->loadScene("testBoxSave");//("testNav4");
+		m_pTheSceneManager->loadScene("navPathsPhys");//("testNav4");
 		
 		sPhysicsProperties* playerObj = new sPhysicsProperties();
 		playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 0.5f));

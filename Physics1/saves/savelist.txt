@@ -21,3 +21,12 @@ FinalLevel_Room3
 FinalLevel_Room4
 FinalLevel_Room5
 FinalLevel_Room7
+FinalLevel_Room8
+FinalLevel_Room8_1
+FinalLevel_Room9
+FinalLevel_Room9_1
+FinalLevel_Room9_2
+FinalLevel_Room9_3
+FinalLevel_Room10
+FinalLevel_Room10_1
+FinalLevel_Room10_2
