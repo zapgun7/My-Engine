@@ -7,6 +7,8 @@
 
 #include "iEntity.h"
 
+#include <random>
+
 struct sPhysicsProperties;
 
 
@@ -63,9 +65,21 @@ private:
 	void AddToMemory(int newID);
 
 
-	const unsigned int MEMORY_SIZE = 20;
-	int* m_IntersectionMemory; // paths it tool where there were >2 choices
+	const unsigned int MEMORY_SIZE = 100;
+	int* m_IntersectionMemory; // paths it took where there were >2 choices
 	unsigned int nextMemIDX;
+
+
+	// RANDOM ARRAY
+	int getRandNum(void);
+	int randArraySize;
+	int nextRandIDX;
+	int* m_RandArray;
+
+	std::vector<cNavMesh::sNavTri*> contenders;
+
+
+
 
 
 	// Basic nav waypoints

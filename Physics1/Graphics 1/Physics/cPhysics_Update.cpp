@@ -268,6 +268,7 @@ void cPhysics::Update(double deltaTime)
 						break;
 
 					case sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT:
+						if (glm::distance(pObjectB->position, pObjectA->position) > 100) break;
 						if (this->m_Capsule_TriMeshIndirect_IntersectionTest(pObjectA, pObjectB, newCollision))
 						{
 // 							if (newCollision.q < theCollision.q)
@@ -298,8 +299,9 @@ void cPhysics::Update(double deltaTime)
 					// Set if the player can jump
 					if (theCollision.hitNorm.y > 0)
 					{
-						if (acos(glm::dot(glm::normalize(theCollision.hitNorm), glm::vec3(0, 1, 0))) < 45)
+						if (theCollision.hitNorm.y > 0.5f)//if (acos(glm::dot(glm::normalize(theCollision.hitNorm), glm::vec3(0, 1, 0))) < 30)
 						{
+
 							pObjectA->playerInfo->jumpNormThisFrame = 1;
 							pObjectA->playerInfo->groundNorm += theCollision.hitNorm; 
 						}

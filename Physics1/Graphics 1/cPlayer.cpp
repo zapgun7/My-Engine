@@ -228,7 +228,7 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 				if (deltaDistSinceStep > 5.0f + actualSpd / 20.0f)
 				{
 					deltaDistSinceStep = 0.0f;
-					//StepSound();
+					StepSound();
 				}
 			}
 		}
@@ -446,6 +446,8 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 		if ((m_pInput->IsPressed(GLFW_KEY_SPACE)) && (m_pPlayerObject->playerInfo->isGrounded)) // Jump    TODO should use isGrounded but breaks when it does
 		{
 			m_pPlayerObject->velocity += m_pPlayerObject->playerInfo->groundNorm * m_PLAYERJUMPFORCE;// glm::vec3(0, m_PLAYERJUMPFORCE, 0);
+			m_pPlayerObject->playerInfo->framesAirborne = 5;
+			m_pPlayerObject->playerInfo->isGrounded = false;
 		}
 
 // 		static sTimer* testTimer = cTimer::MakeNewTimer(0.5f, sTimer::REPEAT);
@@ -463,26 +465,26 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 
 		//std::cout << "Speed: " << glm::length(m_pPlayerObject->velocity) << std::endl;
 
-		if (m_pInput->IsMousePressed(GLFW_MOUSE_BUTTON_LEFT))
-		{
-			m_BuildingKickPower += static_cast<float>(deltaTime) / m_KICKCHARGESPEED;
-			m_BuildingKickPower = m_BuildingKickPower > 1 ? 1 : m_BuildingKickPower; // Cap at 1.0f
-		}
-		else if (m_pInput->IsMouseReleasedEvent(GLFW_MOUSE_BUTTON_LEFT))
-		{
-			glm::vec3 norm = glm::vec3(0.0f);
-			if (m_pThePhysics->GetKickNorm(m_pPlayerObject->position, forwardVector, m_KICKREACH, norm))
-			{
-				Kick(norm, forwardVector);
-
-				// Play sound
-				m_pLuaSoundCall->RunScriptImmediately("PlaySound(1.0, 'kick')");
-
-// 				norm = glm::normalize(norm - forwardVector * 0.5f);
-// 				m_pPlayerObject->velocity += norm * m_MAXKICKFORCE * m_BuildingKickPower;
-			}
-			m_BuildingKickPower = 0.0f;
-		}
+// 		if (m_pInput->IsMousePressed(GLFW_MOUSE_BUTTON_LEFT))
+// 		{
+// 			m_BuildingKickPower += static_cast<float>(deltaTime) / m_KICKCHARGESPEED;
+// 			m_BuildingKickPower = m_BuildingKickPower > 1 ? 1 : m_BuildingKickPower; // Cap at 1.0f
+// 		}
+// 		else if (m_pInput->IsMouseReleasedEvent(GLFW_MOUSE_BUTTON_LEFT))
+// 		{
+// 			glm::vec3 norm = glm::vec3(0.0f);
+// 			if (m_pThePhysics->GetKickNorm(m_pPlayerObject->position, forwardVector, m_KICKREACH, norm))
+// 			{
+// 				Kick(norm, forwardVector);
+// 
+// 				// Play sound
+// 				m_pLuaSoundCall->RunScriptImmediately("PlaySound(1.0, 'kick')");
+// 
+// // 				norm = glm::normalize(norm - forwardVector * 0.5f);
+// // 				m_pPlayerObject->velocity += norm * m_MAXKICKFORCE * m_BuildingKickPower;
+// 			}
+// 			m_BuildingKickPower = 0.0f;
+// 		}
 
 
 

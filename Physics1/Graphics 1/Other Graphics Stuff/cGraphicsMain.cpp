@@ -1544,7 +1544,7 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 			continue;
 		}
 
-		if (glm::distance(m_pPlayer->position, pCurrentMesh->drawPosition) > 200) continue;
+		if (glm::distance(m_pPlayer->position, pCurrentMesh->drawPosition) > 150) continue;
 
 		if (pCurrentMesh->bIsVisible)
 		{

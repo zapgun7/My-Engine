@@ -33,6 +33,24 @@ cEnemyEntity::cEnemyEntity(sPhysicsProperties* entityObj, eAIType type)
 	nextMemIDX = 0;
 
 
+	// Generate random array of ints to make decisions off of
+	
+	randArraySize = 200;
+	nextRandIDX = 0;
+
+	std::mt19937_64 generator;
+	std::uniform_int_distribution<int> distribution;
+	distribution = std::uniform_int_distribution<int>(1, 200);
+
+	m_RandArray = new int[randArraySize];
+
+	for (int i = 0; i < randArraySize; i++)
+	{
+		m_RandArray[i] = distribution(generator);
+	}
+
+	contenders.reserve(2); // Max novel paths from one triangle
+
 }
 
 cEnemyEntity::~cEnemyEntity()
@@ -518,7 +536,23 @@ cNavMesh::sNavTri* cEnemyEntity::chooseNewDir(void)
 		{
 			noveltyRating = tempNov;
 			novelestTri = currTri;
+			contenders.clear(); // Newest best found, clear contenders
 		}
+		else if (tempNov == noveltyRating)
+		{
+			if (contenders.size() == 0)
+				contenders.push_back(novelestTri);
+			contenders.push_back(currTri); // Equally viable path found
+		}
+	}
+
+	if (contenders.size() > 0)
+	{
+		// Assume this has two values
+		if (getRandNum() % 2 == 0)
+			novelestTri = contenders[0];
+		else
+			novelestTri = contenders[1];
 	}
 
 	return novelestTri;
@@ -546,6 +580,13 @@ void cEnemyEntity::AddToMemory(int newID)
 	m_IntersectionMemory[nextMemIDX] = newID;
 	nextMemIDX = (nextMemIDX + 1) % MEMORY_SIZE;
 	return;
+}
+
+int cEnemyEntity::getRandNum(void)
+{
+	int retVal = m_RandArray[nextRandIDX++];
+	nextRandIDX = nextRandIDX % randArraySize;
+	return retVal;
 }
 
 glm::vec3 cEnemyEntity::getLookVector(void)

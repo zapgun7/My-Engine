@@ -5,6 +5,7 @@
 #include "Other Graphics Stuff/cMesh.h"
 #include <unordered_map>
 
+#include <random>
 
 class cNavMesh
 {

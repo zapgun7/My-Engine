@@ -53,3 +53,8 @@ FinalLevel_Room2Nav
 FinalLevel_Room6Nav
 FinalLevel_Room8Nav
 FinalLevel_Nav
+FinalLevel_DropHoles
+FinaleLevel_FixedFrontWalls
+FinalLevel_Tele_1
+FinalLevel_Tele_2
+FinalLevel_TeleFin

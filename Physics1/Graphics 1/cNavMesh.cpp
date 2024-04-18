@@ -27,6 +27,7 @@ cNavMesh::cNavMesh()
 	m_NextID = 0;
 
 	m_MapDepth = 25;
+
 }
 
 
@@ -67,7 +68,6 @@ void cNavMesh::MapGenRecursion(sNavTri* originTri, sNavTri* originDirTri, sNavTr
 		MapGenRecursion(originTri, originDirTri, currTri, depth + 1);
 	}
 }
-
 
 // builds the mesh from the transformations provided by the cMesh vector
 void cNavMesh::Initialize(std::vector<cMesh*> meshes) // These should all be Flat_1x1_plane.ply's
