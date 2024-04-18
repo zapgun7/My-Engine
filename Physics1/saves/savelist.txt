@@ -48,3 +48,8 @@ FinalLevel_Room9Walls_3
 FinalLevel_Room9Walls_4
 FinalLevel_Room10Walls_1
 FinalLevel_Room10Walls_2
+FinalLevel_AllWalls
+FinalLevel_Room2Nav
+FinalLevel_Room6Nav
+FinalLevel_Room8Nav
+FinalLevel_Nav

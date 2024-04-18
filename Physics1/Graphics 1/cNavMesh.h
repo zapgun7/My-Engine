@@ -34,6 +34,7 @@ public:
 	sNavTri* getClosestTri(glm::vec3 pos); // Costly, scans through all tris to find the on the entity's closest to
 
 	sNavTri* getClosestTri(sNavTri* currTri, glm::vec3 pos); // Checks if pos is on the provided tri, then checks adjacent (out a certain depth)
+	sNavTri* getClosestTriEnemy(sNavTri* currTri, glm::vec3 pos);
 
 	sNavTri* findPathToTargetTri(sNavTri* currTri, sNavTri* targetTri);
 

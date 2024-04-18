@@ -160,9 +160,9 @@ bool cEngineController_IMPL::Initialize(void)
 	this->testNav = new cNavMesh();
 
 	// First person player setup
-	if (false) 
+	if (true) 
 	{
-		m_pTheSceneManager->loadScene("navPathsPhys");//("testNav4");
+		m_pTheSceneManager->loadScene("FinalLevel_Nav");//("testNav4");
 		
 		sPhysicsProperties* playerObj = new sPhysicsProperties();
 		playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 0.5f));
@@ -200,9 +200,9 @@ bool cEngineController_IMPL::Initialize(void)
 	}
 
 	// Generate Enemies
-	if (false) // EnemyEntity
+	if (true) // EnemyEntity
 	{
-		//m_pTheSceneManager->loadScene("complexNav");
+		//m_pTheSceneManager->loadScene("FinalLevel_Room2Nav");
 		m_pThePhysics->Update(0.0f);
 		isUsingEntityManager = true;
 

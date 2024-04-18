@@ -50,7 +50,7 @@ void cEntityManager::Initialize(void)
 // 		//(static_cast<cEnemyEntity*>(m_vecEntities[i]))->setTargetObject(m_pPlayerObj);
 // 	}
 
-	glm::vec3 newPos = glm::vec3(1, 5, 2);
+	glm::vec3 newPos = glm::vec3(1, 20, -124.7);
 	m_vecEntities.push_back(m_pEntityBuilder->MakeEntity(AIPROJ4, newPos, m_pPlayerObj, m_pTheNavMesh));
 }
 

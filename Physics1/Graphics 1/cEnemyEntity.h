@@ -91,7 +91,7 @@ private:
 	glm::vec3 getLookVector(void); // Look vector in XZ
 
 
-	const float MOVESPEED = 40.0f;
+	const float MOVESPEED = 80.0f;
 	const float ROTATIONSPEED = 200.0f;
 	const float VELOCITYLIMIT = 15.0f;
 	const float SPEEDREDUCTION = 0.99f;

@@ -26,7 +26,7 @@ cNavMesh::cNavMesh()
 
 	m_NextID = 0;
 
-	m_MapDepth = 5;
+	m_MapDepth = 25;
 }
 
 
@@ -79,6 +79,8 @@ void cNavMesh::Initialize(std::vector<cMesh*> meshes) // These should all be Fla
 		sNavTri* newTri1 = new sNavTri();
 		sNavTri* newTri2 = new sNavTri();
 		MakeTransformedMesh(currMesh, newTri1, newTri2);
+
+		if (newTri1)
 
 		MakeConnections(newTri1);
 		m_vecFullNavMesh.push_back(newTri1);
@@ -133,7 +135,7 @@ cNavMesh::sNavTri* cNavMesh::getClosestTri(sNavTri* prevTri, glm::vec3 pos)
 		float planeSide = glm::dot(pos, currTri->normal) + currTri->pd; // Will be positive if on side normal is pointing to
 
 		// Skip tri if under 
-		if (planeSide < 0) continue;
+		//if (planeSide < 0) continue;
 
 		// Get closest point on triangle, and get distance to it
 		glm::vec3 closestPoint = cPhysics::m_ClosestPtPointTriangle(pos, currTri->vertices[0], currTri->vertices[1], currTri->vertices[2]);
@@ -149,6 +151,33 @@ cNavMesh::sNavTri* cNavMesh::getClosestTri(sNavTri* prevTri, glm::vec3 pos)
 }
 
 
+
+cNavMesh::sNavTri* cNavMesh::getClosestTriEnemy(sNavTri* prevTri, glm::vec3 pos)
+{
+	// Start by adding base "currTri" as a statistic
+	sNavTri* nearestTri = prevTri;
+	float nearestTriDist = glm::distance(pos, cPhysics::m_ClosestPtPointTriangle(pos, prevTri->vertices[0], prevTri->vertices[1], prevTri->vertices[2]));
+
+	// TODO project pos onto combined normals of two neighboring tris and then call a dist to each from that
+	for (sNavTri* currTri : prevTri->adjacentTris)
+	{
+		float planeSide = glm::dot(pos, currTri->normal) + currTri->pd; // Will be positive if on side normal is pointing to
+
+		// Skip tri if under 
+		//if (planeSide < 0) continue;
+
+		// Get closest point on triangle, and get distance to it
+		glm::vec3 closestPoint = cPhysics::m_ClosestPtPointTriangle(pos, currTri->vertices[0], currTri->vertices[1], currTri->vertices[2]);
+		float tridist = glm::distance(closestPoint, pos);
+		if (tridist < nearestTriDist)
+		{
+			nearestTriDist = tridist;
+			nearestTri = currTri;
+		}
+	}
+
+	return nearestTri;
+}
 
 cNavMesh::sNavTri* cNavMesh::findPathToTargetTri(sNavTri* currTri, sNavTri* targetTri)
 {
