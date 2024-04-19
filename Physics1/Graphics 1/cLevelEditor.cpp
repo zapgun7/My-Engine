@@ -369,7 +369,15 @@ void cLevelEditor::MeshEditor(std::vector<cMesh*> ActiveMeshVec, std::vector<sPh
 	 		if (isExistingMesh)
 	 		{
 				selectedMesh = ActiveMeshVec[m_mesh_obj_idx];
-				selectedObj = PhysVec[m_mesh_obj_idx];
+				for (int i = m_mesh_obj_idx; i < PhysVec.size(); i++)
+				{
+					if (PhysVec[i]->getUniqueID() == selectedMesh->uniqueID)
+					{
+						selectedObj = PhysVec[i];
+						break;
+					}
+				}
+				//selectedObj = PhysVec[m_mesh_obj_idx];
 
 
 

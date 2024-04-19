@@ -102,6 +102,29 @@ int cSoundManager::Initialize(void)
 		return 0;
 	}
 
+	std::string heartBeatName = "heartBeat";
+	FMOD::Sound* sound = FindSoundByName(heartBeatName);
+
+	result = this->m_pSystem->playSound(sound, 0, false, &this->m_HeartBeatChannel);
+	if (result != FMOD_OK)
+	{
+		printf("Failed to play a sound\n");
+	}
+	this->m_HeartBeatChannel->setMode(FMOD_LOOP_NORMAL);
+	this->m_HeartBeatChannel->setVolume(0.0f);
+
+	std::string droneBeatName = "drone";
+	sound = FindSoundByName(droneBeatName);
+
+	result = this->m_pSystem->playSound(sound, 0, false, &this->m_DroneChannel);
+	if (result != FMOD_OK)
+	{
+		printf("Failed to play a sound\n");
+	}
+	this->m_DroneChannel->setMode(FMOD_LOOP_NORMAL);
+	this->m_DroneChannel->setVolume(0.0f);
+
+
 	return 1;
 }
 
@@ -177,6 +200,20 @@ FMOD::Channel* cSoundManager::StartSound(FMOD::Sound* sound)
 FMOD::Channel* cSoundManager::StartSound(std::string& soundName)
 {
 	return StartSound(FindSoundByName(soundName));
+}
+
+void cSoundManager::setHeartBeatVol(float vol)
+{
+	if (vol > 1.0f) vol = 1.0f; // Prevent any unanticipated eardrum blowouts
+	m_HeartBeatChannel->setVolume(vol);
+	return;
+}
+
+void cSoundManager::setDroneVolume(float vol)
+{
+	if (vol > 1.0f) vol = 1.0f; // Prevent any unanticipated eardrum blowouts
+	m_DroneChannel->setVolume(vol);
+	return;
 }
 
 FMOD::Sound* cSoundManager::FindSoundByName(std::string& name)

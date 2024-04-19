@@ -26,6 +26,10 @@ struct sPlayerPhysics
 	// These get set in the cPlayer
 	float maxGroundedSpeed = 0.0f;
 	float sprintSpeedIncrease = 0.0f;
+
+
+	// cPlayer can re-calc the nav mesh position for the player whenever they teleport
+	bool hasTeleported = false;
 };
 
 

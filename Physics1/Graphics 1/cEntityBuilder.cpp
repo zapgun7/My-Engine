@@ -56,7 +56,10 @@ iEntity* cEntityBuilder::MakeEntity(eEntityType type, glm::vec3& pos, sPhysicsPr
 	newEntPhys->friendlyName = "enemy";
 
 	cMesh* newEntMesh = new cMesh();
-	newEntMesh->meshName = "rusty_ship.ply";
+	newEntMesh->meshName = "tree2.ply";
+	newEntMesh->isSpooky = true;
+	newEntMesh->material.diffuseTex = "colorfulnoise.bmp";
+	newEntMesh->isDoubleSided = true;
 	newEntMesh->friendlyName = "enemy";
 	newEntMesh->bDoNotLight = false;
 	//newEntMesh->textureName[0] = "water.bmp";

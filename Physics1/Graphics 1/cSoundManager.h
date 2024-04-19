@@ -19,6 +19,9 @@ public:
 	FMOD::Channel* StartSound(std::string& soundName);
 
 
+	void setHeartBeatVol(float vol);
+	void setDroneVolume(float vol);
+
 private:
 
 	// Singleton & setup //
@@ -34,6 +37,9 @@ private:
 
 	FMOD::System* m_pSystem = nullptr;
 	FMOD::Channel* m_pChannel = nullptr;
+
+	FMOD::Channel* m_HeartBeatChannel = nullptr;
+	FMOD::Channel* m_DroneChannel = nullptr;
 
 	std::map<std::string, FMOD::Sound*> m_mapNameToSound;
 	std::vector<std::string> m_vecStoredAudio; // Just nice to have for now I

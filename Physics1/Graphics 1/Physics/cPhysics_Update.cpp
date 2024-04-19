@@ -224,6 +224,7 @@ void cPhysics::Update(double deltaTime)
 
 	for (sPhysicsProperties* pObjectA : m_vec_pPhysicalProps)
 	{
+		int collisionLoopCount = 0;
 		bool isStillColliding = true;
 		while (isStillColliding) // TODO add an escape condition when object gets stuck in geometry; have loop counter, when reaching a certain number, "teleport" to surface of colliding object surface
 		{						 // Will have to add additional info to collision event, like pd so we can get a spot to put the object right off the surface
@@ -268,7 +269,7 @@ void cPhysics::Update(double deltaTime)
 						break;
 
 					case sPhysicsProperties::MESH_OF_TRIANGLES_INDIRECT:
-						if (glm::distance(pObjectB->position, pObjectA->position) > 100) break;
+						if (glm::distance(pObjectB->position, pObjectA->position) > 50) break;
 						if (this->m_Capsule_TriMeshIndirect_IntersectionTest(pObjectA, pObjectB, newCollision))
 						{
 // 							if (newCollision.q < theCollision.q)
@@ -287,6 +288,7 @@ void cPhysics::Update(double deltaTime)
 			if (!didCollide) isStillColliding = false; // Soonest collision doesn't happen this frame
 			else // Handle Collision
 			{
+				collisionLoopCount++;
 				switch (pObjectA->shapeType)
 				{
 				case sPhysicsProperties::SPHERE:
@@ -296,6 +298,10 @@ void cPhysics::Update(double deltaTime)
 					
 					m_Capsule_Collision(pObjectA, theCollision, deltaTime);
 
+					if (collisionLoopCount > 5) // Bandaid fix for unresolvable collisions
+					{
+						pObjectA->position += theCollision.hitNorm;
+					}
 					// Set if the player can jump
 					if (theCollision.hitNorm.y > 0)
 					{
@@ -334,6 +340,7 @@ void cPhysics::Update(double deltaTime)
 
 			m_pThePlayerObj->position = currBoxes->dstCentre + teleOffset;
 			m_pThePlayerObj->oldPosition = currBoxes->dstCentre + teleOffsetOLD;
+			m_pThePlayerObj->playerInfo->hasTeleported = true;
 		}
 	}
 

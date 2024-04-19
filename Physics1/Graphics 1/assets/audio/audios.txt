@@ -2,3 +2,5 @@ demoman_laugh.mp3
 woodstep1.ogg
 woodstep2.ogg
 kick.wav
+heartBeat.wav
+drone.wav

@@ -61,7 +61,7 @@ cGraphicsMain::cGraphicsMain()
 	m_cameraTarget = glm::vec3(1.0f, -0.2f, 0.0f);
 	m_cameraRotation = glm::vec3(0.0, 0.0f, 0.0f);
 	m_upVector = glm::vec3(0.0f, 1.0f, 0.0f);
-	renderDebug = true;
+	renderDebug = false;
 	selectedMesh = -1;
 	selectedLight = -1;
 	//m_player = new cPlayer();
@@ -91,7 +91,8 @@ bool cGraphicsMain::Initialize()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 
 
-	m_window = glfwCreateWindow(640, 480, "Ausgine Render", NULL, NULL);
+	m_window = glfwCreateWindow(1920, 1080, "Ausgine Render", glfwGetPrimaryMonitor(), NULL);
+	//m_window = glfwCreateWindow(1920, 1080, "Ausgine Render", NULL, NULL);
 	if (!m_window)
 	{
 		glfwTerminate();
@@ -673,6 +674,32 @@ bool cGraphicsMain::Update(double deltaTime)
 	static float timeTillUpdate = TIMETILLUPDATEINTERVAL;
 	timeTillUpdate -= static_cast<float>(deltaTime);
 
+	float startX = -200;
+	double currTime = glfwGetTime() * 0.2f;
+	float timeOffsetScale = 1.0f;
+	// Update Flying light positions
+	for (int i = 0; i < 3; i++)
+	{
+		// use i + 2
+		m_pTheLights->theLights[i + 2].position = glm::vec4(startX, sin(currTime * timeOffsetScale) * 200.0f, sin(currTime * timeOffsetScale + glm::half_pi<float>()) * 300.0f - 200.0f, 1.0f);
+		startX += 200.0f;
+		timeOffsetScale -= 0.2f;
+	}
+	startX = -700;
+	timeOffsetScale = 0.8f;
+	for (int i = 0; i < 3; i++)
+	{
+		// use i + 5
+		m_pTheLights->theLights[i + 5].position = glm::vec4(sin(currTime * timeOffsetScale + glm::half_pi<float>()) * 300.0f - 200.0f, sin(currTime * timeOffsetScale) * 200.0f, startX, 1.0f);
+		startX += 200.0f;
+		timeOffsetScale -= 0.2f;
+	}
+
+	// Update Player Light position
+	m_pTheLights->theLights[1].position = glm::vec4(m_pPlayer->position, 1.0f);
+
+
+
 
 
 	// Start by checking if the shaded object is in view (based off of last frame)
@@ -909,7 +936,7 @@ bool cGraphicsMain::Update(double deltaTime)
 
 	glfwPollEvents();
 
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	glfwSwapBuffers(m_window);
 
@@ -1544,7 +1571,7 @@ void cGraphicsMain::DrawPass_1(GLuint shaderProgramID, int screenWidth, int scre
 			continue;
 		}
 
-		if (glm::distance(m_pPlayer->position, pCurrentMesh->drawPosition) > 150) continue;
+		if ((glm::distance(m_pPlayer->position, pCurrentMesh->drawPosition) > 100) || (m_pPlayer->position.y - pCurrentMesh->drawPosition.y > 50.0f)) continue;
 
 		if (pCurrentMesh->bIsVisible)
 		{

@@ -29,3 +29,4 @@ sphere2.ply
 plat.ply
 debugCube.ply
 hole.ply
+tree2.ply

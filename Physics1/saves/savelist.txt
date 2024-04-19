@@ -58,3 +58,9 @@ FinaleLevel_FixedFrontWalls
 FinalLevel_Tele_1
 FinalLevel_Tele_2
 FinalLevel_TeleFin
+FinalLevel_FrontFix
+FinalLevel_GapFix
+FinalLevel_Lights1
+FinalLevel_Lights2
+FinalLevel_Tutorial
+FinalLevel_FINAL

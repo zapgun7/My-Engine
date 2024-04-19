@@ -13,7 +13,7 @@ cPlayer::cPlayer(GLFWwindow* window)
 	m_pEngineController = cEngineController::GetEngineController();
 	m_pInput = cInputHandler::GetInstance();
 	m_pThePhysics = cPhysics::GetInstance();
-	m_CameraType = FLYCAM;
+	m_CameraType = FIRSTPERSON;
 
 	m_KICKREACH = 15.0f;
 	m_MAXKICKFORCE = 60.0f;
@@ -67,18 +67,18 @@ void cPlayer::setPlayerNavMesh(cNavMesh* navmesh)
 void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cameraRotation)
 {
 
-	if (m_pInput->IsPressedEvent(GLFW_KEY_ESCAPE))
-	{
-		if (m_CameraType == FIRSTPERSON)
-		{
-			m_CameraType = FLYCAM;
-			m_pInput->ChangeMouseState(NORMAL);
-		}
-		else
-		{
-			m_CameraType = FIRSTPERSON;
-		}
-	}
+// 	if (m_pInput->IsPressedEvent(GLFW_KEY_ESCAPE))
+// 	{
+// 		if (m_CameraType == FIRSTPERSON)
+// 		{
+// 			m_CameraType = FLYCAM;
+// 			m_pInput->ChangeMouseState(NORMAL);
+// 		}
+// 		else
+// 		{
+// 			m_CameraType = FIRSTPERSON;
+// 		}
+// 	}
 
 
 
@@ -173,6 +173,12 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 	}
 	else if (m_CameraType == FIRSTPERSON) // The "player" character
 	{
+		if (m_pPlayerObject->position.y < -100.0f)
+		{
+			m_pPlayerObject->position = glm::vec3(0, 10, -15);
+			m_pPlayerObject->oldPosition = m_pPlayerObject->position;
+			m_pPlayerObject->velocity = glm::vec3(0.0f);
+		}
 		// Start by updating the TOPSPD stat
 // 		float storedSpd = m_pDatabaseManager->GetTopSpeed();//m_pDatabaseManager->SelectData(0); // Player ID 0
  		float actualSpd = glm::length(m_pPlayerObject->velocity);
@@ -199,15 +205,32 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 // 			m_pDatabaseManager->ResetData();
 // 			std::cout << "Successfully wiped stored speed record" << std::endl;
 // 		}
-		static bool isNaved = false;
+		static bool isNaved = true;
 
-		static sTimer* triUpdateTimer = cTimer::MakeNewTimer(0.1f, sTimer::eTimerType::REPEAT);
+		static sTimer* recalcTriLocationDelay = cTimer::MakeNewTimer(2.0f, sTimer::ONEOFF);
 
-		if ((triUpdateTimer->CheckInterval()) && (isNaved))
+		if (m_pPlayerObject->playerInfo->hasTeleported)
 		{
-			m_pCurrTri = m_pNavMesh->getClosestTri(m_pCurrTri, m_pPlayerObject->position);
-			printf("%d\n", m_pCurrTri->id);
+			m_pPlayerObject->playerInfo->hasTeleported = false;
+			recalcTriLocationDelay->Reset();
 		}
+
+		if (recalcTriLocationDelay->CheckInterval() && (isNaved))
+		{
+			m_pCurrTri = m_pNavMesh->getClosestTri(m_pPlayerObject->position);
+			//printf("FINDING TRI...\n");
+		}
+
+
+
+
+// 		static sTimer* triUpdateTimer = cTimer::MakeNewTimer(0.2f, sTimer::eTimerType::REPEAT);
+// 
+// 		if ((triUpdateTimer->CheckInterval()) && (isNaved))
+// 		{
+// 			m_pCurrTri = m_pNavMesh->getClosestTri(m_pCurrTri, m_pPlayerObject->position);
+// 			printf("%d\n", m_pCurrTri->id);
+// 		}
 
 
 		// Setup Area for Lua sound calls

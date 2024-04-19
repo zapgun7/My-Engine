@@ -68,7 +68,7 @@ void cEngineController_IMPL::Run(void)
 			m_pTheGraphics->setLightPos(2, entityPos);
 		}
 
-		m_pTheEditor->Update(deltaTime); //m_pTheEditor->Update(uncappedDT); 
+		//m_pTheEditor->Update(deltaTime); //m_pTheEditor->Update(uncappedDT); 
 		m_pThePhysics->Update(deltaTime);
 		shouldClose = m_pTheGraphics->Update(deltaTime);
 		m_pTheSound->Update(deltaTime);
@@ -158,20 +158,22 @@ bool cEngineController_IMPL::Initialize(void)
 
 	// TESTING NAV MESH GENERATION
 	this->testNav = new cNavMesh();
-
+	m_pThePhysics->setPhysicsRunningState(true);
 	// First person player setup
+	sPhysicsProperties* playerObj;
 	if (true) 
 	{
-		m_pTheSceneManager->loadScene("FinalLevel_TeleFin");//("testNav4");
+		m_pTheSceneManager->loadScene("FinalLevel_FINAL");//("testNav4");
 		
-		sPhysicsProperties* playerObj = new sPhysicsProperties();
+		playerObj = new sPhysicsProperties();
 		playerObj->setShape(new sPhysicsProperties::sCapsule(1.5f, 0.5f));
 		playerObj->shapeType = sPhysicsProperties::CAPSULE;
 		playerObj->friendlyName = "plyr";
 
-		playerObj->position = glm::vec3(0, 10, 0);
+		playerObj->position = glm::vec3(0, 10, -15);
 		playerObj->restitution = 0.0f;
 		playerObj->inverse_mass = 1.0f;
+		m_TheCamera->setRotationFromEuler(glm::vec3(0.0f, 90.0f, 0.0f));
 		// Add PlayerInfo Struct
 		sPlayerPhysics* plyrPhys = new sPlayerPhysics();
 		playerObj->playerInfo = plyrPhys;
@@ -200,7 +202,7 @@ bool cEngineController_IMPL::Initialize(void)
 	}
 
 	// Generate Enemies
-	if (false) // EnemyEntity
+	if (true) // EnemyEntity
 	{
 		//m_pTheSceneManager->loadScene("FinalLevel_Room2Nav");
 		m_pThePhysics->Update(0.0f);
@@ -219,7 +221,7 @@ bool cEngineController_IMPL::Initialize(void)
 		testNav->Initialize(trimmedMeshVec);
 
 		this->m_pEntityManager = new cEntityManager();
-		this->m_pEntityManager->SetPlayer(m_TheCamera);
+		this->m_pEntityManager->SetPlayer(playerObj);//(m_TheCamera);
 		this->m_pEntityManager->SetNavMesh(testNav);
 		this->m_pEntityManager->Initialize();
 

@@ -46,6 +46,7 @@ void cNavMesh::GenerateNearMap(void)
 {
 	for (sNavTri* currTri : m_vecFullNavMesh)
 	{
+		currTri->map_targetIDtoNearestTri[currTri->id] = std::pair<int, sNavTri*>(0, currTri);
 		for (sNavTri* currTri2 : currTri->adjacentTris)
 		{
 			MapGenRecursion(currTri, currTri2, currTri2, 1);
@@ -56,12 +57,20 @@ void cNavMesh::GenerateNearMap(void)
 void cNavMesh::MapGenRecursion(sNavTri* originTri, sNavTri* originDirTri, sNavTri* nextTri, int depth)
 {
 	// Return if this triangle is already in the map or we've reached max depth
-	if ((originTri->map_targetIDtoNearestTri.find(nextTri->id) != originTri->map_targetIDtoNearestTri.end())
-		|| (depth > m_MapDepth)
+	if (/*(originTri->map_targetIDtoNearestTri.find(nextTri->id) != originTri->map_targetIDtoNearestTri.end())*/
+		/*||*/ (depth > m_MapDepth)
 		|| (originTri->id == nextTri->id)) return;
 
 	// Confirmed not in map, so add tri and generate out more
-	originTri->map_targetIDtoNearestTri[nextTri->id] = originDirTri;
+	std::unordered_map<int, std::pair< int, sNavTri*>>::iterator itMap = originTri->map_targetIDtoNearestTri.find(nextTri->id);
+	if (itMap == originTri->map_targetIDtoNearestTri.end()) // If not in map, add it
+		originTri->map_targetIDtoNearestTri[nextTri->id] = std::pair<int, sNavTri*>(depth, originDirTri);
+	else if (itMap->second.first > depth) // If stored value is at a deeper level, update with this shortest path
+	{
+		originTri->map_targetIDtoNearestTri[nextTri->id] = std::pair<int, sNavTri*>(depth, originDirTri);
+	}
+	else // Already in map, and no better way found, return
+		return;
 
 	for (sNavTri* currTri : nextTri->adjacentTris)
 	{
@@ -100,10 +109,10 @@ cNavMesh::sNavTri* cNavMesh::getClosestTri(glm::vec3 pos)
 	for (sNavTri* currTri : m_vecFullNavMesh)
 	{
 		// Start by making sure the position is on the correct (above) side of the plane, only want to check tris below the pos
-		float planeSide = glm::dot(pos, currTri->normal) + currTri->pd; // Will be positive if on side normal is pointing to
+		//float planeSide = glm::dot(pos, currTri->normal) + currTri->pd; // Will be positive if on side normal is pointing to
 
 		// Skip tri if under 
-		if (planeSide < 0) continue;
+		//if (planeSide < 0) continue;
 		
 		// Get closest point on triangle, and get distance to it
 		glm::vec3 closestPoint = cPhysics::m_ClosestPtPointTriangle(pos, currTri->vertices[0], currTri->vertices[1], currTri->vertices[2]);
@@ -129,15 +138,12 @@ cNavMesh::sNavTri* cNavMesh::getClosestTri(sNavTri* prevTri, glm::vec3 pos)
 	sNavTri* nearestTri = prevTri;
 	float nearestTriDist = glm::distance(pos, cPhysics::m_ClosestPtPointTriangle(pos, prevTri->vertices[0], prevTri->vertices[1], prevTri->vertices[2]));
 
-	// TODO project pos onto combined normals of two neighboring tris and then call a dist to each from that
-	for (sNavTri* currTri : prevTri->adjacentTris)
+	
+	// Check all ids within the map range of the curr tri
+	for (std::unordered_map<int, std::pair<int, sNavTri*>>::iterator itMap = prevTri->map_targetIDtoNearestTri.begin();
+		itMap != prevTri->map_targetIDtoNearestTri.end(); itMap++)
 	{
-		float planeSide = glm::dot(pos, currTri->normal) + currTri->pd; // Will be positive if on side normal is pointing to
-
-		// Skip tri if under 
-		//if (planeSide < 0) continue;
-
-		// Get closest point on triangle, and get distance to it
+		sNavTri* currTri = m_vecFullNavMesh[itMap->first];
 		glm::vec3 closestPoint = cPhysics::m_ClosestPtPointTriangle(pos, currTri->vertices[0], currTri->vertices[1], currTri->vertices[2]);
 		float tridist = glm::distance(closestPoint, pos);
 		if (tridist <= nearestTriDist)
@@ -146,6 +152,25 @@ cNavMesh::sNavTri* cNavMesh::getClosestTri(sNavTri* prevTri, glm::vec3 pos)
 			nearestTri = currTri;
 		}
 	}
+
+
+
+// 	for (sNavTri* currTri : prevTri->adjacentTris)
+// 	{
+// 		//float planeSide = glm::dot(pos, currTri->normal) + currTri->pd; // Will be positive if on side normal is pointing to
+// 
+// 		// Skip tri if under 
+// 		//if (planeSide < 0) continue;
+// 
+// 		// Get closest point on triangle, and get distance to it
+// 		glm::vec3 closestPoint = cPhysics::m_ClosestPtPointTriangle(pos, currTri->vertices[0], currTri->vertices[1], currTri->vertices[2]);
+// 		float tridist = glm::distance(closestPoint, pos);
+// 		if (tridist <= nearestTriDist)
+// 		{
+// 			nearestTriDist = tridist;
+// 			nearestTri = currTri;
+// 		}
+// 	}
 
 	return nearestTri;
 }
@@ -181,11 +206,11 @@ cNavMesh::sNavTri* cNavMesh::getClosestTriEnemy(sNavTri* prevTri, glm::vec3 pos)
 
 cNavMesh::sNavTri* cNavMesh::findPathToTargetTri(sNavTri* currTri, sNavTri* targetTri)
 {
-	std::unordered_map<unsigned int, sNavTri*>::iterator map_IT = currTri->map_targetIDtoNearestTri.find(targetTri->id);
+	std::unordered_map<int, std::pair<int, sNavTri*>>::iterator map_IT = currTri->map_targetIDtoNearestTri.find(targetTri->id);
 
 	if (map_IT == currTri->map_targetIDtoNearestTri.end()) return nullptr;
 
-	return map_IT->second;
+	return map_IT->second.second;
 }
 
 

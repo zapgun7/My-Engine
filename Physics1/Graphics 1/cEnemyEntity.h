@@ -7,6 +7,8 @@
 
 #include "iEntity.h"
 
+#include "cSoundManager.h" // For setting heartbeat sounds
+
 #include <random>
 
 struct sPhysicsProperties;
@@ -63,6 +65,11 @@ private:
 	cNavMesh::sNavTri* chooseNewDir(void);
 	int distInMemory(unsigned int triID);
 	void AddToMemory(int newID);
+
+	cSoundManager* m_pSoundManager = nullptr;
+	float m_HeartBeatVolume = 0.0f;
+	float m_DroneVolume = 0.0f;
+	float m_DroneVolTarget = 0.45f; // This is reduced when the heartbeat ramps up
 
 
 	const unsigned int MEMORY_SIZE = 100;

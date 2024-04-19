@@ -24,7 +24,8 @@ public:
 		float pd;
 		std::vector<sNavTri*> adjacentTris;
 
-		std::unordered_map<unsigned int, sNavTri*> map_targetIDtoNearestTri; // Given a target ID, will return the closest triangle (within predetermined distance)
+		                // id             // depth
+		std::unordered_map<int, std::pair< int, sNavTri*>> map_targetIDtoNearestTri; // Given a target ID, will return the closest triangle (within predetermined distance)
 
 		unsigned int id;
 	};

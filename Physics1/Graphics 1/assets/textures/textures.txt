@@ -16,3 +16,6 @@ arrows1.bmp
 dreadpaths.bmp
 heavypaths.bmp
 colorfulnoise.bmp
+tut1.bmp
+tut2.bmp
+fin.bmp

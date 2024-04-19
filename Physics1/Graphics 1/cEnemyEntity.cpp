@@ -51,6 +51,9 @@ cEnemyEntity::cEnemyEntity(sPhysicsProperties* entityObj, eAIType type)
 
 	contenders.reserve(2); // Max novel paths from one triangle
 
+
+	m_pSoundManager = cSoundManager::GetInstance();
+
 }
 
 cEnemyEntity::~cEnemyEntity()
@@ -74,9 +77,64 @@ void cEnemyEntity::Update(double dt)
 	const float WATCHDIST = 50.0f;
 	const float CHASEDIST = 30.0f;
 
+	static bool hasPlayerEnteredFacility = false;
+
+	if (m_pPlayerEntity->position.z < -110.0f) hasPlayerEnteredFacility = true;
+
+	if (!hasPlayerEnteredFacility) return;
 
 
-	// Start by getting the current triangle they're on
+
+	// Update drone sound for player
+	const float DRONERAMPSPEED = 0.05f;
+
+	if (m_pPlayerEntity->position.z < -110.0f)
+	{
+		if (m_DroneVolume < m_DroneVolTarget)
+		{
+			m_DroneVolume += DRONERAMPSPEED * static_cast<float>(dt);
+			m_DroneVolume = m_DroneVolume > m_DroneVolTarget ? m_DroneVolTarget : m_DroneVolume;
+		}
+		else if (m_DroneVolume > m_DroneVolTarget)
+		{
+			m_DroneVolume -= DRONERAMPSPEED * static_cast<float>(dt);
+			m_DroneVolume = m_DroneVolume < m_DroneVolTarget ? m_DroneVolTarget : m_DroneVolume;
+		}
+	}
+	else
+	{
+		m_DroneVolume -= DRONERAMPSPEED * static_cast<float>(dt);
+		m_DroneVolume = m_DroneVolume < 0.0f ? 0.0f : m_DroneVolume;
+	}
+	m_pSoundManager->setDroneVolume(m_DroneVolume);
+
+
+
+
+
+	static sTimer* initialGracePeriod = cTimer::MakeNewTimer(25.0f, sTimer::ONEOFF);
+	static sTimer* deathGracePeriod = cTimer::MakeNewTimer(20.0f, sTimer::ONEOFF); // Keeps enemy in wander mode for 20s after "death"
+
+	static bool binitialGracePeriod = true;
+	static bool isGraceDeath = false;
+
+	// Enemy is inactive for the first 30s
+	if (!initialGracePeriod->CheckInterval() && binitialGracePeriod)
+	{
+		deathGracePeriod->CheckInterval();
+		return;
+	}
+	else
+		binitialGracePeriod = false;
+
+	if ((isGraceDeath) && (deathGracePeriod->CheckInterval()))
+	{
+		isGraceDeath = false;
+	}
+
+
+
+	// Check if moved to different triangle
 	cNavMesh::sNavTri* currtri = m_pNavMesh->getClosestTriEnemy(m_pCurrNavTri, m_pEntityObject->position);
 	if (m_pCurrNavTri->id != currtri->id)
 	{
@@ -87,48 +145,44 @@ void cEnemyEntity::Update(double dt)
 		// Find new goal
 		if (m_eType == NAVWANDER)
 		{
-// 			for (unsigned int neighborIDX = 0; neighborIDX < m_pCurrNavTri->adjacentTris.size(); neighborIDX++)
-// 			{
-// 				if ((m_pCurrNavTri->adjacentTris[neighborIDX]->id != m_pPrevNavTri->id)  // Is new tri (not backtracking)
-// 					&& (m_pCurrNavTri->adjacentTris[neighborIDX]->adjacentTris.size() > 1)) // Not a dead end
-// 				{
-// 					
-// 					m_pTargetNavTri = m_pCurrNavTri->adjacentTris[neighborIDX];
-// 					break;
-// 				}
-// 			}
 			m_pTargetNavTri = chooseNewDir();
 			AddToMemory(m_pTargetNavTri->id);
 		}
-		else  // Find next closest triangle to player triangle
+
+	}
+
+
+	if (m_eType == NAVCHASE)  // Find next closest triangle to player triangle
+	{
+		cNavMesh::sNavTri* targetTri = m_pNavMesh->findPathToTargetTri(m_pCurrNavTri, m_pPlayerTri);
+		if (targetTri == nullptr)
 		{
-			cNavMesh::sNavTri* targetTri = m_pNavMesh->findPathToTargetTri(m_pCurrNavTri, m_pPlayerTri);
-			if (targetTri == nullptr)
+			// Lost player, go back to wandering
+			m_eType = NAVWANDER;
+
+
+			if (m_pCurrNavTri->adjacentTris.size() <= 2)
 			{
-				// Lost player, go back to wandering
-				m_eType = NAVWANDER;
-
-
-				if (m_pCurrNavTri->adjacentTris.size() <= 2)
+				for (unsigned int neighborIDX = 0; neighborIDX < m_pCurrNavTri->adjacentTris.size(); neighborIDX++)
 				{
-					for (unsigned int neighborIDX = 0; neighborIDX < m_pCurrNavTri->adjacentTris.size(); neighborIDX++)
+					if ((m_pCurrNavTri->adjacentTris[neighborIDX]->id != m_pPrevNavTri->id)  // Is new tri (not backtracking)
+						&& (m_pCurrNavTri->adjacentTris[neighborIDX]->adjacentTris.size() > 1)) // Not a dead end
 					{
-						if ((m_pCurrNavTri->adjacentTris[neighborIDX]->id != m_pPrevNavTri->id)  // Is new tri (not backtracking)
-							&& (m_pCurrNavTri->adjacentTris[neighborIDX]->adjacentTris.size() > 1)) // Not a dead end
-						{
-							m_pTargetNavTri = m_pCurrNavTri->adjacentTris[neighborIDX];
-							break;
-						}
+						m_pTargetNavTri = m_pCurrNavTri->adjacentTris[neighborIDX];
+						break;
 					}
 				}
-				else // Use "smart" memory to choose new paths
-				{
-					m_pTargetNavTri = chooseNewDir();
-					AddToMemory(m_pTargetNavTri->id);
-				}
+			}
+			else // Use "smart" memory to choose new paths
+			{
+				m_pTargetNavTri = chooseNewDir();
+				AddToMemory(m_pTargetNavTri->id);
 			}
 		}
-		
+		else
+		{
+			m_pTargetNavTri = targetTri;
+		}
 	}
 
 
@@ -138,86 +192,92 @@ void cEnemyEntity::Update(double dt)
 
 
 
+
+	// Initiate a chase
 	cNavMesh::sNavTri* targetTri = nullptr;
-	if (false)//(m_eType != NAVCHASE)
+	if ((m_eType != NAVCHASE) && (!isGraceDeath))
+	{
 		targetTri = m_pNavMesh->findPathToTargetTri(m_pCurrNavTri, m_pPlayerTri);
 
+		if (targetTri != nullptr)
+		{
+			// Close enough to player to start chasing
+			m_pTargetNavTri = targetTri;
+			m_eType = NAVCHASE;
+		}
+		else
+		{
+			m_eType = NAVWANDER;
+		}
+	}
 
-	if (targetTri != nullptr)
+
+
+	//////////////// HEART BEAT VOLUME CONTROL /////////////
+	const float HEARTSOUNDINCREASESPD = 0.5f;
+	if (m_eType == NAVCHASE)
 	{
-		// Close enough to player to start chasing
-		m_pTargetNavTri = targetTri;
-		m_eType = NAVCHASE;
+		float targetVol = glm::clamp((glm::distance(m_pEntityObject->position, m_pPlayerEntity->position) / 100.0f), 0.0f, 1.0f);
+		targetVol = abs(targetVol - 1.0f);
+
+		m_HeartBeatVolume += targetVol * HEARTSOUNDINCREASESPD * static_cast<float>(dt);
+		if (m_HeartBeatVolume > 1.0f) m_HeartBeatVolume = 1.0f;
 	}
 	else
 	{
-		m_eType = NAVWANDER;
+		// Reduce the heartbeat intensity
+		m_HeartBeatVolume -= HEARTSOUNDINCREASESPD * static_cast<float>(dt);
+		if (m_HeartBeatVolume < 0.0f) m_HeartBeatVolume = 0.0f;
 	}
+	m_DroneVolTarget = 0.45f - (0.25f * m_HeartBeatVolume);
+
+	m_pSoundManager->setHeartBeatVol(m_HeartBeatVolume);
+	//////////////// ///// //// ////// /////// /////////////
 
 
-	// For now, testing wander these will stay these values
-	//m_eType = NAVWANDER;
 
 	
 
-// 	if (m_eType == NAVWATCH) // Turn to look at player
-// 	{
-// 		glm::vec3 vecToGoal = m_pPlayerEntity->position - m_pEntityObject->position;
-// 		glm::vec3 crossResult = glm::cross(getLookVector(), glm::normalize(vecToGoal));
-// 		if (crossResult.y > 0) // Turn left
-// 		{
-// 			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
-// 			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
-// 		}
-// 		else // Turn right
-// 		{
-// 			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
-// 			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
-// 		}
-// 	}
-// 	else // Navigate to the next triangle
+	glm::vec3 triOffset = glm::vec3(0.0f, 6.0f, 0.0f);//m_pTargetNavTri->normal * 10.0f;
+
+	glm::vec3 deltaMove(0.0f);
+	glm::vec3 vecToGoal(0.0f);
+	if ((m_eType == NAVWANDER) || ((m_eType == NAVCHASE) && (m_pCurrNavTri->id != m_pPlayerTri->id)))
 	{
-		glm::vec3 triOffset = glm::vec3(0.0f, 6.0f, 0.0f);//m_pTargetNavTri->normal * 10.0f;
-
-		glm::vec3 deltaMove(0.0f);
-		glm::vec3 vecToGoal = glm::vec3(m_pTargetNavTri->centreTri.x, m_pTargetNavTri->centreTri.y, m_pTargetNavTri->centreTri.z)
-							 - glm::vec3(m_pEntityObject->position.x, m_pEntityObject->position.y, m_pEntityObject->position.z) + triOffset;
-		//vecToGoal.y = 0;
-		//glm::vec3 crossResult = glm::cross(getLookVector(), glm::normalize(glm::vec3(vecToGoal.x, 0.0f, vecToGoal.z)));
-		//float radDiff = asin(glm::length(crossResult));
-
-// 		if (crossResult.y > 0) // Turn left
-// 		{
-// 			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, ROTATIONSPEED * static_cast<float>(dt), 0)));
-// 			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
-// 		}
-// 		else // Turn right
-// 		{
-// 			glm::quat rotAdjust = glm::quat(glm::radians(glm::vec3(0, -ROTATIONSPEED * static_cast<float>(dt), 0)));
-// 			m_pEntityObject->setRotationFromQuat(m_pEntityObject->get_qOrientation() * (rotAdjust));
-// 		}
-// 		if (radDiff < 0.2f)
-// 		{
-			//m_pEntityObject->velocity += getLookVector() * MOVESPEED * static_cast<float>(dt); // CAREFUL, CAN WALK OFF TRI AREA
-			//deltaMove += getLookVector() * MOVESPEED * static_cast<float>(dt);
-			deltaMove = glm::normalize(vecToGoal) * MOVESPEED * static_cast<float>(dt);
-			//velToAdd += getLookVector() * MOVESPEED * static_cast<float>(dt);
-		//}
-
-		// Project velocity to plane defined by triangle it's currently on
- 		//glm::vec3 projSubVec = glm::dot(deltaMove, m_pCurrNavTri->normal) * m_pCurrNavTri->normal;
- 		//deltaMove -= projSubVec;
-		m_pEntityObject->position += deltaMove;
+		vecToGoal = glm::vec3(m_pTargetNavTri->centreTri.x, m_pTargetNavTri->centreTri.y, m_pTargetNavTri->centreTri.z)
+			- glm::vec3(m_pEntityObject->position.x, m_pEntityObject->position.y, m_pEntityObject->position.z) + triOffset;
+	}
+	else // If on the same triangle, go right for the player
+	{
+		vecToGoal = m_pPlayerEntity->position - m_pEntityObject->position;
+	}
 
 
-		// Update position above the triangle
-// 		glm::vec3 currSpotOnTri(0.0f);
-// 		cPhysics::m_IntersectSegmentPlane(m_pEntityObject->position, 
-// 										  m_pEntityObject->position - glm::vec3(0.0f, 20.0f, 0.0f),
-// 										  m_pCurrNavTri->normal,
-// 										  m_pCurrNavTri->pd,
-// 										  currSpotOnTri);
-// 		m_pEntityObject->position = currSpotOnTri + glm::vec3(0.0f, 10.0f, 0.0f);
+
+
+	float spdRed = 1.0f;
+	if (m_eType == NAVCHASE) spdRed = 0.3f;
+
+	deltaMove = glm::normalize(vecToGoal) * MOVESPEED * spdRed * static_cast<float>(dt);
+
+	m_pEntityObject->position += deltaMove;
+
+
+
+	if ((m_eType == NAVCHASE) && (glm::distance(m_pPlayerEntity->position, m_pEntityObject->position) < 5.0f)) // Teleport player back to start if close enough
+	{
+		m_pPlayerEntity->position = glm::vec3(0, 10, -20);
+		m_pPlayerEntity->oldPosition = m_pPlayerEntity->position;
+		m_pPlayerEntity->velocity = glm::vec3(0.0f);
+		m_pPlayerEntity->playerInfo->hasTeleported = true;
+
+		// Reset to wander
+		m_eType = NAVWANDER;
+		m_pTargetNavTri = chooseNewDir();
+		AddToMemory(m_pTargetNavTri->id);
+
+		isGraceDeath = true;
+		deathGracePeriod->Reset();
 	}
 
 
@@ -228,7 +288,7 @@ void cEnemyEntity::Update(double dt)
 // 	}
 
 	return;
-	// Everything below are just unused behaviors
+	// Everything below are unused behaviors
 
 
 	if ((m_eType == WANDER1) || (m_eType == WANDER2) || (m_eType == WANDER3))
@@ -510,6 +570,9 @@ void cEnemyEntity::setFlockTarget(glm::vec3* target)
 // This should be called for every new wandering triangle we want
 cNavMesh::sNavTri* cEnemyEntity::chooseNewDir(void)
 {
+	//if (m_pCurrNavTri->adjacentTris.size() == 1) return m_pCurrNavTri->adjacentTris[0];
+
+
 	if (m_pCurrNavTri->adjacentTris.size() == 2)
 	{
 		for (cNavMesh::sNavTri* currTri : m_pCurrNavTri->adjacentTris)
@@ -526,7 +589,7 @@ cNavMesh::sNavTri* cEnemyEntity::chooseNewDir(void)
 	}
 
 	// At this point, we choose the most novel direction from the currTri we're at
-	int noveltyRating = 0;
+	int noveltyRating = -1;
 	cNavMesh::sNavTri* novelestTri = nullptr;
 
 	for (cNavMesh::sNavTri* currTri : m_pCurrNavTri->adjacentTris)

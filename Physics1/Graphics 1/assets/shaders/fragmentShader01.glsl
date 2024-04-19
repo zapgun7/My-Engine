@@ -160,8 +160,8 @@ void main()
 		return;
 	}
 
-
-	float fragDist = length(eyeLocation.xyz - vertexWorldPos.xyz);
+	vec3 eyeFragDiff = eyeLocation.xyz - vertexWorldPos.xyz;
+	float fragDist = length(eyeFragDiff) + abs(eyeFragDiff.y * 2.0f);
 	float lossRatio = 0.0f; // No loss default
 	
 	if (fragDist > eyeLocation.w / 2.0f) // If distance is beyond the halfway point to the "border"
@@ -169,13 +169,15 @@ void main()
 		fragDist -= eyeLocation.w / 2.0f;
 		lossRatio = fragDist / eyeLocation.w / 2.0f;
 		
-		lossRatio = clamp(lossRatio, 0.0f, 0.98f);
+		lossRatio = clamp(lossRatio, 0.0f, 1.0f);
 		
 		
 	}
-	vec4 lossRatioVec = vec4(lossRatio * 0.9f, lossRatio, lossRatio, 0.0f);
-	lossRatioVec = vec4(0.0f, 0.0f, 0.0f, 0.0f); // Disabling the fog 
-
+	//vec4 lossRatioVec = vec4(lossRatio * 0.9f, lossRatio, lossRatio, 0.0f);
+	vec4 lossRatioVec = vec4(lossRatio, lossRatio, lossRatio, 1.0f);
+	vec4 addedRed = vec4(0.2f * lossRatio, 0.0f, 0.0f, 1.0f);
+	//lossRatioVec = vec4(0.0f, 0.0f, 0.0f, 0.0f); // Disabling the fog 
+	//addedRed = vec4(0.0f, 0.0f, 0.0f, 0.0f);     //
 //	gl_FragColor = vec4(color, 1.0);
 
 //	if ( bUseHeightmap_IsSkyBox_UseDiscard_NONE.x )
@@ -221,6 +223,7 @@ void main()
 		//gl_FragDepth = 0.999f;
 		//outputColour *= (1.0f - lossRatio);
 		outputColour *= (vec4(1.0f, 1.0f, 1.0f, 1.0f) - lossRatioVec);
+		outputColour += addedRed;
 		return;
 	}
 	
@@ -312,6 +315,7 @@ void main()
 	                                               vertexWorldPos.xyz, vertexSpecular );
    //vertexColorLit *= (1.0f - lossRatio);
    vertexColorLit *= (vec4(1.0f, 1.0f, 1.0f, 1.0f) - lossRatioVec);
+   vertexColorLit += addedRed;
 	// *************************************
 			
 	outputColour.rgb = vertexColorLit.rgb;
