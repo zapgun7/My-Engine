@@ -82,7 +82,7 @@ int cSoundManager::Initialize(void)
 		return 0;
 	}
 
-	result = this->m_pSystem->init(5, FMOD_INIT_NORMAL, nullptr);   /// Prob will want to change this to a 3D setup later
+	result = this->m_pSystem->init(10, FMOD_INIT_NORMAL, nullptr);   /// Prob will want to change this to a 3D setup later
 	if (result != FMOD_OK)
 	{
 		printf("Failed to initialize the FMOD system\n");

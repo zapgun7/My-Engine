@@ -936,7 +936,7 @@ bool cGraphicsMain::Update(double deltaTime)
 
 	glfwPollEvents();
 
-	//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	glfwSwapBuffers(m_window);
 

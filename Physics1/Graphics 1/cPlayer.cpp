@@ -67,18 +67,18 @@ void cPlayer::setPlayerNavMesh(cNavMesh* navmesh)
 void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cameraRotation)
 {
 
-// 	if (m_pInput->IsPressedEvent(GLFW_KEY_ESCAPE))
-// 	{
-// 		if (m_CameraType == FIRSTPERSON)
-// 		{
-// 			m_CameraType = FLYCAM;
-// 			m_pInput->ChangeMouseState(NORMAL);
-// 		}
-// 		else
-// 		{
-// 			m_CameraType = FIRSTPERSON;
-// 		}
-// 	}
+	if (m_pInput->IsPressedEvent(GLFW_KEY_ESCAPE))
+	{
+		if (m_CameraType == FIRSTPERSON)
+		{
+			m_CameraType = FLYCAM;
+			m_pInput->ChangeMouseState(NORMAL);
+		}
+		else
+		{
+			m_CameraType = FIRSTPERSON;
+		}
+	}
 
 
 
@@ -228,7 +228,7 @@ void cPlayer::Update(double deltaTime, glm::vec3& cameraPosition, glm::quat& cam
 // 
 // 		if ((triUpdateTimer->CheckInterval()) && (isNaved))
 // 		{
-// 			m_pCurrTri = m_pNavMesh->getClosestTri(m_pCurrTri, m_pPlayerObject->position);
+ 			m_pCurrTri = m_pNavMesh->getClosestTri(m_pCurrTri, m_pPlayerObject->position);
 // 			printf("%d\n", m_pCurrTri->id);
 // 		}
 

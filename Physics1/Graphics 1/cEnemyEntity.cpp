@@ -214,10 +214,10 @@ void cEnemyEntity::Update(double dt)
 
 
 	//////////////// HEART BEAT VOLUME CONTROL /////////////
-	const float HEARTSOUNDINCREASESPD = 0.5f;
+	const float HEARTSOUNDINCREASESPD = 0.75f;
 	if (m_eType == NAVCHASE)
 	{
-		float targetVol = glm::clamp((glm::distance(m_pEntityObject->position, m_pPlayerEntity->position) / 100.0f), 0.0f, 1.0f);
+		float targetVol = glm::clamp(( glm::distance(m_pEntityObject->position, m_pPlayerEntity->position) / 200.0f), 0.0f, 1.0f);
 		targetVol = abs(targetVol - 1.0f);
 
 		m_HeartBeatVolume += targetVol * HEARTSOUNDINCREASESPD * static_cast<float>(dt);
@@ -229,11 +229,19 @@ void cEnemyEntity::Update(double dt)
 		m_HeartBeatVolume -= HEARTSOUNDINCREASESPD * static_cast<float>(dt);
 		if (m_HeartBeatVolume < 0.0f) m_HeartBeatVolume = 0.0f;
 	}
+	if (m_HeartBeatVolume < 0.0f) m_HeartBeatVolume = 0.0f;
 	m_DroneVolTarget = 0.45f - (0.25f * m_HeartBeatVolume);
 
 	m_pSoundManager->setHeartBeatVol(m_HeartBeatVolume);
 	//////////////// ///// //// ////// /////// /////////////
 
+
+// 	sTimer* heartVol = cTimer::MakeNewTimer(0.1f, sTimer::REPEAT);
+// 
+// 	if (heartVol->CheckInterval())
+// 	{
+		//printf("%.3f\n", m_HeartBeatVolume);
+	/*}*/
 
 
 	

@@ -68,7 +68,7 @@ void cEngineController_IMPL::Run(void)
 			m_pTheGraphics->setLightPos(2, entityPos);
 		}
 
-		//m_pTheEditor->Update(deltaTime); //m_pTheEditor->Update(uncappedDT); 
+		m_pTheEditor->Update(deltaTime); //m_pTheEditor->Update(uncappedDT); 
 		m_pThePhysics->Update(deltaTime);
 		shouldClose = m_pTheGraphics->Update(deltaTime);
 		m_pTheSound->Update(deltaTime);
